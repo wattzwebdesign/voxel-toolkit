@@ -70,6 +70,21 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-light-mode.php',
                 'settings_callback' => array($this, 'render_light_mode_settings'),
                 'version' => '1.0.0'
+            ),
+            'admin_bar_publish' => array(
+                'name' => __('Admin Bar Publish Toggle', 'voxel-toolkit'),
+                'description' => __('Add Publish/Mark as Pending button in the admin bar for quick status changes.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Admin_Bar_Publish',
+                'file' => 'functions/class-admin-bar-publish.php',
+                'settings_callback' => array($this, 'render_admin_bar_publish_settings'),
+                'version' => '1.0.0'
+            ),
+            'sticky_admin_bar' => array(
+                'name' => __('Sticky Admin Bar', 'voxel-toolkit'),
+                'description' => __('Make the WordPress admin bar sticky (fixed) instead of static on the frontend.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Sticky_Admin_Bar',
+                'file' => 'functions/class-sticky-admin-bar.php',
+                'version' => '1.0.0'
             )
         );
         
@@ -352,6 +367,43 @@ class Voxel_Toolkit_Functions {
                 <p class="description">
                     <?php _e('Choose a custom accent color for buttons, links, and highlights in light mode.', 'voxel-toolkit'); ?>
                 </p>
+            </td>
+        </tr>
+        <?php
+    }
+    
+    /**
+     * Render settings for admin bar publish function
+     * 
+     * @param array $settings Current settings
+     */
+    public function render_admin_bar_publish_settings($settings) {
+        $post_types = Voxel_Toolkit_Settings::instance()->get_available_post_types();
+        $selected_types = isset($settings['post_types']) ? $settings['post_types'] : array();
+        
+        ?>
+        <tr>
+            <th scope="row">
+                <label for="admin_bar_publish_post_types"><?php _e('Post Types with Admin Bar Button', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <fieldset>
+                    <legend class="screen-reader-text">
+                        <span><?php _e('Select post types to show admin bar publish button', 'voxel-toolkit'); ?></span>
+                    </legend>
+                    <?php foreach ($post_types as $post_type => $label): ?>
+                        <label>
+                            <input type="checkbox" 
+                                   name="voxel_toolkit_options[admin_bar_publish][post_types][]" 
+                                   value="<?php echo esc_attr($post_type); ?>"
+                                   <?php checked(in_array($post_type, $selected_types)); ?> />
+                            <?php echo esc_html($label); ?>
+                        </label><br>
+                    <?php endforeach; ?>
+                    <p class="description">
+                        <?php _e('Select which post types should show the Publish/Mark as Pending button in the admin bar. The button will appear when viewing or editing posts of these types.', 'voxel-toolkit'); ?>
+                    </p>
+                </fieldset>
             </td>
         </tr>
         <?php
