@@ -42,13 +42,31 @@ class Voxel_Toolkit_Sticky_Admin_Bar {
     public function add_sticky_css() {
         ?>
         <style id="voxel-toolkit-sticky-admin-bar">
-        /* Override Voxel theme static admin bar */
+        /* Override Voxel theme static admin bar and add proper spacing */
         #wpadminbar {
             position: fixed !important;
             top: 0 !important;
             left: 0 !important;
             right: 0 !important;
             z-index: 99999 !important;
+        }
+        
+        /* Add top margin to body to prevent content overlap */
+        html {
+            margin-top: 32px !important;
+        }
+        
+        /* Mobile responsive margin */
+        @media screen and (max-width: 782px) {
+            html {
+                margin-top: 46px !important;
+            }
+        }
+        
+        /* Ensure proper spacing for admin users */
+        body.admin-bar {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
         }
         </style>
         <?php
