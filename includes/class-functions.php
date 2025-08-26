@@ -63,14 +63,6 @@ class Voxel_Toolkit_Functions {
                 'settings_callback' => array($this, 'render_admin_menu_hide_settings'),
                 'version' => '1.0.0'
             ),
-            'light_mode' => array(
-                'name' => __('Light Mode', 'voxel-toolkit'),
-                'description' => __('Switch Voxel admin interface from dark mode to light mode with custom styling.', 'voxel-toolkit'),
-                'class' => 'Voxel_Toolkit_Light_Mode',
-                'file' => 'functions/class-light-mode.php',
-                'settings_callback' => array($this, 'render_light_mode_settings'),
-                'version' => '1.0.0'
-            ),
             'admin_bar_publish' => array(
                 'name' => __('Admin Bar Publish Toggle', 'voxel-toolkit'),
                 'description' => __('Add Publish/Mark as Pending button in the admin bar for quick status changes.', 'voxel-toolkit'),
@@ -303,74 +295,6 @@ class Voxel_Toolkit_Functions {
         <?php
     }
     
-    /**
-     * Render settings for light mode function
-     * 
-     * @param array $settings Current settings
-     */
-    public function render_light_mode_settings($settings) {
-        $color_scheme = isset($settings['color_scheme']) ? $settings['color_scheme'] : 'auto';
-        $custom_accent = isset($settings['custom_accent']) ? $settings['custom_accent'] : '#2271b1';
-        
-        ?>
-        <tr>
-            <th scope="row">
-                <label for="light_mode_scheme"><?php _e('Color Scheme', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <fieldset>
-                    <legend class="screen-reader-text">
-                        <span><?php _e('Select color scheme for Voxel admin', 'voxel-toolkit'); ?></span>
-                    </legend>
-                    
-                    <label>
-                        <input type="radio" 
-                               name="voxel_toolkit_options[light_mode][color_scheme]" 
-                               value="light"
-                               <?php checked($color_scheme, 'light'); ?> />
-                        <strong><?php _e('Light Mode', 'voxel-toolkit'); ?></strong>
-                    </label><br>
-                    
-                    <label>
-                        <input type="radio" 
-                               name="voxel_toolkit_options[light_mode][color_scheme]" 
-                               value="dark"
-                               <?php checked($color_scheme, 'dark'); ?> />
-                        <strong><?php _e('Dark Mode (Default)', 'voxel-toolkit'); ?></strong>
-                    </label><br>
-                    
-                    <label>
-                        <input type="radio" 
-                               name="voxel_toolkit_options[light_mode][color_scheme]" 
-                               value="auto"
-                               <?php checked($color_scheme, 'auto'); ?> />
-                        <strong><?php _e('Auto (Follow System)', 'voxel-toolkit'); ?></strong>
-                    </label><br>
-                    
-                    <p class="description">
-                        <?php _e('Choose the color scheme for Voxel admin interface. Light mode converts the dark interface to a bright, clean look.', 'voxel-toolkit'); ?>
-                    </p>
-                </fieldset>
-            </td>
-        </tr>
-        
-        <tr>
-            <th scope="row">
-                <label for="light_mode_accent"><?php _e('Accent Color', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <input type="color" 
-                       id="light_mode_accent"
-                       name="voxel_toolkit_options[light_mode][custom_accent]" 
-                       value="<?php echo esc_attr($custom_accent); ?>"
-                       class="small-text" />
-                <p class="description">
-                    <?php _e('Choose a custom accent color for buttons, links, and highlights in light mode.', 'voxel-toolkit'); ?>
-                </p>
-            </td>
-        </tr>
-        <?php
-    }
     
     /**
      * Render settings for admin bar publish function

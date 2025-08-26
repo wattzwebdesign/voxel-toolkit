@@ -340,20 +340,6 @@ class Voxel_Toolkit_Admin {
                         }
                         break;
                     
-                    case 'light_mode':
-                        // Validate color scheme
-                        $allowed_schemes = array('light', 'dark', 'auto');
-                        $color_scheme = isset($function_input['color_scheme']) ? $function_input['color_scheme'] : 'auto';
-                        $sanitized_function['color_scheme'] = in_array($color_scheme, $allowed_schemes) ? $color_scheme : 'auto';
-                        
-                        // Validate custom accent color
-                        $custom_accent = isset($function_input['custom_accent']) ? $function_input['custom_accent'] : '#2271b1';
-                        if (preg_match('/^#[0-9a-f]{6}$/i', $custom_accent)) {
-                            $sanitized_function['custom_accent'] = $custom_accent;
-                        } else {
-                            $sanitized_function['custom_accent'] = '#2271b1';
-                        }
-                        break;
                     
                     case 'admin_bar_publish':
                         if (isset($function_input['post_types']) && is_array($function_input['post_types'])) {

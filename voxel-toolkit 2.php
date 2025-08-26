@@ -251,7 +251,7 @@ class Voxel_Toolkit {
         }
         
         // Don't show on license page itself
-        if (isset($_GET['page']) && $_GET['page'] === 'voxel-toolkit-manage-license') {
+        if (isset($_GET['page']) && $_GET['page'] === 'voxel-toolkit-license') {
             return;
         }
         
@@ -272,7 +272,7 @@ class Voxel_Toolkit {
             
             // Get current license key
             $currentKey = $licensing->getCurrentLicenseKey();
-            $licensePageUrl = admin_url('admin.php?page=voxel-toolkit-manage-license');
+            $licensePageUrl = admin_url('admin.php?page=voxel-toolkit-license');
             $purchaseUrl = 'https://codewattz.com/?fluent-cart=instant_checkout&item_id=10&quantity=1';
             
             ?>

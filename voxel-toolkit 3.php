@@ -251,7 +251,7 @@ class Voxel_Toolkit {
         }
         
         // Don't show on license page itself
-        if (isset($_GET['page']) && $_GET['page'] === 'voxel-toolkit-manage-license') {
+        if (isset($_GET['page']) && $_GET['page'] === 'voxel-toolkit-license') {
             return;
         }
         
