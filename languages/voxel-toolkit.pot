@@ -1,0 +1,130 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Voxel Toolkit 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 12:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: voxel-toolkit.php
+msgid "Voxel Toolkit requires the Voxel theme to be active."
+msgstr ""
+
+#: includes/class-functions.php
+msgid "Auto Verify Posts"
+msgstr ""
+
+#: includes/class-functions.php
+msgid "Automatically mark posts as verified when submitted for selected post types."
+msgstr ""
+
+#: includes/class-functions.php
+msgid "Post Types to Auto-Verify"
+msgstr ""
+
+#: includes/class-functions.php
+msgid "Select post types to automatically verify"
+msgstr ""
+
+#: includes/class-functions.php
+msgid "Select which post types should be automatically marked as verified when submitted."
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Voxel Toolkit"
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Functions"
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Settings"
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Settings saved successfully."
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Voxel Toolkit - Functions"
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Welcome to Voxel Toolkit! This plugin provides additional functionality for your Voxel theme. Toggle functions on/off and configure their settings below."
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Advanced Settings"
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Reset All Settings"
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Active"
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Inactive"
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Configure"
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Voxel Toolkit - Settings"
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Settings"
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Enable Function"
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Security check failed."
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "You do not have sufficient permissions."
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Invalid function."
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Function enabled."
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Function disabled."
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Failed to update function status."
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Settings reset successfully."
+msgstr ""
+
+#: includes/admin/class-admin.php
+msgid "Failed to reset settings."
+msgstr ""
