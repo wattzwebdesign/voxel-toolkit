@@ -349,6 +349,14 @@ class Voxel_Toolkit_Admin {
                         }
                         break;
                     
+                    case 'delete_post_media':
+                        if (isset($function_input['post_types']) && is_array($function_input['post_types'])) {
+                            $sanitized_function['post_types'] = array_map('sanitize_text_field', $function_input['post_types']);
+                        } else {
+                            $sanitized_function['post_types'] = array();
+                        }
+                        break;
+                    
                     
                     default:
                         // Allow filtering for custom functions

@@ -77,6 +77,14 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Sticky_Admin_Bar',
                 'file' => 'functions/class-sticky-admin-bar.php',
                 'version' => '1.0.0'
+            ),
+            'delete_post_media' => array(
+                'name' => __('Delete Post Media', 'voxel-toolkit'),
+                'description' => __('Automatically delete all attached media when a post is deleted, with double confirmation.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Delete_Post_Media',
+                'file' => 'functions/class-delete-post-media.php',
+                'settings_callback' => array($this, 'render_delete_post_media_settings'),
+                'version' => '1.0.0'
             )
         );
         
@@ -326,6 +334,47 @@ class Voxel_Toolkit_Functions {
                     <?php endforeach; ?>
                     <p class="description">
                         <?php _e('Select which post types should show the Publish/Mark as Pending button in the admin bar. The button will appear when viewing or editing posts of these types.', 'voxel-toolkit'); ?>
+                    </p>
+                </fieldset>
+            </td>
+        </tr>
+        <?php
+    }
+    
+    /**
+     * Render settings for delete post media function
+     * 
+     * @param array $settings Current settings
+     */
+    public function render_delete_post_media_settings($settings) {
+        $post_types = Voxel_Toolkit_Settings::instance()->get_available_post_types();
+        $selected_types = isset($settings['post_types']) ? $settings['post_types'] : array();
+        
+        ?>
+        <tr>
+            <th scope="row">
+                <label for="delete_post_media_post_types"><?php _e('Post Types with Media Auto-Delete', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <fieldset>
+                    <legend class="screen-reader-text">
+                        <span><?php _e('Select post types to automatically delete media when post is deleted', 'voxel-toolkit'); ?></span>
+                    </legend>
+                    <?php foreach ($post_types as $post_type => $label): ?>
+                        <label>
+                            <input type="checkbox" 
+                                   name="voxel_toolkit_options[delete_post_media][post_types][]" 
+                                   value="<?php echo esc_attr($post_type); ?>"
+                                   <?php checked(in_array($post_type, $selected_types)); ?> />
+                            <?php echo esc_html($label); ?>
+                        </label><br>
+                    <?php endforeach; ?>
+                    <p class="description">
+                        <?php _e('Select which post types should automatically delete all attached media when the post is deleted. A double confirmation dialog will appear to prevent accidental deletions.', 'voxel-toolkit'); ?>
+                    </p>
+                    <p class="description" style="color: #d63638; font-weight: 600;">
+                        <span class="dashicons dashicons-warning"></span>
+                        <?php _e('Warning: This will permanently delete media files from your server. This action cannot be undone.', 'voxel-toolkit'); ?>
                     </p>
                 </fieldset>
             </td>
