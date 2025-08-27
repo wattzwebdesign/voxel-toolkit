@@ -99,7 +99,7 @@ $this->available_functions['my_new_function'] = array(
     'class' => 'Voxel_Toolkit_My_New_Function',
     'file' => 'functions/class-my-new-function.php',
     'settings_callback' => array($this, 'render_my_function_settings'),
-    'version' => '1.0.0'
+    'version' => '1.0.1'
 );
 ```
 
@@ -120,6 +120,10 @@ The auto-verify functionality uses multiple Voxel hooks for maximum compatibilit
 For support and feature requests, please contact the plugin developer.
 
 ## Changelog
+
+### 1.0.1
+- Fixed duplicate plugin registration issue
+- Removed duplicate plugin files
 
 ### 1.0.0
 - Initial release

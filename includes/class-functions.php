@@ -53,7 +53,7 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Auto_Verify_Posts',
                 'file' => 'functions/class-auto-verify-posts.php',
                 'settings_callback' => array($this, 'render_auto_verify_posts_settings'),
-                'version' => '1.0.0'
+                'version' => '1.0.1'
             ),
             'admin_menu_hide' => array(
                 'name' => __('Admin Menu', 'voxel-toolkit'),
@@ -61,7 +61,7 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Admin_Menu_Hide',
                 'file' => 'functions/class-admin-menu-hide.php',
                 'settings_callback' => array($this, 'render_admin_menu_hide_settings'),
-                'version' => '1.0.0'
+                'version' => '1.0.1'
             ),
             'admin_bar_publish' => array(
                 'name' => __('Admin Bar Publish Toggle', 'voxel-toolkit'),
@@ -69,14 +69,14 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Admin_Bar_Publish',
                 'file' => 'functions/class-admin-bar-publish.php',
                 'settings_callback' => array($this, 'render_admin_bar_publish_settings'),
-                'version' => '1.0.0'
+                'version' => '1.0.1'
             ),
             'sticky_admin_bar' => array(
                 'name' => __('Sticky Admin Bar', 'voxel-toolkit'),
                 'description' => __('Make the WordPress admin bar sticky (fixed) instead of static on the frontend.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Sticky_Admin_Bar',
                 'file' => 'functions/class-sticky-admin-bar.php',
-                'version' => '1.0.0'
+                'version' => '1.0.1'
             ),
             'delete_post_media' => array(
                 'name' => __('Delete Post Media', 'voxel-toolkit'),
@@ -84,7 +84,7 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Delete_Post_Media',
                 'file' => 'functions/class-delete-post-media.php',
                 'settings_callback' => array($this, 'render_delete_post_media_settings'),
-                'version' => '1.0.0'
+                'version' => '1.0.1'
             )
         );
         
