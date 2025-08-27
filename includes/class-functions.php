@@ -92,6 +92,14 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Light_Mode',
                 'file' => 'functions/class-light-mode.php',
                 'version' => '1.0'
+            ),
+            'membership_notifications' => array(
+                'name' => __('Membership Notifications', 'voxel-toolkit'),
+                'description' => __('Send email notifications to users based on membership expiration dates.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Membership_Notifications',
+                'file' => 'functions/class-membership-notifications.php',
+                'settings_callback' => array($this, 'render_membership_notifications_settings'),
+                'version' => '1.0'
             )
         );
         
@@ -155,6 +163,13 @@ class Voxel_Toolkit_Functions {
         // Call deinit method if it exists
         if (method_exists($function_instance, 'deinit')) {
             $function_instance->deinit();
+        }
+        
+        // Special handling for membership notifications cron
+        if ($function_key === 'membership_notifications') {
+            if (class_exists('Voxel_Toolkit_Membership_Notifications')) {
+                Voxel_Toolkit_Membership_Notifications::deactivate_cron();
+            }
         }
         
         unset($this->active_functions[$function_key]);
@@ -384,6 +399,355 @@ class Voxel_Toolkit_Functions {
                         <?php _e('Warning: This will permanently delete media files from your server. This action cannot be undone.', 'voxel-toolkit'); ?>
                     </p>
                 </fieldset>
+            </td>
+        </tr>
+        <?php
+    }
+    
+    /**
+     * Render settings for membership notifications function
+     * 
+     * @param array $settings Current settings
+     */
+    public function render_membership_notifications_settings($settings) {
+        $notifications = isset($settings['notifications']) ? $settings['notifications'] : array();
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('Email Notifications', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <div id="membership-notifications-container">
+                    <div class="membership-notifications-intro" style="background: #f8f9fa; border: 1px solid #e1e5e9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 18px;">Email Notification Setup</h3>
+                        <p style="margin: 0 0 15px 0; line-height: 1.6; color: #646970;">Configure automated email notifications to send to members before their subscription expires. Create multiple notification rules with different timing.</p>
+                        
+                        <div style="background: white; padding: 15px; border-radius: 6px; border: 1px solid #e1e5e9;">
+                            <strong style="display: block; margin-bottom: 8px; color: #1e1e1e;">Available Variables (click to copy):</strong>
+                            <div class="variable-tags" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                <span class="variable-tag" data-variable="{expiration_date}" style="background: #f1f1f1; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-family: monospace; font-size: 13px; border: 1px solid #ddd; transition: all 0.2s;" title="Click to copy">{expiration_date}</span>
+                                <span class="variable-tag" data-variable="{amount}" style="background: #f1f1f1; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-family: monospace; font-size: 13px; border: 1px solid #ddd; transition: all 0.2s;" title="Click to copy">{amount}</span>
+                                <span class="variable-tag" data-variable="{currency}" style="background: #f1f1f1; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-family: monospace; font-size: 13px; border: 1px solid #ddd; transition: all 0.2s;" title="Click to copy">{currency}</span>
+                                <span class="variable-tag" data-variable="{plan_name}" style="background: #f1f1f1; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-family: monospace; font-size: 13px; border: 1px solid #ddd; transition: all 0.2s;" title="Click to copy">{plan_name}</span>
+                                <span class="variable-tag" data-variable="{remaining_days}" style="background: #f1f1f1; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-family: monospace; font-size: 13px; border: 1px solid #ddd; transition: all 0.2s;" title="Click to copy">{remaining_days}</span>
+                            </div>
+                            <small style="display: block; margin-top: 8px; color: #646970;">HTML is supported in the email body. Variables will be replaced with actual member data when emails are sent.</small>
+                        </div>
+                    </div>
+                    
+                    <div style="background: white; border: 1px solid #e1e5e9; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <table class="wp-list-table widefat" id="notifications-table" style="margin: 0; border: none;">
+                            <thead style="background: #f8f9fa;">
+                                <tr>
+                                    <th style="padding: 15px 20px; font-weight: 600; color: #1e1e1e; border-bottom: 2px solid #e1e5e9; width: 120px;"><?php _e('Timing', 'voxel-toolkit'); ?></th>
+                                    <th style="padding: 15px 20px; font-weight: 600; color: #1e1e1e; border-bottom: 2px solid #e1e5e9; width: 100px;"><?php _e('Value', 'voxel-toolkit'); ?></th>
+                                    <th style="padding: 15px 20px; font-weight: 600; color: #1e1e1e; border-bottom: 2px solid #e1e5e9;"><?php _e('Email Subject', 'voxel-toolkit'); ?></th>
+                                    <th style="padding: 15px 20px; font-weight: 600; color: #1e1e1e; border-bottom: 2px solid #e1e5e9;"><?php _e('Email Body', 'voxel-toolkit'); ?></th>
+                                    <th style="padding: 15px 20px; font-weight: 600; color: #1e1e1e; border-bottom: 2px solid #e1e5e9; width: 140px; text-align: center;"><?php _e('Actions', 'voxel-toolkit'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (empty($notifications)): ?>
+                                    <tr id="no-notifications-row">
+                                        <td colspan="5" style="padding: 40px; text-align: center; color: #646970; font-style: italic;">
+                                            <?php _e('No notifications configured yet. Click "Add New Notification" to get started.', 'voxel-toolkit'); ?>
+                                        </td>
+                                    </tr>
+                                <?php else: ?>
+                                    <?php foreach ($notifications as $index => $notif): ?>
+                                        <tr style="border-bottom: 1px solid #f0f0f1;">
+                                            <td style="padding: 20px; vertical-align: top;">
+                                                <select name="voxel_toolkit_options[membership_notifications][notifications][<?php echo esc_attr($index); ?>][unit]" 
+                                                        style="width: 100%; padding: 8px 12px; border: 2px solid #e1e5e9; border-radius: 6px; font-size: 14px; background: white;">
+                                                    <option value="days" <?php selected($notif['unit'] ?? '', 'days'); ?>><?php _e('Days', 'voxel-toolkit'); ?></option>
+                                                    <option value="hours" <?php selected($notif['unit'] ?? '', 'hours'); ?>><?php _e('Hours', 'voxel-toolkit'); ?></option>
+                                                </select>
+                                            </td>
+                                            <td style="padding: 20px; vertical-align: top;">
+                                                <input type="number" min="1" 
+                                                       name="voxel_toolkit_options[membership_notifications][notifications][<?php echo esc_attr($index); ?>][value]" 
+                                                       value="<?php echo esc_attr($notif['value'] ?? ''); ?>"
+                                                       style="width: 80px; padding: 8px 12px; border: 2px solid #e1e5e9; border-radius: 6px; font-size: 14px; text-align: center;" />
+                                            </td>
+                                            <td style="padding: 20px; vertical-align: top;">
+                                                <input type="text" 
+                                                       name="voxel_toolkit_options[membership_notifications][notifications][<?php echo esc_attr($index); ?>][subject]" 
+                                                       value="<?php echo esc_attr($notif['subject'] ?? ''); ?>"
+                                                       placeholder="<?php _e('e.g., Your membership expires in {remaining_days} days', 'voxel-toolkit'); ?>"
+                                                       style="width: 100%; padding: 8px 12px; border: 2px solid #e1e5e9; border-radius: 6px; font-size: 14px;" />
+                                            </td>
+                                            <td style="padding: 20px; vertical-align: top;">
+                                                <textarea name="voxel_toolkit_options[membership_notifications][notifications][<?php echo esc_attr($index); ?>][body]" 
+                                                          placeholder="<?php _e('e.g., Hello! Your {plan_name} membership expires on {expiration_date}. Renew now for ${amount} {currency}.', 'voxel-toolkit'); ?>"
+                                                          style="width: 100%; height: 100px; padding: 8px 12px; border: 2px solid #e1e5e9; border-radius: 6px; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; resize: vertical;"><?php echo esc_textarea($notif['body'] ?? ''); ?></textarea>
+                                            </td>
+                                            <td style="padding: 20px; text-align: center; vertical-align: top;">
+                                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                                    <button type="button" class="button button-secondary notification-test-btn" 
+                                                            data-index="<?php echo esc_attr($index); ?>">
+                                                        <?php _e('Test', 'voxel-toolkit'); ?>
+                                                    </button>
+                                                    <button type="button" class="button button-secondary notification-remove-btn">
+                                                        <?php _e('Remove', 'voxel-toolkit'); ?>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e1e5e9;">
+                        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                            <button type="button" class="button button-primary" id="add-notification-btn">
+                                <?php _e('Add New Notification', 'voxel-toolkit'); ?>
+                            </button>
+                            <button type="button" class="button button-secondary" id="manual-notifications-btn">
+                                <?php _e('Send Manual Notifications', 'voxel-toolkit'); ?>
+                            </button>
+                        </div>
+                        <p style="margin: 15px 0 0 0; color: #646970; font-size: 13px;">
+                            <strong>Tip:</strong> Create multiple notification rules to remind users at different times (e.g., 30 days, 7 days, and 1 day before expiration).
+                        </p>
+                    </div>
+                </div>
+                
+                <div id="test-email-modal" style="display: none;">
+                    <div style="background: rgba(0,0,0,0.7); position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 100000;">
+                        <div style="background: white; width: 500px; margin: 80px auto; padding: 0; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); overflow: hidden;">
+                            <div style="background: #f8f9fa; border-bottom: 1px solid #e1e5e9; padding: 20px;">
+                                <h3 style="margin: 0; font-size: 18px; color: #1e1e1e;">
+                                    <?php _e('Send Test Email', 'voxel-toolkit'); ?>
+                                </h3>
+                            </div>
+                            <div style="padding: 25px;">
+                                <p style="margin: 0 0 15px 0; color: #646970;">
+                                    <?php _e('Enter an email address to receive a test notification with sample data:', 'voxel-toolkit'); ?>
+                                </p>
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #1e1e1e;">
+                                        <?php _e('Test Email Address:', 'voxel-toolkit'); ?>
+                                    </label>
+                                    <input type="email" id="test-email-address" 
+                                           style="width: 100%; padding: 12px 16px; border: 2px solid #e1e5e9; border-radius: 6px; font-size: 14px; box-sizing: border-box;"
+                                           placeholder="your-email@example.com" required>
+                                </div>
+                                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                                    <button type="button" class="button button-secondary" id="cancel-test-email-btn">
+                                        <?php _e('Cancel', 'voxel-toolkit'); ?>
+                                    </button>
+                                    <button type="button" class="button button-primary" id="send-test-email-btn">
+                                        <?php _e('Send Test Email', 'voxel-toolkit'); ?>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <script type="text/javascript">
+                jQuery(document).ready(function($) {
+                    console.log('jQuery loaded and ready'); // Debug log
+                    
+                    let notificationIndex = <?php echo count($notifications); ?>;
+                    let currentTestIndex = 0;
+                    
+                    console.log('Initial notificationIndex:', notificationIndex); // Debug log
+                    console.log('Add button exists:', $('#add-notification-btn').length > 0); // Debug log
+                    
+                    // Copy to clipboard functionality for variable tags
+                    $('.variable-tag').click(function() {
+                        const variable = $(this).data('variable');
+                        
+                        // Create temporary input element
+                        const tempInput = $('<input>');
+                        $('body').append(tempInput);
+                        tempInput.val(variable).select();
+                        document.execCommand('copy');
+                        tempInput.remove();
+                        
+                        // Visual feedback
+                        const originalBg = $(this).css('background');
+                        $(this).css({
+                            'background': '#e0e0e0',
+                            'transform': 'scale(1.05)'
+                        });
+                        
+                        setTimeout(() => {
+                            $(this).css({
+                                'background': originalBg,
+                                'transform': 'scale(1)'
+                            });
+                        }, 200);
+                        
+                        // Show tooltip
+                        const tooltip = $('<div style="position: absolute; background: #333; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; z-index: 9999;">Copied!</div>');
+                        $('body').append(tooltip);
+                        
+                        const offset = $(this).offset();
+                        tooltip.css({
+                            top: offset.top - 30,
+                            left: offset.left + ($(this).width() / 2) - (tooltip.width() / 2)
+                        });
+                        
+                        setTimeout(() => tooltip.remove(), 1000);
+                    });
+                    
+                    // Add hover effects for variable tags
+                    $('.variable-tag').hover(
+                        function() {
+                            $(this).css({
+                                'background': '#e0e0e0',
+                                'transform': 'translateY(-1px)'
+                            });
+                        },
+                        function() {
+                            $(this).css({
+                                'background': '#f1f1f1',
+                                'transform': 'translateY(0)'
+                            });
+                        }
+                    );
+                    
+                    // Add notification row (using event delegation)
+                    $(document).on('click', '#add-notification-btn', function(e) {
+                        e.preventDefault(); // Prevent form submission
+                        e.stopPropagation(); // Stop event bubbling
+                        console.log('Add notification button clicked'); // Debug log
+                        
+                        // Remove the "no notifications" row if it exists
+                        $('#no-notifications-row').remove();
+                        
+                        const row = `
+                            <tr style="border-bottom: 1px solid #f0f0f1;">
+                                <td style="padding: 20px; vertical-align: top;">
+                                    <select name="voxel_toolkit_options[membership_notifications][notifications][${notificationIndex}][unit]" 
+                                            style="width: 100%; padding: 8px 12px; border: 2px solid #e1e5e9; border-radius: 6px; font-size: 14px; background: white;">
+                                        <option value="days"><?php _e('Days', 'voxel-toolkit'); ?></option>
+                                        <option value="hours"><?php _e('Hours', 'voxel-toolkit'); ?></option>
+                                    </select>
+                                </td>
+                                <td style="padding: 20px; vertical-align: top;">
+                                    <input type="number" min="1" 
+                                           name="voxel_toolkit_options[membership_notifications][notifications][${notificationIndex}][value]"
+                                           style="width: 80px; padding: 8px 12px; border: 2px solid #e1e5e9; border-radius: 6px; font-size: 14px; text-align: center;" />
+                                </td>
+                                <td style="padding: 20px; vertical-align: top;">
+                                    <input type="text" 
+                                           name="voxel_toolkit_options[membership_notifications][notifications][${notificationIndex}][subject]"
+                                           placeholder="e.g., Your membership expires in {remaining_days} days"
+                                           style="width: 100%; padding: 8px 12px; border: 2px solid #e1e5e9; border-radius: 6px; font-size: 14px;" />
+                                </td>
+                                <td style="padding: 20px; vertical-align: top;">
+                                    <textarea name="voxel_toolkit_options[membership_notifications][notifications][${notificationIndex}][body]"
+                                              placeholder="e.g., Hello! Your {plan_name} membership expires on {expiration_date}. Renew now for $25.00 USD."
+                                              style="width: 100%; height: 100px; padding: 8px 12px; border: 2px solid #e1e5e9; border-radius: 6px; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; resize: vertical;"></textarea>
+                                </td>
+                                <td style="padding: 20px; text-align: center; vertical-align: top;">
+                                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                                        <button type="button" class="button button-secondary notification-test-btn" 
+                                                data-index="${notificationIndex}">
+                                            <?php _e('Test', 'voxel-toolkit'); ?>
+                                        </button>
+                                        <button type="button" class="button button-secondary notification-remove-btn">
+                                            <?php _e('Remove', 'voxel-toolkit'); ?>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                        
+                        $('#notifications-table tbody').append(row);
+                        notificationIndex++;
+                        
+                        console.log('New row added, notificationIndex is now:', notificationIndex); // Debug log
+                    });
+                    
+                    // Test if button can be found immediately
+                    setTimeout(function() {
+                        console.log('Delayed check - Add button exists:', $('#add-notification-btn').length > 0);
+                        console.log('Button element:', $('#add-notification-btn')[0]);
+                    }, 1000);
+                    
+                    // Remove notification row
+                    $(document).on('click', '.notification-remove-btn', function() {
+                        $(this).closest('tr').remove();
+                    });
+                    
+                    // Test notification
+                    $(document).on('click', '.notification-test-btn', function() {
+                        currentTestIndex = $(this).data('index');
+                        $('#test-email-modal').show();
+                    });
+                    
+                    // Cancel test email
+                    $('#cancel-test-email-btn').click(function() {
+                        $('#test-email-modal').hide();
+                        $('#test-email-address').val('');
+                    });
+                    
+                    // Send test email
+                    $('#send-test-email-btn').click(function() {
+                        const email = $('#test-email-address').val();
+                        if (!email) {
+                            alert('<?php _e('Please enter a valid email address.', 'voxel-toolkit'); ?>');
+                            return;
+                        }
+                        
+                        const row = $('#notifications-table tbody tr').eq(currentTestIndex);
+                        const unit = row.find('select[name*="[unit]"]').val();
+                        const value = row.find('input[name*="[value]"]').val();
+                        const subject = row.find('input[name*="[subject]"]').val();
+                        const body = row.find('textarea[name*="[body]"]').val();
+                        
+                        if (!unit || !value || !subject || !body) {
+                            alert('<?php _e('Please fill in all notification fields first.', 'voxel-toolkit'); ?>');
+                            return;
+                        }
+                        
+                        $.post(ajaxurl, {
+                            action: 'voxel_toolkit_send_test_notification',
+                            nonce: '<?php echo wp_create_nonce('voxel_toolkit_nonce'); ?>',
+                            test_email: email,
+                            unit: unit,
+                            value: value,
+                            subject: subject,
+                            body: body
+                        }, function(response) {
+                            if (response.success) {
+                                alert('<?php _e('Test email sent successfully!', 'voxel-toolkit'); ?>');
+                                $('#test-email-modal').hide();
+                                $('#test-email-address').val('');
+                            } else {
+                                alert('<?php _e('Error sending test email: ', 'voxel-toolkit'); ?>' + (response.data || '<?php _e('Unknown error', 'voxel-toolkit'); ?>'));
+                            }
+                        });
+                    });
+                    
+                    // Manual notifications
+                    $('#manual-notifications-btn').click(function() {
+                        if (!confirm('<?php _e('Are you sure you want to manually send out reminders? This will send emails to all applicable users.', 'voxel-toolkit'); ?>')) {
+                            return;
+                        }
+                        
+                        $(this).prop('disabled', true).text('<?php _e('Sending...', 'voxel-toolkit'); ?>');
+                        
+                        $.post(ajaxurl, {
+                            action: 'voxel_toolkit_manual_notifications',
+                            nonce: '<?php echo wp_create_nonce('voxel_toolkit_nonce'); ?>'
+                        }, function(response) {
+                            if (response.success) {
+                                alert('<?php _e('Manual notifications sent successfully!', 'voxel-toolkit'); ?>');
+                            } else {
+                                alert('<?php _e('Error sending manual notifications: ', 'voxel-toolkit'); ?>' + (response.data || '<?php _e('Unknown error', 'voxel-toolkit'); ?>'));
+                            }
+                            $('#manual-notifications-btn').prop('disabled', false).text('<?php _e('Send Manual Notifications', 'voxel-toolkit'); ?>');
+                        });
+                    });
+                });
+                </script>
             </td>
         </tr>
         <?php

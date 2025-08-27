@@ -357,6 +357,29 @@ class Voxel_Toolkit_Admin {
                         }
                         break;
                     
+                    case 'membership_notifications':
+                        if (isset($function_input['notifications']) && is_array($function_input['notifications'])) {
+                            $sanitized_notifications = array();
+                            foreach ($function_input['notifications'] as $notification) {
+                                if (is_array($notification) && 
+                                    !empty($notification['unit']) && 
+                                    !empty($notification['value']) && 
+                                    !empty($notification['subject']) && 
+                                    !empty($notification['body'])) {
+                                    
+                                    $sanitized_notifications[] = array(
+                                        'unit' => sanitize_text_field($notification['unit']),
+                                        'value' => intval($notification['value']),
+                                        'subject' => sanitize_text_field($notification['subject']),
+                                        'body' => wp_kses_post($notification['body'])
+                                    );
+                                }
+                            }
+                            $sanitized_function['notifications'] = $sanitized_notifications;
+                        } else {
+                            $sanitized_function['notifications'] = array();
+                        }
+                        break;
                     
                     default:
                         // Allow filtering for custom functions
