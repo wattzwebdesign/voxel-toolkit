@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Voxel Toolkit
- * Plugin URI: https://codewattz.com/voxel-toolkit
+ * Plugin URI: https://codewattz.com/voxel-toolkit-plugin/
  * Description: A comprehensive toolkit for extending Voxel theme functionality with toggleable features and customizable settings.
  * Version: 1.0.2
  * Author: Code Wattz
