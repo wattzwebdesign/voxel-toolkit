@@ -191,8 +191,7 @@ class FluentLicensing
         // send the post request to the API.
         $response = wp_remote_post($fullUrl, array(
             'timeout'   => 15,
-            'body'      => $payload,
-            'sslverify' => false,
+            'body'      => $payload
         ));
 
         if (is_wp_error($response)) {
