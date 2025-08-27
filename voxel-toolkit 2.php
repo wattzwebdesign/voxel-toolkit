@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('VOXEL_TOOLKIT_VERSION', '1.0.4');
+define('VOXEL_TOOLKIT_VERSION', '1.0.3');
 define('VOXEL_TOOLKIT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('VOXEL_TOOLKIT_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('VOXEL_TOOLKIT_PLUGIN_FILE', __FILE__);
