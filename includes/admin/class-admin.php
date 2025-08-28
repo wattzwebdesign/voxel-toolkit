@@ -268,14 +268,18 @@ class Voxel_Toolkit_Admin {
             
             // Initialize ai_review_summary settings if not exists
             if (!isset($current_options['ai_review_summary'])) {
-                $current_options['ai_review_summary'] = array('enabled' => true);
+                $current_options['ai_review_summary'] = array();
             }
             
-            // Save the API key
+            // Always ensure the function is enabled when saving API key
+            $current_options['ai_review_summary']['enabled'] = true;
             $current_options['ai_review_summary']['api_key'] = $api_key;
             
             // Update the options
             update_option('voxel_toolkit_options', $current_options);
+            
+            // Refresh the settings cache
+            $this->settings->refresh_options();
         }
         
         // Process any other voxel_toolkit_options if they exist

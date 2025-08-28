@@ -49,6 +49,13 @@ class Voxel_Toolkit_Settings {
     }
     
     /**
+     * Refresh options from database
+     */
+    public function refresh_options() {
+        $this->load_options();
+    }
+    
+    /**
      * Get option value
      * 
      * @param string $key Option key
