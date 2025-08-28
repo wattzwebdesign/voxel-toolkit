@@ -390,6 +390,28 @@ class Voxel_Toolkit_Admin {
                         // Sanitize guest view settings
                         $sanitized_function['show_confirmation'] = !empty($function_input['show_confirmation']);
                         $sanitized_function['auto_exit_timeout'] = !empty($function_input['auto_exit_timeout']);
+                        
+                        // Position setting
+                        if (isset($function_input['button_position']) && in_array($function_input['button_position'], ['top-left', 'top-right', 'middle-left', 'middle-right', 'bottom-left', 'bottom-right'])) {
+                            $sanitized_function['button_position'] = sanitize_text_field($function_input['button_position']);
+                        } else {
+                            $sanitized_function['button_position'] = 'bottom-right';
+                        }
+                        
+                        // Color settings
+                        $color_fields = ['bg_color', 'text_color'];
+                        $default_colors = [
+                            'bg_color' => '#667eea',
+                            'text_color' => '#ffffff'
+                        ];
+                        
+                        foreach ($color_fields as $field) {
+                            if (isset($function_input[$field]) && preg_match('/^#[0-9a-fA-F]{6}$/', $function_input[$field])) {
+                                $sanitized_function[$field] = sanitize_hex_color($function_input[$field]);
+                            } else {
+                                $sanitized_function[$field] = $default_colors[$field];
+                            }
+                        }
                         break;
                     
                     default:

@@ -292,22 +292,9 @@ class Voxel_Toolkit_Guest_View {
         
         ?>
         <div id="voxel-toolkit-guest-view-switcher" class="voxel-guest-view-switcher">
-            <div class="switcher-content">
-                <div class="switcher-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 20a6 6 0 0 0-12 0"></path>
-                        <circle cx="12" cy="10" r="4"></circle>
-                        <line x1="1" y1="1" x2="23" y2="23"></line>
-                    </svg>
-                </div>
-                <div class="switcher-info">
-                    <div class="switcher-label"><?php _e('Guest View Active', 'voxel-toolkit'); ?></div>
-                    <div class="switcher-user"><?php echo esc_html($old_user->display_name); ?></div>
-                </div>
-                <button id="voxel-toolkit-switch-back-btn" class="switcher-button">
-                    <?php _e('Switch Back', 'voxel-toolkit'); ?>
-                </button>
-            </div>
+            <button id="voxel-toolkit-switch-back-btn" class="switcher-button">
+                <?php _e('Exit Guest View', 'voxel-toolkit'); ?>
+            </button>
         </div>
         
         <!-- Debug Info -->
@@ -331,6 +318,18 @@ class Voxel_Toolkit_Guest_View {
         if (!$this->is_guest_view_active()) {
             return;
         }
+        
+        // Get settings for dynamic styling
+        $settings = get_option('voxel_toolkit_options', array());
+        $guest_view_settings = isset($settings['guest_view']) ? $settings['guest_view'] : array();
+        
+        // Position settings
+        $position = isset($guest_view_settings['button_position']) ? $guest_view_settings['button_position'] : 'bottom-right';
+        
+        // Color settings
+        $bg_color = isset($guest_view_settings['bg_color']) ? $guest_view_settings['bg_color'] : '#667eea';
+        $text_color = isset($guest_view_settings['text_color']) ? $guest_view_settings['text_color'] : '#ffffff';
+        
         ?>
         <style id="voxel-toolkit-guest-view-styles">
             /* Hide WordPress admin bar */
@@ -368,52 +367,33 @@ class Voxel_Toolkit_Guest_View {
                 display: flex !important;
             }
             
+<?php
+            // Position classes
+            $position_classes = array(
+                'top-left' => 'top: 30px; left: 30px;',
+                'top-right' => 'top: 30px; right: 30px;',
+                'middle-left' => 'top: 50%; left: 30px; transform: translateY(-50%);',
+                'middle-right' => 'top: 50%; right: 30px; transform: translateY(-50%);',
+                'bottom-left' => 'bottom: 30px; left: 30px;',
+                'bottom-right' => 'bottom: 30px; right: 30px;'
+            );
+            
+            $position_style = isset($position_classes[$position]) ? $position_classes[$position] : $position_classes['bottom-right'];
+            ?>
+            
             /* Guest View Switcher Styles */
             .voxel-guest-view-switcher {
                 position: fixed;
-                bottom: 30px;
-                right: 30px;
+                <?php echo $position_style; ?>
                 z-index: 999999;
-                animation: slideInRight 0.3s ease-out;
-            }
-            
-            .voxel-guest-view-switcher .switcher-content {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                padding: 15px 20px;
-                border-radius: 50px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-                display: flex;
-                align-items: center;
-                gap: 12px;
-            }
-            
-            .voxel-guest-view-switcher .switcher-icon svg {
-                width: 24px;
-                height: 24px;
-            }
-            
-            .voxel-guest-view-switcher .switcher-info {
-                flex: 1;
-            }
-            
-            .voxel-guest-view-switcher .switcher-label {
-                font-size: 11px;
-                opacity: 0.9;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-            
-            .voxel-guest-view-switcher .switcher-user {
-                font-size: 14px;
-                font-weight: 600;
+                animation: slideIn 0.3s ease-out;
             }
             
             .voxel-guest-view-switcher .switcher-button {
-                background: white;
-                color: #667eea;
+                background: <?php echo esc_attr($bg_color); ?>;
+                color: <?php echo esc_attr($text_color); ?>;
                 border: none;
-                padding: 10px 20px;
+                padding: 12px 20px;
                 border-radius: 25px;
                 font-size: 14px;
                 font-weight: 600;
@@ -421,36 +401,45 @@ class Voxel_Toolkit_Guest_View {
                 transition: all 0.2s;
                 white-space: nowrap;
                 text-decoration: none;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                min-width: 140px;
             }
             
             .voxel-guest-view-switcher .switcher-button:hover {
-                transform: scale(1.05);
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
                 text-decoration: none;
-                color: #667eea;
+                color: <?php echo esc_attr($text_color); ?>;
+                opacity: 0.9;
             }
             
-            @keyframes slideInRight {
+            .voxel-guest-view-switcher .switcher-button:active {
+                transform: translateY(0);
+            }
+            
+            @keyframes slideIn {
                 from {
-                    transform: translateX(100%);
                     opacity: 0;
+                    transform: scale(0.8);
                 }
                 to {
-                    transform: translateX(0);
                     opacity: 1;
+                    transform: scale(1);
                 }
             }
             
             @media (max-width: 768px) {
                 .voxel-guest-view-switcher {
-                    bottom: 20px;
-                    right: 20px;
-                    left: 20px;
+                    <?php
+                    // Mobile positioning - always bottom center on mobile
+                    echo 'bottom: 20px; left: 50%; transform: translateX(-50%); right: auto; top: auto;';
+                    ?>
                 }
                 
-                .voxel-guest-view-switcher .switcher-content {
-                    justify-content: space-between;
-                    padding: 12px 15px;
+                .voxel-guest-view-switcher .switcher-button {
+                    padding: 10px 16px;
+                    font-size: 13px;
+                    min-width: 120px;
                 }
             }
         </style>
@@ -469,12 +458,27 @@ class Voxel_Toolkit_Guest_View {
             true
         );
         
+        // Get settings
+        $settings = get_option('voxel_toolkit_options', array());
+        $guest_view_settings = isset($settings['guest_view']) ? $settings['guest_view'] : array();
+        
         wp_localize_script('voxel-toolkit-guest-view', 'voxelToolkitGuestView', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('voxel_toolkit_guest_view'),
             'isGuestView' => $this->is_guest_view_active(),
             'isLoggedIn' => is_user_logged_in(),
-            'currentUrl' => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
+            'currentUrl' => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+            'settings' => array(
+                'showConfirmation' => !empty($guest_view_settings['show_confirmation']),
+                'position' => isset($guest_view_settings['button_position']) ? $guest_view_settings['button_position'] : 'bottom-right',
+                'colors' => array(
+                    'background' => isset($guest_view_settings['bg_color']) ? $guest_view_settings['bg_color'] : '#667eea',
+                    'backgroundEnd' => isset($guest_view_settings['bg_color_end']) ? $guest_view_settings['bg_color_end'] : '#764ba2',
+                    'text' => isset($guest_view_settings['text_color']) ? $guest_view_settings['text_color'] : '#ffffff',
+                    'buttonBg' => isset($guest_view_settings['button_bg_color']) ? $guest_view_settings['button_bg_color'] : '#ffffff',
+                    'buttonText' => isset($guest_view_settings['button_text_color']) ? $guest_view_settings['button_text_color'] : '#667eea'
+                )
+            )
         ));
     }
     

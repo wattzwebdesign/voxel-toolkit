@@ -777,41 +777,136 @@ class Voxel_Toolkit_Functions {
                 <label><?php _e('Guest View Settings', 'voxel-toolkit'); ?></label>
             </th>
             <td>
-                <fieldset>
-                    <legend class="screen-reader-text">
-                        <span><?php _e('Guest View Settings', 'voxel-toolkit'); ?></span>
-                    </legend>
-                    
-                    <label>
-                        <input type="checkbox" 
-                               name="voxel_toolkit_options[guest_view][show_confirmation]" 
-                               value="1"
-                               <?php checked(!empty($settings['show_confirmation'])); ?> />
-                        <?php _e('Show confirmation dialog before switching views', 'voxel-toolkit'); ?>
-                    </label><br>
-                    
-                    <label style="margin-top: 10px; display: inline-block;">
-                        <input type="checkbox" 
-                               name="voxel_toolkit_options[guest_view][auto_exit_timeout]" 
-                               value="1"
-                               <?php checked(!empty($settings['auto_exit_timeout'])); ?> />
-                        <?php _e('Automatically exit guest view after 30 minutes', 'voxel-toolkit'); ?>
-                    </label>
-                    
-                    <p class="description" style="margin-top: 10px;">
-                        <?php _e('To use Guest View, add the "Guest View Button" widget to your pages using Elementor. The widget can be found in the "Voxel Toolkit" category.', 'voxel-toolkit'); ?>
-                    </p>
-                    
-                    <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 3px;">
-                        <h4 style="margin: 0 0 10px 0;"><?php _e('How it works:', 'voxel-toolkit'); ?></h4>
-                        <ol style="margin: 5px 0 0 20px;">
-                            <li><?php _e('Add the Guest View Button widget to any page using Elementor', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('Logged-in users can click the button to view the site as a guest', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('A floating "Switch Back" button appears to return to logged-in view', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('The session persists across page navigation until manually switched back', 'voxel-toolkit'); ?></li>
-                        </ol>
+                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 600px;">
+                    <!-- General Settings -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;"><?php _e('General Settings', 'voxel-toolkit'); ?></h3>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                                <input type="checkbox" 
+                                       name="voxel_toolkit_options[guest_view][show_confirmation]" 
+                                       value="1"
+                                       <?php checked(!empty($settings['show_confirmation'])); ?> />
+                                <?php _e('Show confirmation dialog', 'voxel-toolkit'); ?>
+                            </label>
+                            <p style="margin: 5px 0 0 26px; font-size: 13px; color: #666; font-style: italic;"><?php _e('Ask for confirmation before switching to guest view', 'voxel-toolkit'); ?></p>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 8px;"><?php _e('Button Position', 'voxel-toolkit'); ?></label>
+                            <select name="voxel_toolkit_options[guest_view][button_position]" style="width: 200px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option value="top-left" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'top-left'); ?>><?php _e('Top Left', 'voxel-toolkit'); ?></option>
+                                <option value="top-right" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'top-right'); ?>><?php _e('Top Right', 'voxel-toolkit'); ?></option>
+                                <option value="middle-left" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'middle-left'); ?>><?php _e('Middle Left', 'voxel-toolkit'); ?></option>
+                                <option value="middle-right" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'middle-right'); ?>><?php _e('Middle Right', 'voxel-toolkit'); ?></option>
+                                <option value="bottom-left" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'bottom-left'); ?>><?php _e('Bottom Left', 'voxel-toolkit'); ?></option>
+                                <option value="bottom-right" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'bottom-right'); ?>><?php _e('Bottom Right', 'voxel-toolkit'); ?></option>
+                            </select>
+                            <p style="margin: 5px 0 0 0; font-size: 13px; color: #666; font-style: italic;"><?php _e('Where to show the floating "Exit Guest View" button (always bottom center on mobile)', 'voxel-toolkit'); ?></p>
+                        </div>
                     </div>
-                </fieldset>
+                    
+                    <!-- Color Settings -->
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;"><?php _e('Exit Button Colors', 'voxel-toolkit'); ?></h3>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                            <div>
+                                <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('Background Color', 'voxel-toolkit'); ?></label>
+                                <input type="text" 
+                                       name="voxel_toolkit_options[guest_view][bg_color]" 
+                                       value="<?php echo esc_attr(isset($settings['bg_color']) ? $settings['bg_color'] : '#667eea'); ?>"
+                                       placeholder="#667eea"
+                                       pattern="^#[A-Fa-f0-9]{6}$"
+                                       class="guest-view-bg-color"
+                                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;" />
+                                <p style="margin: 3px 0 0 0; font-size: 12px; color: #666; font-style: italic;"><?php _e('Button background color', 'voxel-toolkit'); ?></p>
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('Text Color', 'voxel-toolkit'); ?></label>
+                                <input type="text" 
+                                       name="voxel_toolkit_options[guest_view][text_color]" 
+                                       value="<?php echo esc_attr(isset($settings['text_color']) ? $settings['text_color'] : '#ffffff'); ?>"
+                                       placeholder="#ffffff"
+                                       pattern="^#[A-Fa-f0-9]{6}$"
+                                       class="guest-view-text-color"
+                                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;" />
+                                <p style="margin: 3px 0 0 0; font-size: 12px; color: #666; font-style: italic;"><?php _e('"Exit Guest View" text color', 'voxel-toolkit'); ?></p>
+                            </div>
+                        </div>
+                        
+                        <!-- Live Preview -->
+                        <div style="background: #f8f9fa; border: 1px solid #e1e5e9; border-radius: 6px; padding: 20px; text-align: center;">
+                            <p style="margin: 0 0 15px 0; font-weight: 500; color: #1e1e1e;"><?php _e('Live Preview:', 'voxel-toolkit'); ?></p>
+                            <div id="guest-view-button-preview" style="display: inline-block;">
+                                <button type="button" 
+                                        style="background: <?php echo esc_attr(isset($settings['bg_color']) ? $settings['bg_color'] : '#667eea'); ?>; 
+                                               color: <?php echo esc_attr(isset($settings['text_color']) ? $settings['text_color'] : '#ffffff'); ?>; 
+                                               border: none; 
+                                               padding: 12px 20px; 
+                                               border-radius: 25px; 
+                                               font-size: 14px; 
+                                               font-weight: 600; 
+                                               cursor: pointer; 
+                                               transition: all 0.2s; 
+                                               white-space: nowrap; 
+                                               text-decoration: none; 
+                                               box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
+                                               min-width: 140px;">
+                                    <?php _e('Exit Guest View', 'voxel-toolkit'); ?>
+                                </button>
+                            </div>
+                            <p style="margin: 10px 0 0 0; font-size: 12px; color: #666; font-style: italic;"><?php _e('This is how the button will appear when guest view is active', 'voxel-toolkit'); ?></p>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px;">
+                        <strong><?php _e('How to use:', 'voxel-toolkit'); ?></strong> <?php _e('Add the "Guest View Button" widget to your pages using Elementor (found in "Voxel Toolkit" category).', 'voxel-toolkit'); ?>
+                    </div>
+                </div>
+                
+                <script>
+                jQuery(document).ready(function($) {
+                    // Function to validate hex color
+                    function isValidHex(hex) {
+                        return /^#[0-9A-Fa-f]{6}$/.test(hex);
+                    }
+                    
+                    // Function to update preview
+                    function updatePreview() {
+                        var bgColor = $('.guest-view-bg-color').val();
+                        var textColor = $('.guest-view-text-color').val();
+                        var $previewBtn = $('#guest-view-button-preview button');
+                        
+                        // Update background color
+                        if (isValidHex(bgColor)) {
+                            $previewBtn.css('background', bgColor);
+                        }
+                        
+                        // Update text color
+                        if (isValidHex(textColor)) {
+                            $previewBtn.css('color', textColor);
+                        }
+                    }
+                    
+                    // Bind events to color inputs
+                    $('.guest-view-bg-color, .guest-view-text-color').on('input keyup paste', function() {
+                        setTimeout(updatePreview, 50);
+                    });
+                    
+                    // Add hover effect to preview button
+                    $('#guest-view-button-preview button').hover(
+                        function() {
+                            $(this).css('transform', 'translateY(-2px)');
+                        },
+                        function() {
+                            $(this).css('transform', 'translateY(0)');
+                        }
+                    );
+                });
+                </script>
             </td>
         </tr>
         <?php

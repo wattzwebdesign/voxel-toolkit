@@ -41,8 +41,8 @@
             
             console.log('Original button text:', originalText);
             
-            // Show confirmation
-            if (!confirm('View the site as a guest? You can switch back anytime using the floating button.')) {
+            // Show confirmation only if setting is enabled
+            if (voxelToolkitGuestView.settings.showConfirmation && !confirm('View the site as a guest? You can switch back anytime using the floating button.')) {
                 return false;
             }
             
@@ -107,8 +107,8 @@
             
             const $button = $(this);
             
-            // Show confirmation
-            if (!confirm('Return to your logged-in view?')) {
+            // Show confirmation only if setting is enabled
+            if (voxelToolkitGuestView.settings.showConfirmation && !confirm('Return to your logged-in view?')) {
                 return false;
             }
             
