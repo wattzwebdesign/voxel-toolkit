@@ -80,12 +80,7 @@ class Voxel_Toolkit_Admin {
      * Initialize admin
      */
     public function admin_init() {
-        // Register settings
-        register_setting(
-            'voxel_toolkit_options',
-            'voxel_toolkit_options',
-            array($this, 'sanitize_options')
-        );
+        // No need to register settings since we handle saving manually
     }
     
     /**
@@ -227,16 +222,20 @@ class Voxel_Toolkit_Admin {
      * Render settings page
      */
     public function render_settings_page() {
+        // Handle form submission
+        if (isset($_POST['submit']) && check_admin_referer('voxel_toolkit_settings_nonce', 'voxel_toolkit_settings_nonce')) {
+            
+            $this->handle_settings_save($_POST);
+            echo '<div class="notice notice-success is-dismissible"><p>' . __('Settings saved successfully.', 'voxel-toolkit') . '</p></div>';
+        }
+        
         $available_functions = $this->functions_manager->get_available_functions();
         ?>
         <div class="wrap">
             <h1><?php _e('Voxel Toolkit - Settings', 'voxel-toolkit'); ?></h1>
             
-            <form method="post" action="options.php">
-                <?php
-                settings_fields('voxel_toolkit_options');
-                do_settings_sections('voxel_toolkit_options');
-                ?>
+            <form method="post" action="">
+                <?php wp_nonce_field('voxel_toolkit_settings_nonce', 'voxel_toolkit_settings_nonce'); ?>
                 
                 <div class="voxel-toolkit-settings">
                     <?php foreach ($available_functions as $function_key => $function_data): ?>
@@ -250,6 +249,49 @@ class Voxel_Toolkit_Admin {
             </form>
         </div>
         <?php
+    }
+    
+    /**
+     * Handle settings save
+     */
+    private function handle_settings_save($post_data) {
+        if (!current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.'));
+        }
+        
+        // Get current options to preserve everything
+        $current_options = get_option('voxel_toolkit_options', array());
+        
+        // Handle AI Review Summary API key specifically
+        if (isset($post_data['ai_api_key']) && !empty(trim($post_data['ai_api_key']))) {
+            $api_key = sanitize_text_field(trim($post_data['ai_api_key']));
+            
+            // Initialize ai_review_summary settings if not exists
+            if (!isset($current_options['ai_review_summary'])) {
+                $current_options['ai_review_summary'] = array('enabled' => true);
+            }
+            
+            // Save the API key
+            $current_options['ai_review_summary']['api_key'] = $api_key;
+            
+            // Update the options
+            update_option('voxel_toolkit_options', $current_options);
+        }
+        
+        // Process any other voxel_toolkit_options if they exist
+        if (isset($post_data['voxel_toolkit_options'])) {
+            foreach ($post_data['voxel_toolkit_options'] as $function_key => $function_settings) {
+                if (!isset($current_options[$function_key])) {
+                    $current_options[$function_key] = array();
+                }
+                
+                // Merge settings, preserving existing ones
+                $current_options[$function_key] = array_merge($current_options[$function_key], $function_settings);
+            }
+            
+            // Update the options
+            update_option('voxel_toolkit_options', $current_options);
+        }
     }
     
     /**
@@ -307,6 +349,7 @@ class Voxel_Toolkit_Admin {
             return $sanitized;
         }
         
+        
         $available_functions = $this->functions_manager->get_available_functions();
         
         foreach ($available_functions as $function_key => $function_data) {
@@ -316,6 +359,8 @@ class Voxel_Toolkit_Admin {
                 
                 // Sanitize enabled field
                 $sanitized_function['enabled'] = !empty($function_input['enabled']);
+                
+                try {
                 
                 // Sanitize function-specific settings
                 switch ($function_key) {
@@ -431,6 +476,12 @@ class Voxel_Toolkit_Admin {
                         }
                         break;
                     
+                    case 'ai_review_summary':
+                        // API key setting
+                        $sanitized_function['api_key'] = isset($function_input['api_key']) ? 
+                            sanitize_text_field($function_input['api_key']) : '';
+                        break;
+                    
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(
@@ -439,6 +490,15 @@ class Voxel_Toolkit_Admin {
                             $function_input
                         );
                         break;
+                }
+                
+                } catch (Exception $e) {
+                    // Log error but don't break the sanitization process
+                    error_log('Voxel Toolkit sanitization error for ' . $function_key . ': ' . $e->getMessage());
+                    // Ensure we still have a valid sanitized function array
+                    if (!isset($sanitized_function['enabled'])) {
+                        $sanitized_function['enabled'] = false;
+                    }
                 }
                 
                 $sanitized[$function_key] = $sanitized_function;

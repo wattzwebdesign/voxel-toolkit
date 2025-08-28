@@ -116,6 +116,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-password-visibility-toggle.php',
                 'settings_callback' => array($this, 'render_password_visibility_toggle_settings'),
                 'version' => '1.0'
+            ),
+            'ai_review_summary' => array(
+                'name' => __('AI Review Summary', 'voxel-toolkit'),
+                'description' => __('Generate AI-powered review summaries and category opinions using ChatGPT API with caching.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_AI_Review_Summary',
+                'file' => 'functions/class-ai-review-summary.php',
+                'settings_callback' => array($this, 'render_ai_review_summary_settings'),
+                'version' => '1.0'
             )
         );
         
@@ -1056,6 +1064,178 @@ class Voxel_Toolkit_Functions {
                     
                     // Initialize preview colors
                     updatePreviewColors();
+                });
+                </script>
+            </td>
+        </tr>
+        <?php
+    }
+    
+    /**
+     * Render settings for AI Review Summary function
+     * 
+     * @param array $settings Current settings
+     */
+    public function render_ai_review_summary_settings($settings) {
+        // Check if cache was refreshed
+        $cache_refreshed = isset($_GET['ai_cache_refreshed']) ? intval($_GET['ai_cache_refreshed']) : 0;
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('AI Review Summary Settings', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 800px;">
+                    <!-- API Settings -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;"><?php _e('ChatGPT API Configuration', 'voxel-toolkit'); ?></h3>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 8px;"><?php _e('OpenAI API Key', 'voxel-toolkit'); ?></label>
+                            
+                            <?php
+                            $api_key = isset($settings['api_key']) ? $settings['api_key'] : '';
+                            $has_api_key = !empty($api_key) && strlen($api_key) > 10;
+                            ?>
+                            
+                            <?php if ($has_api_key): ?>
+                                <!-- Show existing key status -->
+                                <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin-bottom: 15px;">
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                        <span style="font-family: monospace; color: #666; font-size: 14px;">
+                                            <?php echo esc_html(substr($api_key, 0, 7) . str_repeat('*', 20)); ?>
+                                        </span>
+                                        <span style="background: #d4edda; color: #155724; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase;">
+                                            <?php _e('Active', 'voxel-toolkit'); ?>
+                                        </span>
+                                    </div>
+                                    <p style="margin: 0; font-size: 12px; color: #6c757d;">
+                                        <?php _e('API key is configured and ready to use. Enter a new key below to replace it.', 'voxel-toolkit'); ?>
+                                    </p>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <input type="text" 
+                                   name="ai_api_key" 
+                                   value=""
+                                   placeholder="<?php echo $has_api_key ? 'Enter new API key to replace existing one' : 'sk-proj-...'; ?>"
+                                   autocomplete="off"
+                                   spellcheck="false"
+                                   style="width: 100%; max-width: 500px; padding: 12px; border: 2px solid <?php echo $has_api_key ? '#28a745' : '#ddd'; ?>; border-radius: 6px; font-family: monospace; font-size: 14px; background: <?php echo $has_api_key ? '#f8fff9' : 'white'; ?>;" />
+                            
+                            <p style="margin: 10px 0 0 0; font-size: 13px; color: #666;">
+                                <?php _e('Get your OpenAI API key from ', 'voxel-toolkit'); ?>
+                                <a href="https://platform.openai.com/api-keys" target="_blank" style="color: #0073aa;"><?php _e('OpenAI Platform', 'voxel-toolkit'); ?></a>
+                                <?php _e(' (API usage costs apply)', 'voxel-toolkit'); ?>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Cache Management -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;"><?php _e('Cache Management', 'voxel-toolkit'); ?></h3>
+                        
+                        <?php if ($cache_refreshed): ?>
+                            <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+                                <strong><?php _e('Success:', 'voxel-toolkit'); ?></strong> <?php _e('AI cached summaries have been refreshed.', 'voxel-toolkit'); ?>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <p style="margin-bottom: 15px; color: #666;">
+                            <?php _e('Clear all cached AI-generated summaries and category opinions. New summaries will be generated on the next page load.', 'voxel-toolkit'); ?>
+                        </p>
+                        
+                        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="display: inline-block;">
+                            <?php wp_nonce_field('voxel_toolkit_refresh_ai_cache', 'voxel_toolkit_refresh_ai_cache_nonce'); ?>
+                            <input type="hidden" name="action" value="voxel_toolkit_refresh_ai_cache">
+                            <button type="submit" class="button button-secondary" onclick="return confirm('Are you sure you want to refresh all cached AI summaries? This will trigger new API calls when users next view pages with review summaries.');">
+                                <?php _e('Refresh All Cached Summaries', 'voxel-toolkit'); ?>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Shortcode Documentation -->
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;"><?php _e('Available Shortcodes', 'voxel-toolkit'); ?></h3>
+                        
+                        <!-- Review Summary Shortcode -->
+                        <div style="background: #f8f9fa; border: 1px solid #e1e5e9; border-radius: 6px; padding: 20px; margin-bottom: 20px;">
+                            <h4 style="margin: 0 0 10px 0; color: #1e1e1e; display: flex; align-items: center; gap: 10px;">
+                                <?php _e('Review Summary', 'voxel-toolkit'); ?>
+                                <button type="button" class="button button-small copy-shortcode-btn" data-shortcode='[review_summary]'>
+                                    <?php _e('Copy', 'voxel-toolkit'); ?>
+                                </button>
+                            </h4>
+                            <p style="margin: 0 0 10px 0; color: #666; line-height: 1.5;">
+                                <?php _e('Generates an AI-powered summary of all reviews for a post, similar to TripAdvisor summaries. Focuses on main strengths and weaknesses mentioned by users.', 'voxel-toolkit'); ?>
+                            </p>
+                            <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 13px; margin-bottom: 10px;">
+                                <strong><?php _e('Basic usage:', 'voxel-toolkit'); ?></strong><br>
+                                <code style="color: #f39c12;">[review_summary]</code>
+                            </div>
+                            <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 13px;">
+                                <strong><?php _e('Specific post:', 'voxel-toolkit'); ?></strong><br>
+                                <code style="color: #f39c12;">[review_summary post_id="123"]</code>
+                            </div>
+                        </div>
+                        
+                        <!-- Category Opinions Shortcode -->
+                        <div style="background: #f8f9fa; border: 1px solid #e1e5e9; border-radius: 6px; padding: 20px;">
+                            <h4 style="margin: 0 0 10px 0; color: #1e1e1e; display: flex; align-items: center; gap: 10px;">
+                                <?php _e('Category Opinions', 'voxel-toolkit'); ?>
+                                <button type="button" class="button button-small copy-shortcode-btn" data-shortcode='[category_opinions]'>
+                                    <?php _e('Copy', 'voxel-toolkit'); ?>
+                                </button>
+                            </h4>
+                            <p style="margin: 0 0 10px 0; color: #666; line-height: 1.5;">
+                                <?php _e('Creates a grid of category opinion boxes with one-word AI summaries for different aspects of the listing (Food, Service, Atmosphere, etc.).', 'voxel-toolkit'); ?>
+                            </p>
+                            <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 13px; margin-bottom: 10px;">
+                                <strong><?php _e('Default categories:', 'voxel-toolkit'); ?></strong><br>
+                                <code style="color: #f39c12;">[category_opinions]</code><br>
+                                <small style="color: #95a5a6;"><?php _e('Uses: Food, Atmosphere, Service, Value', 'voxel-toolkit'); ?></small>
+                            </div>
+                            <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 13px; margin-bottom: 10px;">
+                                <strong><?php _e('Custom categories:', 'voxel-toolkit'); ?></strong><br>
+                                <code style="color: #f39c12;">[category_opinions categories="Quality, Price, Staff, Location"]</code>
+                            </div>
+                            <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 13px;">
+                                <strong><?php _e('Specific post with custom categories:', 'voxel-toolkit'); ?></strong><br>
+                                <code style="color: #f39c12;">[category_opinions post_id="123" categories="Food, Service, Ambiance"]</code>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 15px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; font-size: 14px;">
+                        <strong style="color: #856404;"><?php _e('Important:', 'voxel-toolkit'); ?></strong>
+                        <span style="color: #856404;">
+                            <?php _e('Summaries are cached until new reviews are added. API calls are only made when cache is empty or outdated. OpenAI API usage costs apply.', 'voxel-toolkit'); ?>
+                        </span>
+                    </div>
+                </div>
+                
+                <script>
+                jQuery(document).ready(function($) {
+                    // Copy shortcode functionality
+                    $('.copy-shortcode-btn').on('click', function() {
+                        var shortcode = $(this).data('shortcode');
+                        var $btn = $(this);
+                        
+                        // Create temporary textarea to copy text
+                        var $temp = $('<textarea>');
+                        $('body').append($temp);
+                        $temp.val(shortcode).select();
+                        document.execCommand('copy');
+                        $temp.remove();
+                        
+                        // Show feedback
+                        var originalText = $btn.text();
+                        $btn.text('<?php _e('Copied!', 'voxel-toolkit'); ?>').prop('disabled', true);
+                        
+                        setTimeout(function() {
+                            $btn.text(originalText).prop('disabled', false);
+                        }, 2000);
+                    });
                 });
                 </script>
             </td>
