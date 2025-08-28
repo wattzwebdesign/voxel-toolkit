@@ -1371,11 +1371,50 @@ class Voxel_Toolkit_Functions {
                     </div>
                     
                     <!-- What Gets Duplicated -->
-                    <div style="background: #e7f6ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 15px; font-size: 14px;">
+                    <div style="background: #e7f6ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 15px; font-size: 14px; margin-bottom: 20px;">
                         <strong style="color: #0066cc;"><?php _e('What gets duplicated:', 'voxel-toolkit'); ?></strong>
                         <p style="margin: 10px 0 0 0; color: #0066cc;">
                             <?php _e('Content, excerpt, custom fields, featured image, categories, tags, and all other taxonomies. The new post is created as a draft by the current user.', 'voxel-toolkit'); ?>
                         </p>
+                    </div>
+                    
+                    <!-- Usage Instructions -->
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
+                            <?php _e('Usage Instructions', 'voxel-toolkit'); ?>
+                        </h3>
+                        
+                        <!-- Backend Usage -->
+                        <div style="background: #fff; border: 1px solid #e1e5e9; border-radius: 6px; padding: 15px; margin-bottom: 15px;">
+                            <h4 style="margin: 0 0 10px 0; color: #1e1e1e; font-size: 14px;">
+                                <span class="dashicons dashicons-admin-settings" style="margin-right: 5px;"></span>
+                                <?php _e('Backend (Admin)', 'voxel-toolkit'); ?>
+                            </h4>
+                            <ul style="margin: 0; padding-left: 20px; color: #666;">
+                                <li><?php _e('In post/page list: Hover over a post → click "Duplicate" in quick actions', 'voxel-toolkit'); ?></li>
+                                <li><?php _e('In post editor: Look for "Duplicate This" button in the publish box sidebar', 'voxel-toolkit'); ?></li>
+                                <li><?php _e('Both methods create a draft copy and show success message', 'voxel-toolkit'); ?></li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Frontend Usage -->
+                        <div style="background: #fff; border: 1px solid #e1e5e9; border-radius: 6px; padding: 15px;">
+                            <h4 style="margin: 0 0 10px 0; color: #1e1e1e; font-size: 14px;">
+                                <span class="dashicons dashicons-admin-appearance" style="margin-right: 5px;"></span>
+                                <?php _e('Frontend (Elementor Widget)', 'voxel-toolkit'); ?>
+                            </h4>
+                            <ol style="margin: 0; padding-left: 20px; color: #666;">
+                                <li><?php _e('Edit page/template with Elementor', 'voxel-toolkit'); ?></li>
+                                <li><?php _e('Search for "Duplicate Post" widget in Voxel Toolkit category', 'voxel-toolkit'); ?></li>
+                                <li><?php _e('Drag widget to desired location', 'voxel-toolkit'); ?></li>
+                                <li><?php _e('Customize button text and styling in widget settings', 'voxel-toolkit'); ?></li>
+                                <li><?php _e('Choose redirect behavior: "Create/Edit Page" or "Current Page"', 'voxel-toolkit'); ?></li>
+                                <li><?php _e('Save and view page - button will duplicate current post when clicked', 'voxel-toolkit'); ?></li>
+                            </ol>
+                            <div style="margin-top: 10px; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 13px; color: #666;">
+                                <strong><?php _e('Note:', 'voxel-toolkit'); ?></strong> <?php _e('Frontend widget only works for logged-in users with edit permissions. Button redirects to the create/edit page for the duplicated post.', 'voxel-toolkit'); ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </td>

@@ -37,6 +37,18 @@ class Voxel_Toolkit_Duplicate_Post {
         
         // Enqueue scripts
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
+        
+        // Frontend AJAX handler
+        add_action('wp_ajax_voxel_toolkit_duplicate_post_frontend', array($this, 'duplicate_post_frontend'));
+        
+        // Enqueue frontend scripts
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_scripts'));
+        
+        // Register Elementor widget
+        add_action('elementor/widgets/widgets_registered', array($this, 'register_elementor_widget'));
+        
+        // Add Elementor widget category
+        add_action('elementor/elements/categories_registered', array($this, 'add_elementor_widget_category'));
     }
     
     /**
@@ -310,5 +322,138 @@ class Voxel_Toolkit_Duplicate_Post {
             }
         </style>
         <?php
+    }
+    
+    /**
+     * Enqueue frontend scripts
+     */
+    public function enqueue_frontend_scripts() {
+        if (!is_user_logged_in()) {
+            return;
+        }
+        
+        wp_enqueue_script('jquery');
+        wp_add_inline_script('jquery', $this->get_frontend_js());
+    }
+    
+    /**
+     * Get frontend JavaScript
+     */
+    private function get_frontend_js() {
+        return "
+        jQuery(document).ready(function($) {
+            $(document).on('click', '.voxel-toolkit-duplicate-btn', function(e) {
+                e.preventDefault();
+                
+                var button = $(this);
+                var postId = button.data('post-id');
+                var redirectType = button.data('redirect');
+                var originalText = button.text();
+                
+                // Disable button and show loading
+                button.prop('disabled', true).text('Duplicating...');
+                
+                $.ajax({
+                    url: '" . admin_url('admin-ajax.php') . "',
+                    type: 'POST',
+                    data: {
+                        action: 'voxel_toolkit_duplicate_post_frontend',
+                        post_id: postId,
+                        redirect_type: redirectType,
+                        nonce: '" . wp_create_nonce('voxel_toolkit_duplicate_frontend') . "'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.href = response.data.redirect_url;
+                        } else {
+                            alert('Error: ' + response.data.message);
+                            button.prop('disabled', false).text(originalText);
+                        }
+                    },
+                    error: function() {
+                        alert('Error: Could not duplicate post.');
+                        button.prop('disabled', false).text(originalText);
+                    }
+                });
+            });
+        });
+        ";
+    }
+    
+    /**
+     * Handle frontend post duplication via AJAX
+     */
+    public function duplicate_post_frontend() {
+        // Check nonce
+        if (!wp_verify_nonce($_POST['nonce'], 'voxel_toolkit_duplicate_frontend')) {
+            wp_send_json_error(array('message' => 'Security check failed'));
+        }
+        
+        // Check permissions
+        if (!current_user_can('edit_posts')) {
+            wp_send_json_error(array('message' => 'You do not have permission to duplicate posts'));
+        }
+        
+        $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+        $redirect_type = isset($_POST['redirect_type']) ? sanitize_text_field($_POST['redirect_type']) : 'create_page';
+        
+        $post = get_post($post_id);
+        
+        if (!$post) {
+            wp_send_json_error(array('message' => 'Post not found'));
+        }
+        
+        if (!$this->is_enabled_for_post_type($post->post_type)) {
+            wp_send_json_error(array('message' => 'Duplication not enabled for this post type'));
+        }
+        
+        if (!current_user_can('edit_post', $post_id)) {
+            wp_send_json_error(array('message' => 'You do not have permission to duplicate this post'));
+        }
+        
+        // Create the duplicate
+        $new_post_id = $this->create_duplicate($post);
+        
+        if (!$new_post_id) {
+            wp_send_json_error(array('message' => 'Failed to duplicate post'));
+        }
+        
+        // Determine redirect URL
+        if ($redirect_type === 'create_page') {
+            $redirect_url = home_url('/create-' . $post->post_type . '/?post_id=' . $new_post_id);
+        } else {
+            $redirect_url = get_permalink($post_id) . '?duplicated=' . $new_post_id;
+        }
+        
+        wp_send_json_success(array('redirect_url' => $redirect_url));
+    }
+    
+    /**
+     * Register Elementor widget
+     */
+    public function register_elementor_widget($widgets_manager) {
+        // Check if Elementor is active
+        if (!class_exists('\Elementor\Widget_Base')) {
+            return;
+        }
+        
+        // Include widget file
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/widgets/class-duplicate-post-widget.php';
+        
+        // Register the widget
+        $widgets_manager->register_widget_type(new Voxel_Toolkit_Duplicate_Post_Widget());
+    }
+    
+    /**
+     * Add Elementor widget category
+     */
+    public function add_elementor_widget_category($elements_manager) {
+        $elements_manager->add_category(
+            'voxel-toolkit',
+            [
+                'title' => __('Voxel Toolkit', 'voxel-toolkit'),
+                'icon' => 'fa fa-toolbox',
+            ]
+        );
     }
 }
