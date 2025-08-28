@@ -1285,6 +1285,13 @@ class Voxel_Toolkit_Functions {
                             <li><?php _e('Works on all create/edit post forms', 'voxel-toolkit'); ?></li>
                         </ul>
                     </div>
+                    
+                    <div style="margin-top: 20px; padding: 12px; background: #f8f9fa; border-radius: 4px; text-align: center; border-top: 1px solid #dee2e6;">
+                        <p style="margin: 0; font-size: 13px; color: #6c757d;">
+                            <?php _e('Show Field Description developed by', 'voxel-toolkit'); ?> 
+                            <strong style="color: #495057;">Michał Maciak</strong>
+                        </p>
+                    </div>
                 </div>
             </td>
         </tr>
