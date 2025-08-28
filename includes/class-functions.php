@@ -1212,6 +1212,13 @@ class Voxel_Toolkit_Functions {
                             <?php _e('Summaries are cached until new reviews are added. API calls are only made when cache is empty or outdated. OpenAI API usage costs apply.', 'voxel-toolkit'); ?>
                         </span>
                     </div>
+                    
+                    <div style="margin-top: 20px; padding: 12px; background: #f8f9fa; border-radius: 4px; text-align: center; border-top: 1px solid #dee2e6;">
+                        <p style="margin: 0; font-size: 13px; color: #6c757d;">
+                            <?php _e('AI Review Summary developed by', 'voxel-toolkit'); ?> 
+                            <strong style="color: #495057;">Miguel Gomes</strong>
+                        </p>
+                    </div>
                 </div>
                 
                 <script>
