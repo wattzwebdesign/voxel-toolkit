@@ -44,6 +44,9 @@ class Voxel_Toolkit_Guest_View {
         
         // Add CSS to hide elements when in guest view
         add_action('wp_head', array($this, 'add_guest_view_styles'), 999);
+        
+        // Add admin bar button
+        add_action('admin_bar_menu', array($this, 'add_admin_bar_button'), 999);
     }
     
     /**
@@ -511,5 +514,37 @@ class Voxel_Toolkit_Guest_View {
                 'icon' => 'fa fa-plug',
             ]
         );
+    }
+    
+    /**
+     * Add admin bar button for guest view
+     */
+    public function add_admin_bar_button($wp_admin_bar) {
+        // Only show if user is logged in and we're not already in guest view
+        if (!is_user_logged_in() || $this->is_guest_view_active()) {
+            return;
+        }
+        
+        // Check if on frontend
+        if (is_admin()) {
+            return;
+        }
+        
+        // Get settings
+        $settings = Voxel_Toolkit_Settings::instance();
+        $guest_view_settings = $settings->get_function_settings('guest_view', array());
+        
+        // Check if show confirmation is enabled
+        $show_confirmation = isset($guest_view_settings['show_confirmation']) ? $guest_view_settings['show_confirmation'] : true;
+        
+        // Add the admin bar button
+        $wp_admin_bar->add_node(array(
+            'id' => 'voxel-toolkit-guest-view',
+            'title' => '<span class="ab-icon dashicons dashicons-visibility" style="margin-top: 2px;"></span> ' . __('View as Guest', 'voxel-toolkit'),
+            'href' => '#',
+            'meta' => array(
+                'class' => 'voxel-toolkit-guest-view-btn voxel-toolkit-guest-view-admin-bar'
+            )
+        ));
     }
 }

@@ -103,11 +103,11 @@ class Voxel_Toolkit_Functions {
             ),
             'guest_view' => array(
                 'name' => __('Guest View', 'voxel-toolkit'),
-                'description' => __('Allow logged-in users to temporarily view the site as a guest with an Elementor widget.', 'voxel-toolkit'),
+                'description' => __('Allow logged-in users to temporarily view the site as a guest with an Elementor widget and admin bar button.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Guest_View',
                 'file' => 'functions/class-guest-view.php',
                 'settings_callback' => array($this, 'render_guest_view_settings'),
-                'version' => '1.0'
+                'version' => '1.1'
             ),
             'password_visibility_toggle' => array(
                 'name' => __('Password Visibility Toggle', 'voxel-toolkit'),
