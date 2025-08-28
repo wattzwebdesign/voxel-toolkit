@@ -361,18 +361,23 @@ class Voxel_Toolkit_Admin {
                         if (isset($function_input['notifications']) && is_array($function_input['notifications'])) {
                             $sanitized_notifications = array();
                             foreach ($function_input['notifications'] as $notification) {
-                                if (is_array($notification) && 
-                                    !empty($notification['unit']) && 
-                                    !empty($notification['value']) && 
-                                    !empty($notification['subject']) && 
-                                    !empty($notification['body'])) {
+                                if (is_array($notification)) {
+                                    // Allow notifications to be saved even if partially filled
+                                    // This enables users to add new rows and fill them in before saving
+                                    $unit = isset($notification['unit']) ? sanitize_text_field($notification['unit']) : 'days';
+                                    $value = isset($notification['value']) ? intval($notification['value']) : 0;
+                                    $subject = isset($notification['subject']) ? sanitize_text_field($notification['subject']) : '';
+                                    $body = isset($notification['body']) ? wp_kses_post($notification['body']) : '';
                                     
-                                    $sanitized_notifications[] = array(
-                                        'unit' => sanitize_text_field($notification['unit']),
-                                        'value' => intval($notification['value']),
-                                        'subject' => sanitize_text_field($notification['subject']),
-                                        'body' => wp_kses_post($notification['body'])
-                                    );
+                                    // Only skip completely empty notifications (no value at all)
+                                    if ($value > 0 || !empty($subject) || !empty($body)) {
+                                        $sanitized_notifications[] = array(
+                                            'unit' => $unit,
+                                            'value' => $value,
+                                            'subject' => $subject,
+                                            'body' => $body
+                                        );
+                                    }
                                 }
                             }
                             $sanitized_function['notifications'] = $sanitized_notifications;

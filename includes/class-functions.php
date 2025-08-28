@@ -514,39 +514,6 @@ class Voxel_Toolkit_Functions {
                     </div>
                 </div>
                 
-                <div id="test-email-modal" style="display: none;">
-                    <div style="background: rgba(0,0,0,0.7); position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 100000;">
-                        <div style="background: white; width: 500px; margin: 80px auto; padding: 0; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); overflow: hidden;">
-                            <div style="background: #f8f9fa; border-bottom: 1px solid #e1e5e9; padding: 20px;">
-                                <h3 style="margin: 0; font-size: 18px; color: #1e1e1e;">
-                                    <?php _e('Send Test Email', 'voxel-toolkit'); ?>
-                                </h3>
-                            </div>
-                            <div style="padding: 25px;">
-                                <p style="margin: 0 0 15px 0; color: #646970;">
-                                    <?php _e('Enter an email address to receive a test notification with sample data:', 'voxel-toolkit'); ?>
-                                </p>
-                                <div style="margin-bottom: 20px;">
-                                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #1e1e1e;">
-                                        <?php _e('Test Email Address:', 'voxel-toolkit'); ?>
-                                    </label>
-                                    <input type="email" id="test-email-address" 
-                                           style="width: 100%; padding: 12px 16px; border: 2px solid #e1e5e9; border-radius: 6px; font-size: 14px; box-sizing: border-box;"
-                                           placeholder="your-email@example.com" required>
-                                </div>
-                                <div style="display: flex; gap: 12px; justify-content: flex-end;">
-                                    <button type="button" class="button button-secondary" id="cancel-test-email-btn">
-                                        <?php _e('Cancel', 'voxel-toolkit'); ?>
-                                    </button>
-                                    <button type="button" class="button button-primary" id="send-test-email-btn">
-                                        <?php _e('Send Test Email', 'voxel-toolkit'); ?>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
                 <script type="text/javascript">
                 jQuery(document).ready(function($) {
                     console.log('jQuery loaded and ready'); // Debug log
@@ -676,6 +643,43 @@ class Voxel_Toolkit_Functions {
                         $(this).closest('tr').remove();
                     });
                     
+                    // Create test email modal and append to body (outside the form)
+                    const testEmailModal = $(`
+                        <div id="test-email-modal" style="display: none;">
+                            <div style="background: rgba(0,0,0,0.7); position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 100000;">
+                                <div style="background: white; width: 500px; margin: 80px auto; padding: 0; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); overflow: hidden;">
+                                    <div style="background: #f8f9fa; border-bottom: 1px solid #e1e5e9; padding: 20px;">
+                                        <h3 style="margin: 0; font-size: 18px; color: #1e1e1e;">
+                                            <?php _e('Send Test Email', 'voxel-toolkit'); ?>
+                                        </h3>
+                                    </div>
+                                    <div style="padding: 25px;">
+                                        <p style="margin: 0 0 15px 0; color: #646970;">
+                                            <?php _e('Enter an email address to receive a test notification with sample data:', 'voxel-toolkit'); ?>
+                                        </p>
+                                        <div style="margin-bottom: 20px;">
+                                            <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #1e1e1e;">
+                                                <?php _e('Test Email Address:', 'voxel-toolkit'); ?>
+                                            </label>
+                                            <input type="email" id="test-email-address" 
+                                                   style="width: 100%; padding: 12px 16px; border: 2px solid #e1e5e9; border-radius: 6px; font-size: 14px; box-sizing: border-box;"
+                                                   placeholder="your-email@example.com">
+                                        </div>
+                                        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                                            <button type="button" class="button button-secondary" id="cancel-test-email-btn">
+                                                <?php _e('Cancel', 'voxel-toolkit'); ?>
+                                            </button>
+                                            <button type="button" class="button button-primary" id="send-test-email-btn">
+                                                <?php _e('Send Test Email', 'voxel-toolkit'); ?>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                    $('body').append(testEmailModal);
+                    
                     // Test notification
                     $(document).on('click', '.notification-test-btn', function() {
                         currentTestIndex = $(this).data('index');
@@ -683,15 +687,15 @@ class Voxel_Toolkit_Functions {
                     });
                     
                     // Cancel test email
-                    $('#cancel-test-email-btn').click(function() {
+                    $(document).on('click', '#cancel-test-email-btn', function() {
                         $('#test-email-modal').hide();
                         $('#test-email-address').val('');
                     });
                     
                     // Send test email
-                    $('#send-test-email-btn').click(function() {
+                    $(document).on('click', '#send-test-email-btn', function() {
                         const email = $('#test-email-address').val();
-                        if (!email) {
+                        if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
                             alert('<?php _e('Please enter a valid email address.', 'voxel-toolkit'); ?>');
                             return;
                         }
