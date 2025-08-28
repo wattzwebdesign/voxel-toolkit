@@ -486,6 +486,10 @@ class Voxel_Toolkit_Admin {
                             sanitize_text_field($function_input['api_key']) : '';
                         break;
                     
+                    case 'show_field_description':
+                        // No additional settings needed - just enabled/disabled
+                        break;
+                    
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(

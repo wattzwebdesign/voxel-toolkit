@@ -124,6 +124,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-ai-review-summary.php',
                 'settings_callback' => array($this, 'render_ai_review_summary_settings'),
                 'version' => '1.0'
+            ),
+            'show_field_description' => array(
+                'name' => __('Show Field Description', 'voxel-toolkit'),
+                'description' => __('Display form field descriptions as subtitles below labels instead of tooltip icons.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Show_Field_Description',
+                'file' => 'functions/class-show-field-description.php',
+                'settings_callback' => array($this, 'render_show_field_description_settings'),
+                'version' => '1.0'
             )
         );
         
@@ -1245,6 +1253,39 @@ class Voxel_Toolkit_Functions {
                     });
                 });
                 </script>
+            </td>
+        </tr>
+        <?php
+    }
+    
+    /**
+     * Render settings for Show Field Description function
+     * 
+     * @param array $settings Current settings
+     */
+    public function render_show_field_description_settings($settings) {
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('Show Field Description Settings', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 600px;">
+                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px;">
+                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
+                        <?php _e('This function automatically converts Voxel form field tooltip icons into visible descriptions displayed below field labels. No additional configuration needed - simply enable the function and it will work on all Voxel forms site-wide.', 'voxel-toolkit'); ?>
+                    </div>
+                    
+                    <div style="margin-top: 20px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; font-size: 14px;">
+                        <strong style="color: #856404;"><?php _e('Effect:', 'voxel-toolkit'); ?></strong>
+                        <ul style="margin: 10px 0 0 20px; color: #856404;">
+                            <li><?php _e('Tooltip icons are hidden', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Field descriptions appear as subtitles below labels', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Improves form accessibility and user experience', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Works on all create/edit post forms', 'voxel-toolkit'); ?></li>
+                        </ul>
+                    </div>
+                </div>
             </td>
         </tr>
         <?php
