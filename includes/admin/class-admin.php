@@ -386,6 +386,12 @@ class Voxel_Toolkit_Admin {
                         }
                         break;
                     
+                    case 'guest_view':
+                        // Sanitize guest view settings
+                        $sanitized_function['show_confirmation'] = !empty($function_input['show_confirmation']);
+                        $sanitized_function['auto_exit_timeout'] = !empty($function_input['auto_exit_timeout']);
+                        break;
+                    
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(

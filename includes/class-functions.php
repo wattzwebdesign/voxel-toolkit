@@ -100,6 +100,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-membership-notifications.php',
                 'settings_callback' => array($this, 'render_membership_notifications_settings'),
                 'version' => '1.0'
+            ),
+            'guest_view' => array(
+                'name' => __('Guest View', 'voxel-toolkit'),
+                'description' => __('Allow logged-in users to temporarily view the site as a guest with an Elementor widget.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Guest_View',
+                'file' => 'functions/class-guest-view.php',
+                'settings_callback' => array($this, 'render_guest_view_settings'),
+                'version' => '1.0'
             )
         );
         
@@ -752,6 +760,58 @@ class Voxel_Toolkit_Functions {
                     });
                 });
                 </script>
+            </td>
+        </tr>
+        <?php
+    }
+    
+    /**
+     * Render settings for guest view function
+     * 
+     * @param array $settings Current settings
+     */
+    public function render_guest_view_settings($settings) {
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('Guest View Settings', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <fieldset>
+                    <legend class="screen-reader-text">
+                        <span><?php _e('Guest View Settings', 'voxel-toolkit'); ?></span>
+                    </legend>
+                    
+                    <label>
+                        <input type="checkbox" 
+                               name="voxel_toolkit_options[guest_view][show_confirmation]" 
+                               value="1"
+                               <?php checked(!empty($settings['show_confirmation'])); ?> />
+                        <?php _e('Show confirmation dialog before switching views', 'voxel-toolkit'); ?>
+                    </label><br>
+                    
+                    <label style="margin-top: 10px; display: inline-block;">
+                        <input type="checkbox" 
+                               name="voxel_toolkit_options[guest_view][auto_exit_timeout]" 
+                               value="1"
+                               <?php checked(!empty($settings['auto_exit_timeout'])); ?> />
+                        <?php _e('Automatically exit guest view after 30 minutes', 'voxel-toolkit'); ?>
+                    </label>
+                    
+                    <p class="description" style="margin-top: 10px;">
+                        <?php _e('To use Guest View, add the "Guest View Button" widget to your pages using Elementor. The widget can be found in the "Voxel Toolkit" category.', 'voxel-toolkit'); ?>
+                    </p>
+                    
+                    <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 3px;">
+                        <h4 style="margin: 0 0 10px 0;"><?php _e('How it works:', 'voxel-toolkit'); ?></h4>
+                        <ol style="margin: 5px 0 0 20px;">
+                            <li><?php _e('Add the Guest View Button widget to any page using Elementor', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Logged-in users can click the button to view the site as a guest', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('A floating "Switch Back" button appears to return to logged-in view', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('The session persists across page navigation until manually switched back', 'voxel-toolkit'); ?></li>
+                        </ol>
+                    </div>
+                </fieldset>
             </td>
         </tr>
         <?php
