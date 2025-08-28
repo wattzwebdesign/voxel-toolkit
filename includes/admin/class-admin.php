@@ -414,6 +414,23 @@ class Voxel_Toolkit_Admin {
                         }
                         break;
                     
+                    case 'password_visibility_toggle':
+                        // Icon color settings
+                        $color_fields = ['icon_color', 'icon_hover_color'];
+                        $default_colors = [
+                            'icon_color' => '#666666',
+                            'icon_hover_color' => '#333333'
+                        ];
+                        
+                        foreach ($color_fields as $field) {
+                            if (isset($function_input[$field]) && preg_match('/^#[0-9a-fA-F]{6}$/', $function_input[$field])) {
+                                $sanitized_function[$field] = sanitize_hex_color($function_input[$field]);
+                            } else {
+                                $sanitized_function[$field] = $default_colors[$field];
+                            }
+                        }
+                        break;
+                    
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(
