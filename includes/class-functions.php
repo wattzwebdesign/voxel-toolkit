@@ -132,6 +132,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-show-field-description.php',
                 'settings_callback' => array($this, 'render_show_field_description_settings'),
                 'version' => '1.0'
+            ),
+            'duplicate_post' => array(
+                'name' => __('Duplicate Post/Page', 'voxel-toolkit'),
+                'description' => __('Enable post/page duplication with quick actions and edit screen button for selected post types.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Duplicate_Post',
+                'file' => 'functions/class-duplicate-post.php',
+                'settings_callback' => array($this, 'render_duplicate_post_settings'),
+                'version' => '1.0'
             )
         );
         
@@ -1290,6 +1298,83 @@ class Voxel_Toolkit_Functions {
                         <p style="margin: 0; font-size: 13px; color: #6c757d;">
                             <?php _e('Show Field Description developed by', 'voxel-toolkit'); ?> 
                             <strong style="color: #495057;">Michał Maciak</strong>
+                        </p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <?php
+    }
+    
+    /**
+     * Render settings for Duplicate Post function
+     * 
+     * @param array $settings Current settings
+     */
+    public function render_duplicate_post_settings($settings) {
+        $post_types = isset($settings['post_types']) ? $settings['post_types'] : array();
+        $available_post_types = get_post_types(array(
+            'public' => true,
+            'show_ui' => true
+        ), 'objects');
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('Duplicate Post Settings', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 600px;">
+                    <!-- How it works -->
+                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px; margin-bottom: 20px;">
+                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
+                        <?php _e('Adds a "Duplicate" option to quickly create copies of posts and pages. The duplicate will be created as a draft with "(Copy)" added to the title.', 'voxel-toolkit'); ?>
+                    </div>
+                    
+                    <!-- Post Types Selection -->
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
+                            <?php _e('Enable for Post Types', 'voxel-toolkit'); ?>
+                        </h3>
+                        <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">
+                            <?php _e('Select which post types should have the duplicate feature enabled:', 'voxel-toolkit'); ?>
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                            <?php foreach ($available_post_types as $post_type): ?>
+                                <?php 
+                                // Skip certain post types
+                                if (in_array($post_type->name, array('attachment', 'nav_menu_item', 'wp_block', 'wp_template', 'wp_template_part'))) {
+                                    continue;
+                                }
+                                ?>
+                                <label style="display: flex; align-items: center; padding: 8px; background: #f8f9fa; border-radius: 4px; cursor: pointer;">
+                                    <input type="checkbox" 
+                                           name="voxel_toolkit_options[duplicate_post][post_types][]" 
+                                           value="<?php echo esc_attr($post_type->name); ?>"
+                                           <?php checked(in_array($post_type->name, $post_types)); ?>
+                                           style="margin-right: 8px;">
+                                    <span><?php echo esc_html($post_type->label); ?></span>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Features -->
+                    <div style="margin-bottom: 20px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; font-size: 14px;">
+                        <strong style="color: #856404;"><?php _e('Features:', 'voxel-toolkit'); ?></strong>
+                        <ul style="margin: 10px 0 0 20px; color: #856404;">
+                            <li><?php _e('"Duplicate" link in post/page list quick actions', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('"Duplicate This" button in the post edit sidebar', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Copies all post content, meta data, and taxonomies', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Creates draft copy with "(Copy)" suffix in title', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Respects user permissions and capabilities', 'voxel-toolkit'); ?></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- What Gets Duplicated -->
+                    <div style="background: #e7f6ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 15px; font-size: 14px;">
+                        <strong style="color: #0066cc;"><?php _e('What gets duplicated:', 'voxel-toolkit'); ?></strong>
+                        <p style="margin: 10px 0 0 0; color: #0066cc;">
+                            <?php _e('Content, excerpt, custom fields, featured image, categories, tags, and all other taxonomies. The new post is created as a draft by the current user.', 'voxel-toolkit'); ?>
                         </p>
                     </div>
                 </div>
