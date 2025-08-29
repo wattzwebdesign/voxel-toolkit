@@ -88,6 +88,7 @@ class Voxel_Toolkit {
         if (is_admin()) {
             $this->init_admin();
             $this->init_license_notices();
+            $this->init_deactivation_warning();
         }
     }
     
@@ -241,6 +242,13 @@ class Voxel_Toolkit {
     }
     
     /**
+     * Initialize deactivation warning
+     */
+    private function init_deactivation_warning() {
+        add_action('admin_footer', array($this, 'add_deactivation_warning_script'));
+    }
+    
+    /**
      * Display license activation notice
      */
     public function license_admin_notice() {
@@ -311,6 +319,46 @@ class Voxel_Toolkit {
     }
     
     /**
+     * Add deactivation warning script
+     */
+    public function add_deactivation_warning_script() {
+        $screen = get_current_screen();
+        if ($screen && $screen->id === 'plugins') {
+            $plugin_basename = plugin_basename(VOXEL_TOOLKIT_PLUGIN_FILE);
+            ?>
+            <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                // Find the deactivate link for our plugin
+                var deactivateLink = $('tr[data-plugin="<?php echo esc_js($plugin_basename); ?>"] .deactivate a');
+                
+                if (deactivateLink.length) {
+                    deactivateLink.on('click', function(e) {
+                        e.preventDefault();
+                        
+                        var confirmed = confirm(
+                            "⚠️ IMPORTANT WARNING\n\n" +
+                            "Deactivating Voxel Toolkit will immediately break:\n" +
+                            "• All embedded review badges on external websites\n" +
+                            "• All Voxel Toolkit widgets on your site\n" +
+                            "• Custom functionality provided by enabled functions\n\n" +
+                            "If you have embedded review badges on other websites, they will show errors until you reactivate this plugin.\n\n" +
+                            "Are you sure you want to continue with deactivation?"
+                        );
+                        
+                        if (confirmed) {
+                            // User confirmed, proceed with deactivation
+                            window.location.href = this.href;
+                        }
+                        // If not confirmed, do nothing (stay on page)
+                    });
+                }
+            });
+            </script>
+            <?php
+        }
+    }
+    
+    /**
      * Plugin activation
      */
     public function activate() {
@@ -348,3 +396,15 @@ class Voxel_Toolkit {
 
 // Initialize plugin
 Voxel_Toolkit::instance();
+
+// Activation hook to flush rewrite rules for embed endpoints
+register_activation_hook(__FILE__, function() {
+    // Set flag to flush rules on next init
+    update_option('voxel_toolkit_flush_rules', '1');
+    flush_rewrite_rules();
+});
+
+// Deactivation hook to cleanup rewrite rules
+register_deactivation_hook(__FILE__, function() {
+    flush_rewrite_rules();
+});

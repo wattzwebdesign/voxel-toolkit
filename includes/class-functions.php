@@ -143,6 +143,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-duplicate-post.php',
                 'settings_callback' => array($this, 'render_duplicate_post_settings'),
                 'version' => '1.0'
+            ),
+            'review_embedder' => array(
+                'name' => __('Voxel Review Embedder', 'voxel-toolkit'),
+                'description' => __('Generate embeddable review badges from Voxel timeline data with customizable styling and iframe embed codes.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Review_Embedder',
+                'file' => 'functions/class-review-embedder.php',
+                'settings_callback' => array($this, 'render_review_embedder_settings'),
+                'version' => '1.0'
             )
         );
         
@@ -1513,5 +1521,28 @@ class Voxel_Toolkit_Functions {
      */
     public function render_weather_widget_settings($settings) {
         // No additional settings for weather widget
+    }
+    
+    /**
+     * Get function instance
+     * 
+     * @param string $function_key Function key
+     * @return object|null Function instance or null
+     */
+    private function get_function_instance($function_key) {
+        return isset($this->active_functions[$function_key]) ? $this->active_functions[$function_key] : null;
+    }
+    
+    /**
+     * Render settings for Review Embedder function
+     * 
+     * @param array $settings Current settings
+     */
+    public function render_review_embedder_settings($settings) {
+        // Get function instance to render settings
+        $function_instance = $this->get_function_instance('review_embedder');
+        if ($function_instance && method_exists($function_instance, 'render_settings')) {
+            $function_instance->render_settings($settings);
+        }
     }
 }

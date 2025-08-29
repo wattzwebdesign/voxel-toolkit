@@ -40,6 +40,7 @@ class Voxel_Toolkit_Admin {
         
         // Handle AJAX requests
         add_action('wp_ajax_voxel_toolkit_toggle_function', array($this, 'ajax_toggle_function'));
+        add_action('wp_ajax_voxel_toolkit_confirm_disable_function', array($this, 'ajax_confirm_disable_function'));
         add_action('wp_ajax_voxel_toolkit_toggle_widget', array($this, 'ajax_toggle_widget'));
         add_action('wp_ajax_voxel_toolkit_reset_settings', array($this, 'ajax_reset_settings'));
     }
@@ -299,12 +300,22 @@ class Voxel_Toolkit_Admin {
                     $current_options[$function_key] = array();
                 }
                 
+                // IMPORTANT: Preserve the 'enabled' status when saving settings
+                // Only merge the new settings, don't overwrite the enabled status
+                $enabled_status = isset($current_options[$function_key]['enabled']) ? $current_options[$function_key]['enabled'] : false;
+                
                 // Merge settings, preserving existing ones
                 $current_options[$function_key] = array_merge($current_options[$function_key], $function_settings);
+                
+                // Ensure the enabled status is preserved
+                $current_options[$function_key]['enabled'] = $enabled_status;
             }
             
             // Update the options
             update_option('voxel_toolkit_options', $current_options);
+            
+            // Refresh the settings cache
+            $this->settings->refresh_options();
         }
     }
     
@@ -553,6 +564,17 @@ class Voxel_Toolkit_Admin {
         if ($enabled) {
             $result = $this->settings->enable_function($function_key);
         } else {
+            // Special warning for Review Embedder function
+            if ($function_key === 'review_embedder') {
+                // Send back a warning instead of immediately disabling
+                wp_send_json_error(array(
+                    'warning' => true,
+                    'message' => __('⚠️ WARNING: Disabling the Review Embedder will immediately break all embedded review badges on external websites. They will show errors until you re-enable this function. Are you sure you want to continue?', 'voxel-toolkit'),
+                    'function' => $function_key
+                ));
+                return;
+            }
+            
             $result = $this->settings->disable_function($function_key);
         }
         
@@ -562,6 +584,40 @@ class Voxel_Toolkit_Admin {
             ));
         } else {
             wp_send_json_error(__('Failed to update function status.', 'voxel-toolkit'));
+        }
+    }
+    
+    /**
+     * Handle confirmed function disable
+     */
+    public function ajax_confirm_disable_function() {
+        // Verify nonce
+        if (!wp_verify_nonce($_POST['nonce'], 'voxel_toolkit_nonce')) {
+            wp_die(__('Security check failed.', 'voxel-toolkit'));
+        }
+        
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions.', 'voxel-toolkit'));
+        }
+        
+        $function_key = sanitize_text_field($_POST['function']);
+        
+        // Validate function exists
+        $available_functions = $this->functions_manager->get_available_functions();
+        if (!isset($available_functions[$function_key])) {
+            wp_send_json_error(__('Invalid function.', 'voxel-toolkit'));
+        }
+        
+        // Disable the function (user already confirmed)
+        $result = $this->settings->disable_function($function_key);
+        
+        if ($result) {
+            wp_send_json_success(array(
+                'message' => __('Function disabled.', 'voxel-toolkit')
+            ));
+        } else {
+            wp_send_json_error(__('Failed to disable function.', 'voxel-toolkit'));
         }
     }
     
