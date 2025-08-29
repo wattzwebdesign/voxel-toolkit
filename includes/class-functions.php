@@ -15,6 +15,7 @@ class Voxel_Toolkit_Functions {
     private static $instance = null;
     private $available_functions = array();
     private $active_functions = array();
+    private $available_widgets = array();
     
     /**
      * Get singleton instance
@@ -39,7 +40,9 @@ class Voxel_Toolkit_Functions {
      */
     public function init() {
         $this->register_functions();
+        $this->register_widgets();
         $this->init_active_functions();
+        $this->init_active_widgets();
     }
     
     /**
@@ -148,6 +151,25 @@ class Voxel_Toolkit_Functions {
     }
     
     /**
+     * Register available widgets
+     */
+    private function register_widgets() {
+        $this->available_widgets = array(
+            'weather' => array(
+                'name' => __('Weather Widget', 'voxel-toolkit'),
+                'description' => __('Display current weather, forecasts with customizable styling using OpenWeatherMap API.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Weather_Widget',
+                'file' => 'widgets/class-weather-widget.php',
+                'settings_callback' => array($this, 'render_weather_widget_settings'),
+                'version' => '1.0'
+            )
+        );
+        
+        // Allow other plugins/themes to register widgets
+        $this->available_widgets = apply_filters('voxel_toolkit/available_widgets', $this->available_widgets);
+    }
+    
+    /**
      * Initialize active functions
      */
     private function init_active_functions() {
@@ -158,6 +180,59 @@ class Voxel_Toolkit_Functions {
                 $this->init_function($function_key, $function_data);
             }
         }
+    }
+    
+    /**
+     * Initialize active widgets
+     */
+    private function init_active_widgets() {
+        $settings = Voxel_Toolkit_Settings::instance();
+        
+        foreach ($this->available_widgets as $widget_key => $widget_data) {
+            $widget_key_full = 'widget_' . $widget_key;
+            if ($settings->is_function_enabled($widget_key_full)) {
+                $this->init_widget($widget_key, $widget_data);
+            }
+        }
+    }
+    
+    /**
+     * Initialize a specific widget
+     * 
+     * @param string $widget_key Widget key
+     * @param array $widget_data Widget data
+     */
+    private function init_widget($widget_key, $widget_data) {
+        // Include widget file if specified
+        if (isset($widget_data['file']) && !empty($widget_data['file'])) {
+            $file_path = VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/' . $widget_data['file'];
+            if (file_exists($file_path)) {
+                require_once $file_path;
+            }
+        }
+        
+        // Initialize widget class if exists
+        if (isset($widget_data['class']) && class_exists($widget_data['class'])) {
+            new $widget_data['class']();
+        }
+        
+        // Register with Elementor
+        add_action('elementor/widgets/widgets_registered', function($widgets_manager) use ($widget_data) {
+            if (class_exists($widget_data['class'])) {
+                $widgets_manager->register_widget_type(new $widget_data['class']());
+            }
+        });
+        
+        // Add widget category
+        add_action('elementor/elements/categories_registered', function($elements_manager) {
+            $elements_manager->add_category(
+                'voxel-toolkit',
+                [
+                    'title' => __('Voxel Toolkit', 'voxel-toolkit'),
+                    'icon' => 'fa fa-toolbox',
+                ]
+            );
+        });
     }
     
     /**
@@ -234,6 +309,15 @@ class Voxel_Toolkit_Functions {
      */
     public function get_active_functions() {
         return $this->active_functions;
+    }
+    
+    /**
+     * Get available widgets
+     * 
+     * @return array Available widget configurations
+     */
+    public function get_available_widgets() {
+        return $this->available_widgets;
     }
     
     /**
@@ -1420,5 +1504,14 @@ class Voxel_Toolkit_Functions {
             </td>
         </tr>
         <?php
+    }
+    
+    /**
+     * Render settings for Weather Widget
+     * 
+     * @param array $settings Current settings
+     */
+    public function render_weather_widget_settings($settings) {
+        // No additional settings for weather widget
     }
 }

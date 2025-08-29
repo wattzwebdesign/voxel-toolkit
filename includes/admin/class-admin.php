@@ -40,6 +40,7 @@ class Voxel_Toolkit_Admin {
         
         // Handle AJAX requests
         add_action('wp_ajax_voxel_toolkit_toggle_function', array($this, 'ajax_toggle_function'));
+        add_action('wp_ajax_voxel_toolkit_toggle_widget', array($this, 'ajax_toggle_widget'));
         add_action('wp_ajax_voxel_toolkit_reset_settings', array($this, 'ajax_reset_settings'));
     }
     
@@ -64,6 +65,15 @@ class Voxel_Toolkit_Admin {
             'manage_options',
             'voxel-toolkit',
             array($this, 'render_main_page')
+        );
+        
+        add_submenu_page(
+            'voxel-toolkit',
+            __('Widgets', 'voxel-toolkit'),
+            __('Widgets', 'voxel-toolkit'),
+            'manage_options',
+            'voxel-toolkit-widgets',
+            array($this, 'render_widgets_page')
         );
         
         add_submenu_page(
@@ -556,6 +566,40 @@ class Voxel_Toolkit_Admin {
     }
     
     /**
+     * Handle AJAX widget toggle
+     */
+    public function ajax_toggle_widget() {
+        // Verify nonce
+        if (!wp_verify_nonce($_POST['nonce'], 'voxel_toolkit_widget_nonce')) {
+            wp_send_json_error(__('Security check failed.', 'voxel-toolkit'));
+        }
+        
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('You do not have sufficient permissions.', 'voxel-toolkit'));
+        }
+        
+        $widget_key = sanitize_text_field($_POST['widget_key']);
+        $enabled = intval($_POST['enabled']);
+        
+        $widget_key_full = 'widget_' . $widget_key;
+        
+        if ($enabled) {
+            $result = $this->settings->enable_function($widget_key_full);
+        } else {
+            $result = $this->settings->disable_function($widget_key_full);
+        }
+        
+        if ($result) {
+            wp_send_json_success(array(
+                'message' => $enabled ? __('Widget enabled.', 'voxel-toolkit') : __('Widget disabled.', 'voxel-toolkit')
+            ));
+        } else {
+            wp_send_json_error(__('Failed to update widget status.', 'voxel-toolkit'));
+        }
+    }
+    
+    /**
      * Handle AJAX settings reset
      */
     public function ajax_reset_settings() {
@@ -578,5 +622,199 @@ class Voxel_Toolkit_Admin {
         } else {
             wp_send_json_error(__('Failed to reset settings.', 'voxel-toolkit'));
         }
+    }
+    
+    /**
+     * Render widgets page
+     */
+    public function render_widgets_page() {
+        $available_widgets = $this->functions_manager->get_available_widgets();
+        ?>
+        <div class="wrap">
+            <h1><?php _e('Voxel Toolkit - Elementor Widgets', 'voxel-toolkit'); ?></h1>
+            
+            <div class="voxel-toolkit-intro">
+                <p><?php _e('Enhance your Elementor page builder with these additional widgets. Each widget can be enabled/disabled independently and includes comprehensive styling controls.', 'voxel-toolkit'); ?></p>
+            </div>
+            
+            <div class="voxel-toolkit-widgets">
+                <?php foreach ($available_widgets as $widget_key => $widget_data): ?>
+                    <?php $this->render_widget_card($widget_key, $widget_data); ?>
+                <?php endforeach; ?>
+                
+                <?php if (empty($available_widgets)): ?>
+                    <div class="voxel-toolkit-no-widgets">
+                        <p><?php _e('No widgets are currently available. More widgets will be added in future updates!', 'voxel-toolkit'); ?></p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        
+        <style>
+            .voxel-toolkit-widgets {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                margin-top: 20px;
+            }
+            
+            @media (max-width: 1200px) {
+                .voxel-toolkit-widgets {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            
+            @media (max-width: 768px) {
+                .voxel-toolkit-widgets {
+                    grid-template-columns: 1fr;
+                }
+            }
+            .voxel-toolkit-widget-card {
+                background: #fff;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 12px 12px 8px 12px;
+                transition: border-color 0.2s ease;
+            }
+            .voxel-toolkit-widget-card:hover {
+                border-color: #999;
+            }
+            .voxel-toolkit-widget-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .voxel-toolkit-widget-title {
+                font-size: 14px;
+                font-weight: 500;
+                margin: 0;
+                color: #1e1e1e;
+            }
+            .voxel-toolkit-widget-toggle {
+                position: relative;
+                display: inline-block;
+                width: 40px;
+                height: 20px;
+            }
+            .voxel-toolkit-widget-toggle input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+            .voxel-toolkit-widget-toggle-slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: .2s;
+                border-radius: 20px;
+            }
+            .voxel-toolkit-widget-toggle-slider:before {
+                position: absolute;
+                content: "";
+                height: 16px;
+                width: 16px;
+                left: 2px;
+                bottom: 2px;
+                background-color: white;
+                transition: .2s;
+                border-radius: 50%;
+            }
+            .voxel-toolkit-widget-toggle input:checked + .voxel-toolkit-widget-toggle-slider {
+                background-color: #2271b1;
+            }
+            .voxel-toolkit-widget-toggle input:checked + .voxel-toolkit-widget-toggle-slider:before {
+                transform: translateX(20px);
+            }
+            .voxel-toolkit-widget-settings {
+                margin-top: 12px;
+            }
+            .voxel-toolkit-no-widgets {
+                background: #f8f9fa;
+                border: 1px solid #e1e5e9;
+                border-radius: 8px;
+                padding: 40px 20px;
+                text-align: center;
+                color: #666;
+            }
+        </style>
+        
+        <script>
+        jQuery(document).ready(function($) {
+            $('.voxel-toolkit-widget-toggle input').on('change', function() {
+                const widgetKey = $(this).data('widget');
+                const enabled = $(this).is(':checked');
+                
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'voxel_toolkit_toggle_widget',
+                        widget_key: widgetKey,
+                        enabled: enabled ? 1 : 0,
+                        nonce: '<?php echo wp_create_nonce('voxel_toolkit_widget_nonce'); ?>'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Show success message
+                            const message = $('<div class="notice notice-success is-dismissible"><p>' + response.data.message + '</p></div>');
+                            $('.wrap h1').after(message);
+                            setTimeout(function() {
+                                message.fadeOut();
+                            }, 3000);
+                        } else {
+                            alert('Error: ' + response.data.message);
+                            // Revert toggle
+                            $(this).prop('checked', !enabled);
+                        }
+                    }.bind(this),
+                    error: function() {
+                        alert('Error updating widget status');
+                        // Revert toggle
+                        $(this).prop('checked', !enabled);
+                    }.bind(this)
+                });
+            });
+        });
+        </script>
+        <?php
+    }
+    
+    /**
+     * Render widget card
+     * 
+     * @param string $widget_key Widget key
+     * @param array $widget_data Widget data
+     */
+    private function render_widget_card($widget_key, $widget_data) {
+        $widget_key_full = 'widget_' . $widget_key;
+        $is_enabled = $this->settings->is_function_enabled($widget_key_full);
+        ?>
+        <div class="voxel-toolkit-widget-card" title="<?php echo esc_attr($widget_data['description']); ?>">
+            <div class="voxel-toolkit-widget-content">
+                <h3 class="voxel-toolkit-widget-title"><?php echo esc_html($widget_data['name']); ?></h3>
+                <label class="voxel-toolkit-widget-toggle">
+                    <input type="checkbox" 
+                           data-widget="<?php echo esc_attr($widget_key); ?>" 
+                           <?php checked($is_enabled); ?>>
+                    <span class="voxel-toolkit-widget-toggle-slider"></span>
+                </label>
+            </div>
+            
+            <?php if ($is_enabled && isset($widget_data['settings_callback']) && is_callable($widget_data['settings_callback'])): ?>
+                <div class="voxel-toolkit-widget-settings">
+                    <?php
+                    $widget_settings = $this->settings->get_function_settings($widget_key_full, array());
+                    echo '<table class="form-table" role="presentation">';
+                    call_user_func($widget_data['settings_callback'], $widget_settings);
+                    echo '</table>';
+                    ?>
+                </div>
+            <?php endif; ?>
+        </div>
+        <?php
     }
 }

@@ -521,6 +521,7 @@ class Voxel_Toolkit_Guest_View {
      */
     public function add_admin_bar_button($wp_admin_bar) {
         // Only show if user is logged in and we're not already in guest view
+        // Fixed method name: is_guest_view_active() not is_in_guest_view()
         if (!is_user_logged_in() || $this->is_guest_view_active()) {
             return;
         }
