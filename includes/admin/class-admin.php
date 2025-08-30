@@ -151,6 +151,12 @@ class Voxel_Toolkit_Admin {
      */
     public function render_main_page() {
         $available_functions = $this->functions_manager->get_available_functions();
+        
+        // Sort functions alphabetically by name
+        uasort($available_functions, function($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+        
         ?>
         <div class="wrap">
             <h1><?php _e('Voxel Toolkit - Functions', 'voxel-toolkit'); ?></h1>
@@ -159,7 +165,24 @@ class Voxel_Toolkit_Admin {
                 <p><?php _e('Welcome to Voxel Toolkit! This plugin provides additional functionality for your Voxel theme. Toggle functions on/off and configure their settings below.', 'voxel-toolkit'); ?></p>
             </div>
             
-            <div class="voxel-toolkit-functions">
+            <div class="voxel-toolkit-search">
+                <div class="search-container">
+                    <input type="text" 
+                           id="voxel-toolkit-search" 
+                           class="search-input" 
+                           placeholder="<?php _e('Search functions...', 'voxel-toolkit'); ?>" 
+                           autocomplete="off">
+                    <button type="button" 
+                            id="voxel-toolkit-search-reset" 
+                            class="button button-secondary search-reset"
+                            title="<?php _e('Reset search', 'voxel-toolkit'); ?>">
+                        <?php _e('Reset', 'voxel-toolkit'); ?>
+                    </button>
+                </div>
+                <div class="search-results-info" id="search-results-info"></div>
+            </div>
+            
+            <div class="voxel-toolkit-functions" id="voxel-toolkit-functions">
                 <?php foreach ($available_functions as $function_key => $function_data): ?>
                     <?php $this->render_function_card($function_key, $function_data); ?>
                 <?php endforeach; ?>
@@ -189,7 +212,10 @@ class Voxel_Toolkit_Admin {
         $is_active = $this->functions_manager->is_function_active($function_key);
         $settings_url = admin_url("admin.php?page=voxel-toolkit-settings#section-{$function_key}");
         ?>
-        <div class="voxel-toolkit-function-card <?php echo $is_enabled ? 'enabled' : 'disabled'; ?>">
+        <div class="voxel-toolkit-function-card <?php echo $is_enabled ? 'enabled' : 'disabled'; ?>"
+             data-function-key="<?php echo esc_attr($function_key); ?>"
+             data-function-name="<?php echo esc_attr(strtolower($function_data['name'])); ?>"
+             data-function-description="<?php echo esc_attr(strtolower($function_data['description'])); ?>">
             <div class="function-header">
                 <h3><?php echo esc_html($function_data['name']); ?></h3>
                 <div class="function-toggle">
