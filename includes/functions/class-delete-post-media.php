@@ -435,7 +435,12 @@ class Voxel_Toolkit_Delete_Post_Media {
             return false;
         }
         
-        return in_array($post_type, $function_settings['post_types']);
+        // Ensure post_types is an array before checking
+        $post_types = isset($function_settings['post_types']) && is_array($function_settings['post_types']) 
+            ? $function_settings['post_types'] 
+            : array();
+        
+        return in_array($post_type, $post_types);
     }
     
     /**

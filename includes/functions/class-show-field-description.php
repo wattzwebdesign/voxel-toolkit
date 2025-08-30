@@ -50,6 +50,11 @@ class Voxel_Toolkit_Show_Field_Description {
                 if (!form) return; // Only works on the appropriate page
      
                 form.querySelectorAll(".ts-form-group").forEach(function (field) {
+                    // Check if subtitle already exists to prevent duplicates
+                    if (field.querySelector(".vx-subtitle")) {
+                        return; // Skip if subtitle already added
+                    }
+                    
                     const dialogContent = field.querySelector(".vx-dialog-content");
                     const label = field.querySelector("label");
      

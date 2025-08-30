@@ -57,6 +57,7 @@
                     nonce: voxelToolkit.nonce
                 },
                 success: function(response) {
+                    console.log('Toggle response for', functionKey, ':', response); // Debug log
                     if (response.success) {
                         // Update card state
                         $card.toggleClass('enabled', enabled);
@@ -82,7 +83,7 @@
                         // Show success message
                         VoxelToolkitAdmin.showNotice(response.data.message, 'success');
                     } else {
-                        // Revert checkbox state
+                        // Regular error - revert checkbox state
                         $checkbox.prop('checked', !enabled);
                         VoxelToolkitAdmin.showNotice(response.data || voxelToolkit.strings.error, 'error');
                     }

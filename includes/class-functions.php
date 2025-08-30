@@ -143,14 +143,6 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-duplicate-post.php',
                 'settings_callback' => array($this, 'render_duplicate_post_settings'),
                 'version' => '1.0'
-            ),
-            'review_embedder' => array(
-                'name' => __('Voxel Review Embedder', 'voxel-toolkit'),
-                'description' => __('Generate embeddable review badges from Voxel timeline data with customizable styling and iframe embed codes.', 'voxel-toolkit'),
-                'class' => 'Voxel_Toolkit_Review_Embedder',
-                'file' => 'functions/class-review-embedder.php',
-                'settings_callback' => array($this, 'render_review_embedder_settings'),
-                'version' => '1.0'
             )
         );
         
@@ -166,9 +158,17 @@ class Voxel_Toolkit_Functions {
             'weather' => array(
                 'name' => __('Weather Widget', 'voxel-toolkit'),
                 'description' => __('Display current weather, forecasts with customizable styling using OpenWeatherMap API.', 'voxel-toolkit'),
-                'class' => 'Voxel_Toolkit_Weather_Widget',
-                'file' => 'widgets/class-weather-widget.php',
+                'class' => 'Voxel_Toolkit_Weather_Widget_Manager',
+                'file' => 'widgets/class-weather-widget-manager.php',
                 'settings_callback' => array($this, 'render_weather_widget_settings'),
+                'version' => '1.0'
+            ),
+            'reading_time' => array(
+                'name' => __('Reading Time', 'voxel-toolkit'),
+                'description' => __('Display estimated reading time for posts with customizable prefix, postfix, and styling options.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Reading_Time_Widget',
+                'file' => 'widgets/class-reading-time-widget.php',
+                'settings_callback' => array($this, 'render_reading_time_widget_settings'),
                 'version' => '1.0'
             )
         );
@@ -223,13 +223,6 @@ class Voxel_Toolkit_Functions {
         if (isset($widget_data['class']) && class_exists($widget_data['class'])) {
             new $widget_data['class']();
         }
-        
-        // Register with Elementor
-        add_action('elementor/widgets/widgets_registered', function($widgets_manager) use ($widget_data) {
-            if (class_exists($widget_data['class'])) {
-                $widgets_manager->register_widget_type(new $widget_data['class']());
-            }
-        });
         
         // Add widget category
         add_action('elementor/elements/categories_registered', function($elements_manager) {
@@ -1524,6 +1517,14 @@ class Voxel_Toolkit_Functions {
     }
     
     /**
+     * Render Reading Time widget settings
+     */
+    public function render_reading_time_widget_settings($settings) {
+        // No additional settings needed for reading time widget
+        // All configuration is done through the Elementor widget
+    }
+    
+    /**
      * Get function instance
      * 
      * @param string $function_key Function key
@@ -1531,18 +1532,5 @@ class Voxel_Toolkit_Functions {
      */
     private function get_function_instance($function_key) {
         return isset($this->active_functions[$function_key]) ? $this->active_functions[$function_key] : null;
-    }
-    
-    /**
-     * Render settings for Review Embedder function
-     * 
-     * @param array $settings Current settings
-     */
-    public function render_review_embedder_settings($settings) {
-        // Get function instance to render settings
-        $function_instance = $this->get_function_instance('review_embedder');
-        if ($function_instance && method_exists($function_instance, 'render_settings')) {
-            $function_instance->render_settings($settings);
-        }
     }
 }

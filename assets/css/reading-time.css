@@ -1,0 +1,36 @@
+/**
+ * Voxel Toolkit Reading Time Widget Styles
+ */
+
+.voxel-reading-time {
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+}
+
+.voxel-reading-time-left {
+    justify-content: flex-start;
+}
+
+.voxel-reading-time-center {
+    justify-content: center;
+}
+
+.voxel-reading-time-right {
+    justify-content: flex-end;
+}
+
+.voxel-reading-time-prefix,
+.voxel-reading-time-value,
+.voxel-reading-time-postfix {
+    display: inline-block;
+}
+
+.voxel-reading-time-value {
+    font-weight: 600;
+}
+
+/* Elementor Editor Specific */
+.elementor-editor-active .voxel-reading-time {
+    min-height: 20px;
+}
