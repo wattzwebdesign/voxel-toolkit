@@ -143,6 +143,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-duplicate-post.php',
                 'settings_callback' => array($this, 'render_duplicate_post_settings'),
                 'version' => '1.0'
+            ),
+            'pending_posts_badge' => array(
+                'name' => __('Pending Posts Badge', 'voxel-toolkit'),
+                'description' => __('Add badges with pending post counts to admin menu items for selected post types with customizable styling.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Pending_Posts_Badge',
+                'file' => 'functions/class-pending-posts-badge.php',
+                'settings_callback' => array($this, 'render_pending_posts_badge_settings'),
+                'version' => '1.0'
             )
         );
         
@@ -1522,6 +1530,72 @@ class Voxel_Toolkit_Functions {
     public function render_reading_time_widget_settings($settings) {
         // No additional settings needed for reading time widget
         // All configuration is done through the Elementor widget
+    }
+    
+    /**
+     * Render Pending Posts Badge settings
+     */
+    public function render_pending_posts_badge_settings($settings) {
+        $post_types = Voxel_Toolkit_Settings::instance()->get_available_post_types();
+        $selected_types = isset($settings['post_types']) ? $settings['post_types'] : array();
+        $background_color = isset($settings['background_color']) ? $settings['background_color'] : '#d63638';
+        $text_color = isset($settings['text_color']) ? $settings['text_color'] : '#ffffff';
+        
+        ?>
+        <tr>
+            <th scope="row">
+                <label for="pending_posts_badge_post_types"><?php _e('Post Types to Show Badges', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <fieldset>
+                    <legend class="screen-reader-text">
+                        <span><?php _e('Select post types to show pending badges', 'voxel-toolkit'); ?></span>
+                    </legend>
+                    <?php foreach ($post_types as $post_type => $label): ?>
+                        <label>
+                            <input type="checkbox" 
+                                   name="voxel_toolkit_options[pending_posts_badge][post_types][]" 
+                                   value="<?php echo esc_attr($post_type); ?>"
+                                   <?php checked(in_array($post_type, $selected_types)); ?> />
+                            <?php echo esc_html($label); ?>
+                        </label><br>
+                    <?php endforeach; ?>
+                    <p class="description"><?php _e('Select which post types should display pending post count badges in the admin menu.', 'voxel-toolkit'); ?></p>
+                </fieldset>
+            </td>
+        </tr>
+
+        <tr>
+            <th scope="row">
+                <label for="pending_posts_badge_background_color"><?php _e('Background Color', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <input 
+                    type="color" 
+                    id="pending_posts_badge_background_color" 
+                    name="voxel_toolkit_options[pending_posts_badge][background_color]" 
+                    value="<?php echo esc_attr($background_color); ?>"
+                    class="color-picker"
+                />
+                <p class="description"><?php _e('Choose the background color for the badges.', 'voxel-toolkit'); ?></p>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">
+                <label for="pending_posts_badge_text_color"><?php _e('Text Color', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <input 
+                    type="color" 
+                    id="pending_posts_badge_text_color" 
+                    name="voxel_toolkit_options[pending_posts_badge][text_color]" 
+                    value="<?php echo esc_attr($text_color); ?>"
+                    class="color-picker"
+                />
+                <p class="description"><?php _e('Choose the text color for the badges.', 'voxel-toolkit'); ?></p>
+            </td>
+        </tr>
+        <?php
     }
     
     /**
