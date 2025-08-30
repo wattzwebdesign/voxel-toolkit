@@ -28,9 +28,6 @@ class Voxel_Toolkit_Pending_Posts_Badge {
         
         // Update badge counts when post status changes
         add_action('transition_post_status', array($this, 'update_badge_on_status_change'), 10, 3);
-        
-        // Debug notice (temporary)
-        add_action('admin_notices', array($this, 'debug_pending_counts'));
     }
     
     /**
@@ -261,32 +258,6 @@ class Voxel_Toolkit_Pending_Posts_Badge {
     }
     
     /**
-     * Debug function to show pending counts (temporary)
-     */
-    public function debug_pending_counts() {
-        if (!current_user_can('manage_options')) {
-            return;
-        }
-        
-        $settings = Voxel_Toolkit_Settings::instance();
-        $function_settings = $settings->get_function_settings('pending_posts_badge', array());
-        $enabled_post_types = isset($function_settings['post_types']) ? $function_settings['post_types'] : array();
-        
-        if (empty($enabled_post_types)) {
-            echo '<div class="notice notice-info"><p>Voxel Toolkit Debug: No post types enabled for pending badges.</p></div>';
-            return;
-        }
-        
-        $debug_info = array();
-        foreach ($enabled_post_types as $post_type) {
-            $count = $this->get_pending_count($post_type);
-            $debug_info[] = "$post_type: $count pending";
-        }
-        
-        echo '<div class="notice notice-info"><p>Voxel Toolkit Debug: ' . implode(', ', $debug_info) . '</p></div>';
-    }
-    
-    /**
      * Remove hooks when deactivated
      */
     public function deactivate() {
@@ -294,6 +265,5 @@ class Voxel_Toolkit_Pending_Posts_Badge {
         remove_action('admin_enqueue_scripts', array($this, 'enqueue_admin_styles'));
         remove_action('wp_ajax_voxel_toolkit_update_pending_count', array($this, 'ajax_update_pending_count'));
         remove_action('transition_post_status', array($this, 'update_badge_on_status_change'), 10, 3);
-        remove_action('admin_notices', array($this, 'debug_pending_counts'));
     }
 }
