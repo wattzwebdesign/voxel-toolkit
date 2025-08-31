@@ -55,8 +55,10 @@ class Voxel_Toolkit_Pending_Posts_Badge {
             // Get pending count for this post type
             $pending_count = $this->get_pending_count($post_type->name);
             
-            // Add badge even if count is 0 for debugging (we'll hide with CSS)
-            $this->add_badge_to_menu($post_type, $pending_count);
+            // Only add badge if there are pending posts
+            if ($pending_count > 0) {
+                $this->add_badge_to_menu($post_type, $pending_count);
+            }
         }
     }
     
@@ -204,18 +206,18 @@ class Voxel_Toolkit_Pending_Posts_Badge {
                                         var currentCount = parseInt(badge.text()) || 0;
                                         
                                         if (newCount !== currentCount) {
-                                            badge.addClass('updating');
-                                            badge.text(newCount);
-                                            
-                                            if (newCount === 0) {
-                                                badge.hide();
-                                            } else {
+                                            if (newCount > 0) {
+                                                badge.addClass('updating');
+                                                badge.text(newCount);
                                                 badge.show();
+                                                
+                                                setTimeout(function() {
+                                                    badge.removeClass('updating');
+                                                }, 600);
+                                            } else {
+                                                // If count is 0, remove the badge entirely
+                                                badge.remove();
                                             }
-                                            
-                                            setTimeout(function() {
-                                                badge.removeClass('updating');
-                                            }, 600);
                                         }
                                     }
                                 }

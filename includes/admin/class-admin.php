@@ -358,26 +358,20 @@ class Voxel_Toolkit_Admin {
             
             <table class="form-table" role="presentation">
                 <tbody>
-                    <tr>
-                        <th scope="row">
-                            <label for="<?php echo esc_attr($function_key); ?>_enabled">
-                                <?php _e('Enable Function', 'voxel-toolkit'); ?>
-                            </label>
-                        </th>
-                        <td>
-                            <input type="checkbox" 
-                                   id="<?php echo esc_attr($function_key); ?>_enabled" 
-                                   name="voxel_toolkit_options[<?php echo esc_attr($function_key); ?>][enabled]" 
-                                   value="1" 
-                                   <?php checked($function_settings['enabled'] ?? false); ?> />
-                            <p class="description"><?php echo esc_html($function_data['description']); ?></p>
-                        </td>
-                    </tr>
-                    
                     <?php
                     // Call custom settings callback if available
                     if (isset($function_data['settings_callback']) && is_callable($function_data['settings_callback'])) {
                         call_user_func($function_data['settings_callback'], $function_settings);
+                    } else {
+                        // If no custom settings, show a message
+                        ?>
+                        <tr>
+                            <td colspan="2">
+                                <p class="description"><?php echo esc_html($function_data['description']); ?></p>
+                                <p><?php _e('This function is currently enabled and active. No additional configuration is required.', 'voxel-toolkit'); ?></p>
+                            </td>
+                        </tr>
+                        <?php
                     }
                     ?>
                 </tbody>
