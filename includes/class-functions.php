@@ -186,6 +186,13 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-reading-time-widget.php',
                 'settings_callback' => array($this, 'render_reading_time_widget_settings'),
                 'version' => '1.0'
+            ),
+            'review_collection' => array(
+                'name' => __('Review Collection', 'voxel-toolkit'),
+                'description' => __('Display a collection of user reviews with advanced filtering and styling options.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Review_Collection_Widget_Manager',
+                'file' => 'widgets/class-review-collection-widget-manager.php',
+                'version' => '1.0'
             )
         );
         
