@@ -151,6 +151,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-pending-posts-badge.php',
                 'settings_callback' => array($this, 'render_pending_posts_badge_settings'),
                 'version' => '1.0'
+            ),
+            'pre_approve_posts' => array(
+                'name' => __('Pre-Approve Posts', 'voxel-toolkit'),
+                'description' => __('Automatically publish posts from pre-approved users instead of marking them as pending.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Pre_Approve_Posts',
+                'file' => 'functions/class-pre-approve-posts.php',
+                'settings_callback' => array($this, 'render_pre_approve_posts_settings'),
+                'version' => '1.0'
             )
         );
         
@@ -1593,6 +1601,45 @@ class Voxel_Toolkit_Functions {
                     class="color-picker"
                 />
                 <p class="description"><?php _e('Choose the text color for the badges.', 'voxel-toolkit'); ?></p>
+            </td>
+        </tr>
+        <?php
+    }
+    
+    /**
+     * Render Pre-Approve Posts settings
+     */
+    public function render_pre_approve_posts_settings($settings) {
+        $show_column = isset($settings['show_column']) ? $settings['show_column'] : true;
+        ?>
+        <tr>
+            <th scope="row">
+                <label for="pre_approve_posts_show_column"><?php _e('Show Pre-Approved Column', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <label>
+                    <input type="checkbox" 
+                           id="pre_approve_posts_show_column"
+                           name="voxel_toolkit_options[pre_approve_posts][show_column]" 
+                           value="1"
+                           <?php checked($show_column); ?> />
+                    <?php _e('Display "Pre-Approved?" column in the users list', 'voxel-toolkit'); ?>
+                </label>
+                <p class="description"><?php _e('When enabled, shows a column in the users list indicating which users have pre-approval settings.', 'voxel-toolkit'); ?></p>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row"><?php _e('How It Works', 'voxel-toolkit'); ?></th>
+            <td>
+                <div class="voxel-toolkit-info-box">
+                    <ol>
+                        <li><?php _e('Go to any user\'s profile page in WordPress admin', 'voxel-toolkit'); ?></li>
+                        <li><?php _e('Find the "Pre-Approve Posts Settings" section', 'voxel-toolkit'); ?></li>
+                        <li><?php _e('Check the post types you want to pre-approve for that user', 'voxel-toolkit'); ?></li>
+                        <li><?php _e('When that user submits a post that would normally be pending, it will automatically be published', 'voxel-toolkit'); ?></li>
+                    </ol>
+                    <p><strong><?php _e('Note:', 'voxel-toolkit'); ?></strong> <?php _e('Only administrators can manage pre-approval settings for users.', 'voxel-toolkit'); ?></p>
+                </div>
             </td>
         </tr>
         <?php

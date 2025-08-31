@@ -318,6 +318,30 @@ input:checked + .slider:before {
     transform: scale(0.95);
 }
 
+/* Info Box */
+.voxel-toolkit-info-box {
+    background: #f1f3f5;
+    border: 1px solid #d0d5dd;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.voxel-toolkit-info-box ol {
+    margin: 10px 0 10px 20px;
+    padding: 0;
+}
+
+.voxel-toolkit-info-box li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+.voxel-toolkit-info-box p {
+    margin: 10px 0 0 0;
+    line-height: 1.6;
+}
+
 @media (max-width: 768px) {
     .voxel-toolkit-functions {
         grid-template-columns: 1fr;
