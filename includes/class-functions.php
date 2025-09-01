@@ -1618,6 +1618,7 @@ class Voxel_Toolkit_Functions {
      */
     public function render_pre_approve_posts_settings($settings) {
         $show_column = isset($settings['show_column']) ? $settings['show_column'] : true;
+        $approve_verified = isset($settings['approve_verified']) ? $settings['approve_verified'] : false;
         ?>
         <tr>
             <th scope="row">
@@ -1636,15 +1637,34 @@ class Voxel_Toolkit_Functions {
             </td>
         </tr>
         <tr>
+            <th scope="row">
+                <label for="pre_approve_posts_approve_verified"><?php _e('Approve Verified Users', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <label>
+                    <input type="checkbox" 
+                           id="pre_approve_posts_approve_verified"
+                           name="voxel_toolkit_options[pre_approve_posts][approve_verified]" 
+                           value="1"
+                           <?php checked($approve_verified); ?> />
+                    <?php _e('Automatically approve posts from users with verified profiles', 'voxel-toolkit'); ?>
+                </label>
+                <p class="description"><?php _e('When enabled, users with voxel:verified = 1 in their profile meta will have their posts automatically published.', 'voxel-toolkit'); ?></p>
+            </td>
+        </tr>
+        <tr>
             <th scope="row"><?php _e('How It Works', 'voxel-toolkit'); ?></th>
             <td>
                 <div class="voxel-toolkit-info-box">
+                    <h4><?php _e('Manual Pre-Approval:', 'voxel-toolkit'); ?></h4>
                     <ol>
                         <li><?php _e('Go to any user\'s profile page in WordPress admin', 'voxel-toolkit'); ?></li>
                         <li><?php _e('Find the "Pre-Approve Posts Settings" section', 'voxel-toolkit'); ?></li>
                         <li><?php _e('Check the post types you want to pre-approve for that user', 'voxel-toolkit'); ?></li>
                         <li><?php _e('When that user submits a post that would normally be pending, it will automatically be published', 'voxel-toolkit'); ?></li>
                     </ol>
+                    <h4><?php _e('Verified Profile Auto-Approval:', 'voxel-toolkit'); ?></h4>
+                    <p><?php _e('When "Approve Verified Users" is enabled, any user with a verified Voxel profile will have their posts automatically approved, regardless of manual pre-approval settings.', 'voxel-toolkit'); ?></p>
                     <p><strong><?php _e('Note:', 'voxel-toolkit'); ?></strong> <?php _e('Only administrators can manage pre-approval settings for users.', 'voxel-toolkit'); ?></p>
                 </div>
             </td>

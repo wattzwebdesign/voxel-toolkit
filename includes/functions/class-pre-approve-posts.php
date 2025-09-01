@@ -31,6 +31,7 @@ class Voxel_Toolkit_Pre_Approve_Posts {
         $this->options = $this->settings->get_function_settings('pre_approve_posts', array(
             'enabled' => false,
             'show_column' => true,
+            'approve_verified' => false,
             'post_types' => array()
         ));
         
@@ -205,6 +206,14 @@ class Voxel_Toolkit_Pre_Approve_Posts {
      * Check if user is pre-approved for a post type
      */
     private function is_user_pre_approved($user_id, $post_type) {
+        // Check if verified profile approval is enabled and user is verified
+        if (!empty($this->options['approve_verified'])) {
+            if ($this->is_user_verified($user_id)) {
+                return true;
+            }
+        }
+        
+        // Check manual pre-approval
         $pre_approved_types = get_user_meta($user_id, 'voxel_toolkit_pre_approved_post_types', true);
         
         if (!is_array($pre_approved_types)) {
@@ -212,6 +221,23 @@ class Voxel_Toolkit_Pre_Approve_Posts {
         }
         
         return in_array($post_type, $pre_approved_types);
+    }
+    
+    /**
+     * Check if user has a verified profile
+     */
+    private function is_user_verified($user_id) {
+        // Get user's profile post ID from user meta
+        $profile_post_id = get_user_meta($user_id, 'voxel:profile_id', true);
+        
+        if (!$profile_post_id) {
+            return false;
+        }
+        
+        // Check if profile has verified status in post meta
+        $verified = get_post_meta($profile_post_id, 'voxel:verified', true);
+        
+        return ($verified === '1' || $verified === 1);
     }
     
     /**
@@ -225,6 +251,11 @@ class Voxel_Toolkit_Pre_Approve_Posts {
                 font-size: 18px;
                 font-weight: bold;
                 cursor: help;
+            }
+            .form-table td, .form-table th {
+                padding: 6px 0;
+                vertical-align: top;
+                font-weight: 400;
             }
         </style>
         <?php
