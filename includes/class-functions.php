@@ -142,7 +142,7 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Duplicate_Post',
                 'file' => 'functions/class-duplicate-post.php',
                 'settings_callback' => array($this, 'render_duplicate_post_settings'),
-                'version' => '1.0'
+                'version' => '1.1'
             ),
             'pending_posts_badge' => array(
                 'name' => __('Pending Posts Badge', 'voxel-toolkit'),
@@ -158,6 +158,22 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Pre_Approve_Posts',
                 'file' => 'functions/class-pre-approve-posts.php',
                 'settings_callback' => array($this, 'render_pre_approve_posts_settings'),
+                'version' => '1.0'
+            ),
+            'disable_auto_updates' => array(
+                'name' => __('Disable Automatic Updates', 'voxel-toolkit'),
+                'description' => __('Disable automatic updates for plugins, themes, and WordPress core with individual controls.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Disable_Auto_Updates',
+                'file' => 'functions/class-disable-auto-updates.php',
+                'settings_callback' => array($this, 'render_disable_auto_updates_settings'),
+                'version' => '1.0'
+            ),
+            'redirect_posts' => array(
+                'name' => __('Redirect Posts', 'voxel-toolkit'),
+                'description' => __('Automatically redirect posts with specific statuses to specified URLs based on post type with flexible status and expiration detection.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Redirect_Posts',
+                'file' => 'functions/class-redirect-posts.php',
+                'settings_callback' => array($this, 'render_redirect_posts_settings'),
                 'version' => '1.0'
             )
         );
@@ -193,6 +209,13 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Review_Collection_Widget_Manager',
                 'file' => 'widgets/class-review-collection-widget-manager.php',
                 'version' => '1.0'
+            ),
+            'prev_next_widget' => array(
+                'name' => __('Previous/Next Navigation', 'voxel-toolkit'),
+                'description' => __('Navigate between posts with customizable previous/next buttons and post information display.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Prev_Next_Widget_Manager',
+                'file' => 'widgets/class-prev-next-widget-manager.php',
+                'version' => '1.0'
             )
         );
         
@@ -207,7 +230,10 @@ class Voxel_Toolkit_Functions {
         $settings = Voxel_Toolkit_Settings::instance();
         
         foreach ($this->available_functions as $function_key => $function_data) {
-            if ($settings->is_function_enabled($function_key)) {
+            // Initialize if enabled in settings OR if it's always enabled
+            $is_always_enabled = isset($function_data['always_enabled']) && $function_data['always_enabled'];
+            
+            if ($settings->is_function_enabled($function_key) || $is_always_enabled) {
                 $this->init_function($function_key, $function_data);
             }
         }
@@ -1421,10 +1447,15 @@ class Voxel_Toolkit_Functions {
      */
     public function render_duplicate_post_settings($settings) {
         $post_types = isset($settings['post_types']) ? $settings['post_types'] : array();
+        $allowed_roles = isset($settings['allowed_roles']) ? $settings['allowed_roles'] : array('contributor', 'author', 'editor', 'administrator');
         $available_post_types = get_post_types(array(
             'public' => true,
             'show_ui' => true
         ), 'objects');
+        
+        // Get all user roles
+        global $wp_roles;
+        $all_roles = $wp_roles->roles;
         ?>
         <tr>
             <th scope="row">
@@ -1466,6 +1497,60 @@ class Voxel_Toolkit_Functions {
                         </div>
                     </div>
                     
+                    <!-- User Roles Selection -->
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
+                            <?php _e('Allowed User Roles', 'voxel-toolkit'); ?>
+                        </h3>
+                        <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">
+                            <?php _e('Select which user roles can duplicate posts (check "All Roles" to allow everyone including subscribers):', 'voxel-toolkit'); ?>
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                            <!-- All Roles Option -->
+                            <label style="display: flex; align-items: center; padding: 8px; background: #e8f5e8; border: 2px solid #4caf50; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                                <input type="checkbox" 
+                                       name="voxel_toolkit_options[duplicate_post][allowed_roles][]" 
+                                       value="all_roles"
+                                       <?php checked(in_array('all_roles', $allowed_roles)); ?>
+                                       style="margin-right: 8px;"
+                                       onchange="toggleAllRoles(this)">
+                                <span><?php _e('All Roles (Including Subscribers)', 'voxel-toolkit'); ?></span>
+                            </label>
+                            
+                            <?php foreach ($all_roles as $role_key => $role_data): ?>
+                                <label style="display: flex; align-items: center; padding: 8px; background: #f8f9fa; border-radius: 4px; cursor: pointer;" class="role-checkbox">
+                                    <input type="checkbox" 
+                                           name="voxel_toolkit_options[duplicate_post][allowed_roles][]" 
+                                           value="<?php echo esc_attr($role_key); ?>"
+                                           <?php checked(in_array($role_key, $allowed_roles) || in_array('all_roles', $allowed_roles)); ?>
+                                           <?php echo in_array('all_roles', $allowed_roles) ? 'disabled' : ''; ?>
+                                           style="margin-right: 8px;">
+                                    <span><?php echo esc_html(translate_user_role($role_data['name'])); ?></span>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                        
+                        <script>
+                        function toggleAllRoles(checkbox) {
+                            const roleCheckboxes = document.querySelectorAll('.role-checkbox input[type="checkbox"]');
+                            roleCheckboxes.forEach(cb => {
+                                cb.disabled = checkbox.checked;
+                                if (checkbox.checked) {
+                                    cb.checked = true;
+                                }
+                            });
+                        }
+                        
+                        // Initialize on page load
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const allRolesCheckbox = document.querySelector('input[value="all_roles"]');
+                            if (allRolesCheckbox && allRolesCheckbox.checked) {
+                                toggleAllRoles(allRolesCheckbox);
+                            }
+                        });
+                        </script>
+                    </div>
+                    
                     <!-- Features -->
                     <div style="margin-bottom: 20px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; font-size: 14px;">
                         <strong style="color: #856404;"><?php _e('Features:', 'voxel-toolkit'); ?></strong>
@@ -1474,7 +1559,7 @@ class Voxel_Toolkit_Functions {
                             <li><?php _e('"Duplicate This" button in the post edit sidebar', 'voxel-toolkit'); ?></li>
                             <li><?php _e('Copies all post content, meta data, and taxonomies', 'voxel-toolkit'); ?></li>
                             <li><?php _e('Creates draft copy with "(Copy)" suffix in title', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('Respects user permissions and capabilities', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Available to all logged-in users', 'voxel-toolkit'); ?></li>
                         </ul>
                     </div>
                     
@@ -1520,7 +1605,7 @@ class Voxel_Toolkit_Functions {
                                 <li><?php _e('Save and view page - button will duplicate current post when clicked', 'voxel-toolkit'); ?></li>
                             </ol>
                             <div style="margin-top: 10px; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 13px; color: #666;">
-                                <strong><?php _e('Note:', 'voxel-toolkit'); ?></strong> <?php _e('Frontend widget only works for logged-in users with edit permissions. Button redirects to the create/edit page for the duplicated post.', 'voxel-toolkit'); ?>
+                                <strong><?php _e('Note:', 'voxel-toolkit'); ?></strong> <?php _e('Frontend widget works for all logged-in users. Button redirects to the create/edit page for the duplicated post.', 'voxel-toolkit'); ?>
                             </div>
                         </div>
                     </div>
@@ -1670,6 +1755,277 @@ class Voxel_Toolkit_Functions {
             </td>
         </tr>
         <?php
+    }
+    
+    /**
+     * Render settings for Disable Auto Updates function
+     * 
+     * @param array $settings Current settings
+     */
+    public function render_disable_auto_updates_settings($settings) {
+        $disable_plugin_updates = isset($settings['disable_plugin_updates']) ? $settings['disable_plugin_updates'] : false;
+        $disable_theme_updates = isset($settings['disable_theme_updates']) ? $settings['disable_theme_updates'] : false;
+        $disable_core_updates = isset($settings['disable_core_updates']) ? $settings['disable_core_updates'] : false;
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('Disable Auto Updates Settings', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 600px;">
+                    <!-- How it works -->
+                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px; margin-bottom: 20px;">
+                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
+                        <?php _e('Disables automatic updates for plugins, themes, and WordPress core. Choose which types of updates to disable with individual controls.', 'voxel-toolkit'); ?>
+                    </div>
+                    
+                    <!-- Update Types Selection -->
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
+                            <?php _e('Disable Updates For', 'voxel-toolkit'); ?>
+                        </h3>
+                        <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">
+                            <?php _e('Select which types of automatic updates to disable:', 'voxel-toolkit'); ?>
+                        </p>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <!-- Plugin Updates -->
+                            <label style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 4px; cursor: pointer; border: 2px solid #e1e5e9;">
+                                <input type="checkbox" 
+                                       name="voxel_toolkit_options[disable_auto_updates][disable_plugin_updates]" 
+                                       value="1"
+                                       <?php checked($disable_plugin_updates); ?>
+                                       style="margin-right: 12px; transform: scale(1.2);">
+                                <div>
+                                    <strong style="display: block; color: #1e1e1e; font-size: 14px;">
+                                        <?php _e('Plugin Updates', 'voxel-toolkit'); ?>
+                                    </strong>
+                                    <span style="color: #666; font-size: 13px;">
+                                        <?php _e('Prevent plugins from updating automatically', 'voxel-toolkit'); ?>
+                                    </span>
+                                </div>
+                            </label>
+                            
+                            <!-- Theme Updates -->
+                            <label style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 4px; cursor: pointer; border: 2px solid #e1e5e9;">
+                                <input type="checkbox" 
+                                       name="voxel_toolkit_options[disable_auto_updates][disable_theme_updates]" 
+                                       value="1"
+                                       <?php checked($disable_theme_updates); ?>
+                                       style="margin-right: 12px; transform: scale(1.2);">
+                                <div>
+                                    <strong style="display: block; color: #1e1e1e; font-size: 14px;">
+                                        <?php _e('Theme Updates', 'voxel-toolkit'); ?>
+                                    </strong>
+                                    <span style="color: #666; font-size: 13px;">
+                                        <?php _e('Prevent themes from updating automatically', 'voxel-toolkit'); ?>
+                                    </span>
+                                </div>
+                            </label>
+                            
+                            <!-- WordPress Core Updates -->
+                            <label style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 4px; cursor: pointer; border: 2px solid #e1e5e9;">
+                                <input type="checkbox" 
+                                       name="voxel_toolkit_options[disable_auto_updates][disable_core_updates]" 
+                                       value="1"
+                                       <?php checked($disable_core_updates); ?>
+                                       style="margin-right: 12px; transform: scale(1.2);">
+                                <div>
+                                    <strong style="display: block; color: #1e1e1e; font-size: 14px;">
+                                        <?php _e('WordPress Core Updates', 'voxel-toolkit'); ?>
+                                    </strong>
+                                    <span style="color: #666; font-size: 13px;">
+                                        <?php _e('Prevent WordPress core from updating automatically (includes major and minor updates)', 'voxel-toolkit'); ?>
+                                    </span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Warning -->
+                    <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; font-size: 14px; margin-bottom: 20px;">
+                        <strong style="color: #856404;"><?php _e('⚠️ Important Security Notice:', 'voxel-toolkit'); ?></strong>
+                        <p style="margin: 8px 0 0 0; color: #856404;">
+                            <?php _e('Disabling automatic updates means you\'ll need to manually update plugins, themes, and WordPress core. Make sure to regularly check for and install updates to maintain security.', 'voxel-toolkit'); ?>
+                        </p>
+                    </div>
+                    
+                    <!-- What Gets Disabled -->
+                    <div style="background: #e7f6ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 15px; font-size: 14px; margin-bottom: 20px;">
+                        <strong style="color: #0066cc;"><?php _e('Technical Details:', 'voxel-toolkit'); ?></strong>
+                        <ul style="margin: 8px 0 0 20px; color: #0066cc;">
+                            <li><?php _e('Plugin Updates: Uses add_filter(\'auto_update_plugin\', \'__return_false\')', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Theme Updates: Uses add_filter(\'auto_update_theme\', \'__return_false\')', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Core Updates: Uses multiple filters and WP_AUTO_UPDATE_CORE constant', 'voxel-toolkit'); ?></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Manual Updates Note -->
+                    <div style="background: #fff; border: 1px solid #e1e5e9; border-radius: 6px; padding: 15px;">
+                        <h4 style="margin: 0 0 10px 0; color: #1e1e1e; font-size: 14px;">
+                            <span class="dashicons dashicons-update" style="margin-right: 5px;"></span>
+                            <?php _e('Manual Updates', 'voxel-toolkit'); ?>
+                        </h4>
+                        <p style="margin: 0; color: #666; font-size: 13px;">
+                            <?php _e('You can still update manually from the WordPress admin dashboard. Go to Dashboard > Updates to see and install available updates when you\'re ready.', 'voxel-toolkit'); ?>
+                        </p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <?php
+    }
+    
+    /**
+     * Render settings for Redirect Posts function
+     * 
+     * @param array $settings Current settings
+     */
+    public function render_redirect_posts_settings($settings) {
+        $redirect_urls = isset($settings['redirect_urls']) ? $settings['redirect_urls'] : array();
+        $redirect_statuses = isset($settings['redirect_statuses']) ? $settings['redirect_statuses'] : array();
+        
+        // Get all public post types
+        $post_types = get_post_types(array(
+            'public' => true,
+            'show_ui' => true
+        ), 'objects');
+        
+        // Get all post statuses
+        $post_statuses = get_post_stati(array(), 'objects');
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('Redirect Posts Settings', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 700px;">
+                    <!-- How it works -->
+                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px; margin-bottom: 20px;">
+                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
+                        <?php _e('Automatically redirects visitors from posts with specific statuses to specified URLs. Also detects expiration using Voxel expiration dates and common meta fields.', 'voxel-toolkit'); ?>
+                    </div>
+                    
+                    <!-- Post Status Selection -->
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
+                            <?php _e('Post Statuses to Redirect', 'voxel-toolkit'); ?>
+                        </h3>
+                        <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">
+                            <?php _e('Select which post statuses should trigger redirects:', 'voxel-toolkit'); ?>
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
+                            <?php foreach ($post_statuses as $status_key => $status_obj): ?>
+                                <?php if (in_array($status_key, array('auto-draft', 'inherit'))) continue; ?>
+                                <label style="display: flex; align-items: center; padding: 8px; background: #f8f9fa; border-radius: 4px; cursor: pointer;">
+                                    <input type="checkbox" 
+                                           name="voxel_toolkit_options[redirect_posts][redirect_statuses][]" 
+                                           value="<?php echo esc_attr($status_key); ?>"
+                                           <?php checked(in_array($status_key, $redirect_statuses)); ?>
+                                           style="margin-right: 8px;">
+                                    <span><?php echo esc_html($status_obj->label); ?></span>
+                                </label>
+                            <?php endforeach; ?>
+                            
+                            <!-- Add Expired Status -->
+                            <label style="display: flex; align-items: center; padding: 8px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; cursor: pointer;">
+                                <input type="checkbox" 
+                                       name="voxel_toolkit_options[redirect_posts][redirect_statuses][]" 
+                                       value="expired"
+                                       <?php checked(in_array('expired', $redirect_statuses)); ?>
+                                       style="margin-right: 8px;">
+                                <span><?php _e('Expired', 'voxel-toolkit'); ?></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Detection Methods -->
+                    <div style="background: #e7f6ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 15px; font-size: 14px; margin-bottom: 20px;">
+                        <strong style="color: #0066cc;"><?php _e('How It Works:', 'voxel-toolkit'); ?></strong>
+                        <p style="margin: 8px 0 0 0; color: #0066cc;">
+                            <?php _e('Redirects posts that match any of the selected statuses above. Only affects single post pages, not archive pages.', 'voxel-toolkit'); ?>
+                        </p>
+                    </div>
+                    
+                    <!-- Post Type Redirects -->
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
+                            <?php _e('Redirect URLs by Post Type', 'voxel-toolkit'); ?>
+                        </h3>
+                        <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">
+                            <?php _e('Set where to redirect expired posts for each post type. Leave blank to disable redirects for that post type.', 'voxel-toolkit'); ?>
+                        </p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <?php foreach ($post_types as $post_type): ?>
+                                <?php 
+                                // Skip certain post types
+                                if (in_array($post_type->name, array('attachment', 'nav_menu_item', 'wp_block', 'wp_template', 'wp_template_part'))) {
+                                    continue;
+                                }
+                                
+                                $current_url = isset($redirect_urls[$post_type->name]) ? $redirect_urls[$post_type->name] : '';
+                                ?>
+                                <div style="padding: 15px; background: #f8f9fa; border-radius: 4px; border: 1px solid #e1e5e9;">
+                                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                        <span class="dashicons dashicons-<?php echo $this->get_post_type_icon($post_type->name); ?>" style="margin-right: 8px; color: #666;"></span>
+                                        <strong style="color: #1e1e1e; font-size: 14px;">
+                                            <?php echo esc_html($post_type->label); ?>
+                                        </strong>
+                                        <span style="color: #666; font-size: 12px; margin-left: 8px;">
+                                            (<?php echo esc_html($post_type->name); ?>)
+                                        </span>
+                                    </div>
+                                    
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="url" 
+                                               name="voxel_toolkit_options[redirect_posts][redirect_urls][<?php echo esc_attr($post_type->name); ?>]" 
+                                               value="<?php echo esc_url($current_url); ?>"
+                                               placeholder="https://example.com/expired-<?php echo esc_attr($post_type->name); ?>"
+                                               style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 3px; font-size: 13px;">
+                                        <?php if (!empty($current_url)): ?>
+                                            <a href="<?php echo esc_url($current_url); ?>" target="_blank" style="color: #0073aa; text-decoration: none;">
+                                                <span class="dashicons dashicons-external" title="Test redirect URL"></span>
+                                            </a>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Important Notes -->
+                    <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; font-size: 14px; margin-bottom: 20px;">
+                        <strong style="color: #856404;"><?php _e('⚠️ Important Notes:', 'voxel-toolkit'); ?></strong>
+                        <ul style="margin: 8px 0 0 20px; color: #856404;">
+                            <li><?php _e('Redirects use 301 (permanent) status codes', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Only affects single post pages (not archives)', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Test your redirect URLs before enabling', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Leave URL empty to disable redirects for that post type', 'voxel-toolkit'); ?></li>
+                        </ul>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <?php
+    }
+    
+    /**
+     * Get appropriate dashicon for post type
+     */
+    private function get_post_type_icon($post_type) {
+        $icons = array(
+            'post' => 'admin-post',
+            'page' => 'admin-page',
+            'product' => 'products',
+            'event' => 'calendar-alt',
+            'job' => 'businessman',
+            'place' => 'location',
+            'listing' => 'list-view',
+            'portfolio' => 'portfolio',
+            'testimonial' => 'testimonial'
+        );
+        
+        return isset($icons[$post_type]) ? $icons[$post_type] : 'admin-generic';
     }
     
     /**

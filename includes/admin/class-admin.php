@@ -165,21 +165,50 @@ class Voxel_Toolkit_Admin {
                 <p><?php _e('Welcome to Voxel Toolkit! This plugin provides additional functionality for your Voxel theme. Toggle functions on/off and configure their settings below.', 'voxel-toolkit'); ?></p>
             </div>
             
-            <div class="voxel-toolkit-search">
-                <div class="search-container">
-                    <input type="text" 
-                           id="voxel-toolkit-search" 
-                           class="search-input" 
-                           placeholder="<?php _e('Search functions...', 'voxel-toolkit'); ?>" 
-                           autocomplete="off">
-                    <button type="button" 
-                            id="voxel-toolkit-search-reset" 
-                            class="button button-secondary search-reset"
-                            title="<?php _e('Reset search', 'voxel-toolkit'); ?>">
-                        <?php _e('Reset', 'voxel-toolkit'); ?>
-                    </button>
+            <div class="voxel-toolkit-controls">
+                <div class="controls-row">
+                    <div class="search-section">
+                        <label for="voxel-toolkit-search" class="search-label">
+                            <span class="dashicons dashicons-search"></span>
+                            <?php _e('Search', 'voxel-toolkit'); ?>
+                        </label>
+                        <input type="text" 
+                               id="voxel-toolkit-search" 
+                               class="search-input" 
+                               placeholder="<?php _e('Type to search functions...', 'voxel-toolkit'); ?>" 
+                               autocomplete="off">
+                    </div>
+                    
+                    <div class="filter-section">
+                        <label class="filter-label"><?php _e('Show', 'voxel-toolkit'); ?></label>
+                        <div class="filter-options">
+                            <label class="filter-option">
+                                <input type="radio" name="function-filter" value="all" checked>
+                                <span><?php _e('All', 'voxel-toolkit'); ?></span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="function-filter" value="enabled">
+                                <span><?php _e('Enabled', 'voxel-toolkit'); ?></span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="function-filter" value="disabled">
+                                <span><?php _e('Disabled', 'voxel-toolkit'); ?></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="controls-actions">
+                        <button type="button" 
+                                id="voxel-toolkit-controls-reset" 
+                                class="button button-secondary controls-reset"
+                                title="<?php _e('Reset all filters', 'voxel-toolkit'); ?>">
+                            <span class="dashicons dashicons-update"></span>
+                            <?php _e('Reset', 'voxel-toolkit'); ?>
+                        </button>
+                    </div>
                 </div>
-                <div class="search-results-info" id="search-results-info"></div>
+                
+                <div class="controls-results" id="controls-results-info"></div>
             </div>
             
             <div class="voxel-toolkit-functions" id="voxel-toolkit-functions">
@@ -210,22 +239,30 @@ class Voxel_Toolkit_Admin {
     private function render_function_card($function_key, $function_data) {
         $is_enabled = $this->settings->is_function_enabled($function_key);
         $is_active = $this->functions_manager->is_function_active($function_key);
+        $is_always_enabled = isset($function_data['always_enabled']) && $function_data['always_enabled'];
         $settings_url = admin_url("admin.php?page=voxel-toolkit-settings#section-{$function_key}");
+        
+        // Always enabled functions should show as enabled
+        $display_enabled = $is_enabled || $is_always_enabled;
         ?>
-        <div class="voxel-toolkit-function-card <?php echo $is_enabled ? 'enabled' : 'disabled'; ?>"
+        <div class="voxel-toolkit-function-card <?php echo $display_enabled ? 'enabled' : 'disabled'; ?> <?php echo $is_always_enabled ? 'always-enabled' : ''; ?>"
              data-function-key="<?php echo esc_attr($function_key); ?>"
              data-function-name="<?php echo esc_attr(strtolower($function_data['name'])); ?>"
              data-function-description="<?php echo esc_attr(strtolower($function_data['description'])); ?>">
             <div class="function-header">
                 <h3><?php echo esc_html($function_data['name']); ?></h3>
                 <div class="function-toggle">
-                    <label class="toggle-switch">
-                        <input type="checkbox" 
-                               class="function-toggle-checkbox" 
-                               data-function="<?php echo esc_attr($function_key); ?>"
-                               <?php checked($is_enabled); ?>>
-                        <span class="slider"></span>
-                    </label>
+                    <?php if ($is_always_enabled): ?>
+                        <span class="always-enabled-badge"><?php _e('Always Active', 'voxel-toolkit'); ?></span>
+                    <?php else: ?>
+                        <label class="toggle-switch">
+                            <input type="checkbox" 
+                                   class="function-toggle-checkbox" 
+                                   data-function="<?php echo esc_attr($function_key); ?>"
+                                   <?php checked($is_enabled); ?>>
+                            <span class="slider"></span>
+                        </label>
+                    <?php endif; ?>
                 </div>
             </div>
             

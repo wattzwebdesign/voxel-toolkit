@@ -17,6 +17,15 @@
          */
         init: function() {
             this.bindEvents();
+            this.initializeFilters();
+        },
+        
+        /**
+         * Initialize filters on page load
+         */
+        initializeFilters: function() {
+            // Apply initial filters to show current state
+            this.applyFilters();
         },
         
         /**
@@ -29,9 +38,10 @@
             // Reset settings button
             $(document).on('click', '#reset-all-settings', this.handleResetSettings.bind(this));
             
-            // Search functionality
+            // Search and filter functionality
             $(document).on('input', '#voxel-toolkit-search', this.handleSearch.bind(this));
-            $(document).on('click', '#voxel-toolkit-search-reset', this.handleSearchReset.bind(this));
+            $(document).on('change', 'input[name="function-filter"]', this.handleFilterChange.bind(this));
+            $(document).on('click', '#voxel-toolkit-controls-reset', this.handleControlsReset.bind(this));
             
             // Handle AJAX errors globally
             $(document).ajaxError(this.handleAjaxError.bind(this));
@@ -86,6 +96,9 @@
                         
                         // Show success message
                         VoxelToolkitAdmin.showNotice(response.data.message, 'success');
+                        
+                        // Re-apply filters in case filter is active
+                        VoxelToolkitAdmin.applyFilters();
                     } else {
                         // Regular error - revert checkbox state
                         $checkbox.prop('checked', !enabled);
@@ -232,51 +245,67 @@
          * Handle search input - search as user types
          */
         handleSearch: function(e) {
-            const $input = $(e.target);
-            const searchTerm = $input.val().toLowerCase().trim();
-            
-            // Search immediately as user types
-            this.performSearch(searchTerm);
+            // Apply filters when search changes
+            this.applyFilters();
         },
         
         /**
-         * Perform the actual search
+         * Handle filter change
          */
-        performSearch: function(searchTerm) {
+        handleFilterChange: function(e) {
+            // Apply filters when radio button changes
+            this.applyFilters();
+        },
+        
+        /**
+         * Apply both search and filter
+         */
+        applyFilters: function() {
+            const searchTerm = $('#voxel-toolkit-search').val().toLowerCase().trim();
+            const filterValue = $('input[name="function-filter"]:checked').val();
+            
             const $functions = $('.voxel-toolkit-function-card');
-            const $resultsInfo = $('#search-results-info');
+            const $resultsInfo = $('#controls-results-info');
             let visibleCount = 0;
             let totalCount = $functions.length;
             
-            console.log('Searching for:', searchTerm, 'Total functions:', totalCount); // Debug
+            console.log('Applying filters - Search:', searchTerm, 'Filter:', filterValue); // Debug
             
-            if (searchTerm === '') {
-                // Show all functions
-                $functions.show();
-                $resultsInfo.empty();
-                console.log('Empty search - showing all functions'); // Debug
-                return;
-            }
-            
-            // Search through functions
+            // Filter through functions
             $functions.each(function() {
                 const $card = $(this);
                 const functionName = ($card.data('function-name') || '').toString().toLowerCase();
                 const functionDescription = ($card.data('function-description') || '').toString().toLowerCase();
                 const functionKey = ($card.data('function-key') || '').toString().toLowerCase();
+                const isEnabled = $card.hasClass('enabled');
+                const isAlwaysEnabled = $card.hasClass('always-enabled');
                 
                 // Also search in the visible text content
                 const cardText = $card.text().toLowerCase();
                 
-                // Check if search term matches any field
-                const matches = functionName.includes(searchTerm) || 
-                              functionDescription.includes(searchTerm) ||
-                              functionKey.includes(searchTerm) ||
-                              cardText.includes(searchTerm);
+                // Check search criteria
+                let matchesSearch = true;
+                if (searchTerm !== '') {
+                    matchesSearch = functionName.includes(searchTerm) || 
+                                  functionDescription.includes(searchTerm) ||
+                                  functionKey.includes(searchTerm) ||
+                                  cardText.includes(searchTerm);
+                }
                 
-                console.log('Function:', functionKey, 'Matches:', matches); // Debug
+                // Check filter criteria
+                let matchesFilter = true;
+                if (filterValue === 'enabled') {
+                    matchesFilter = isEnabled || isAlwaysEnabled;
+                } else if (filterValue === 'disabled') {
+                    matchesFilter = !isEnabled && !isAlwaysEnabled;
+                }
+                // 'all' matches everything, so no additional check needed
                 
-                if (matches) {
+                const shouldShow = matchesSearch && matchesFilter;
+                
+                console.log('Function:', functionKey, 'Enabled:', isEnabled, 'Always:', isAlwaysEnabled, 'Matches search:', matchesSearch, 'Matches filter:', matchesFilter, 'Show:', shouldShow); // Debug
+                
+                if (shouldShow) {
                     $card.show();
                     visibleCount++;
                 } else {
@@ -287,45 +316,67 @@
             console.log('Visible count:', visibleCount); // Debug
             
             // Update results info
-            this.updateSearchResults(searchTerm, visibleCount, totalCount);
+            this.updateResultsInfo(searchTerm, filterValue, visibleCount, totalCount);
         },
         
         /**
-         * Update search results information
+         * Update results information
          */
-        updateSearchResults: function(searchTerm, visibleCount, totalCount) {
-            const $resultsInfo = $('#search-results-info');
+        updateResultsInfo: function(searchTerm, filterValue, visibleCount, totalCount) {
+            const $resultsInfo = $('#controls-results-info');
             
             if (visibleCount === 0) {
-                $resultsInfo.html('<span class="no-results">No functions found for "' + searchTerm + '"</span>');
-            } else if (visibleCount === totalCount) {
-                $resultsInfo.empty();
+                let message = 'No functions found';
+                if (searchTerm && filterValue !== 'all') {
+                    const filterText = filterValue === 'enabled' ? 'enabled' : 'disabled';
+                    message += ' for "' + searchTerm + '" in ' + filterText + ' functions';
+                } else if (searchTerm) {
+                    message += ' for "' + searchTerm + '"';
+                } else if (filterValue === 'enabled') {
+                    message = 'No enabled functions found';
+                } else if (filterValue === 'disabled') {
+                    message = 'No disabled functions found';
+                }
+                $resultsInfo.html('<div class="results-message no-results"><span class="dashicons dashicons-warning"></span>' + message + '</div>');
+            } else if (visibleCount === totalCount && !searchTerm && filterValue === 'all') {
+                $resultsInfo.html('<div class="results-message all-showing"><span class="dashicons dashicons-yes"></span>Showing all ' + totalCount + ' functions</div>');
             } else {
                 const resultsText = visibleCount === 1 ? 'function' : 'functions';
-                $resultsInfo.html('<span class="search-results">Showing ' + visibleCount + ' of ' + totalCount + ' ' + resultsText + ' for "' + searchTerm + '"</span>');
+                let message = 'Showing ' + visibleCount + ' of ' + totalCount + ' ' + resultsText;
+                
+                const conditions = [];
+                if (searchTerm) conditions.push('matching "' + searchTerm + '"');
+                if (filterValue === 'enabled') conditions.push('enabled only');
+                if (filterValue === 'disabled') conditions.push('disabled only');
+                
+                if (conditions.length > 0) {
+                    message += ' (' + conditions.join(', ') + ')';
+                }
+                
+                $resultsInfo.html('<div class="results-message filtered-results"><span class="dashicons dashicons-filter"></span>' + message + '</div>');
             }
         },
         
         /**
-         * Handle search reset
+         * Handle controls reset
          */
-        handleSearchReset: function(e) {
+        handleControlsReset: function(e) {
             e.preventDefault();
             
             const $searchInput = $('#voxel-toolkit-search');
-            const $functions = $('.voxel-toolkit-function-card');
-            const $resultsInfo = $('#search-results-info');
+            const $allRadio = $('input[name="function-filter"][value="all"]');
             
-            console.log('Resetting search'); // Debug
+            console.log('Resetting all controls'); // Debug
             
-            // Clear search input
-            $searchInput.val('').focus();
+            // Clear search input and reset filter
+            $searchInput.val('');
+            $allRadio.prop('checked', true);
             
-            // Show all functions
-            $functions.show();
+            // Re-apply filters (which will show all functions)
+            this.applyFilters();
             
-            // Clear results info
-            $resultsInfo.empty();
+            // Focus on search input
+            $searchInput.focus();
         }
     };
     

@@ -67,6 +67,36 @@ class Voxel_Toolkit_Duplicate_Post {
     }
     
     /**
+     * Check if current user can duplicate posts based on role settings
+     */
+    private function can_user_duplicate() {
+        if (!is_user_logged_in()) {
+            return false;
+        }
+        
+        $settings = Voxel_Toolkit_Settings::instance();
+        $duplicate_settings = $settings->get_function_settings('duplicate_post', array());
+        $allowed_roles = isset($duplicate_settings['allowed_roles']) ? $duplicate_settings['allowed_roles'] : array('contributor', 'author', 'editor', 'administrator');
+        
+        // If "all_roles" is selected, allow everyone
+        if (in_array('all_roles', $allowed_roles)) {
+            return true;
+        }
+        
+        // Check if user has any of the allowed roles
+        $user = wp_get_current_user();
+        $user_roles = $user->roles;
+        
+        foreach ($user_roles as $role) {
+            if (in_array($role, $allowed_roles)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
      * Add duplicate link to row actions
      */
     public function add_duplicate_link($actions, $post) {
@@ -74,7 +104,8 @@ class Voxel_Toolkit_Duplicate_Post {
             return $actions;
         }
         
-        if (!current_user_can('edit_posts') || !current_user_can('edit_post', $post->ID)) {
+        // Check if user can duplicate based on role settings
+        if (!$this->can_user_duplicate()) {
             return $actions;
         }
         
@@ -110,7 +141,8 @@ class Voxel_Toolkit_Duplicate_Post {
             return;
         }
         
-        if (!current_user_can('edit_posts') || !current_user_can('edit_post', $post->ID)) {
+        // Check if user can duplicate based on role settings
+        if (!$this->can_user_duplicate()) {
             return;
         }
         
@@ -156,8 +188,9 @@ class Voxel_Toolkit_Duplicate_Post {
             wp_die(__('Post not found!', 'voxel-toolkit'));
         }
         
-        if (!current_user_can('edit_posts') || !current_user_can('edit_post', $post_id)) {
-            wp_die(__('You do not have permission to duplicate this post.', 'voxel-toolkit'));
+        // Check if user can duplicate based on role settings
+        if (!$this->can_user_duplicate()) {
+            wp_die(__('You do not have permission to duplicate posts.', 'voxel-toolkit'));
         }
         
         if (!$this->is_enabled_for_post_type($post->post_type)) {
@@ -328,12 +361,11 @@ class Voxel_Toolkit_Duplicate_Post {
      * Enqueue frontend scripts
      */
     public function enqueue_frontend_scripts() {
-        if (!is_user_logged_in()) {
-            return;
+        // Only enqueue for users who can duplicate
+        if ($this->can_user_duplicate()) {
+            wp_enqueue_script('jquery');
+            wp_add_inline_script('jquery', $this->get_frontend_js());
         }
-        
-        wp_enqueue_script('jquery');
-        wp_add_inline_script('jquery', $this->get_frontend_js());
     }
     
     /**
@@ -389,11 +421,6 @@ class Voxel_Toolkit_Duplicate_Post {
             wp_send_json_error(array('message' => 'Security check failed'));
         }
         
-        // Check permissions
-        if (!current_user_can('edit_posts')) {
-            wp_send_json_error(array('message' => 'You do not have permission to duplicate posts'));
-        }
-        
         $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
         $redirect_type = isset($_POST['redirect_type']) ? sanitize_text_field($_POST['redirect_type']) : 'create_page';
         
@@ -407,8 +434,9 @@ class Voxel_Toolkit_Duplicate_Post {
             wp_send_json_error(array('message' => 'Duplication not enabled for this post type'));
         }
         
-        if (!current_user_can('edit_post', $post_id)) {
-            wp_send_json_error(array('message' => 'You do not have permission to duplicate this post'));
+        // Check if user can duplicate based on role settings
+        if (!$this->can_user_duplicate()) {
+            wp_send_json_error(array('message' => 'You do not have permission to duplicate posts'));
         }
         
         // Create the duplicate
