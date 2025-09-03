@@ -183,6 +183,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-auto-promotion.php',
                 'settings_callback' => array($this, 'render_auto_promotion_settings'),
                 'version' => '1.0'
+            ),
+            'custom_submission_messages' => array(
+                'name' => __('Custom Submission Messages', 'voxel-toolkit'),
+                'description' => __('Customize confirmation messages shown to users after submitting different post types.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Custom_Submission_Messages',
+                'file' => 'functions/class-custom-submission-messages.php',
+                'settings_callback' => array($this, 'render_custom_submission_messages_settings'),
+                'version' => '1.0'
             )
         );
         
@@ -1727,54 +1735,71 @@ class Voxel_Toolkit_Functions {
     public function render_pre_approve_posts_settings($settings) {
         $show_column = isset($settings['show_column']) ? $settings['show_column'] : true;
         $approve_verified = isset($settings['approve_verified']) ? $settings['approve_verified'] : false;
+        $approved_roles = isset($settings['approved_roles']) ? $settings['approved_roles'] : array();
         ?>
         <tr>
-            <th scope="row">
-                <label for="pre_approve_posts_show_column"><?php _e('Show Pre-Approved Column', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <label>
-                    <input type="checkbox" 
-                           id="pre_approve_posts_show_column"
-                           name="voxel_toolkit_options[pre_approve_posts][show_column]" 
-                           value="1"
-                           <?php checked($show_column); ?> />
-                    <?php _e('Display "Pre-Approved?" column in the users list', 'voxel-toolkit'); ?>
+            <th>
+                <label for="pre_approve_posts_auto_approve_verified">
+                    <?php _e('Auto-Approve Verified Users', 'voxel-toolkit'); ?>
                 </label>
-                <p class="description"><?php _e('When enabled, shows a column in the users list indicating which users have pre-approval settings.', 'voxel-toolkit'); ?></p>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">
-                <label for="pre_approve_posts_approve_verified"><?php _e('Approve Verified Users', 'voxel-toolkit'); ?></label>
             </th>
             <td>
                 <label>
                     <input type="checkbox" 
-                           id="pre_approve_posts_approve_verified"
                            name="voxel_toolkit_options[pre_approve_posts][approve_verified]" 
-                           value="1"
-                           <?php checked($approve_verified); ?> />
+                           id="pre_approve_posts_auto_approve_verified" 
+                           value="1" 
+                           <?php checked($approve_verified); ?>>
                     <?php _e('Automatically approve posts from users with verified profiles', 'voxel-toolkit'); ?>
                 </label>
-                <p class="description"><?php _e('When enabled, users with voxel:verified = 1 in their profile meta will have their posts automatically published.', 'voxel-toolkit'); ?></p>
+                <p class="description">
+                    <?php _e('When enabled, users with verified Voxel profiles will have posts automatically approved.', 'voxel-toolkit'); ?>
+                </p>
             </td>
         </tr>
+        
         <tr>
-            <th scope="row"><?php _e('How It Works', 'voxel-toolkit'); ?></th>
+            <th>
+                <label for="pre_approve_posts_approved_roles">
+                    <?php _e('Auto-Approve Roles', 'voxel-toolkit'); ?>
+                </label>
+            </th>
             <td>
-                <div class="voxel-toolkit-info-box">
-                    <h4><?php _e('Manual Pre-Approval:', 'voxel-toolkit'); ?></h4>
-                    <ol>
-                        <li><?php _e('Go to any user\'s profile page in WordPress admin', 'voxel-toolkit'); ?></li>
-                        <li><?php _e('Find the "Pre-Approve Posts Settings" section', 'voxel-toolkit'); ?></li>
-                        <li><?php _e('Check the post types you want to pre-approve for that user', 'voxel-toolkit'); ?></li>
-                        <li><?php _e('When that user submits a post that would normally be pending, it will automatically be published', 'voxel-toolkit'); ?></li>
-                    </ol>
-                    <h4><?php _e('Verified Profile Auto-Approval:', 'voxel-toolkit'); ?></h4>
-                    <p><?php _e('When "Approve Verified Users" is enabled, any user with a verified Voxel profile will have their posts automatically approved, regardless of manual pre-approval settings.', 'voxel-toolkit'); ?></p>
-                    <p><strong><?php _e('Note:', 'voxel-toolkit'); ?></strong> <?php _e('Only administrators can manage pre-approval settings for users.', 'voxel-toolkit'); ?></p>
-                </div>
+                <?php 
+                $all_roles = wp_roles()->roles;
+                foreach($all_roles as $role_key => $role_info): ?>
+                    <label style="display: block; margin: 5px 0;">
+                        <input type="checkbox" 
+                               name="voxel_toolkit_options[pre_approve_posts][approved_roles][]" 
+                               value="<?php echo esc_attr($role_key); ?>"
+                               <?php checked(in_array($role_key, $approved_roles)); ?>>
+                        <?php echo esc_html($role_info['name']); ?>
+                    </label>
+                <?php endforeach; ?>
+                <p class="description">
+                    <?php _e('Select user roles that should have posts automatically approved.', 'voxel-toolkit'); ?>
+                </p>
+            </td>
+        </tr>
+        
+        <tr>
+            <th>
+                <label for="pre_approve_posts_show_column">
+                    <?php _e('Show Pre-Approved Column', 'voxel-toolkit'); ?>
+                </label>
+            </th>
+            <td>
+                <label>
+                    <input type="checkbox" 
+                           name="voxel_toolkit_options[pre_approve_posts][show_column]" 
+                           id="pre_approve_posts_show_column" 
+                           value="1" 
+                           <?php checked($show_column); ?>>
+                    <?php _e('Display "Pre-Approved?" column in the users list', 'voxel-toolkit'); ?>
+                </label>
+                <p class="description">
+                    <?php _e('Shows a column in the users list indicating which users have pre-approval settings.', 'voxel-toolkit'); ?>
+                </p>
             </td>
         </tr>
         <?php
@@ -2264,6 +2289,132 @@ class Voxel_Toolkit_Functions {
                 </div>
             </td>
         </tr>
+        <?php
+    }
+    
+    /**
+     * Render Custom Submission Messages settings
+     */
+    public function render_custom_submission_messages_settings($settings) {
+        $post_type_settings = isset($settings['post_type_settings']) ? $settings['post_type_settings'] : array();
+        
+        // Check if pre-approve posts function is enabled
+        $settings_instance = Voxel_Toolkit_Settings::instance();
+        $pre_approve_enabled = $settings_instance->is_function_enabled('pre_approve_posts');
+        
+        // Get available post types
+        $post_types = get_post_types(array('public' => true), 'objects');
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('Custom Submission Messages Settings', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 800px;">
+                    <!-- How it works -->
+                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px; margin-bottom: 20px;">
+                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
+                        <?php _e('Customize confirmation messages shown to users after submitting different post types. You can set different messages for pending review, published posts, and pre-approved users.', 'voxel-toolkit'); ?>
+                    </div>
+                    
+                    <?php foreach ($post_types as $post_type): ?>
+                        <?php if (in_array($post_type->name, array('attachment', 'page'))) continue; ?>
+                        <?php
+                        $enabled = isset($post_type_settings[$post_type->name]['enabled']) ? $post_type_settings[$post_type->name]['enabled'] : false;
+                        $messages = isset($post_type_settings[$post_type->name]['messages']) ? $post_type_settings[$post_type->name]['messages'] : array();
+                        ?>
+                        
+                        <!-- Post Type Section -->
+                        <div style="background: #e7f6ff; border: 1px solid #b3d9ff; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                            <!-- Post Type Header -->
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: flex; align-items: center; cursor: pointer; margin-bottom: 10px;">
+                                    <input type="checkbox" 
+                                           name="voxel_toolkit_options[custom_submission_messages][post_type_settings][<?php echo esc_attr($post_type->name); ?>][enabled]" 
+                                           id="custom_msg_<?php echo esc_attr($post_type->name); ?>_enabled"
+                                           value="1" 
+                                           <?php checked($enabled); ?>
+                                           onchange="toggleCustomMessageSection('<?php echo esc_js($post_type->name); ?>')"
+                                           style="margin-right: 12px; transform: scale(1.2);">
+                                    <div>
+                                        <strong style="display: block; color: #1e1e1e; font-size: 16px;">
+                                            <?php echo esc_html($post_type->labels->name); ?>
+                                        </strong>
+                                        <span style="color: #666; font-size: 13px;">
+                                            <?php printf(__('Customize submission messages for %s', 'voxel-toolkit'), $post_type->labels->name); ?>
+                                        </span>
+                                    </div>
+                                </label>
+                            </div>
+                            
+                            <!-- Message Type Settings -->
+                            <div id="custom_msg_<?php echo esc_attr($post_type->name); ?>_settings" style="<?php echo $enabled ? '' : 'display: none;'; ?>">
+                                
+                                <!-- Pending Review Message -->
+                                <div style="margin-bottom: 20px;">
+                                    <h4 style="margin: 0 0 10px 0; color: #1e1e1e; font-size: 14px; font-weight: 600;">
+                                        <?php _e('Pending Review Message', 'voxel-toolkit'); ?>
+                                    </h4>
+                                    <textarea name="voxel_toolkit_options[custom_submission_messages][post_type_settings][<?php echo esc_attr($post_type->name); ?>][messages][pending_review]"
+                                              rows="3" 
+                                              style="width: 100%; border: 1px solid #ccd0d4; border-radius: 4px; padding: 8px;"
+                                              placeholder="<?php printf(__('Message shown when %s are submitted for review (e.g., "Thanks for your submission! We\'ll review it within 24 hours.")', 'voxel-toolkit'), strtolower($post_type->labels->name)); ?>"><?php echo esc_textarea($messages['pending_review'] ?? ''); ?></textarea>
+                                </div>
+                                
+                                <!-- Published Message -->
+                                <div style="margin-bottom: 20px;">
+                                    <h4 style="margin: 0 0 10px 0; color: #1e1e1e; font-size: 14px; font-weight: 600;">
+                                        <?php _e('Published Message', 'voxel-toolkit'); ?>
+                                    </h4>
+                                    <textarea name="voxel_toolkit_options[custom_submission_messages][post_type_settings][<?php echo esc_attr($post_type->name); ?>][messages][published]"
+                                              rows="3" 
+                                              style="width: 100%; border: 1px solid #ccd0d4; border-radius: 4px; padding: 8px;"
+                                              placeholder="<?php printf(__('Message shown when %s are published immediately (e.g., "Congratulations! Your %s is now live.")', 'voxel-toolkit'), strtolower($post_type->labels->name), strtolower($post_type->labels->singular_name)); ?>"><?php echo esc_textarea($messages['published'] ?? ''); ?></textarea>
+                                </div>
+                                
+                                <!-- Pre-Approved Message -->
+                                <div style="margin-bottom: 10px; <?php echo !$pre_approve_enabled ? 'opacity: 0.5; pointer-events: none;' : ''; ?>">
+                                    <h4 style="margin: 0 0 10px 0; color: #1e1e1e; font-size: 14px; font-weight: 600;">
+                                        <?php _e('Pre-Approved Message', 'voxel-toolkit'); ?>
+                                        <?php if (!$pre_approve_enabled): ?>
+                                            <span style="font-size: 12px; color: #d63638; font-weight: normal;">
+                                                (<?php _e('Pre-Approve Posts function required', 'voxel-toolkit'); ?>)
+                                            </span>
+                                        <?php endif; ?>
+                                    </h4>
+                                    <textarea name="voxel_toolkit_options[custom_submission_messages][post_type_settings][<?php echo esc_attr($post_type->name); ?>][messages][pre_approved]"
+                                              rows="3" 
+                                              style="width: 100%; border: 1px solid #ccd0d4; border-radius: 4px; padding: 8px;"
+                                              placeholder="<?php printf(__('Message shown to pre-approved users (e.g., "Thanks for your %s! It\'s been published automatically.")', 'voxel-toolkit'), strtolower($post_type->labels->singular_name)); ?>"
+                                              <?php echo !$pre_approve_enabled ? 'disabled' : ''; ?>><?php echo esc_textarea($messages['pre_approved'] ?? ''); ?></textarea>
+                                    <?php if (!$pre_approve_enabled): ?>
+                                        <p style="margin: 8px 0 0 0; color: #d63638; font-size: 13px;">
+                                            <?php _e('Enable the Pre-Approve Posts function to use this message type.', 'voxel-toolkit'); ?>
+                                        </p>
+                                    <?php endif; ?>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
+                    <?php endforeach; ?>
+                    
+                </div>
+            </td>
+        </tr>
+        
+        <script type="text/javascript">
+        function toggleCustomMessageSection(postType) {
+            var checkbox = document.getElementById('custom_msg_' + postType + '_enabled');
+            var settings = document.getElementById('custom_msg_' + postType + '_settings');
+            
+            if (checkbox.checked) {
+                settings.style.display = 'block';
+            } else {
+                settings.style.display = 'none';
+            }
+        }
+        </script>
         <?php
     }
     

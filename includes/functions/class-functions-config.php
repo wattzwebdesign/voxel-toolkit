@@ -129,6 +129,39 @@ class Voxel_Toolkit_Functions_Config {
                         'description' => __('Select which post types to auto-promote when published.', 'voxel-toolkit')
                     )
                 )
+            ),
+            
+            'pre_approve_posts' => array(
+                'name' => __('Pre-Approve Posts', 'voxel-toolkit'),
+                'description' => __('Allow certain users to publish posts immediately without review based on verification status or manual approval.', 'voxel-toolkit'),
+                'enabled_by_default' => false,
+                'class' => 'Voxel_Toolkit_Pre_Approve_Posts',
+                'settings' => array(
+                    'show_column' => array(
+                        'label' => __('Show Admin Column', 'voxel-toolkit'),
+                        'type' => 'checkbox',
+                        'default' => true,
+                        'description' => __('Show pre-approved status column in the Users admin list.', 'voxel-toolkit')
+                    ),
+                    'approve_verified' => array(
+                        'label' => __('Auto-Approve Verified Users', 'voxel-toolkit'),
+                        'type' => 'checkbox',
+                        'default' => false,
+                        'description' => __('Automatically approve posts from users with verified profiles.', 'voxel-toolkit')
+                    ),
+                    'approved_roles' => array(
+                        'label' => __('Auto-Approve Roles', 'voxel-toolkit'),
+                        'type' => 'roles',
+                        'default' => array(),
+                        'description' => __('Select user roles that should have posts automatically approved.', 'voxel-toolkit')
+                    ),
+                    'post_types' => array(
+                        'label' => __('Applicable Post Types', 'voxel-toolkit'),
+                        'type' => 'post_types',
+                        'default' => array(),
+                        'description' => __('Select which post types this auto-approval applies to. Leave empty for all post types.', 'voxel-toolkit')
+                    )
+                )
             )
         );
     }

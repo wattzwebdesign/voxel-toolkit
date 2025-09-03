@@ -32,6 +32,7 @@ class Voxel_Toolkit_Pre_Approve_Posts {
             'enabled' => false,
             'show_column' => true,
             'approve_verified' => false,
+            'approved_roles' => array(),
             'post_types' => array()
         ));
         
@@ -70,6 +71,7 @@ class Voxel_Toolkit_Pre_Approve_Posts {
         
         // Add admin styles
         add_action('admin_head', array($this, 'add_admin_styles'));
+        
     }
     
     /**
@@ -88,28 +90,59 @@ class Voxel_Toolkit_Pre_Approve_Posts {
             $user_pre_approvals = array();
         }
         ?>
-        <h3><?php _e('Pre-Approve Posts Settings', 'voxel-toolkit'); ?></h3>
+        <h3><?php _e('Voxel Toolkit Settings', 'voxel-toolkit'); ?></h3>
         <table class="form-table">
             <tr>
-                <th scope="row"><?php _e('Pre-Approve Posts?', 'voxel-toolkit'); ?></th>
+                <th>
+                    <label for="voxel_toolkit_pre_approved">
+                        <?php _e('Pre-Approved for Publishing', 'voxel-toolkit'); ?>
+                    </label>
+                </th>
                 <td>
-                    <fieldset>
-                        <legend class="screen-reader-text"><span><?php _e('Pre-Approve Posts', 'voxel-toolkit'); ?></span></legend>
-                        <?php foreach ($post_types as $post_type): ?>
-                            <?php if ($post_type->name === 'attachment') continue; ?>
-                            <label for="pre_approve_<?php echo esc_attr($post_type->name); ?>">
-                                <input type="checkbox" 
-                                       name="voxel_toolkit_pre_approved_post_types[]" 
-                                       id="pre_approve_<?php echo esc_attr($post_type->name); ?>"
-                                       value="<?php echo esc_attr($post_type->name); ?>"
-                                       <?php checked(in_array($post_type->name, $user_pre_approvals)); ?> />
-                                <?php echo esc_html($post_type->labels->name); ?>
-                            </label><br />
-                        <?php endforeach; ?>
-                    </fieldset>
+                    <label>
+                        <input type="checkbox" 
+                               name="voxel_toolkit_pre_approved" 
+                               id="voxel_toolkit_pre_approved" 
+                               value="yes" 
+                               <?php checked(get_user_meta($user->ID, 'voxel_toolkit_pre_approved', true) === 'yes'); ?>>
+                        <?php _e('Allow this user to publish posts without review', 'voxel-toolkit'); ?>
+                    </label>
                     <p class="description">
-                        <?php _e('When enabled, posts from this user will automatically be published instead of being marked as pending.', 'voxel-toolkit'); ?>
+                        <?php _e('When enabled, posts from this user will be automatically published instead of pending review.', 'voxel-toolkit'); ?>
                     </p>
+                    
+                    <?php 
+                    // Check if user is auto-approved by role
+                    $user = get_user_by('ID', $user->ID);
+                    $role_approved = false;
+                    $approved_roles = !empty($this->options['approved_roles']) ? $this->options['approved_roles'] : array();
+                    
+                    if ($user && !empty($approved_roles)) {
+                        foreach ($approved_roles as $role) {
+                            if (in_array($role, $user->roles)) {
+                                $role_approved = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    $verified_approved = false;
+                    if (!empty($this->options['approve_verified']) && $this->is_user_verified($user->ID)) {
+                        $verified_approved = true;
+                    }
+                    
+                    if ($role_approved || $verified_approved): ?>
+                        <div style="margin-top: 10px; padding: 10px; background: #f0f8ff; border-left: 4px solid #2271b1;">
+                            <strong><?php _e('Auto-Approval Status:', 'voxel-toolkit'); ?></strong><br>
+                            <?php if ($role_approved): ?>
+                                <span style="color: #2271b1;">✓ <?php _e('Approved by user role', 'voxel-toolkit'); ?></span><br>
+                            <?php endif; ?>
+                            <?php if ($verified_approved): ?>
+                                <span style="color: #2271b1;">✓ <?php _e('Approved by verified profile', 'voxel-toolkit'); ?></span><br>
+                            <?php endif; ?>
+                            <em><?php _e('This user is automatically pre-approved regardless of manual setting above.', 'voxel-toolkit'); ?></em>
+                        </div>
+                    <?php endif; ?>
                 </td>
             </tr>
         </table>
@@ -124,11 +157,11 @@ class Voxel_Toolkit_Pre_Approve_Posts {
             return;
         }
         
-        $pre_approved_types = isset($_POST['voxel_toolkit_pre_approved_post_types']) 
-            ? array_map('sanitize_text_field', $_POST['voxel_toolkit_pre_approved_post_types']) 
-            : array();
-        
-        update_user_meta($user_id, 'voxel_toolkit_pre_approved_post_types', $pre_approved_types);
+        if (isset($_POST['voxel_toolkit_pre_approved'])) {
+            update_user_meta($user_id, 'voxel_toolkit_pre_approved', 'yes');
+        } else {
+            delete_user_meta($user_id, 'voxel_toolkit_pre_approved');
+        }
     }
     
     /**
@@ -144,12 +177,38 @@ class Voxel_Toolkit_Pre_Approve_Posts {
      */
     public function show_users_column_content($value, $column_name, $user_id) {
         if ($column_name === 'pre_approved') {
-            $pre_approved_types = get_user_meta($user_id, 'voxel_toolkit_pre_approved_post_types', true);
-            
-            if (!empty($pre_approved_types) && is_array($pre_approved_types)) {
-                // Show green checkmark
-                return '<span class="voxel-toolkit-pre-approved-check" title="' . 
-                       esc_attr(implode(', ', $pre_approved_types)) . '">✓</span>';
+            if ($this->is_user_pre_approved_any($user_id)) {
+                $manually_approved = get_user_meta($user_id, 'voxel_toolkit_pre_approved', true) === 'yes';
+                $verified_approved = !empty($this->options['approve_verified']) && $this->is_user_verified($user_id);
+                $role_approved = false;
+                
+                // Check role approval
+                if (!empty($this->options['approved_roles'])) {
+                    $user = get_user_by('ID', $user_id);
+                    if ($user) {
+                        foreach ($this->options['approved_roles'] as $role) {
+                            if (in_array($role, $user->roles)) {
+                                $role_approved = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                $methods = array();
+                if ($manually_approved) $methods[] = __('Manual', 'voxel-toolkit');
+                if ($verified_approved) $methods[] = __('Verified', 'voxel-toolkit');
+                if ($role_approved) $methods[] = __('Role', 'voxel-toolkit');
+                
+                $title = !empty($methods) ? implode(', ', $methods) : __('Pre-Approved', 'voxel-toolkit');
+                
+                if ($manually_approved) {
+                    return '<span class="voxel-toolkit-pre-approved-check" style="color: green;" title="' . esc_attr($title) . '">✓ ' . __('Manual', 'voxel-toolkit') . '</span>';
+                } elseif ($verified_approved) {
+                    return '<span class="voxel-toolkit-pre-approved-check" style="color: blue;" title="' . esc_attr($title) . '">✓ ' . __('Verified', 'voxel-toolkit') . '</span>';
+                } elseif ($role_approved) {
+                    return '<span class="voxel-toolkit-pre-approved-check" style="color: purple;" title="' . esc_attr($title) . '">✓ ' . __('Role', 'voxel-toolkit') . '</span>';
+                }
             }
         }
         return $value;
@@ -206,21 +265,36 @@ class Voxel_Toolkit_Pre_Approve_Posts {
      * Check if user is pre-approved for a post type
      */
     private function is_user_pre_approved($user_id, $post_type) {
-        // Check if verified profile approval is enabled and user is verified
-        if (!empty($this->options['approve_verified'])) {
-            if ($this->is_user_verified($user_id)) {
-                return true;
+        return $this->is_user_pre_approved_any($user_id);
+    }
+    
+    /**
+     * Check if user is pre-approved by any method
+     */
+    public function is_user_pre_approved_any($user_id) {
+        // Manual pre-approval
+        if (get_user_meta($user_id, 'voxel_toolkit_pre_approved', true) === 'yes') {
+            return true;
+        }
+        
+        // Role-based approval
+        if (!empty($this->options['approved_roles'])) {
+            $user = get_user_by('ID', $user_id);
+            if ($user) {
+                foreach ($this->options['approved_roles'] as $role) {
+                    if (in_array($role, $user->roles)) {
+                        return true;
+                    }
+                }
             }
         }
         
-        // Check manual pre-approval
-        $pre_approved_types = get_user_meta($user_id, 'voxel_toolkit_pre_approved_post_types', true);
-        
-        if (!is_array($pre_approved_types)) {
-            return false;
+        // Verified user approval
+        if (!empty($this->options['approve_verified']) && $this->is_user_verified($user_id)) {
+            return true;
         }
         
-        return in_array($post_type, $pre_approved_types);
+        return false;
     }
     
     /**
@@ -277,4 +351,5 @@ class Voxel_Toolkit_Pre_Approve_Posts {
         
         return $available;
     }
+    
 }
