@@ -42,6 +42,7 @@ class Voxel_Toolkit_Admin {
         add_action('wp_ajax_voxel_toolkit_toggle_function', array($this, 'ajax_toggle_function'));
         add_action('wp_ajax_voxel_toolkit_toggle_widget', array($this, 'ajax_toggle_widget'));
         add_action('wp_ajax_voxel_toolkit_reset_settings', array($this, 'ajax_reset_settings'));
+        add_action('wp_ajax_voxel_toolkit_test_auto_promotion', array($this, 'ajax_test_auto_promotion'));
     }
     
     /**
@@ -567,6 +568,50 @@ class Voxel_Toolkit_Admin {
                         // No additional settings needed - just enabled/disabled
                         break;
                     
+                    case 'auto_promotion':
+                        // Sanitize post types
+                        if (isset($function_input['post_types']) && is_array($function_input['post_types'])) {
+                            $sanitized_function['post_types'] = array_map('sanitize_text_field', $function_input['post_types']);
+                        } else {
+                            $sanitized_function['post_types'] = array();
+                        }
+                        
+                        // Sanitize individual post type settings
+                        foreach ($function_input as $key => $value) {
+                            if (strpos($key, 'settings_') === 0 && is_array($value)) {
+                                $post_type = str_replace('settings_', '', $key);
+                                $post_type = sanitize_text_field($post_type);
+                                
+                                $sanitized_settings = array();
+                                
+                                // Sanitize priority
+                                if (isset($value['priority'])) {
+                                    $priority = intval($value['priority']);
+                                    $sanitized_settings['priority'] = max(1, min(999, $priority)); // Clamp between 1-999
+                                } else {
+                                    $sanitized_settings['priority'] = 10; // Default
+                                }
+                                
+                                // Sanitize duration
+                                if (isset($value['duration'])) {
+                                    $duration = intval($value['duration']);
+                                    $sanitized_settings['duration'] = max(1, min(999, $duration)); // Clamp between 1-999
+                                } else {
+                                    $sanitized_settings['duration'] = 24; // Default
+                                }
+                                
+                                // Sanitize duration unit
+                                if (isset($value['duration_unit']) && in_array($value['duration_unit'], array('hours', 'days', 'weeks'))) {
+                                    $sanitized_settings['duration_unit'] = sanitize_text_field($value['duration_unit']);
+                                } else {
+                                    $sanitized_settings['duration_unit'] = 'hours'; // Default
+                                }
+                                
+                                $sanitized_function['settings_' . $post_type] = $sanitized_settings;
+                            }
+                        }
+                        break;
+                    
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(
@@ -898,5 +943,53 @@ class Voxel_Toolkit_Admin {
             <?php endif; ?>
         </div>
         <?php
+    }
+    
+    /**
+     * Handle AJAX test for auto promotion
+     */
+    public function ajax_test_auto_promotion() {
+        // Verify nonce
+        if (!wp_verify_nonce($_POST['nonce'], 'voxel_toolkit_test_nonce')) {
+            wp_send_json_error(__('Security check failed.', 'voxel-toolkit'));
+        }
+        
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('You do not have sufficient permissions.', 'voxel-toolkit'));
+        }
+        
+        // Check if function is enabled
+        if (!$this->settings->is_function_enabled('auto_promotion')) {
+            wp_send_json_error(__('Auto Promotion function is not enabled.', 'voxel-toolkit'));
+        }
+        
+        // Get the function instance
+        $functions_manager = Voxel_Toolkit_Functions::instance();
+        $auto_promotion_instance = null;
+        
+        // Try to get the instance
+        if (class_exists('Voxel_Toolkit_Auto_Promotion')) {
+            $auto_promotion_instance = Voxel_Toolkit_Auto_Promotion::instance();
+        }
+        
+        if (!$auto_promotion_instance) {
+            wp_send_json_error(__('Auto Promotion instance not found. Make sure the function is enabled.', 'voxel-toolkit'));
+        }
+        
+        // Run the manual test
+        try {
+            $result = $auto_promotion_instance->manual_test();
+            
+            if ($result) {
+                wp_send_json_success(array(
+                    'message' => __('Test completed successfully! Check the error log for detailed debug information.', 'voxel-toolkit')
+                ));
+            } else {
+                wp_send_json_error(__('Test failed. Check the error log for details.', 'voxel-toolkit'));
+            }
+        } catch (Exception $e) {
+            wp_send_json_error(__('Test error: ', 'voxel-toolkit') . $e->getMessage());
+        }
     }
 }

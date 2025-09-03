@@ -175,6 +175,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-redirect-posts.php',
                 'settings_callback' => array($this, 'render_redirect_posts_settings'),
                 'version' => '1.0'
+            ),
+            'auto_promotion' => array(
+                'name' => __('Auto Promotion', 'voxel-toolkit'),
+                'description' => __('Automatically boost newly published posts for a set duration to increase their visibility and ranking.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Auto_Promotion',
+                'file' => 'functions/class-auto-promotion.php',
+                'settings_callback' => array($this, 'render_auto_promotion_settings'),
+                'version' => '1.0'
             )
         );
         
@@ -306,7 +314,15 @@ class Voxel_Toolkit_Functions {
         
         // Initialize function class if specified
         if (isset($function_data['class']) && class_exists($function_data['class'])) {
-            $this->active_functions[$function_key] = new $function_data['class']();
+            $class_name = $function_data['class'];
+            
+            // Check if class has instance method (singleton pattern)
+            if (method_exists($class_name, 'instance')) {
+                $this->active_functions[$function_key] = $class_name::instance();
+            } else {
+                // Use regular constructor
+                $this->active_functions[$function_key] = new $class_name();
+            }
         }
         
         // Fire action hook
@@ -334,6 +350,13 @@ class Voxel_Toolkit_Functions {
         if ($function_key === 'membership_notifications') {
             if (class_exists('Voxel_Toolkit_Membership_Notifications')) {
                 Voxel_Toolkit_Membership_Notifications::deactivate_cron();
+            }
+        }
+        
+        // Special handling for auto promotion cleanup
+        if ($function_key === 'auto_promotion') {
+            if (class_exists('Voxel_Toolkit_Auto_Promotion')) {
+                Voxel_Toolkit_Auto_Promotion::cleanup();
             }
         }
         
@@ -2003,6 +2026,241 @@ class Voxel_Toolkit_Functions {
                             <li><?php _e('Leave URL empty to disable redirects for that post type', 'voxel-toolkit'); ?></li>
                         </ul>
                     </div>
+                </div>
+            </td>
+        </tr>
+        <?php
+    }
+    
+    /**
+     * Render settings for Auto Promotion function
+     * 
+     * @param array $settings Current settings
+     */
+    public function render_auto_promotion_settings($settings) {
+        $post_types = isset($settings['post_types']) ? $settings['post_types'] : array();
+        
+        // Get all public post types
+        $available_post_types = get_post_types(array(
+            'public' => true,
+            'show_ui' => true
+        ), 'objects');
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('Auto Promotion Settings', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 800px;">
+                    <!-- How it works -->
+                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px; margin-bottom: 20px;">
+                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
+                        <?php _e('When a post is published, it automatically gets boosted with a higher priority ranking for the duration you specify. After that time expires, it returns to normal ranking. Perfect for giving new content initial visibility.', 'voxel-toolkit'); ?>
+                    </div>
+                    
+                    <!-- Post Type Selection -->
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
+                            <?php _e('Enabled Post Types', 'voxel-toolkit'); ?>
+                        </h3>
+                        <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">
+                            <?php _e('Select which post types should automatically get promoted when published:', 'voxel-toolkit'); ?>
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
+                            <?php foreach ($available_post_types as $post_type): ?>
+                                <?php
+                                // Skip certain post types
+                                if (in_array($post_type->name, array('attachment', 'nav_menu_item', 'wp_block', 'wp_template', 'wp_template_part'))) {
+                                    continue;
+                                }
+                                ?>
+                                <label style="display: flex; align-items: center; padding: 8px; background: #f8f9fa; border-radius: 4px; cursor: pointer;">
+                                    <input type="checkbox" 
+                                           name="voxel_toolkit_options[auto_promotion][post_types][]" 
+                                           value="<?php echo esc_attr($post_type->name); ?>"
+                                           <?php checked(in_array($post_type->name, $post_types)); ?>
+                                           style="margin-right: 8px;"
+                                           class="auto-promotion-post-type"
+                                           data-post-type="<?php echo esc_attr($post_type->name); ?>">
+                                    <span><?php echo esc_html($post_type->label); ?></span>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Individual Post Type Settings -->
+                    <div id="auto-promotion-post-type-settings">
+                        <?php foreach ($available_post_types as $post_type): ?>
+                            <?php
+                            // Skip certain post types
+                            if (in_array($post_type->name, array('attachment', 'nav_menu_item', 'wp_block', 'wp_template', 'wp_template_part'))) {
+                                continue;
+                            }
+                            
+                            $is_enabled = in_array($post_type->name, $post_types);
+                            $settings_key = 'settings_' . $post_type->name;
+                            $post_type_settings = isset($settings[$settings_key]) ? $settings[$settings_key] : array();
+                            $priority = isset($post_type_settings['priority']) ? $post_type_settings['priority'] : 10;
+                            $duration = isset($post_type_settings['duration']) ? $post_type_settings['duration'] : 24;
+                            $duration_unit = isset($post_type_settings['duration_unit']) ? $post_type_settings['duration_unit'] : 'hours';
+                            ?>
+                            <div class="post-type-settings" data-post-type="<?php echo esc_attr($post_type->name); ?>" style="<?php echo $is_enabled ? '' : 'display: none;'; ?> margin-bottom: 25px; padding: 15px; background: #f8faff; border: 1px solid #d4e5ff; border-radius: 6px;">
+                                <h4 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 15px; display: flex; align-items: center;">
+                                    <span class="dashicons dashicons-<?php echo $this->get_post_type_icon($post_type->name); ?>"></span>
+                                    &nbsp;<?php echo esc_html($post_type->label); ?> <?php _e('Settings', 'voxel-toolkit'); ?>
+                                </h4>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+                                    <!-- Priority Level -->
+                                    <div>
+                                        <label style="display: block; font-weight: 500; margin-bottom: 5px;">
+                                            <?php _e('Priority Level', 'voxel-toolkit'); ?>
+                                        </label>
+                                        <input type="number" 
+                                               name="voxel_toolkit_options[auto_promotion][<?php echo esc_attr($settings_key); ?>][priority]"
+                                               value="<?php echo esc_attr($priority); ?>"
+                                               min="1"
+                                               max="999"
+                                               step="1"
+                                               style="width: 100px; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                        <p style="margin: 5px 0 0 0; color: #666; font-size: 12px;">
+                                            <?php _e('Higher numbers = higher priority', 'voxel-toolkit'); ?>
+                                        </p>
+                                    </div>
+                                    
+                                    <!-- Duration -->
+                                    <div>
+                                        <label style="display: block; font-weight: 500; margin-bottom: 5px;">
+                                            <?php _e('Promotion Duration', 'voxel-toolkit'); ?>
+                                        </label>
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            <input type="number" 
+                                                   name="voxel_toolkit_options[auto_promotion][<?php echo esc_attr($settings_key); ?>][duration]"
+                                                   value="<?php echo esc_attr($duration); ?>"
+                                                   min="1"
+                                                   max="999"
+                                                   step="1"
+                                                   style="width: 80px; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                            <select name="voxel_toolkit_options[auto_promotion][<?php echo esc_attr($settings_key); ?>][duration_unit]"
+                                                    style="padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; min-width: 80px;">
+                                                <option value="hours" <?php selected($duration_unit, 'hours'); ?>><?php _e('Hours', 'voxel-toolkit'); ?></option>
+                                                <option value="days" <?php selected($duration_unit, 'days'); ?>><?php _e('Days', 'voxel-toolkit'); ?></option>
+                                                <option value="weeks" <?php selected($duration_unit, 'weeks'); ?>><?php _e('Weeks', 'voxel-toolkit'); ?></option>
+                                            </select>
+                                        </div>
+                                        <p style="margin: 5px 0 0 0; color: #666; font-size: 12px;">
+                                            <?php _e('How long to keep the promotion active', 'voxel-toolkit'); ?>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    
+                    <!-- Active Promotions Display -->
+                    <?php
+                    $active_promotions = array();
+                    if (class_exists('Voxel_Toolkit_Auto_Promotion')) {
+                        $instance = Voxel_Toolkit_Auto_Promotion::instance();
+                        $active_promotions = $instance->get_active_promotions();
+                    }
+                    ?>
+                    <?php if (!empty($active_promotions)): ?>
+                        <div style="margin-top: 25px; padding: 15px; background: #e8f5e8; border: 1px solid #c8e6c9; border-radius: 6px;">
+                            <h4 style="margin: 0 0 10px 0; color: #2e7d32;">
+                                <span class="dashicons dashicons-clock"></span>
+                                <?php _e('Currently Active Promotions', 'voxel-toolkit'); ?>
+                            </h4>
+                            <div style="display: grid; gap: 8px;">
+                                <?php foreach ($active_promotions as $promotion): ?>
+                                    <?php 
+                                    $remaining_hours = max(0, floor($promotion['remaining_time'] / 3600));
+                                    $remaining_minutes = max(0, floor(($promotion['remaining_time'] % 3600) / 60));
+                                    ?>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: white; border-radius: 4px; font-size: 14px;">
+                                        <div>
+                                            <strong><?php echo esc_html($promotion['post_title']); ?></strong>
+                                            <span style="color: #666; margin-left: 10px;">(<?php echo esc_html($promotion['post_type']); ?>)</span>
+                                        </div>
+                                        <div style="color: #2e7d32; font-weight: 500;">
+                                            <?php if ($promotion['remaining_time'] > 0): ?>
+                                                <?php printf(__('Expires in %dh %dm', 'voxel-toolkit'), $remaining_hours, $remaining_minutes); ?>
+                                            <?php else: ?>
+                                                <?php _e('Expired (will be processed soon)', 'voxel-toolkit'); ?>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <!-- Test Button for Debugging -->
+                    <div style="margin-top: 25px; padding: 15px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px;">
+                        <h4 style="margin: 0 0 10px 0; color: #856404;">
+                            <span class="dashicons dashicons-admin-tools"></span>
+                            <?php _e('Debug & Test', 'voxel-toolkit'); ?>
+                        </h4>
+                        <p style="margin: 0 0 10px 0; color: #856404; font-size: 14px;">
+                            <?php _e('Use this button to test the auto promotion function with an existing published post.', 'voxel-toolkit'); ?>
+                        </p>
+                        <button type="button" 
+                                id="test-auto-promotion-btn" 
+                                class="button button-secondary"
+                                style="background: #856404; color: white; border-color: #856404;">
+                            <?php _e('Test Auto Promotion', 'voxel-toolkit'); ?>
+                        </button>
+                        <div id="test-auto-promotion-result" style="margin-top: 10px; display: none;"></div>
+                    </div>
+                    
+                    <!-- JavaScript for dynamic settings -->
+                    <script>
+                    jQuery(document).ready(function($) {
+                        // Toggle post type settings when checkboxes change
+                        $('.auto-promotion-post-type').change(function() {
+                            const postType = $(this).data('post-type');
+                            const isChecked = $(this).is(':checked');
+                            const settingsDiv = $(`.post-type-settings[data-post-type="${postType}"]`);
+                            
+                            if (isChecked) {
+                                settingsDiv.slideDown();
+                            } else {
+                                settingsDiv.slideUp();
+                            }
+                        });
+                        
+                        // Handle test button click
+                        $('#test-auto-promotion-btn').click(function() {
+                            const $button = $(this);
+                            const $result = $('#test-auto-promotion-result');
+                            
+                            $button.prop('disabled', true).text('<?php _e('Testing...', 'voxel-toolkit'); ?>');
+                            $result.hide();
+                            
+                            $.ajax({
+                                url: ajaxurl,
+                                type: 'POST',
+                                data: {
+                                    action: 'voxel_toolkit_test_auto_promotion',
+                                    nonce: '<?php echo wp_create_nonce('voxel_toolkit_test_nonce'); ?>'
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        $result.html('<div style="color: #155724; background: #d4edda; padding: 10px; border-radius: 4px;">' + response.data.message + '</div>').show();
+                                    } else {
+                                        $result.html('<div style="color: #721c24; background: #f8d7da; padding: 10px; border-radius: 4px;">Error: ' + (response.data || '<?php _e('Unknown error', 'voxel-toolkit'); ?>') + '</div>').show();
+                                    }
+                                },
+                                error: function() {
+                                    $result.html('<div style="color: #721c24; background: #f8d7da; padding: 10px; border-radius: 4px;"><?php _e('AJAX error occurred', 'voxel-toolkit'); ?></div>').show();
+                                },
+                                complete: function() {
+                                    $button.prop('disabled', false).text('<?php _e('Test Auto Promotion', 'voxel-toolkit'); ?>');
+                                }
+                            });
+                        });
+                    });
+                    </script>
                 </div>
             </td>
         </tr>
