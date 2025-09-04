@@ -99,8 +99,19 @@ class Voxel_Toolkit_Admin {
      * @param string $hook Current admin page hook
      */
     public function enqueue_admin_scripts($hook) {
-        // Only load on our plugin pages
-        if (strpos($hook, 'voxel-toolkit') === false) {
+        // Always load basic styles for dark mode support
+        wp_enqueue_style(
+            'voxel-toolkit-admin',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/admin.css',
+            array(),
+            VOXEL_TOOLKIT_VERSION
+        );
+        
+        // Load full scripts on our plugin pages and Voxel taxonomies pages
+        $load_full_scripts = (strpos($hook, 'voxel-toolkit') !== false) || 
+                            (isset($_GET['page']) && $_GET['page'] === 'voxel-taxonomies');
+        
+        if (!$load_full_scripts) {
             return;
         }
         
@@ -112,12 +123,78 @@ class Voxel_Toolkit_Admin {
             true
         );
         
-        wp_enqueue_style(
-            'voxel-toolkit-admin',
-            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/admin.css',
-            array(),
-            VOXEL_TOOLKIT_VERSION
-        );
+        // Add inline styles and JS for Voxel taxonomies page
+        if (isset($_GET['page']) && $_GET['page'] === 'voxel-taxonomies' && isset($_GET['action']) && $_GET['action'] === 'reorder-terms') {
+            wp_add_inline_style('voxel-toolkit-admin', '
+                .ts-terms-order .field-level-1>.field-head {
+                    background: #e9e9e9 !important;
+                }
+                .ts-terms-order .field-level-2>.field-head {
+                    background: #e9e9e9 !important;
+                }
+                .ts-form-group select[multiple] {
+                    background: #e9e9e9 !important;
+                }
+                .ts-form-group select[multiple] option {
+                    padding: 5px !important;
+                    color: black !important;
+                    background: #f5f5f5 !important;
+                }
+                .ts-form-group select[multiple] option:hover {
+                    background: #e0e0e0 !important;
+                }
+                .ts-form-group select[multiple] option:checked {
+                    background: #393e42 linear-gradient(0deg, #393e42, #393e42) !important;
+                    color: #fff !important;
+                    font-weight: 400 !important;
+                }
+                /* Dark mode styles - excluding admin bar */
+                body.vx-dark-mode #wpwrap #wpcontent i,
+                body.vx-dark-mode #wpwrap #wpbody i {
+                    color: white !important;
+                }
+            ');
+            
+            wp_add_inline_script('voxel-toolkit-admin', "
+                jQuery(document).ready(function($) {
+                    // Apply styles once on load - no continuous monitoring to prevent freezing
+                    setTimeout(function() {
+                        // Multi-select styles
+                        $('.ts-form-group select[multiple]').each(function() {
+                            if (!$(this).data('voxel-styled')) {
+                                $(this).attr('style', 'background: #e9e9e9 !important; background-color: #e9e9e9 !important;');
+                                $(this).data('voxel-styled', true);
+                            }
+                        });
+                        
+                        $('.ts-form-group select[multiple] option').each(function() {
+                            if (!$(this).data('voxel-styled')) {
+                                $(this).attr('style', 'padding: 5px !important; color: black !important; background: #f5f5f5 !important;');
+                                $(this).data('voxel-styled', true);
+                            }
+                        });
+                        
+                        $('.ts-form-group select[multiple] option:checked').each(function() {
+                            $(this).attr('style', 'background: #393e42 linear-gradient(0deg, #393e42, #393e42) !important; color: #fff !important; font-weight: 400 !important;');
+                        });
+                        
+                        // Terms order field head
+                        $('.ts-terms-order .field-level-1>.field-head, .ts-terms-order .field-level-2>.field-head').each(function() {
+                            if (!$(this).data('voxel-styled')) {
+                                $(this).attr('style', 'background: #e9e9e9 !important;');
+                                $(this).data('voxel-styled', true);
+                            }
+                        });
+                    }, 100);
+                    
+                    // Reapply on specific events only
+                    $(document).on('change', '.ts-form-group select[multiple]', function() {
+                        $(this).find('option:checked').attr('style', 'background: #393e42 linear-gradient(0deg, #393e42, #393e42) !important; color: #fff !important; font-weight: 400 !important;');
+                        $(this).find('option:not(:checked)').attr('style', 'padding: 5px !important; color: black !important; background: #f5f5f5 !important;');
+                    });
+                });
+            ");
+        }
         
         // Localize script
         wp_localize_script('voxel-toolkit-admin', 'voxelToolkit', array(

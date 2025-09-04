@@ -490,6 +490,35 @@ input:checked + .slider:before {
     line-height: 1.6;
 }
 
+.ts-terms-order .field-level-1>.field-head {
+    background: #e9e9e9 !important;
+}
+
+.ts-terms-order .field-level-2>.field-head {
+    background: #e9e9e9 !important;
+}
+
+.ts-form-group select[multiple] {
+    background: #e9e9e9 !important;
+}
+
+.ts-form-group select[multiple] option {
+    padding: 5px !important;
+    color: black !important;
+}
+
+.ts-form-group select[multiple] option:checked {
+    background: #393e42 linear-gradient(0deg, #393e42, #393e42) !important;
+    color: #fff !important;
+    font-weight: 400 !important;
+}
+
+/* Dark mode styles - excluding admin bar */
+body.vx-dark-mode #wpwrap #wpcontent i,
+body.vx-dark-mode #wpwrap #wpbody i {
+    color: white !important;
+}
+
 @media (max-width: 768px) {
     .voxel-toolkit-functions {
         grid-template-columns: 1fr;

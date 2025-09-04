@@ -114,7 +114,7 @@ class Voxel_Toolkit_Duplicate_Post {
                 array(
                     'action' => 'voxel_toolkit_duplicate_post',
                     'post' => $post->ID,
-                    'redirect_to' => urlencode($_SERVER['REQUEST_URI'])
+                    'redirect_to' => 'edit'
                 ),
                 admin_url('admin.php')
             ),
@@ -205,11 +205,12 @@ class Voxel_Toolkit_Duplicate_Post {
         }
         
         // Determine where to redirect
-        $redirect_to = isset($_GET['redirect_to']) ? $_GET['redirect_to'] : '';
+        $redirect_to = isset($_GET['redirect_to']) ? sanitize_text_field($_GET['redirect_to']) : '';
         
         if ($redirect_to === 'edit') {
             // Redirect to edit the new post
-            wp_redirect(admin_url('post.php?action=edit&post=' . $new_post_id));
+            wp_safe_redirect(admin_url('post.php?action=edit&post=' . $new_post_id));
+            exit;
         } else {
             // Redirect back to the list with success message
             $redirect_url = urldecode($redirect_to);
@@ -217,10 +218,9 @@ class Voxel_Toolkit_Duplicate_Post {
                 $redirect_url = admin_url('edit.php?post_type=' . $post->post_type);
             }
             $redirect_url = add_query_arg('duplicated', $new_post_id, $redirect_url);
-            wp_redirect($redirect_url);
+            wp_safe_redirect($redirect_url);
+            exit;
         }
-        
-        exit;
     }
     
     /**
@@ -284,9 +284,52 @@ class Voxel_Toolkit_Duplicate_Post {
                 continue;
             }
             
+            // Process meta value to fix unicode encoding issues
+            $meta_value = $this->fix_unicode_encoding($meta->meta_value);
+            
             // Add meta to new post
-            add_post_meta($target_id, $meta->meta_key, maybe_unserialize($meta->meta_value));
+            add_post_meta($target_id, $meta->meta_key, maybe_unserialize($meta_value));
         }
+    }
+    
+    /**
+     * Fix unicode encoding issues with umlauts and other special characters
+     */
+    private function fix_unicode_encoding($value) {
+        if (empty($value) || !is_string($value)) {
+            return $value;
+        }
+        
+        // Check if the value contains unicode escape sequences
+        if (strpos($value, '\u00') !== false) {
+            // Convert unicode escape sequences back to proper UTF-8
+            $value = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', function($matches) {
+                return mb_convert_encoding(pack('H*', $matches[1]), 'UTF-8', 'UCS-2BE');
+            }, $value);
+        }
+        
+        // Handle JSON data that might contain escaped unicode
+        if ($this->is_json($value)) {
+            $decoded = json_decode($value, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                // Re-encode with proper UTF-8 handling
+                $value = wp_json_encode($decoded, JSON_UNESCAPED_UNICODE);
+            }
+        }
+        
+        return $value;
+    }
+    
+    /**
+     * Check if a string is valid JSON
+     */
+    private function is_json($string) {
+        if (!is_string($string)) {
+            return false;
+        }
+        
+        json_decode($string);
+        return (json_last_error() === JSON_ERROR_NONE);
     }
     
     /**
