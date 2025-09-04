@@ -2220,24 +2220,6 @@ class Voxel_Toolkit_Functions {
                         </div>
                     <?php endif; ?>
                     
-                    <!-- Test Button for Debugging -->
-                    <div style="margin-top: 25px; padding: 15px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px;">
-                        <h4 style="margin: 0 0 10px 0; color: #856404;">
-                            <span class="dashicons dashicons-admin-tools"></span>
-                            <?php _e('Debug & Test', 'voxel-toolkit'); ?>
-                        </h4>
-                        <p style="margin: 0 0 10px 0; color: #856404; font-size: 14px;">
-                            <?php _e('Use this button to test the auto promotion function with an existing published post.', 'voxel-toolkit'); ?>
-                        </p>
-                        <button type="button" 
-                                id="test-auto-promotion-btn" 
-                                class="button button-secondary"
-                                style="background: #856404; color: white; border-color: #856404;">
-                            <?php _e('Test Auto Promotion', 'voxel-toolkit'); ?>
-                        </button>
-                        <div id="test-auto-promotion-result" style="margin-top: 10px; display: none;"></div>
-                    </div>
-                    
                     <!-- JavaScript for dynamic settings -->
                     <script>
                     jQuery(document).ready(function($) {
@@ -2252,37 +2234,6 @@ class Voxel_Toolkit_Functions {
                             } else {
                                 settingsDiv.slideUp();
                             }
-                        });
-                        
-                        // Handle test button click
-                        $('#test-auto-promotion-btn').click(function() {
-                            const $button = $(this);
-                            const $result = $('#test-auto-promotion-result');
-                            
-                            $button.prop('disabled', true).text('<?php _e('Testing...', 'voxel-toolkit'); ?>');
-                            $result.hide();
-                            
-                            $.ajax({
-                                url: ajaxurl,
-                                type: 'POST',
-                                data: {
-                                    action: 'voxel_toolkit_test_auto_promotion',
-                                    nonce: '<?php echo wp_create_nonce('voxel_toolkit_test_nonce'); ?>'
-                                },
-                                success: function(response) {
-                                    if (response.success) {
-                                        $result.html('<div style="color: #155724; background: #d4edda; padding: 10px; border-radius: 4px;">' + response.data.message + '</div>').show();
-                                    } else {
-                                        $result.html('<div style="color: #721c24; background: #f8d7da; padding: 10px; border-radius: 4px;">Error: ' + (response.data || '<?php _e('Unknown error', 'voxel-toolkit'); ?>') + '</div>').show();
-                                    }
-                                },
-                                error: function() {
-                                    $result.html('<div style="color: #721c24; background: #f8d7da; padding: 10px; border-radius: 4px;"><?php _e('AJAX error occurred', 'voxel-toolkit'); ?></div>').show();
-                                },
-                                complete: function() {
-                                    $button.prop('disabled', false).text('<?php _e('Test Auto Promotion', 'voxel-toolkit'); ?>');
-                                }
-                            });
                         });
                     });
                     </script>

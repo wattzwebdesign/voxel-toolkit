@@ -51,26 +51,11 @@ class Voxel_Toolkit_Auto_Promotion {
         add_action('voxel/post/created', array($this, 'handle_voxel_post_created'), 10, 1);
         add_action('voxel/post/published', array($this, 'handle_voxel_post_published'), 10, 1);
         
-        // Hook into AJAX actions that might create posts
-        add_action('wp_ajax_voxel_create_post', array($this, 'debug_voxel_ajax'), 1);
-        add_action('wp_ajax_nopriv_voxel_create_post', array($this, 'debug_voxel_ajax'), 1);
-        
-        // Hook into all AJAX actions for debugging
-        add_action('wp_ajax_*', array($this, 'debug_ajax_action'), 1);
-        add_action('wp_ajax_nopriv_*', array($this, 'debug_ajax_action'), 1);
-        
-        // Hook into all post actions for debugging
-        add_action('wp', array($this, 'debug_current_action'), 1);
-        add_action('init', array($this, 'debug_all_hooks'), 999);
-        
         // Register custom cron job
         add_action('voxel_toolkit_auto_promotion_cleanup', array($this, 'process_expired_promotions'));
         
         // Add custom cron schedule if not exists
         add_filter('cron_schedules', array($this, 'add_cron_schedules'));
-        
-        // Log initialization
-        error_log("Voxel Toolkit Auto Promotion: Hooks initialized successfully");
     }
     
     /**
@@ -107,45 +92,31 @@ class Voxel_Toolkit_Auto_Promotion {
      * Handle post status changes
      */
     public function handle_post_status_change($new_status, $old_status, $post) {
-        // Log all status changes for debugging
-        error_log("Voxel Toolkit Auto Promotion: Status change detected - Post ID: {$post->ID}, Post Type: {$post->post_type}, Old Status: {$old_status}, New Status: {$new_status}");
         
         // Only process when post becomes published
         if ($new_status !== 'publish') {
-            error_log("Voxel Toolkit Auto Promotion: Skipping - new status is not publish (new: {$new_status})");
             return;
         }
         
         // Skip if already published (unless it's our special 'new' status)
         if ($old_status === 'publish') {
-            error_log("Voxel Toolkit Auto Promotion: Skipping - already published (old: {$old_status})");
             return;
         }
         
         // Check if this post type is enabled for auto promotion
         if (!$this->is_post_type_enabled($post->post_type)) {
-            error_log("Voxel Toolkit Auto Promotion: Post type '{$post->post_type}' is not enabled for auto promotion");
             return;
         }
         
         // Get settings for this post type
         $post_type_settings = $this->get_post_type_settings($post->post_type);
         if (empty($post_type_settings)) {
-            error_log("Voxel Toolkit Auto Promotion: No settings found for post type '{$post->post_type}'");
             return;
         }
         
-        error_log("Voxel Toolkit Auto Promotion: Settings found - Priority: {$post_type_settings['priority']}, Duration: {$post_type_settings['duration']} {$post_type_settings['duration_unit']}");
         
         // Apply promotion
-        $result = $this->apply_promotion($post->ID, $post_type_settings);
-        
-        // Log result
-        if ($result) {
-            error_log("Voxel Toolkit Auto Promotion: Successfully applied to post {$post->ID} with priority {$post_type_settings['priority']} for {$post_type_settings['duration']} {$post_type_settings['duration_unit']}");
-        } else {
-            error_log("Voxel Toolkit Auto Promotion: Failed to apply promotion to post {$post->ID}");
-        }
+        $this->apply_promotion($post->ID, $post_type_settings);
     }
     
     /**
@@ -157,7 +128,6 @@ class Voxel_Toolkit_Auto_Promotion {
             return;
         }
         
-        error_log("Voxel Toolkit Auto Promotion: wp_insert_post triggered - Post ID: {$post_id}, Status: {$post->post_status}, Update: " . ($update ? 'true' : 'false'));
         
         // For new posts, simulate status change
         if (!$update) {
@@ -179,7 +149,6 @@ class Voxel_Toolkit_Auto_Promotion {
             return;
         }
         
-        error_log("Voxel Toolkit Auto Promotion: save_post triggered - Post ID: {$post_id}, Status: {$post->post_status}, Update: " . ($update ? 'true' : 'false'));
         
         // Check if this is a new publish by looking at previous status
         $previous_status = get_post_meta($post_id, '_previous_status', true);
@@ -198,7 +167,6 @@ class Voxel_Toolkit_Auto_Promotion {
      * Handle wp_after_insert_post action (WordPress 5.6+)
      */
     public function handle_after_insert_post($post_id, $post, $update, $post_before) {
-        error_log("Voxel Toolkit Auto Promotion: wp_after_insert_post triggered - Post ID: {$post_id}, Status: {$post->post_status}, Update: " . ($update ? 'true' : 'false'));
         
         if ($post->post_status === 'publish') {
             $old_status = $post_before ? $post_before->post_status : 'new';
@@ -210,7 +178,6 @@ class Voxel_Toolkit_Auto_Promotion {
      * Handle rest_after_insert_post action (REST API)
      */
     public function handle_rest_after_insert_post($post, $request, $creating) {
-        error_log("Voxel Toolkit Auto Promotion: rest_after_insert_post triggered - Post ID: {$post->ID}, Status: {$post->post_status}, Creating: " . ($creating ? 'true' : 'false'));
         
         if ($post->post_status === 'publish' && $creating) {
             $this->handle_post_status_change('publish', 'new', $post);
@@ -223,7 +190,6 @@ class Voxel_Toolkit_Auto_Promotion {
     public function handle_voxel_post_created($post_id) {
         $post = get_post($post_id);
         if ($post) {
-            error_log("Voxel Toolkit Auto Promotion: voxel/post/created triggered - Post ID: {$post_id}, Status: {$post->post_status}");
             if ($post->post_status === 'publish') {
                 $this->handle_post_status_change('publish', 'new', $post);
             }
@@ -236,49 +202,10 @@ class Voxel_Toolkit_Auto_Promotion {
     public function handle_voxel_post_published($post_id) {
         $post = get_post($post_id);
         if ($post) {
-            error_log("Voxel Toolkit Auto Promotion: voxel/post/published triggered - Post ID: {$post_id}, Status: {$post->post_status}");
             $this->handle_post_status_change('publish', 'pending', $post);
         }
     }
     
-    /**
-     * Debug Voxel AJAX actions
-     */
-    public function debug_voxel_ajax() {
-        error_log("Voxel Toolkit Auto Promotion: Voxel AJAX post creation detected - Action: " . current_action());
-        error_log("Voxel Toolkit Auto Promotion: POST data: " . print_r($_POST, true));
-    }
-    
-    /**
-     * Debug AJAX actions
-     */
-    public function debug_ajax_action() {
-        $action = current_action();
-        if (strpos($action, 'post') !== false || strpos($action, 'create') !== false || strpos($action, 'submit') !== false) {
-            error_log("Voxel Toolkit Auto Promotion: Relevant AJAX action detected: {$action}");
-        }
-    }
-    
-    /**
-     * Debug current action
-     */
-    public function debug_current_action() {
-        if (isset($_POST['action']) && $_POST['action']) {
-            error_log("Voxel Toolkit Auto Promotion: Current POST action: " . $_POST['action']);
-        }
-        
-        if (isset($_GET['action']) && $_GET['action']) {
-            error_log("Voxel Toolkit Auto Promotion: Current GET action: " . $_GET['action']);
-        }
-    }
-    
-    /**
-     * Debug all hooks - temporary for troubleshooting
-     */
-    public function debug_all_hooks() {
-        // Only enable this temporarily for debugging
-        // error_log("Voxel Toolkit Auto Promotion: Available hooks: " . implode(', ', array_keys($GLOBALS['wp_filter'])));
-    }
     
     /**
      * Check if post type is enabled for auto promotion
@@ -308,17 +235,14 @@ class Voxel_Toolkit_Auto_Promotion {
         $duration = isset($settings['duration']) ? intval($settings['duration']) : 0;
         $duration_unit = isset($settings['duration_unit']) ? $settings['duration_unit'] : 'hours';
         
-        error_log("Voxel Toolkit Auto Promotion: Applying promotion - Post ID: {$post_id}, Priority: {$priority}, Duration: {$duration} {$duration_unit}");
         
         if ($priority <= 0 || $duration <= 0) {
-            error_log("Voxel Toolkit Auto Promotion: Invalid settings - Priority: {$priority}, Duration: {$duration}");
             return false;
         }
         
         // Check if post exists
         $post = get_post($post_id);
         if (!$post) {
-            error_log("Voxel Toolkit Auto Promotion: Post {$post_id} does not exist");
             return false;
         }
         
@@ -327,25 +251,20 @@ class Voxel_Toolkit_Auto_Promotion {
         if ($original_priority === '' || $original_priority === false) {
             $original_priority = 0;
         }
-        error_log("Voxel Toolkit Auto Promotion: Original priority for post {$post_id}: '{$original_priority}'");
         
         // Set new priority - Force update even if same value
         $meta_updated = update_post_meta($post_id, 'voxel:priority', $priority);
-        error_log("Voxel Toolkit Auto Promotion: Meta update result for post {$post_id}: " . ($meta_updated ? 'SUCCESS' : 'FAILED/UNCHANGED'));
         
         // Verify the meta was set
         $current_priority = get_post_meta($post_id, 'voxel:priority', true);
-        error_log("Voxel Toolkit Auto Promotion: Current priority after update for post {$post_id}: '{$current_priority}'");
         
         // Also try to add the meta key directly if it doesn't exist
         if ($original_priority == 0 && !metadata_exists('post', $post_id, 'voxel:priority')) {
             $added = add_post_meta($post_id, 'voxel:priority', $priority, true);
-            error_log("Voxel Toolkit Auto Promotion: Add meta result for post {$post_id}: " . ($added ? 'SUCCESS' : 'FAILED'));
         }
         
         // Calculate expiration time
         $expiration_time = $this->calculate_expiration_time($duration, $duration_unit);
-        error_log("Voxel Toolkit Auto Promotion: Expiration time set to: " . date('Y-m-d H:i:s', $expiration_time));
         
         // Store promotion data for later cleanup
         $promotion_data = array(
@@ -359,11 +278,7 @@ class Voxel_Toolkit_Auto_Promotion {
         // Store in options table for tracking
         $active_promotions = get_option('voxel_toolkit_active_promotions', array());
         $active_promotions[$post_id] = $promotion_data;
-        $options_updated = update_option('voxel_toolkit_active_promotions', $active_promotions);
-        error_log("Voxel Toolkit Auto Promotion: Active promotions updated: " . ($options_updated ? 'SUCCESS' : 'FAILED/UNCHANGED'));
-        
-        // Log current active promotions count
-        error_log("Voxel Toolkit Auto Promotion: Total active promotions: " . count($active_promotions));
+        update_option('voxel_toolkit_active_promotions', $active_promotions);
         
         return true;
     }
@@ -405,9 +320,6 @@ class Voxel_Toolkit_Auto_Promotion {
                 // Promotion has expired, revert priority
                 $this->revert_promotion($post_id, $promotion_data);
                 $expired_count++;
-                
-                // Log for debugging
-                error_log("Voxel Toolkit Auto Promotion: Reverted post {$post_id} to original priority {$promotion_data['original_priority']}");
             } else {
                 // Keep active promotion
                 $updated_promotions[$post_id] = $promotion_data;
@@ -416,11 +328,6 @@ class Voxel_Toolkit_Auto_Promotion {
         
         // Update the active promotions list
         update_option('voxel_toolkit_active_promotions', $updated_promotions);
-        
-        // Log summary
-        if ($expired_count > 0) {
-            error_log("Voxel Toolkit Auto Promotion: Processed {$expired_count} expired promotions");
-        }
     }
     
     /**
@@ -460,37 +367,6 @@ class Voxel_Toolkit_Auto_Promotion {
         return $active_promotions;
     }
     
-    /**
-     * Manual test method - for debugging only
-     * Can be called via admin panel or direct PHP execution
-     */
-    public function manual_test($post_id = null) {
-        error_log("Voxel Toolkit Auto Promotion: Manual test started");
-        
-        // Get a published post to test with
-        if (!$post_id) {
-            $posts = get_posts(array(
-                'post_status' => 'publish',
-                'numberposts' => 1,
-                'post_type' => 'any'
-            ));
-            
-            if (empty($posts)) {
-                error_log("Voxel Toolkit Auto Promotion: No published posts found for testing");
-                return false;
-            }
-            
-            $post_id = $posts[0]->ID;
-        }
-        
-        $post = get_post($post_id);
-        error_log("Voxel Toolkit Auto Promotion: Testing with post ID {$post_id}, type: {$post->post_type}, status: {$post->post_status}");
-        
-        // Simulate the status change
-        $this->handle_post_status_change('publish', 'draft', $post);
-        
-        return true;
-    }
     
     /**
      * Clean up on plugin deactivation

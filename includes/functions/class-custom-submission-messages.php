@@ -414,135 +414,16 @@ class Voxel_Toolkit_Custom_Submission_Messages {
                             console.log('Voxel Toolkit: Replacing message in:', selector);
                             element.setAttribute('data-voxel-replaced', 'true');
                             
-                            // Try to preserve styling by only replacing text content
-                            // Check if element has child elements (complex structure)
-                            if (element.children.length > 0) {
-                                // Has child elements - find and replace text nodes only
-                                var textNodes = [];
-                                var walker = document.createTreeWalker(
-                                    element,
-                                    NodeFilter.SHOW_TEXT,
-                                    null,
-                                    false
-                                );
-                                var node;
-                                while (node = walker.nextNode()) {
-                                    if (node.textContent.trim().length > 5) {
-                                        textNodes.push(node);
-                                    }
-                                }
-                                
-                                // Replace the longest text node (likely the main message)
-                                if (textNodes.length > 0) {
-                                    var longestNode = textNodes.reduce(function(prev, current) {
-                                        return (current.textContent.length > prev.textContent.length) ? current : prev;
-                                    });
-                                    
-                                    // Create a span to preserve styling
-                                    var span = document.createElement('span');
-                                    span.className = 'voxel-custom-message';
-                                    span.textContent = customMessage;
-                                    
-                                    // Replace the text node with our span
-                                    longestNode.parentNode.replaceChild(span, longestNode);
-                                    
-                                    // Clear other text nodes that might contain parts of the old message
-                                    textNodes.forEach(function(node) {
-                                        if (node !== longestNode && 
-                                            (node.textContent.toLowerCase().includes('submitted') || 
-                                             node.textContent.toLowerCase().includes('review'))) {
-                                            node.textContent = '';
-                                        }
-                                    });
-                                }
-                            } else {
-                                // Simple element - preserve styling by keeping the element structure
-                                // Get computed styles to maintain appearance
-                                var computedStyle = window.getComputedStyle(element);
-                                element.innerHTML = '<span class="voxel-custom-message" style="' +
-                                    'font-size: ' + computedStyle.fontSize + ';' +
-                                    'color: ' + computedStyle.color + ';' +
-                                    'font-family: ' + computedStyle.fontFamily + ';' +
-                                    'font-weight: ' + computedStyle.fontWeight + ';' +
-                                    'line-height: ' + computedStyle.lineHeight + ';' +
-                                    '">' + customMessage + '</span>';
-                            }
+                            // Simplified replacement to improve performance
+                            // Just replace the text content while preserving the element structure
+                            element.textContent = customMessage;
                         }
                     });
-                });
-                
-                // Also check standalone text nodes, but be more careful
-                var walker = document.createTreeWalker(
-                    document.body,
-                    NodeFilter.SHOW_TEXT,
-                    {
-                        acceptNode: function(node) {
-                            // Skip text nodes inside script, style, or noscript tags
-                            var parent = node.parentNode;
-                            while (parent) {
-                                var tagName = parent.tagName ? parent.tagName.toLowerCase() : '';
-                                if (tagName === 'script' || tagName === 'style' || tagName === 'noscript') {
-                                    return NodeFilter.FILTER_REJECT;
-                                }
-                                parent = parent.parentNode;
-                            }
-                            
-                            // Skip if text is too short or too long (likely code)
-                            var text = node.textContent.trim();
-                            if (text.length < 15 || text.length > 200) {
-                                return NodeFilter.FILTER_REJECT;
-                            }
-                            
-                            // Skip if it looks like code (contains common code patterns)
-                            if (text.includes('function') || text.includes('var ') || text.includes('const ') || 
-                                text.includes('let ') || text.includes('return ') || text.includes('console.')) {
-                                return NodeFilter.FILTER_REJECT;
-                            }
-                            
-                            return NodeFilter.FILTER_ACCEPT;
-                        }
-                    },
-                    false
-                );
-                
-                var textNodes = [];
-                var node;
-                
-                while (node = walker.nextNode()) {
-                    textNodes.push(node);
-                }
-                
-                textNodes.forEach(function(textNode) {
-                    var nodeText = textNode.textContent.toLowerCase();
-                    
-                    // Be more specific - look for complete submission messages
-                    var submissionPhrases = [
-                        'submitted for review',
-                        'has been submitted',
-                        'post has been submitted',
-                        'listing has been submitted',
-                        'event has been submitted',
-                        'thank you for your submission',
-                        'your submission has been received'
-                    ];
-                    
-                    var isSubmissionMessage = submissionPhrases.some(function(phrase) {
-                        return nodeText.includes(phrase.toLowerCase());
-                    });
-                    
-                    if (isSubmissionMessage) {
-                        console.log('Voxel Toolkit: Replacing entire text node content');
-                        // Replace the entire text content
-                        textNode.textContent = customMessage;
-                    }
                 });
             }
             
-            // Run replacement multiple times to catch dynamic content
+            // Run replacement on page load
             replaceSubmissionMessages();
-            setTimeout(replaceSubmissionMessages, 100);
-            setTimeout(replaceSubmissionMessages, 500);
-            setTimeout(replaceSubmissionMessages, 1000);
             
             // Watch for DOM changes - wait for body to be ready
             if (typeof MutationObserver !== 'undefined' && document.body) {
@@ -600,12 +481,11 @@ class Voxel_Toolkit_Custom_Submission_Messages {
                 }
             }
             
-            // Hook into jQuery AJAX if available
+            // Hook into jQuery AJAX if available - single delayed check
             if (typeof jQuery !== 'undefined') {
                 jQuery(document).ajaxSuccess(function(event, xhr, settings) {
                     console.log('Voxel Toolkit: AJAX success - checking for messages to replace');
-                    setTimeout(replaceSubmissionMessages, 50);
-                    setTimeout(replaceSubmissionMessages, 200);
+                    setTimeout(replaceSubmissionMessages, 100);
                 });
             }
         })();

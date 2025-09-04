@@ -15,6 +15,7 @@ class Voxel_Toolkit_Auto_Verify_Posts {
     
     private $settings;
     private $enabled_post_types = array();
+    private $current_post_type_being_created = '';
     
     /**
      * Constructor
@@ -193,8 +194,13 @@ class Voxel_Toolkit_Auto_Verify_Posts {
      * Handle AJAX post submission
      */
     public function on_ajax_submit_post() {
-        // Check if this is a post submission and get post type
-        $post_type = isset($_POST['post_type']) ? sanitize_text_field($_POST['post_type']) : '';
+        // Validate post type parameter
+        $post_type = isset($_POST['post_type']) ? sanitize_key($_POST['post_type']) : '';
+        
+        // Validate post type exists
+        if (!empty($post_type) && !post_type_exists($post_type)) {
+            return;
+        }
         
         if ($this->should_auto_verify_post_type($post_type)) {
             // Hook into the post insertion for this AJAX request
@@ -240,6 +246,12 @@ class Voxel_Toolkit_Auto_Verify_Posts {
      */
     private function verify_post($post_id) {
         if (!$post_id) {
+            return false;
+        }
+        
+        // Validate post exists
+        $post = get_post($post_id);
+        if (!$post) {
             return false;
         }
         

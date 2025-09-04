@@ -1,6 +1,6 @@
 <?php
 /**
- * Pre-Approve Posts Feature
+ * Pre-Approve Posts Feature v1.1
  * 
  * Automatically publishes posts from pre-approved users
  */
@@ -43,7 +43,7 @@ class Voxel_Toolkit_Pre_Approve_Posts {
     /**
      * Handle settings update
      */
-    public function on_settings_updated($old_settings, $new_settings) {
+    public function on_settings_updated($new_settings, $old_settings) {
         if (isset($new_settings['pre_approve_posts'])) {
             $this->options = $new_settings['pre_approve_posts'];
         }
