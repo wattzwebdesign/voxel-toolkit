@@ -229,7 +229,7 @@ class Voxel_Toolkit_Duplicate_Post {
     private function create_duplicate($post) {
         // Prepare post data
         $new_post = array(
-            'post_title'    => $post->post_title . ' (Copy)',
+            'post_title'    => wp_unslash($post->post_title) . ' (Copy)',
             'post_content'  => $post->post_content,
             'post_excerpt'  => $post->post_excerpt,
             'post_status'   => 'draft',
@@ -448,7 +448,25 @@ class Voxel_Toolkit_Duplicate_Post {
         
         // Determine redirect URL
         if ($redirect_type === 'create_page') {
-            $redirect_url = home_url('/create-' . $post->post_type . '/?post_id=' . $new_post_id);
+            // Check if there's a custom redirect page configured for this post type
+            $settings = Voxel_Toolkit_Settings::instance();
+            $duplicate_settings = $settings->get_function_settings('duplicate_post', array());
+            $redirect_pages = isset($duplicate_settings['redirect_pages']) ? $duplicate_settings['redirect_pages'] : array();
+            
+            if (!empty($redirect_pages[$post->post_type])) {
+                // Use the configured page
+                $page_id = $redirect_pages[$post->post_type];
+                $redirect_url = get_permalink($page_id);
+                if ($redirect_url) {
+                    $redirect_url = add_query_arg('post_id', $new_post_id, $redirect_url);
+                } else {
+                    // Fallback if page doesn't exist
+                    $redirect_url = home_url('/create-' . $post->post_type . '/?post_id=' . $new_post_id);
+                }
+            } else {
+                // Use default URL pattern
+                $redirect_url = home_url('/create-' . $post->post_type . '/?post_id=' . $new_post_id);
+            }
         } else {
             $redirect_url = get_permalink($post_id) . '?duplicated=' . $new_post_id;
         }

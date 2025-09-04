@@ -1479,6 +1479,7 @@ class Voxel_Toolkit_Functions {
     public function render_duplicate_post_settings($settings) {
         $post_types = isset($settings['post_types']) ? $settings['post_types'] : array();
         $allowed_roles = isset($settings['allowed_roles']) ? $settings['allowed_roles'] : array('contributor', 'author', 'editor', 'administrator');
+        $redirect_pages = isset($settings['redirect_pages']) ? $settings['redirect_pages'] : array();
         $available_post_types = get_post_types(array(
             'public' => true,
             'show_ui' => true
@@ -1526,6 +1527,76 @@ class Voxel_Toolkit_Functions {
                                 </label>
                             <?php endforeach; ?>
                         </div>
+                    </div>
+                    
+                    <!-- Redirect Pages Selection -->
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
+                            <?php _e('Duplication Redirect Pages', 'voxel-toolkit'); ?>
+                        </h3>
+                        <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">
+                            <?php _e('For each enabled post type, select which page to redirect to after duplication:', 'voxel-toolkit'); ?>
+                        </p>
+                        <div style="padding: 12px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; font-size: 13px; margin-bottom: 15px;">
+                            <strong style="color: #856404;"><?php _e('Important:', 'voxel-toolkit'); ?></strong> 
+                            <?php _e('The selected page must have a "Create Post" widget configured for the respective post type. If no page is selected, the default "/create-{post-type}/" URL will be used.', 'voxel-toolkit'); ?>
+                        </div>
+                        <?php 
+                        // Get all pages for dropdown
+                        $all_pages = get_pages(array(
+                            'post_status' => 'publish',
+                            'sort_column' => 'post_title',
+                            'sort_order' => 'ASC'
+                        ));
+                        ?>
+                        <div style="background: #f8f9fa; border-radius: 6px; padding: 15px;">
+                            <?php foreach ($available_post_types as $post_type): ?>
+                                <?php 
+                                // Skip certain post types
+                                if (in_array($post_type->name, array('attachment', 'nav_menu_item', 'wp_block', 'wp_template', 'wp_template_part'))) {
+                                    continue;
+                                }
+                                // Only show if post type is enabled
+                                if (!in_array($post_type->name, $post_types)) {
+                                    continue;
+                                }
+                                ?>
+                                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 12px;">
+                                    <label style="flex: 0 0 150px; font-weight: 500; color: #1e1e1e;">
+                                        <?php echo esc_html($post_type->label); ?>:
+                                    </label>
+                                    <select name="voxel_toolkit_options[duplicate_post][redirect_pages][<?php echo esc_attr($post_type->name); ?>]" 
+                                            style="flex: 1; padding: 6px 10px; border: 1px solid #ddd; border-radius: 4px;">
+                                        <option value=""><?php _e('— Use Default URL —', 'voxel-toolkit'); ?></option>
+                                        <?php foreach ($all_pages as $page): ?>
+                                            <option value="<?php echo esc_attr($page->ID); ?>" 
+                                                    <?php selected(isset($redirect_pages[$post_type->name]) ? $redirect_pages[$post_type->name] : '', $page->ID); ?>>
+                                                <?php echo esc_html($page->post_title); ?> (<?php echo esc_html(get_permalink($page->ID)); ?>)
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            <?php endforeach; ?>
+                            <?php if (empty($post_types)): ?>
+                                <p style="margin: 0; color: #666; font-style: italic;">
+                                    <?php _e('Please select post types above to configure redirect pages.', 'voxel-toolkit'); ?>
+                                </p>
+                            <?php endif; ?>
+                        </div>
+                        <script>
+                        // Show/hide redirect page options based on enabled post types
+                        jQuery(document).ready(function($) {
+                            $('input[name="voxel_toolkit_options[duplicate_post][post_types][]"]').on('change', function() {
+                                // Submit form to refresh redirect pages section
+                                var $form = $(this).closest('form');
+                                $form.find('input[name="action"]').val('update');
+                                // Add a flag to indicate we're just updating the display
+                                if (!$form.find('input[name="refresh_only"]').length) {
+                                    $form.append('<input type="hidden" name="refresh_only" value="1">');
+                                }
+                            });
+                        });
+                        </script>
                     </div>
                     
                     <!-- User Roles Selection -->
