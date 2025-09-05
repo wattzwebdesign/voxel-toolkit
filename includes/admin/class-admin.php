@@ -42,6 +42,7 @@ class Voxel_Toolkit_Admin {
         add_action('wp_ajax_voxel_toolkit_toggle_function', array($this, 'ajax_toggle_function'));
         add_action('wp_ajax_voxel_toolkit_toggle_widget', array($this, 'ajax_toggle_widget'));
         add_action('wp_ajax_voxel_toolkit_reset_settings', array($this, 'ajax_reset_settings'));
+        add_action('wp_ajax_vt_admin_notifications_user_search', array($this, 'ajax_admin_notifications_user_search'));
     }
     
     /**
@@ -115,10 +116,14 @@ class Voxel_Toolkit_Admin {
             return;
         }
         
+        // Enqueue Select2 for user search functionality
+        wp_enqueue_style('select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css');
+        wp_enqueue_script('select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js', array('jquery'), '', true);
+        
         wp_enqueue_script(
             'voxel-toolkit-admin',
             VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/admin.js',
-            array('jquery'),
+            array('jquery', 'select2'),
             VOXEL_TOOLKIT_VERSION,
             true
         );
@@ -1019,6 +1024,50 @@ class Voxel_Toolkit_Admin {
             <?php endif; ?>
         </div>
         <?php
+    }
+    
+    /**
+     * AJAX handler for admin notifications user search
+     */
+    public function ajax_admin_notifications_user_search() {
+        // Verify nonce
+        if (!wp_verify_nonce($_REQUEST['nonce'], "vt_admin_notifications_user_search")) {
+            wp_send_json_error('Security check failed');
+            return;
+        }
+
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Insufficient permissions');
+            return;
+        }
+
+        $search_filter = isset($_REQUEST['q']) ? sanitize_text_field($_REQUEST['q']) : false;
+
+        if (empty($search_filter) || strlen($search_filter) < 3) {
+            wp_send_json(array());
+            return;
+        }
+
+        $args = array(
+            'search'         => '*' . $search_filter . '*',
+            'search_columns' => array('user_login', 'user_nicename', 'user_email'),
+            'number'         => 20, // Limit results
+        );
+
+        $user_query = new WP_User_Query($args);
+        $user_results = $user_query->get_results();
+
+        $results = array();
+
+        foreach ($user_results as $user) {
+            $results[] = array(
+                'id' => $user->ID,
+                'text' => $user->display_name . ' (' . $user->user_email . ')',
+            );
+        }
+
+        wp_send_json($results);
     }
     
 }

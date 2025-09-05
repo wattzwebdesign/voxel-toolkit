@@ -96,6 +96,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-light-mode.php',
                 'version' => '1.0'
             ),
+            'admin_notifications' => array(
+                'name' => __('Admin Notifications', 'voxel-toolkit'),
+                'description' => __('Override default admin notifications to send to multiple users based on roles or individual selection instead.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Admin_Notifications',
+                'file' => 'functions/class-admin-notifications.php',
+                'settings_callback' => array($this, 'render_admin_notifications_settings'),
+                'version' => '1.0'
+            ),
             'membership_notifications' => array(
                 'name' => __('Membership Notifications', 'voxel-toolkit'),
                 'description' => __('Send email notifications to users based on membership expiration dates.', 'voxel-toolkit'),
@@ -190,6 +198,13 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Custom_Submission_Messages',
                 'file' => 'functions/class-custom-submission-messages.php',
                 'settings_callback' => array($this, 'render_custom_submission_messages_settings'),
+                'version' => '1.0'
+            ),
+            'export_orders' => array(
+                'name' => __('Export Orders', 'voxel-toolkit'),
+                'description' => __('Add an export button to the Voxel orders page to export all orders to CSV format with comprehensive details.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Export_Orders',
+                'file' => 'functions/class-export-orders.php',
                 'version' => '1.0'
             )
         );
@@ -606,6 +621,132 @@ class Voxel_Toolkit_Functions {
                 </fieldset>
             </td>
         </tr>
+        <?php
+    }
+    
+    /**
+     * Render settings for admin notifications function
+     * 
+     * @param array $settings Current settings
+     */
+    public function render_admin_notifications_settings($settings) {
+        $user_roles = isset($settings['user_roles']) ? $settings['user_roles'] : array();
+        $selected_users = isset($settings['selected_users']) ? $settings['selected_users'] : array();
+        $roles = get_editable_roles();
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('User Roles', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <fieldset>
+                    <legend class="screen-reader-text">
+                        <span><?php _e('Select user roles to receive admin notifications', 'voxel-toolkit'); ?></span>
+                    </legend>
+                    <div class="vt-role-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px;">
+                        <?php foreach ($roles as $role_key => $role_data): ?>
+                            <label style="background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px; padding: 10px; display: flex; align-items: center; cursor: pointer; transition: all 0.2s;">
+                                <input type="checkbox" 
+                                       name="voxel_toolkit_options[admin_notifications][user_roles][]" 
+                                       value="<?php echo esc_attr($role_key); ?>"
+                                       <?php checked(in_array($role_key, $user_roles)); ?> 
+                                       style="margin-right: 8px;" />
+                                <?php echo esc_html($role_data['name']); ?>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                    <p class="description">
+                        <?php _e('Replace default admin notifications with notifications sent to all users with the selected roles.', 'voxel-toolkit'); ?>
+                    </p>
+                </fieldset>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">
+                <label for="admin_notifications_selected_users"><?php _e('Individual Users', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <!-- Hidden field to ensure empty selection is properly handled -->
+                <input type="hidden" name="voxel_toolkit_options[admin_notifications][selected_users]" value="" />
+                
+                <select id="admin_notifications_selected_users" 
+                        name="voxel_toolkit_options[admin_notifications][selected_users][]" 
+                        multiple="multiple" 
+                        style="width: 100%; min-height: 120px;"
+                        class="vt-user-search-select">
+                    <?php foreach($selected_users as $user_id): ?>
+                        <?php if ($user_data = get_userdata($user_id)): ?>
+                            <option selected value="<?php echo esc_attr($user_id); ?>">
+                                <?php echo esc_html($user_data->display_name . ' (' . $user_data->user_email . ')'); ?>
+                            </option>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </select>
+                <p class="description">
+                    <?php _e('Search and select individual users to receive admin notifications instead of the default admin. Type at least 3 characters to search.', 'voxel-toolkit'); ?>
+                </p>
+            </td>
+        </tr>
+        
+        <script>
+        jQuery(document).ready(function($) {
+            // Initialize Select2 for user search if not already done
+            if (!$('#admin_notifications_selected_users').hasClass('select2-hidden-accessible')) {
+                $('#admin_notifications_selected_users').select2({
+                    ajax: {
+                        url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                action: 'vt_admin_notifications_user_search',
+                                nonce: '<?php echo wp_create_nonce('vt_admin_notifications_user_search'); ?>',
+                                q: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: data
+                            };
+                        },
+                        cache: true
+                    },
+                    escapeMarkup: function(markup) {
+                        return markup;
+                    },
+                    minimumInputLength: 3,
+                    placeholder: '<?php _e('Search for users by name or email...', 'voxel-toolkit'); ?>',
+                    allowClear: true
+                });
+            }
+            
+            // Handle form submission to ensure empty selection is properly saved
+            $('form').on('submit', function() {
+                var selectedValues = $('#admin_notifications_selected_users').val();
+                if (!selectedValues || selectedValues.length === 0) {
+                    // If no users selected, ensure the hidden field value is kept empty
+                    $('input[name="voxel_toolkit_options[admin_notifications][selected_users]"]').val('');
+                }
+            });
+        });
+        </script>
+        
+        <style>
+        .vt-role-grid label:hover {
+            background: #f0f0f1 !important;
+        }
+        .vt-role-grid input[type="checkbox"]:checked + span {
+            font-weight: 600;
+            color: #2271b1;
+        }
+        .select2-container {
+            max-width: 100%;
+        }
+        .select2-container--default .select2-selection--multiple {
+            min-height: 38px;
+            padding: 2px;
+        }
+        </style>
         <?php
     }
     

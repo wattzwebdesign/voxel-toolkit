@@ -1,0 +1,95 @@
+.vt-admin-notifications-form {
+    max-width: 800px;
+}
+
+.vt-admin-notifications-form .form-table {
+    margin-top: 20px;
+}
+
+.vt-admin-notifications-form .form-table th {
+    padding: 20px 10px 20px 0;
+    width: 200px;
+    vertical-align: top;
+}
+
+.vt-admin-notifications-form .form-table td {
+    padding: 20px 10px 20px 0;
+    vertical-align: top;
+}
+
+.vt-role-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.vt-role-list li {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.vt-role-list li:hover {
+    background: #f0f0f1;
+}
+
+.vt-role-list label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin: 0;
+    font-weight: normal;
+}
+
+.vt-role-list input[type="checkbox"] {
+    margin: 0 8px 0 0;
+}
+
+.vt-role-list span {
+    font-size: 14px;
+}
+
+#vt-user-select {
+    min-height: 150px;
+}
+
+.select2-container {
+    max-width: 100%;
+}
+
+.select2-container--default .select2-selection--multiple {
+    min-height: 38px;
+    padding: 2px;
+    border-color: #8c8f94;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+    padding: 2px 8px;
+    margin: 2px;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: #fff;
+    margin-right: 5px;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+    color: #f0f0f1;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.description {
+    margin-top: 10px !important;
+    color: #646970;
+    font-style: italic;
+}
