@@ -437,6 +437,12 @@ class Voxel_Toolkit_Admin {
             $this->settings->refresh_options();
         }
         
+        // Handle Weather Widget default language
+        if (isset($post_data['voxel_toolkit_weather_default_language'])) {
+            $language = sanitize_text_field($post_data['voxel_toolkit_weather_default_language']);
+            update_option('voxel_toolkit_weather_default_language', $language);
+        }
+        
         // Process any other voxel_toolkit_options if they exist
         if (isset($post_data['voxel_toolkit_options'])) {
             foreach ($post_data['voxel_toolkit_options'] as $function_key => $function_settings) {

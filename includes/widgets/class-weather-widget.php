@@ -118,6 +118,17 @@ class Voxel_Toolkit_Weather_Widget extends \Elementor\Widget_Base {
         );
         
         $this->add_control(
+            'language',
+            [
+                'label' => __('Language', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'default' => $this->get_default_language(),
+                'options' => $this->get_language_options(),
+                'description' => __('Select the language for weather descriptions and location names.', 'voxel-toolkit'),
+            ]
+        );
+        
+        $this->add_control(
             'show_description',
             [
                 'label' => __('Show Weather Description', 'voxel-toolkit'),
@@ -301,6 +312,70 @@ class Voxel_Toolkit_Weather_Widget extends \Elementor\Widget_Base {
     }
     
     /**
+     * Get language options for dropdown
+     */
+    private function get_language_options() {
+        return [
+            'en' => __('English', 'voxel-toolkit'),
+            'af' => __('Afrikaans', 'voxel-toolkit'),
+            'sq' => __('Albanian', 'voxel-toolkit'),
+            'ar' => __('Arabic', 'voxel-toolkit'),
+            'az' => __('Azerbaijani', 'voxel-toolkit'),
+            'eu' => __('Basque', 'voxel-toolkit'),
+            'be' => __('Belarusian', 'voxel-toolkit'),
+            'bg' => __('Bulgarian', 'voxel-toolkit'),
+            'ca' => __('Catalan', 'voxel-toolkit'),
+            'zh_cn' => __('Chinese Simplified', 'voxel-toolkit'),
+            'zh_tw' => __('Chinese Traditional', 'voxel-toolkit'),
+            'hr' => __('Croatian', 'voxel-toolkit'),
+            'cz' => __('Czech', 'voxel-toolkit'),
+            'da' => __('Danish', 'voxel-toolkit'),
+            'nl' => __('Dutch', 'voxel-toolkit'),
+            'fi' => __('Finnish', 'voxel-toolkit'),
+            'fr' => __('French', 'voxel-toolkit'),
+            'gl' => __('Galician', 'voxel-toolkit'),
+            'de' => __('German', 'voxel-toolkit'),
+            'el' => __('Greek', 'voxel-toolkit'),
+            'he' => __('Hebrew', 'voxel-toolkit'),
+            'hi' => __('Hindi', 'voxel-toolkit'),
+            'hu' => __('Hungarian', 'voxel-toolkit'),
+            'is' => __('Icelandic', 'voxel-toolkit'),
+            'id' => __('Indonesian', 'voxel-toolkit'),
+            'it' => __('Italian', 'voxel-toolkit'),
+            'ja' => __('Japanese', 'voxel-toolkit'),
+            'kr' => __('Korean', 'voxel-toolkit'),
+            'ku' => __('Kurmanji (Kurdish)', 'voxel-toolkit'),
+            'la' => __('Latvian', 'voxel-toolkit'),
+            'lt' => __('Lithuanian', 'voxel-toolkit'),
+            'mk' => __('Macedonian', 'voxel-toolkit'),
+            'no' => __('Norwegian', 'voxel-toolkit'),
+            'fa' => __('Persian (Farsi)', 'voxel-toolkit'),
+            'pl' => __('Polish', 'voxel-toolkit'),
+            'pt' => __('Portuguese', 'voxel-toolkit'),
+            'pt_br' => __('Portuguese Brasil', 'voxel-toolkit'),
+            'ro' => __('Romanian', 'voxel-toolkit'),
+            'ru' => __('Russian', 'voxel-toolkit'),
+            'sr' => __('Serbian', 'voxel-toolkit'),
+            'sk' => __('Slovak', 'voxel-toolkit'),
+            'sl' => __('Slovenian', 'voxel-toolkit'),
+            'es' => __('Spanish', 'voxel-toolkit'),
+            'sv' => __('Swedish', 'voxel-toolkit'),
+            'th' => __('Thai', 'voxel-toolkit'),
+            'tr' => __('Turkish', 'voxel-toolkit'),
+            'uk' => __('Ukrainian', 'voxel-toolkit'),
+            'vi' => __('Vietnamese', 'voxel-toolkit'),
+        ];
+    }
+    
+    /**
+     * Get default language from settings or fallback to English
+     */
+    private function get_default_language() {
+        $default = get_option('voxel_toolkit_weather_default_language', 'en');
+        return $default;
+    }
+    
+    /**
      * Render the widget
      */
     protected function render() {
@@ -338,9 +413,10 @@ class Voxel_Toolkit_Weather_Widget extends \Elementor\Widget_Base {
         $longitude = $settings['longitude'];
         $units = $settings['units'];
         $view_type = $settings['view_type'];
+        $language = !empty($settings['language']) ? $settings['language'] : $this->get_default_language();
         
         // Create cache key
-        $cache_key = 'voxel_weather_' . md5($api_key . $latitude . $longitude . $units . $view_type);
+        $cache_key = 'voxel_weather_' . md5($api_key . $latitude . $longitude . $units . $view_type . $language);
         
         // Check cache first (5 minutes)
         $cached_data = get_transient($cache_key);
@@ -350,9 +426,9 @@ class Voxel_Toolkit_Weather_Widget extends \Elementor\Widget_Base {
         
         // Determine API endpoint using lat/lng
         if ($view_type === 'current') {
-            $api_url = "https://api.openweathermap.org/data/2.5/weather?lat={$latitude}&lon={$longitude}&appid={$api_key}&units={$units}";
+            $api_url = "https://api.openweathermap.org/data/2.5/weather?lat={$latitude}&lon={$longitude}&appid={$api_key}&units={$units}&lang={$language}";
         } else {
-            $api_url = "https://api.openweathermap.org/data/2.5/forecast?lat={$latitude}&lon={$longitude}&appid={$api_key}&units={$units}";
+            $api_url = "https://api.openweathermap.org/data/2.5/forecast?lat={$latitude}&lon={$longitude}&appid={$api_key}&units={$units}&lang={$language}";
         }
         
         // Make API request

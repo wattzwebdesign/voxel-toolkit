@@ -277,8 +277,56 @@ class Voxel_Toolkit_Duplicate_Post_Widget extends \Elementor\Widget_Base {
         $button_text = !empty($settings['button_text']) ? $settings['button_text'] : __('Duplicate Post', 'voxel-toolkit');
         $redirect_type = $settings['redirect_type'];
         
-        // Check if user can edit posts
-        if (!current_user_can('edit_posts')) {
+        // Check if duplication is enabled for this post type and if user can duplicate
+        $settings_instance = Voxel_Toolkit_Settings::instance();
+        $duplicate_settings = $settings_instance->get_function_settings('duplicate_post', array());
+        
+        // First check if duplicate post function is enabled
+        if (!isset($duplicate_settings['enabled']) || !$duplicate_settings['enabled']) {
+            if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+                echo '<div class="voxel-toolkit-duplicate-wrapper">';
+                echo '<button class="voxel-toolkit-duplicate-btn elementor-button" disabled>Duplication Disabled</button>';
+                echo '</div>';
+            }
+            return;
+        }
+        
+        // Check if enabled for this post type
+        $enabled_post_types = isset($duplicate_settings['post_types']) ? $duplicate_settings['post_types'] : array();
+        if (!in_array($post->post_type, $enabled_post_types)) {
+            if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+                echo '<div class="voxel-toolkit-duplicate-wrapper">';
+                echo '<button class="voxel-toolkit-duplicate-btn elementor-button" disabled>Not Enabled for This Post Type</button>';
+                echo '</div>';
+            }
+            return;
+        }
+        
+        // Check if user can duplicate based on role settings
+        $can_duplicate = false;
+        
+        // Check if user is logged in and has permission based on settings
+        if (is_user_logged_in()) {
+            $allowed_roles = isset($duplicate_settings['allowed_roles']) ? $duplicate_settings['allowed_roles'] : array('contributor', 'author', 'editor', 'administrator');
+            
+            // If "all_roles" is selected, allow everyone
+            if (in_array('all_roles', $allowed_roles)) {
+                $can_duplicate = true;
+            } else {
+                // Check if user has any of the allowed roles
+                $user = wp_get_current_user();
+                $user_roles = $user->roles;
+                
+                foreach ($user_roles as $role) {
+                    if (in_array($role, $allowed_roles)) {
+                        $can_duplicate = true;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        if (!$can_duplicate) {
             if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
                 echo '<div class="voxel-toolkit-duplicate-wrapper">';
                 echo '<button class="voxel-toolkit-duplicate-btn elementor-button" disabled>Login Required</button>';
