@@ -206,6 +206,14 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Export_Orders',
                 'file' => 'functions/class-export-orders.php',
                 'version' => '1.0'
+            ),
+            'fluent_forms_post_author' => array(
+                'name' => __('Fluent Forms Post Author', 'voxel-toolkit'),
+                'description' => __('Adds a "Voxel Post Author" email field to Fluent Forms that automatically populates with the post author\'s email when embedded on posts. Requires Fluent Forms plugin to be active.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Fluent_Forms_Post_Author',
+                'file' => 'functions/class-fluent-forms-post-author.php',
+                'settings_callback' => array($this, 'render_fluent_forms_post_author_settings'),
+                'version' => '1.0'
             )
         );
         
@@ -2649,6 +2657,34 @@ class Voxel_Toolkit_Functions {
             }
         }
         </script>
+        <?php
+    }
+    
+    /**
+     * Render Fluent Forms Post Author settings
+     */
+    public function render_fluent_forms_post_author_settings($settings) {
+        ?>
+        <div class="voxel-toolkit-function-settings">
+            <h4><?php _e('How to Use', 'voxel-toolkit'); ?></h4>
+            <div class="voxel-instructions">
+                <p><strong><?php _e('Instructions:', 'voxel-toolkit'); ?></strong></p>
+                <ul style="list-style-type: disc; margin-left: 20px;">
+                    <li><?php _e('Add the "Voxel Post Author" field to your form', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('Go to Settings and Integrations → Email Notifications', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('Edit the notification you want to configure', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('In "Send To" select "A field value" and choose the Voxel Post Author field', 'voxel-toolkit'); ?></li>
+                </ul>
+            </div>
+            
+            <div class="voxel-tip" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 10px; margin: 15px 0;">
+                <span style="font-size: 18px;">💡</span>
+                <strong><?php _e('Tip:', 'voxel-toolkit'); ?></strong>
+                <?php _e('Add "hidden" to the container class to hide the element from the front end while keeping it functional for notifications.', 'voxel-toolkit'); ?>
+            </div>
+            
+            <p><em><?php _e('This function is currently enabled and active. No additional configuration is required.', 'voxel-toolkit'); ?></em></p>
+        </div>
         <?php
     }
     
