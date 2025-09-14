@@ -141,7 +141,8 @@ class Voxel_Toolkit {
             'includes/class-functions.php',
             'includes/functions/class-auto-verify-posts.php',
             'includes/functions/class-admin-menu-hide.php',
-            'includes/functions/class-admin-notifications.php'
+            'includes/functions/class-admin-notifications.php',
+            'includes/functions/class-featured-posts.php'
         );
         
         if (is_admin()) {

@@ -214,6 +214,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-fluent-forms-post-author.php',
                 'settings_callback' => array($this, 'render_fluent_forms_post_author_settings'),
                 'version' => '1.0'
+            ),
+            'featured_posts' => array(
+                'name' => __('Featured Posts', 'voxel-toolkit'),
+                'description' => __('Add featured functionality to posts with star icons, filtering, and bulk actions. Sets Voxel Priority meta field.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Featured_Posts',
+                'file' => 'functions/class-featured-posts.php',
+                'settings_callback' => array($this, 'render_featured_posts_settings'),
+                'version' => '1.0'
             )
         );
         
@@ -2685,6 +2693,125 @@ class Voxel_Toolkit_Functions {
             
             <p><em><?php _e('This function is currently enabled and active. No additional configuration is required.', 'voxel-toolkit'); ?></em></p>
         </div>
+        <?php
+    }
+    
+    /**
+     * Render Featured Posts settings
+     */
+    public function render_featured_posts_settings($settings) {
+        // Debug what we're receiving
+        error_log('Voxel Toolkit: Featured Posts settings received: ' . print_r($settings, true));
+        
+        $enabled_post_types = isset($settings['post_types']) ? $settings['post_types'] : array();
+        $priority_values = isset($settings['priority_values']) ? $settings['priority_values'] : array();
+        
+        // Get all public post types
+        $post_types = get_post_types(array('public' => true), 'objects');
+        unset($post_types['attachment']); // Remove attachments
+        ?>
+                    <tr>
+                        <th scope="row">
+                            <label><?php _e('Enable for Post Types', 'voxel-toolkit'); ?></label>
+                        </th>
+                        <td>
+                            <fieldset>
+                                <?php foreach ($post_types as $post_type_key => $post_type_obj): ?>
+                                    <label style="display: block; margin-bottom: 8px;">
+                                        <input 
+                                            type="checkbox" 
+                                            name="voxel_toolkit_options[featured_posts][post_types][]" 
+                                            value="<?php echo esc_attr($post_type_key); ?>"
+                                            <?php checked(in_array($post_type_key, $enabled_post_types)); ?>
+                                            class="featured-post-type-toggle"
+                                            data-post-type="<?php echo esc_attr($post_type_key); ?>"
+                                        />
+                                        <span class="dashicons <?php echo esc_attr($this->get_post_type_icon($post_type_key)); ?>"></span>
+                                        <?php echo esc_html($post_type_obj->labels->name); ?>
+                                        <em>(<?php echo esc_html($post_type_key); ?>)</em>
+                                    </label>
+                                <?php endforeach; ?>
+                            </fieldset>
+                            <p class="description">
+                                <?php _e('Select which post types should have featured functionality enabled.', 'voxel-toolkit'); ?>
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <th scope="row">
+                            <label><?php _e('Priority Values', 'voxel-toolkit'); ?></label>
+                        </th>
+                        <td>
+                            <div id="priority-values-container">
+                                <?php foreach ($post_types as $post_type_key => $post_type_obj): ?>
+                                    <?php 
+                                    $is_enabled = in_array($post_type_key, $enabled_post_types);
+                                    $priority_value = isset($priority_values[$post_type_key]) ? $priority_values[$post_type_key] : 10;
+                                    ?>
+                                    <div class="priority-value-row priority-row-<?php echo esc_attr($post_type_key); ?>" 
+                                         style="<?php echo $is_enabled ? '' : 'display: none;'; ?> margin-bottom: 10px;">
+                                        <label style="display: inline-block; min-width: 150px;">
+                                            <span class="dashicons <?php echo esc_attr($this->get_post_type_icon($post_type_key)); ?>"></span>
+                                            <?php echo esc_html($post_type_obj->labels->name); ?>:
+                                        </label>
+                                        <input 
+                                            type="number" 
+                                            name="voxel_toolkit_options[featured_posts][priority_values][<?php echo esc_attr($post_type_key); ?>]" 
+                                            value="<?php echo esc_attr($priority_value); ?>"
+                                            min="1"
+                                            max="999"
+                                            style="width: 80px;"
+                                        />
+                                        <span class="description" style="margin-left: 10px;">
+                                            <?php _e('Voxel Priority value for featured posts', 'voxel-toolkit'); ?>
+                                        </span>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <p class="description">
+                                <?php _e('Set the Voxel Priority meta value that will be used when posts are marked as featured. Higher numbers typically mean higher priority in listings.', 'voxel-toolkit'); ?>
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td colspan="2">
+                            <div class="voxel-instructions" style="margin-top: 20px;">
+                                <h4><?php _e('How to Use', 'voxel-toolkit'); ?></h4>
+                                <ul style="list-style-type: disc; margin-left: 20px;">
+                                    <li><?php _e('Enable featured functionality for desired post types above', 'voxel-toolkit'); ?></li>
+                                    <li><?php _e('Set the priority value that will be assigned to featured posts', 'voxel-toolkit'); ?></li>
+                                    <li><?php _e('Go to the post list page for any enabled post type', 'voxel-toolkit'); ?></li>
+                                    <li><?php _e('Click the star icon next to any post to make it featured', 'voxel-toolkit'); ?></li>
+                                    <li><?php _e('Use the "Featured" filter dropdown to show only featured or non-featured posts', 'voxel-toolkit'); ?></li>
+                                    <li><?php _e('Use bulk actions to make multiple posts featured or remove featured status', 'voxel-toolkit'); ?></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="voxel-tip" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 10px; margin: 15px 0;">
+                                <span style="font-size: 18px;">💡</span>
+                                <strong><?php _e('Tip:', 'voxel-toolkit'); ?></strong>
+                                <?php _e('The priority values set the Voxel Priority meta field which is used by Voxel theme to determine post ranking in listings. Higher values typically appear first.', 'voxel-toolkit'); ?>
+                            </div>
+                        </td>
+                    </tr>
+        
+        <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            // Show/hide priority value inputs based on enabled post types
+            $('.featured-post-type-toggle').change(function() {
+                var postType = $(this).data('post-type');
+                var priorityRow = $('.priority-row-' + postType);
+                
+                if ($(this).is(':checked')) {
+                    priorityRow.show();
+                } else {
+                    priorityRow.hide();
+                }
+            });
+        });
+        </script>
         <?php
     }
     

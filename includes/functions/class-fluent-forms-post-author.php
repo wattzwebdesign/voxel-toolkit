@@ -20,7 +20,6 @@ class Voxel_Toolkit_Fluent_Forms_Post_Author {
      * Get singleton instance
      */
     public static function instance() {
-        error_log('Voxel Toolkit: Fluent Forms Post Author instance() called');
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -31,19 +30,14 @@ class Voxel_Toolkit_Fluent_Forms_Post_Author {
      * Constructor
      */
     private function __construct() {
-        error_log('Voxel Toolkit: Fluent Forms constructor called');
-        
         // Only initialize if Fluent Forms is active
         if ($this->is_fluent_forms_active()) {
-            error_log('Voxel Toolkit: Fluent Forms detected, calling init()');
             // Initialize immediately since Fluent Forms is already loaded
             $this->init();
             
             // Also add hooks in case we need them later
             add_action('fluentform/loaded', array($this, 'init'));
             add_action('init', array($this, 'init'), 20);
-        } else {
-            error_log('Voxel Toolkit: Fluent Forms NOT detected in constructor');
         }
     }
     
@@ -66,11 +60,9 @@ class Voxel_Toolkit_Fluent_Forms_Post_Author {
     public function init() {
         // Prevent multiple initializations
         if ($this->initialized) {
-            error_log('Voxel Toolkit: init() already called, skipping');
             return;
         }
         
-        error_log('Voxel Toolkit: init() called, setting up hooks');
         $this->initialized = true;
         
         // Add custom field to form builder
@@ -95,9 +87,6 @@ class Voxel_Toolkit_Fluent_Forms_Post_Author {
      * Add Voxel Post Author field directly via filter
      */
     public function add_voxel_post_author_direct($components, $formId) {
-        error_log('Voxel Toolkit: add_voxel_post_author_direct called for form ID: ' . $formId);
-        error_log('Voxel Toolkit: Current components structure: ' . print_r(array_keys($components), true));
-        
         // Add our custom field using a structure similar to built-in fields
         $voxel_field = array(
             'index' => 25,
@@ -142,7 +131,6 @@ class Voxel_Toolkit_Fluent_Forms_Post_Author {
         
         $components['advanced'][] = $voxel_field;
         
-        error_log('Voxel Toolkit: Field added to advanced components. Total advanced fields: ' . count($components['advanced']));
         return $components;
     }
     
