@@ -75,6 +75,28 @@ class Voxel_Toolkit_Duplicate_Post_Widget extends \Elementor\Widget_Base {
             ]
         );
         
+        $this->add_control(
+            'copying_text',
+            [
+                'label' => __('Copying Text', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Duplicating...', 'voxel-toolkit'),
+                'placeholder' => __('Enter text shown while copying', 'voxel-toolkit'),
+                'description' => __('Text displayed on button while duplication is in progress', 'voxel-toolkit'),
+            ]
+        );
+        
+        $this->add_control(
+            'title_suffix',
+            [
+                'label' => __('Title Suffix', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('(Copy)', 'voxel-toolkit'),
+                'placeholder' => __('Enter suffix for duplicated title', 'voxel-toolkit'),
+                'description' => __('Text added to the end of the duplicated post title', 'voxel-toolkit'),
+            ]
+        );
+        
         $this->end_controls_section();
         
         // Button Style Section
@@ -276,6 +298,8 @@ class Voxel_Toolkit_Duplicate_Post_Widget extends \Elementor\Widget_Base {
         $settings = $this->get_settings_for_display();
         $button_text = !empty($settings['button_text']) ? $settings['button_text'] : __('Duplicate Post', 'voxel-toolkit');
         $redirect_type = $settings['redirect_type'];
+        $copying_text = !empty($settings['copying_text']) ? $settings['copying_text'] : __('Duplicating...', 'voxel-toolkit');
+        $title_suffix = !empty($settings['title_suffix']) ? $settings['title_suffix'] : __('(Copy)', 'voxel-toolkit');
         
         // Check if duplication is enabled for this post type and if user can duplicate
         $settings_instance = Voxel_Toolkit_Settings::instance();
@@ -344,7 +368,9 @@ class Voxel_Toolkit_Duplicate_Post_Widget extends \Elementor\Widget_Base {
         <div class="voxel-toolkit-duplicate-wrapper">
             <button class="voxel-toolkit-duplicate-btn elementor-button <?php echo esc_attr($hover_class); ?>" 
                     data-post-id="<?php echo esc_attr($post->ID); ?>"
-                    data-redirect="<?php echo esc_attr($redirect_type); ?>">
+                    data-redirect="<?php echo esc_attr($redirect_type); ?>"
+                    data-copying-text="<?php echo esc_attr($copying_text); ?>"
+                    data-title-suffix="<?php echo esc_attr($title_suffix); ?>">
                 <?php echo esc_html($button_text); ?>
             </button>
         </div>

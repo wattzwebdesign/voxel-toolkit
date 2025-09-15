@@ -197,8 +197,8 @@ class Voxel_Toolkit_Duplicate_Post {
             wp_die(__('Duplication is not enabled for this post type.', 'voxel-toolkit'));
         }
         
-        // Create the duplicate
-        $new_post_id = $this->create_duplicate($post);
+        // Create the duplicate (use default suffix for admin duplication)
+        $new_post_id = $this->create_duplicate($post, ' (Copy)');
         
         if (!$new_post_id) {
             wp_die(__('Post duplication failed.', 'voxel-toolkit'));
@@ -226,10 +226,10 @@ class Voxel_Toolkit_Duplicate_Post {
     /**
      * Create a duplicate of the post
      */
-    private function create_duplicate($post) {
+    private function create_duplicate($post, $title_suffix = ' (Copy)') {
         // Prepare post data
         $new_post = array(
-            'post_title'    => wp_unslash($post->post_title) . ' (Copy)',
+            'post_title'    => wp_unslash($post->post_title) . ' ' . trim($title_suffix),
             'post_content'  => $post->post_content,
             'post_excerpt'  => $post->post_excerpt,
             'post_status'   => 'draft',
@@ -424,9 +424,11 @@ class Voxel_Toolkit_Duplicate_Post {
                 var postId = button.data('post-id');
                 var redirectType = button.data('redirect');
                 var originalText = button.text();
+                var copyingText = button.data('copying-text') || 'Duplicating...';
+                var titleSuffix = button.data('title-suffix') || '(Copy)';
                 
                 // Disable button and show loading
-                button.prop('disabled', true).text('Duplicating...');
+                button.prop('disabled', true).text(copyingText);
                 
                 $.ajax({
                     url: '" . admin_url('admin-ajax.php') . "',
@@ -435,6 +437,7 @@ class Voxel_Toolkit_Duplicate_Post {
                         action: 'voxel_toolkit_duplicate_post_frontend',
                         post_id: postId,
                         redirect_type: redirectType,
+                        title_suffix: titleSuffix,
                         nonce: '" . wp_create_nonce('voxel_toolkit_duplicate_frontend') . "'
                     },
                     success: function(response) {
@@ -466,6 +469,7 @@ class Voxel_Toolkit_Duplicate_Post {
         
         $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
         $redirect_type = isset($_POST['redirect_type']) ? sanitize_text_field($_POST['redirect_type']) : 'create_page';
+        $title_suffix = isset($_POST['title_suffix']) ? sanitize_text_field($_POST['title_suffix']) : ' (Copy)';
         
         $post = get_post($post_id);
         
@@ -483,7 +487,7 @@ class Voxel_Toolkit_Duplicate_Post {
         }
         
         // Create the duplicate
-        $new_post_id = $this->create_duplicate($post);
+        $new_post_id = $this->create_duplicate($post, $title_suffix);
         
         if (!$new_post_id) {
             wp_send_json_error(array('message' => 'Failed to duplicate post'));
