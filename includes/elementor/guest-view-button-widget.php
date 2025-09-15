@@ -21,7 +21,7 @@ class Voxel_Toolkit_Guest_View_Button_Widget extends \Elementor\Widget_Base {
      * Get widget title
      */
     public function get_title() {
-        return __('Guest View Button', 'voxel-toolkit');
+        return __('Guest View Button (VT)', 'voxel-toolkit');
     }
     
     /**

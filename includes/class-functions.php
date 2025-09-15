@@ -239,7 +239,6 @@ class Voxel_Toolkit_Functions {
                 'description' => __('Display current weather, forecasts with customizable styling using OpenWeatherMap API.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Weather_Widget_Manager',
                 'file' => 'widgets/class-weather-widget-manager.php',
-                'settings_callback' => array($this, 'render_weather_widget_settings'),
                 'version' => '1.0'
             ),
             'reading_time' => array(
@@ -1882,85 +1881,6 @@ class Voxel_Toolkit_Functions {
         <?php
     }
     
-    /**
-     * Render settings for Weather Widget
-     * 
-     * @param array $settings Current settings
-     */
-    public function render_weather_widget_settings($settings) {
-        $default_language = get_option('voxel_toolkit_weather_default_language', 'en');
-        
-        // Language options
-        $language_options = [
-            'en' => __('English', 'voxel-toolkit'),
-            'af' => __('Afrikaans', 'voxel-toolkit'),
-            'sq' => __('Albanian', 'voxel-toolkit'),
-            'ar' => __('Arabic', 'voxel-toolkit'),
-            'az' => __('Azerbaijani', 'voxel-toolkit'),
-            'eu' => __('Basque', 'voxel-toolkit'),
-            'be' => __('Belarusian', 'voxel-toolkit'),
-            'bg' => __('Bulgarian', 'voxel-toolkit'),
-            'ca' => __('Catalan', 'voxel-toolkit'),
-            'zh_cn' => __('Chinese Simplified', 'voxel-toolkit'),
-            'zh_tw' => __('Chinese Traditional', 'voxel-toolkit'),
-            'hr' => __('Croatian', 'voxel-toolkit'),
-            'cz' => __('Czech', 'voxel-toolkit'),
-            'da' => __('Danish', 'voxel-toolkit'),
-            'nl' => __('Dutch', 'voxel-toolkit'),
-            'fi' => __('Finnish', 'voxel-toolkit'),
-            'fr' => __('French', 'voxel-toolkit'),
-            'gl' => __('Galician', 'voxel-toolkit'),
-            'de' => __('German', 'voxel-toolkit'),
-            'el' => __('Greek', 'voxel-toolkit'),
-            'he' => __('Hebrew', 'voxel-toolkit'),
-            'hi' => __('Hindi', 'voxel-toolkit'),
-            'hu' => __('Hungarian', 'voxel-toolkit'),
-            'is' => __('Icelandic', 'voxel-toolkit'),
-            'id' => __('Indonesian', 'voxel-toolkit'),
-            'it' => __('Italian', 'voxel-toolkit'),
-            'ja' => __('Japanese', 'voxel-toolkit'),
-            'kr' => __('Korean', 'voxel-toolkit'),
-            'ku' => __('Kurmanji (Kurdish)', 'voxel-toolkit'),
-            'la' => __('Latvian', 'voxel-toolkit'),
-            'lt' => __('Lithuanian', 'voxel-toolkit'),
-            'mk' => __('Macedonian', 'voxel-toolkit'),
-            'no' => __('Norwegian', 'voxel-toolkit'),
-            'fa' => __('Persian (Farsi)', 'voxel-toolkit'),
-            'pl' => __('Polish', 'voxel-toolkit'),
-            'pt' => __('Portuguese', 'voxel-toolkit'),
-            'pt_br' => __('Portuguese Brasil', 'voxel-toolkit'),
-            'ro' => __('Romanian', 'voxel-toolkit'),
-            'ru' => __('Russian', 'voxel-toolkit'),
-            'sr' => __('Serbian', 'voxel-toolkit'),
-            'sk' => __('Slovak', 'voxel-toolkit'),
-            'sl' => __('Slovenian', 'voxel-toolkit'),
-            'es' => __('Spanish', 'voxel-toolkit'),
-            'sv' => __('Swedish', 'voxel-toolkit'),
-            'th' => __('Thai', 'voxel-toolkit'),
-            'tr' => __('Turkish', 'voxel-toolkit'),
-            'uk' => __('Ukrainian', 'voxel-toolkit'),
-            'vi' => __('Vietnamese', 'voxel-toolkit'),
-        ];
-        ?>
-        <tr>
-            <th scope="row">
-                <label for="voxel_toolkit_weather_default_language"><?php _e('Default Language', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <select name="voxel_toolkit_weather_default_language" id="voxel_toolkit_weather_default_language">
-                    <?php foreach ($language_options as $code => $name): ?>
-                        <option value="<?php echo esc_attr($code); ?>" <?php selected($default_language, $code); ?>>
-                            <?php echo esc_html($name); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <p class="description">
-                    <?php _e('Set the default language for weather descriptions and location names. Individual widgets can override this setting.', 'voxel-toolkit'); ?>
-                </p>
-            </td>
-        </tr>
-        <?php
-    }
     
     /**
      * Render Reading Time widget settings

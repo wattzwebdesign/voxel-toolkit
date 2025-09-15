@@ -17,7 +17,7 @@ class Voxel_Toolkit_Prev_Next_Widget extends \Elementor\Widget_Base {
     }
     
     public function get_title() { 
-        return __('Previous/Next Navigation', 'voxel-toolkit'); 
+        return __('Previous/Next Navigation (VT)', 'voxel-toolkit'); 
     }
     
     public function get_icon() { 

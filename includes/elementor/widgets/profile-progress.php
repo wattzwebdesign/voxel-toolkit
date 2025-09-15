@@ -44,7 +44,7 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
      * Get widget title
      */
     public function get_title() {
-        return __('Profile Progress', 'voxel-toolkit');
+        return __('Profile Progress (VT)', 'voxel-toolkit');
     }
     
     /**

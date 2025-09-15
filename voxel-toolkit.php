@@ -3,7 +3,7 @@
  * Plugin Name: Voxel Toolkit
  * Plugin URI: https://codewattz.com/voxel-toolkit-plugin/
  * Description: A comprehensive toolkit for extending Voxel theme functionality with toggleable features and customizable settings.
- * Version: 1.2.0.1
+ * Version: 1.2.1
  * Author: Code Wattz
  * Author URI: https://codewattz.com
  * License: GPL v2 or later
@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('VOXEL_TOOLKIT_VERSION', '1.2.0.1');
+define('VOXEL_TOOLKIT_VERSION', '1.2.1');
 define('VOXEL_TOOLKIT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('VOXEL_TOOLKIT_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('VOXEL_TOOLKIT_PLUGIN_FILE', __FILE__);
@@ -83,6 +83,9 @@ class Voxel_Toolkit {
         // Load plugin components
         $this->load_includes();
         $this->init_hooks();
+        
+        // Clear Elementor cache if needed
+        $this->maybe_clear_elementor_cache();
         
         // Initialize admin if in admin area
         if (is_admin()) {
@@ -173,6 +176,10 @@ class Voxel_Toolkit {
             if (class_exists('Voxel_Toolkit_Functions')) {
                 Voxel_Toolkit_Functions::instance();
             }
+            
+            // Add hook to refresh Elementor widget cache on init
+            add_action('elementor/init', array($this, 'force_elementor_widget_refresh'));
+            
         } catch (Exception $e) {
             error_log('Voxel Toolkit: Error initializing hooks - ' . $e->getMessage());
         }
@@ -385,6 +392,67 @@ class Voxel_Toolkit {
         
         // Flush rewrite rules
         flush_rewrite_rules();
+    }
+    
+    /**
+     * Force Elementor to refresh widget cache
+     */
+    public function force_elementor_widget_refresh() {
+        // Check if we need to refresh widgets due to title changes
+        $current_version = get_option('voxel_toolkit_widget_cache_version', '0');
+        
+        if (version_compare($current_version, VOXEL_TOOLKIT_VERSION, '<')) {
+            // Force Elementor to refresh widget list
+            if (class_exists('\Elementor\Plugin')) {
+                // Delete cached widgets list
+                wp_cache_delete('elementor_widgets', 'elementor');
+                
+                // Force refresh of widgets registry
+                if (method_exists('\Elementor\Plugin', 'instance')) {
+                    $elementor = \Elementor\Plugin::instance();
+                    if (isset($elementor->widgets_manager)) {
+                        // Clear the widgets cache
+                        $elementor->widgets_manager->_init_widgets();
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Clear Elementor cache if needed to refresh widget titles
+     */
+    private function maybe_clear_elementor_cache() {
+        // Only run this once per plugin update by checking version option
+        $current_version = get_option('voxel_toolkit_widget_cache_version', '0');
+        
+        if (version_compare($current_version, VOXEL_TOOLKIT_VERSION, '<')) {
+            // Clear Elementor cache if Elementor is active
+            if (class_exists('\Elementor\Plugin')) {
+                // Clear Elementor cache
+                if (method_exists('\Elementor\Plugin', 'instance')) {
+                    $elementor = \Elementor\Plugin::instance();
+                    
+                    // Clear files cache
+                    if (isset($elementor->files_manager)) {
+                        $elementor->files_manager->clear_cache();
+                    }
+                    
+                    // Clear widgets cache
+                    if (isset($elementor->widgets_manager)) {
+                        // Force refresh of widget list
+                        wp_cache_delete('elementor_widgets', 'elementor');
+                    }
+                }
+                
+                // Clear any Elementor specific caches
+                delete_transient('elementor_remote_info_api_data');
+                delete_transient('elementor_system_info');
+            }
+            
+            // Update version to prevent running this again
+            update_option('voxel_toolkit_widget_cache_version', VOXEL_TOOLKIT_VERSION);
+        }
     }
     
     /**

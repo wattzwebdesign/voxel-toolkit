@@ -44,7 +44,7 @@ class Voxel_Toolkit_Elementor_Reading_Time extends \Elementor\Widget_Base {
      * Get widget title
      */
     public function get_title() {
-        return __('Reading Time', 'voxel-toolkit');
+        return __('Reading Time (VT)', 'voxel-toolkit');
     }
     
     /**

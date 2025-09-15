@@ -22,7 +22,7 @@ class Voxel_Toolkit_Duplicate_Post_Widget extends \Elementor\Widget_Base {
      * Get widget title
      */
     public function get_title() {
-        return __('Duplicate Post', 'voxel-toolkit');
+        return __('Duplicate Post (VT)', 'voxel-toolkit');
     }
     
     /**

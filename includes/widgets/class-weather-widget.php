@@ -22,7 +22,7 @@ class Voxel_Toolkit_Weather_Widget extends \Elementor\Widget_Base {
      * Get widget title
      */
     public function get_title() {
-        return __('Weather', 'voxel-toolkit');
+        return __('Weather (VT)', 'voxel-toolkit');
     }
     
     /**
@@ -368,11 +368,10 @@ class Voxel_Toolkit_Weather_Widget extends \Elementor\Widget_Base {
     }
     
     /**
-     * Get default language from settings or fallback to English
+     * Get default language - always English
      */
     private function get_default_language() {
-        $default = get_option('voxel_toolkit_weather_default_language', 'en');
-        return $default;
+        return 'en';
     }
     
     /**
