@@ -65,7 +65,7 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
      * Get help URL
      */
     public function get_custom_help_url() {
-        return 'https://codewattz.com/voxel-toolkit-plugin/';
+        return 'https://codewattz.com/doc';
     }
     
     /**
@@ -120,7 +120,7 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'placeholder' => __('Enter field key (e.g., first_name)', 'voxel-toolkit'),
                 'label_block' => true,
-                'render_type' => 'ui',
+                'render_type' => 'none',
             ]
         );
         
@@ -131,7 +131,7 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'placeholder' => __('Enter field display name', 'voxel-toolkit'),
                 'label_block' => true,
-                'render_type' => 'ui',
+                'render_type' => 'none',
             ]
         );
         
@@ -189,7 +189,9 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
                 'condition' => [
                     'show_percentage' => 'yes',
                 ],
-                'render_type' => 'none',
+                'render_type' => 'template',
+                'prefix_class' => '',
+                'selectors' => [],
             ]
         );
         
@@ -203,7 +205,9 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
                 'condition' => [
                     'show_percentage' => 'yes',
                 ],
-                'render_type' => 'none',
+                'render_type' => 'template',
+                'prefix_class' => '',
+                'selectors' => [],
             ]
         );
         
