@@ -290,6 +290,16 @@ class Voxel_Toolkit_Featured_Posts {
             $is_featured = true;
         }
         
+        // Force post update to refresh caches and trigger Voxel's reindexing
+        wp_update_post(array(
+            'ID' => $post_id,
+            'post_modified' => current_time('mysql'),
+            'post_modified_gmt' => current_time('mysql', 1)
+        ));
+        
+        // Trigger Voxel indexing for this specific post
+        $this->reindex_post($post_id);
+        
         wp_send_json_success(array(
             'featured' => $is_featured,
             'message' => $is_featured ? __('Post marked as featured', 'voxel-toolkit') : __('Post removed from featured', 'voxel-toolkit')
@@ -333,6 +343,16 @@ class Voxel_Toolkit_Featured_Posts {
                 delete_post_meta($post_id, 'voxel:priority');
                 $count++;
             }
+            
+            // Force post update to refresh caches
+            wp_update_post(array(
+                'ID' => $post_id,
+                'post_modified' => current_time('mysql'),
+                'post_modified_gmt' => current_time('mysql', 1)
+            ));
+            
+            // Trigger Voxel indexing for this specific post
+            $this->reindex_post($post_id);
         }
         
         $redirect_to = add_query_arg('bulk_featured_posts', $count, $redirect_to);
@@ -416,5 +436,39 @@ class Voxel_Toolkit_Featured_Posts {
                 }
             </style>';
         });
+    }
+    
+    /**
+     * Reindex a specific post for Voxel search/listings
+     * Based on Essential Addons for Voxel implementation
+     */
+    private function reindex_post($post_id) {
+        try {
+            // Check if Voxel is available
+            if (!class_exists('\Voxel\Post_Type')) {
+                return;
+            }
+            
+            $post = get_post($post_id);
+            if (!$post) {
+                return;
+            }
+            
+            // Get the Voxel post type
+            $voxel_post_type = \Voxel\Post_Type::get($post->post_type);
+            if (!$voxel_post_type) {
+                return;
+            }
+            
+            // Get the index table and reindex this specific post
+            $table = $voxel_post_type->get_index_table();
+            if ($table && method_exists($table, 'index')) {
+                $table->index([$post_id]);
+                error_log("Voxel Toolkit Featured Posts: Reindexed post {$post_id}");
+            }
+            
+        } catch (Exception $e) {
+            error_log("Voxel Toolkit Featured Posts: Error reindexing post {$post_id}: " . $e->getMessage());
+        }
     }
 }
