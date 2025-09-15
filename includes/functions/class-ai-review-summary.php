@@ -71,11 +71,12 @@ class Voxel_Toolkit_AI_Review_Summary {
                 $review_text .= strip_tags($review->content) . "\n";
             }
             
-            // Construct prompt for ChatGPT.
-            $prompt = "Please provide a concise summary of the following user reviews for a listing. Focus on the main strengths and weaknesses mentioned by users, and provide a brief overview similar to what you might see on TripAdvisor.\n\nReviews:\n" . $review_text;
+            // Construct prompt for ChatGPT with language support
+            $language_name = $this->get_language_name();
+            $prompt = "Please provide a concise summary of the following user reviews for a listing. Focus on the main strengths and weaknesses mentioned by users, and provide a brief overview similar to what you might see on TripAdvisor. Respond in {$language_name}.\n\nReviews:\n" . $review_text;
             
             // Get summary from API
-            $summary = $this->get_chatgpt_response($prompt, 'You are a helpful assistant that summarizes user reviews.');
+            $summary = $this->get_chatgpt_response($prompt, "You are a helpful assistant that summarizes user reviews. Always respond in {$language_name}.");
             
             if (is_wp_error($summary)) {
                 return '<p>Error generating summary: ' . esc_html($summary->get_error_message()) . '</p>';
@@ -158,10 +159,11 @@ class Voxel_Toolkit_AI_Review_Summary {
                 $review_text .= strip_tags($review->content) . "\n";
             }
             
-            // Construct prompt for this category.
-            $prompt = "Based on the following user reviews for a listing, provide one word that best summarizes the overall opinion about {$cat}. Only output one word (for example, 'Delicious' or 'Mediocre').\n\nReviews:\n" . $review_text;
+            // Construct prompt for this category with language support
+            $language_name = $this->get_language_name();
+            $prompt = "Based on the following user reviews for a listing, provide one word that best summarizes the overall opinion about {$cat}. Only output one word (for example, 'Delicious' or 'Mediocre'). Respond in {$language_name}.\n\nReviews:\n" . $review_text;
             
-            $opinion = $this->get_chatgpt_response($prompt, 'You are a helpful assistant that summarizes opinions in one word.', 0.5);
+            $opinion = $this->get_chatgpt_response($prompt, "You are a helpful assistant that summarizes opinions in one word. Always respond in {$language_name}.", 0.5);
             
             if (is_wp_error($opinion)) {
                 $opinions[$cat] = 'Error';
@@ -188,6 +190,56 @@ class Voxel_Toolkit_AI_Review_Summary {
         $output .= '</div>';
         
         return $output;
+    }
+    
+    /**
+     * Get the language name for AI prompts
+     */
+    private function get_language_name() {
+        $settings = get_option('voxel_toolkit_options', array());
+        $ai_settings = isset($settings['ai_review_summary']) ? $settings['ai_review_summary'] : array();
+        $language_code = isset($ai_settings['language']) ? $ai_settings['language'] : 'en';
+        
+        $language_names = array(
+            'en' => 'English',
+            'it' => 'Italian',
+            'es' => 'Spanish',
+            'fr' => 'French',
+            'de' => 'German',
+            'pt' => 'Portuguese',
+            'nl' => 'Dutch',
+            'ru' => 'Russian',
+            'zh' => 'Chinese',
+            'ja' => 'Japanese',
+            'ko' => 'Korean',
+            'ar' => 'Arabic',
+            'hi' => 'Hindi',
+            'tr' => 'Turkish',
+            'pl' => 'Polish',
+            'sv' => 'Swedish',
+            'da' => 'Danish',
+            'no' => 'Norwegian',
+            'fi' => 'Finnish',
+            'cs' => 'Czech',
+            'hu' => 'Hungarian',
+            'ro' => 'Romanian',
+            'bg' => 'Bulgarian',
+            'hr' => 'Croatian',
+            'sk' => 'Slovak',
+            'sl' => 'Slovenian',
+            'et' => 'Estonian',
+            'lv' => 'Latvian',
+            'lt' => 'Lithuanian',
+            'el' => 'Greek',
+            'he' => 'Hebrew',
+            'th' => 'Thai',
+            'vi' => 'Vietnamese',
+            'id' => 'Indonesian',
+            'ms' => 'Malay',
+            'uk' => 'Ukrainian',
+        );
+        
+        return isset($language_names[$language_code]) ? $language_names[$language_code] : 'English';
     }
     
     /**

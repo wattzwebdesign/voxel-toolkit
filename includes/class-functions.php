@@ -1476,6 +1476,70 @@ class Voxel_Toolkit_Functions {
                         </div>
                     </div>
                     
+                    <!-- Language Settings -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;"><?php _e('Language Settings', 'voxel-toolkit'); ?></h3>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 8px;"><?php _e('AI Output Language', 'voxel-toolkit'); ?></label>
+                            
+                            <?php 
+                            $current_language = isset($settings['language']) ? $settings['language'] : 'en';
+                            $languages = array(
+                                'en' => __('English', 'voxel-toolkit'),
+                                'it' => __('Italian', 'voxel-toolkit'),
+                                'es' => __('Spanish', 'voxel-toolkit'),
+                                'fr' => __('French', 'voxel-toolkit'),
+                                'de' => __('German', 'voxel-toolkit'),
+                                'pt' => __('Portuguese', 'voxel-toolkit'),
+                                'nl' => __('Dutch', 'voxel-toolkit'),
+                                'ru' => __('Russian', 'voxel-toolkit'),
+                                'zh' => __('Chinese', 'voxel-toolkit'),
+                                'ja' => __('Japanese', 'voxel-toolkit'),
+                                'ko' => __('Korean', 'voxel-toolkit'),
+                                'ar' => __('Arabic', 'voxel-toolkit'),
+                                'hi' => __('Hindi', 'voxel-toolkit'),
+                                'tr' => __('Turkish', 'voxel-toolkit'),
+                                'pl' => __('Polish', 'voxel-toolkit'),
+                                'sv' => __('Swedish', 'voxel-toolkit'),
+                                'da' => __('Danish', 'voxel-toolkit'),
+                                'no' => __('Norwegian', 'voxel-toolkit'),
+                                'fi' => __('Finnish', 'voxel-toolkit'),
+                                'cs' => __('Czech', 'voxel-toolkit'),
+                                'hu' => __('Hungarian', 'voxel-toolkit'),
+                                'ro' => __('Romanian', 'voxel-toolkit'),
+                                'bg' => __('Bulgarian', 'voxel-toolkit'),
+                                'hr' => __('Croatian', 'voxel-toolkit'),
+                                'sk' => __('Slovak', 'voxel-toolkit'),
+                                'sl' => __('Slovenian', 'voxel-toolkit'),
+                                'et' => __('Estonian', 'voxel-toolkit'),
+                                'lv' => __('Latvian', 'voxel-toolkit'),
+                                'lt' => __('Lithuanian', 'voxel-toolkit'),
+                                'el' => __('Greek', 'voxel-toolkit'),
+                                'he' => __('Hebrew', 'voxel-toolkit'),
+                                'th' => __('Thai', 'voxel-toolkit'),
+                                'vi' => __('Vietnamese', 'voxel-toolkit'),
+                                'id' => __('Indonesian', 'voxel-toolkit'),
+                                'ms' => __('Malay', 'voxel-toolkit'),
+                                'uk' => __('Ukrainian', 'voxel-toolkit'),
+                            );
+                            ?>
+                            
+                            <select name="voxel_toolkit_options[ai_review_summary][language]" 
+                                    style="width: 100%; max-width: 300px; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; background: white;">
+                                <?php foreach ($languages as $code => $name): ?>
+                                    <option value="<?php echo esc_attr($code); ?>" <?php selected($current_language, $code); ?>>
+                                        <?php echo esc_html($name); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            
+                            <p style="margin: 10px 0 0 0; font-size: 13px; color: #666;">
+                                <?php _e('Select the language for AI-generated summaries and opinions. The AI will respond in the selected language.', 'voxel-toolkit'); ?>
+                            </p>
+                        </div>
+                    </div>
+                    
                     <!-- Cache Management -->
                     <div style="margin-bottom: 30px;">
                         <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;"><?php _e('Cache Management', 'voxel-toolkit'); ?></h3>
