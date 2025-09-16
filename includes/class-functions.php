@@ -270,6 +270,13 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-profile-progress-widget.php',
                 'settings_callback' => array($this, 'render_profile_progress_widget_settings'),
                 'version' => '1.0'
+            ),
+            'timeline_photos' => array(
+                'name' => __('Timeline Photos', 'voxel-toolkit'),
+                'description' => __('Display photos from post reviews in a customizable gallery with masonry, grid, and justified layouts.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Timeline_Photos_Widget',
+                'file' => 'widgets/class-timeline-photos-widget.php',
+                'version' => '1.0'
             )
         );
         
