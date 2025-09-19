@@ -56,7 +56,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Auto_Verify_Posts',
                 'file' => 'functions/class-auto-verify-posts.php',
                 'settings_callback' => array($this, 'render_auto_verify_posts_settings'),
-                'version' => '1.0'
             ),
             'admin_menu_hide' => array(
                 'name' => __('Admin Menu', 'voxel-toolkit'),
@@ -64,7 +63,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Admin_Menu_Hide',
                 'file' => 'functions/class-admin-menu-hide.php',
                 'settings_callback' => array($this, 'render_admin_menu_hide_settings'),
-                'version' => '1.0'
             ),
             'admin_bar_publish' => array(
                 'name' => __('Admin Bar Publish Toggle', 'voxel-toolkit'),
@@ -72,14 +70,12 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Admin_Bar_Publish',
                 'file' => 'functions/class-admin-bar-publish.php',
                 'settings_callback' => array($this, 'render_admin_bar_publish_settings'),
-                'version' => '1.0'
             ),
             'sticky_admin_bar' => array(
                 'name' => __('Sticky Admin Bar', 'voxel-toolkit'),
                 'description' => __('Make the WordPress admin bar sticky (fixed) instead of static on the frontend.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Sticky_Admin_Bar',
                 'file' => 'functions/class-sticky-admin-bar.php',
-                'version' => '1.0'
             ),
             'delete_post_media' => array(
                 'name' => __('Delete Post Media', 'voxel-toolkit'),
@@ -87,14 +83,12 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Delete_Post_Media',
                 'file' => 'functions/class-delete-post-media.php',
                 'settings_callback' => array($this, 'render_delete_post_media_settings'),
-                'version' => '1.0'
             ),
             'light_mode' => array(
                 'name' => __('Light Mode', 'voxel-toolkit'),
                 'description' => __('Enable light mode styling for the Voxel admin interface.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Light_Mode',
                 'file' => 'functions/class-light-mode.php',
-                'version' => '1.0'
             ),
             'admin_notifications' => array(
                 'name' => __('Admin Notifications', 'voxel-toolkit'),
@@ -102,7 +96,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Admin_Notifications',
                 'file' => 'functions/class-admin-notifications.php',
                 'settings_callback' => array($this, 'render_admin_notifications_settings'),
-                'version' => '1.0'
             ),
             'membership_notifications' => array(
                 'name' => __('Membership Notifications', 'voxel-toolkit'),
@@ -110,7 +103,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Membership_Notifications',
                 'file' => 'functions/class-membership-notifications.php',
                 'settings_callback' => array($this, 'render_membership_notifications_settings'),
-                'version' => '1.0'
             ),
             'guest_view' => array(
                 'name' => __('Guest View', 'voxel-toolkit'),
@@ -118,7 +110,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Guest_View',
                 'file' => 'functions/class-guest-view.php',
                 'settings_callback' => array($this, 'render_guest_view_settings'),
-                'version' => '1.1'
             ),
             'password_visibility_toggle' => array(
                 'name' => __('Password Visibility Toggle', 'voxel-toolkit'),
@@ -126,7 +117,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Password_Visibility_Toggle',
                 'file' => 'functions/class-password-visibility-toggle.php',
                 'settings_callback' => array($this, 'render_password_visibility_toggle_settings'),
-                'version' => '1.0'
             ),
             'ai_review_summary' => array(
                 'name' => __('AI Review Summary', 'voxel-toolkit'),
@@ -134,7 +124,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_AI_Review_Summary',
                 'file' => 'functions/class-ai-review-summary.php',
                 'settings_callback' => array($this, 'render_ai_review_summary_settings'),
-                'version' => '1.0'
             ),
             'show_field_description' => array(
                 'name' => __('Show Field Description', 'voxel-toolkit'),
@@ -142,7 +131,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Show_Field_Description',
                 'file' => 'functions/class-show-field-description.php',
                 'settings_callback' => array($this, 'render_show_field_description_settings'),
-                'version' => '1.0'
             ),
             'duplicate_post' => array(
                 'name' => __('Duplicate Post/Page', 'voxel-toolkit'),
@@ -150,7 +138,20 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Duplicate_Post',
                 'file' => 'functions/class-duplicate-post.php',
                 'settings_callback' => array($this, 'render_duplicate_post_settings'),
-                'version' => '1.1'
+            ),
+            'media_paste' => array(
+                'name' => __('Media Paste', 'voxel-toolkit'),
+                'description' => __('Paste images directly from clipboard into WordPress media library and other media pickers. Elementor integration coming soon.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Media_Paste',
+                'file' => 'functions/class-media-paste.php',
+                'settings_callback' => array($this, 'render_media_paste_settings'),
+            ),
+            'admin_taxonomy_search' => array(
+                'name' => __('Admin Taxonomy Search', 'voxel-toolkit'),
+                'description' => __('Add search functionality to taxonomy metaboxes on post edit pages for easier term selection.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Admin_Taxonomy_Search',
+                'file' => 'functions/class-admin-taxonomy-search.php',
+                'settings_callback' => array($this, 'render_admin_taxonomy_search_settings'),
             ),
             'pending_posts_badge' => array(
                 'name' => __('Pending Posts Badge', 'voxel-toolkit'),
@@ -158,7 +159,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Pending_Posts_Badge',
                 'file' => 'functions/class-pending-posts-badge.php',
                 'settings_callback' => array($this, 'render_pending_posts_badge_settings'),
-                'version' => '1.0'
             ),
             'pre_approve_posts' => array(
                 'name' => __('Pre-Approve Posts', 'voxel-toolkit'),
@@ -166,7 +166,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Pre_Approve_Posts',
                 'file' => 'functions/class-pre-approve-posts.php',
                 'settings_callback' => array($this, 'render_pre_approve_posts_settings'),
-                'version' => '1.0'
             ),
             'disable_auto_updates' => array(
                 'name' => __('Disable Automatic Updates', 'voxel-toolkit'),
@@ -174,7 +173,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Disable_Auto_Updates',
                 'file' => 'functions/class-disable-auto-updates.php',
                 'settings_callback' => array($this, 'render_disable_auto_updates_settings'),
-                'version' => '1.0'
             ),
             'redirect_posts' => array(
                 'name' => __('Redirect Posts', 'voxel-toolkit'),
@@ -182,7 +180,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Redirect_Posts',
                 'file' => 'functions/class-redirect-posts.php',
                 'settings_callback' => array($this, 'render_redirect_posts_settings'),
-                'version' => '1.0'
             ),
             'auto_promotion' => array(
                 'name' => __('Auto Promotion', 'voxel-toolkit'),
@@ -190,7 +187,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Auto_Promotion',
                 'file' => 'functions/class-auto-promotion.php',
                 'settings_callback' => array($this, 'render_auto_promotion_settings'),
-                'version' => '1.0'
             ),
             'custom_submission_messages' => array(
                 'name' => __('Custom Submission Messages', 'voxel-toolkit'),
@@ -198,14 +194,12 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Custom_Submission_Messages',
                 'file' => 'functions/class-custom-submission-messages.php',
                 'settings_callback' => array($this, 'render_custom_submission_messages_settings'),
-                'version' => '1.0'
             ),
             'export_orders' => array(
                 'name' => __('Export Orders', 'voxel-toolkit'),
                 'description' => __('Add an export button to the Voxel orders page to export all orders to CSV format with comprehensive details.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Export_Orders',
                 'file' => 'functions/class-export-orders.php',
-                'version' => '1.0'
             ),
             'fluent_forms_post_author' => array(
                 'name' => __('Fluent Forms Post Author', 'voxel-toolkit'),
@@ -213,7 +207,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Fluent_Forms_Post_Author',
                 'file' => 'functions/class-fluent-forms-post-author.php',
                 'settings_callback' => array($this, 'render_fluent_forms_post_author_settings'),
-                'version' => '1.0'
             ),
             'featured_posts' => array(
                 'name' => __('Featured Posts', 'voxel-toolkit'),
@@ -221,7 +214,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Featured_Posts',
                 'file' => 'functions/class-featured-posts.php',
                 'settings_callback' => array($this, 'render_featured_posts_settings'),
-                'version' => '1.0'
             )
         );
         
@@ -239,7 +231,6 @@ class Voxel_Toolkit_Functions {
                 'description' => __('Display current weather, forecasts with customizable styling using OpenWeatherMap API.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Weather_Widget_Manager',
                 'file' => 'widgets/class-weather-widget-manager.php',
-                'version' => '1.0'
             ),
             'reading_time' => array(
                 'name' => __('Reading Time', 'voxel-toolkit'),
@@ -247,21 +238,18 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Reading_Time_Widget',
                 'file' => 'widgets/class-reading-time-widget.php',
                 'settings_callback' => array($this, 'render_reading_time_widget_settings'),
-                'version' => '1.0'
             ),
             'review_collection' => array(
                 'name' => __('Review Collection', 'voxel-toolkit'),
                 'description' => __('Display a collection of user reviews with advanced filtering and styling options.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Review_Collection_Widget_Manager',
                 'file' => 'widgets/class-review-collection-widget-manager.php',
-                'version' => '1.0'
             ),
             'prev_next_widget' => array(
                 'name' => __('Previous/Next Navigation', 'voxel-toolkit'),
                 'description' => __('Navigate between posts with customizable previous/next buttons and post information display.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Prev_Next_Widget_Manager',
                 'file' => 'widgets/class-prev-next-widget-manager.php',
-                'version' => '1.0'
             ),
             'profile_progress' => array(
                 'name' => __('Profile Progress', 'voxel-toolkit'),
@@ -269,14 +257,12 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Profile_Progress_Widget',
                 'file' => 'widgets/class-profile-progress-widget.php',
                 'settings_callback' => array($this, 'render_profile_progress_widget_settings'),
-                'version' => '1.0'
             ),
             'timeline_photos' => array(
                 'name' => __('Timeline Photos', 'voxel-toolkit'),
                 'description' => __('Display photos from post reviews in a customizable gallery with masonry, grid, and justified layouts.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Timeline_Photos_Widget',
                 'file' => 'widgets/class-timeline-photos-widget.php',
-                'version' => '1.0'
             )
         );
         
@@ -1949,6 +1935,217 @@ class Voxel_Toolkit_Functions {
                 </div>
             </td>
         </tr>
+        <?php
+    }
+    
+    /**
+     * Render Media Paste settings
+     */
+    public function render_media_paste_settings($settings) {
+        $allowed_roles = isset($settings['allowed_roles']) ? $settings['allowed_roles'] : array('administrator', 'editor');
+        $max_file_size = isset($settings['max_file_size']) ? $settings['max_file_size'] : '';
+        $allowed_types = isset($settings['allowed_types']) ? $settings['allowed_types'] : array('image/jpeg', 'image/png', 'image/gif', 'image/webp');
+        
+        $available_roles = wp_roles()->roles;
+        ?>
+        <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            
+            <!-- User Roles -->
+            <div style="margin-bottom: 25px;">
+                <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
+                    <?php _e('User Permissions', 'voxel-toolkit'); ?>
+                </h3>
+                <p style="margin: 0 0 15px 0; color: #666; font-size: 13px;">
+                    <?php _e('Select which user roles can paste images from clipboard.', 'voxel-toolkit'); ?>
+                </p>
+                
+                <div class="role-options" style="display: flex; flex-wrap: wrap; gap: 15px;">
+                    <label style="display: flex; align-items: center; margin-bottom: 8px; padding: 8px 12px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; cursor: pointer;">
+                        <input type="checkbox" 
+                               name="voxel_toolkit_options[media_paste][allowed_roles][]" 
+                               value="all_roles"
+                               <?php checked(in_array('all_roles', $allowed_roles)); ?>
+                               style="margin-right: 8px;"
+                               onchange="toggleAllRoles(this)">
+                        <span><?php _e('All Roles (Including Subscribers)', 'voxel-toolkit'); ?></span>
+                    </label>
+                </div>
+                
+                <div class="role-options" style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
+                    <?php foreach ($available_roles as $role_key => $role_data): ?>
+                        <label class="role-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; padding: 8px 12px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; cursor: pointer;">
+                            <input type="checkbox" 
+                                   name="voxel_toolkit_options[media_paste][allowed_roles][]" 
+                                   value="<?php echo esc_attr($role_key); ?>"
+                                   <?php checked(in_array($role_key, $allowed_roles) || in_array('all_roles', $allowed_roles)); ?>
+                                   <?php echo in_array('all_roles', $allowed_roles) ? 'disabled' : ''; ?>
+                                   style="margin-right: 8px;">
+                            <span><?php echo esc_html(translate_user_role($role_data['name'])); ?></span>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+                
+                <script>
+                        function toggleAllRoles(checkbox) {
+                            const roleCheckboxes = document.querySelectorAll('.role-checkbox input[type="checkbox"]');
+                            roleCheckboxes.forEach(cb => {
+                                cb.disabled = checkbox.checked;
+                                if (checkbox.checked) {
+                                    cb.checked = true;
+                                }
+                            });
+                        }
+                        
+                        // Initialize on page load
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const allRolesCheckbox = document.querySelector('input[value="all_roles"]');
+                            if (allRolesCheckbox && allRolesCheckbox.checked) {
+                                toggleAllRoles(allRolesCheckbox);
+                            }
+                        });
+                </script>
+            </div>
+            
+            <!-- File Settings -->
+            <div style="margin-bottom: 25px;">
+                <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
+                    <?php _e('File Settings', 'voxel-toolkit'); ?>
+                </h3>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #333;">
+                        <?php _e('Maximum File Size (MB)', 'voxel-toolkit'); ?>
+                    </label>
+                    <input type="number" 
+                           name="voxel_toolkit_options[media_paste][max_file_size]"
+                           value="<?php echo esc_attr($max_file_size); ?>"
+                           placeholder="<?php echo esc_attr(wp_max_upload_size() / (1024 * 1024)); ?>"
+                           min="1"
+                           max="<?php echo esc_attr(wp_max_upload_size() / (1024 * 1024)); ?>"
+                           style="width: 100px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
+                    <p style="margin: 5px 0 0 0; color: #666; font-size: 12px;">
+                        <?php printf(__('Leave empty for server default (%s MB)', 'voxel-toolkit'), number_format(wp_max_upload_size() / (1024 * 1024), 1)); ?>
+                    </p>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 10px; font-weight: 500; color: #333;">
+                        <?php _e('Allowed Image Types', 'voxel-toolkit'); ?>
+                    </label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                        <?php 
+                        $image_types = array(
+                            'image/jpeg' => 'JPEG',
+                            'image/png' => 'PNG', 
+                            'image/gif' => 'GIF',
+                            'image/webp' => 'WebP'
+                        );
+                        foreach ($image_types as $type => $label): 
+                        ?>
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" 
+                                       name="voxel_toolkit_options[media_paste][allowed_types][]"
+                                       value="<?php echo esc_attr($type); ?>"
+                                       <?php checked(in_array($type, $allowed_types)); ?>
+                                       style="margin-right: 8px;">
+                                <span><?php echo esc_html($label); ?></span>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Features -->
+            <div style="margin-bottom: 20px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; font-size: 14px;">
+                <strong style="color: #856404;"><?php _e('Features:', 'voxel-toolkit'); ?></strong>
+                <ul style="margin: 10px 0 0 20px; color: #856404;">
+                    <li><?php _e('Paste images directly from clipboard (Ctrl/Cmd+V)', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('Works in WordPress media library', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('Works in Elementor media picker', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('Works in all WordPress media frames', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('Automatic file naming with timestamps', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('Visual feedback during upload', 'voxel-toolkit'); ?></li>
+                </ul>
+            </div>
+            
+            <!-- Usage Instructions -->
+            <div style="margin-bottom: 20px;">
+                <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
+                    <?php _e('How to Use', 'voxel-toolkit'); ?>
+                </h3>
+                <ol style="margin: 0; padding-left: 20px; color: #333;">
+                    <li style="margin-bottom: 8px;"><?php _e('Copy an image to your clipboard (Ctrl/Cmd+C)', 'voxel-toolkit'); ?></li>
+                    <li style="margin-bottom: 8px;"><?php _e('Go to WordPress Media Library or open Elementor media picker', 'voxel-toolkit'); ?></li>
+                    <li style="margin-bottom: 8px;"><?php _e('Press Ctrl/Cmd+V to paste the image', 'voxel-toolkit'); ?></li>
+                    <li style="margin-bottom: 8px;"><?php _e('Image will be automatically uploaded and added to media library', 'voxel-toolkit'); ?></li>
+                </ol>
+            </div>
+            
+            <!-- Browser Support -->
+            <div style="background: #e7f6ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 15px; font-size: 14px;">
+                <strong style="color: #0066cc;"><?php _e('Browser Support:', 'voxel-toolkit'); ?></strong>
+                <p style="margin: 10px 0 0 0; color: #0066cc;">
+                    <?php _e('Chrome, Firefox, Safari, and Edge. Works with images copied from other applications, screenshots, and image files.', 'voxel-toolkit'); ?>
+                </p>
+            </div>
+        </div>
+        <?php
+    }
+    
+    /**
+     * Render Admin Taxonomy Search settings
+     */
+    public function render_admin_taxonomy_search_settings($settings) {
+        $taxonomies = get_taxonomies(array('public' => true), 'objects');
+        $selected_taxonomies = isset($settings['taxonomies']) ? $settings['taxonomies'] : array();
+        ?>
+        <div class="voxel-settings-group">
+            <label class="voxel-settings-label">
+                <?php _e('Enable Search for Taxonomies', 'voxel-toolkit'); ?>
+            </label>
+            <div class="voxel-settings-description">
+                <?php _e('Select which taxonomies should have search functionality in their metaboxes on post edit pages.', 'voxel-toolkit'); ?>
+            </div>
+            
+            <div class="taxonomy-options" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                <?php foreach ($taxonomies as $taxonomy_key => $taxonomy): ?>
+                    <label style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border: 1px solid #e1e5e9; border-radius: 6px; cursor: pointer; transition: all 0.2s ease;">
+                        <input type="checkbox" 
+                               name="voxel_toolkit_options[admin_taxonomy_search][taxonomies][]" 
+                               value="<?php echo esc_attr($taxonomy_key); ?>"
+                               <?php checked(in_array($taxonomy_key, $selected_taxonomies)); ?>
+                               style="margin-right: 10px;">
+                        <div>
+                            <strong><?php echo esc_html($taxonomy->label); ?></strong>
+                            <div style="font-size: 12px; color: #666; margin-top: 2px;">
+                                <?php echo esc_html($taxonomy_key); ?>
+                            </div>
+                        </div>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+            
+            <?php if (empty($taxonomies)): ?>
+                <p style="color: #666; font-style: italic;">
+                    <?php _e('No public taxonomies found.', 'voxel-toolkit'); ?>
+                </p>
+            <?php endif; ?>
+        </div>
+        
+        <div class="voxel-settings-group">
+            <label class="voxel-settings-label">
+                <?php _e('How it works', 'voxel-toolkit'); ?>
+            </label>
+            <div class="voxel-settings-description">
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><?php _e('Adds a search box to the top of taxonomy metaboxes on post edit pages', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('Search filters terms in real-time as you type', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('Works with both hierarchical (categories) and non-hierarchical (tags) taxonomies', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('Shows parent terms when child terms match the search', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('Clear button (×) to quickly reset the search', 'voxel-toolkit'); ?></li>
+                </ul>
+            </div>
+        </div>
         <?php
     }
     

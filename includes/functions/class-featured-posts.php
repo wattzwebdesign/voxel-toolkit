@@ -30,13 +30,10 @@ class Voxel_Toolkit_Featured_Posts {
      * Constructor
      */
     private function __construct() {
-        error_log('Voxel Toolkit Featured Posts: Constructor called');
         add_action('init', array($this, 'init'));
         add_action('admin_init', array($this, 'init'));
         
-        // Try calling init directly to debug
         if (is_admin()) {
-            error_log('Voxel Toolkit Featured Posts: Calling init directly from constructor');
             $this->init();
         }
     }
@@ -45,17 +42,12 @@ class Voxel_Toolkit_Featured_Posts {
      * Initialize the function
      */
     public function init() {
-        error_log('Voxel Toolkit Featured Posts: init() method called');
-        
         // Get settings
         $settings = get_option('voxel_toolkit_options', array());
-        error_log('Voxel Toolkit Featured Posts: All settings - ' . print_r($settings, true));
         
         $featured_settings = isset($settings['featured_posts']) ? $settings['featured_posts'] : array();
-        error_log('Voxel Toolkit Featured Posts: Featured settings - ' . print_r($featured_settings, true));
         
         if (!isset($featured_settings['enabled']) || !$featured_settings['enabled']) {
-            error_log('Voxel Toolkit Featured Posts: Function not enabled, exiting');
             return;
         }
         
@@ -73,11 +65,8 @@ class Voxel_Toolkit_Featured_Posts {
      * Initialize hooks
      */
     private function init_hooks() {
-        error_log('Featured Posts: init_hooks called with post types: ' . implode(', ', $this->enabled_post_types));
-        
         // Add columns to post list tables
         foreach ($this->enabled_post_types as $post_type) {
-            error_log('Featured Posts: Adding hooks for post type: ' . $post_type);
             add_filter("manage_{$post_type}_posts_columns", array($this, 'add_featured_column'));
             add_action("manage_{$post_type}_posts_custom_column", array($this, 'display_featured_column'), 10, 2);
         }
@@ -120,11 +109,7 @@ class Voxel_Toolkit_Featured_Posts {
     public function add_featured_column($columns) {
         global $typenow;
         
-        error_log('Featured Posts: add_featured_column called for post type: ' . $typenow);
-        error_log('Featured Posts: enabled post types: ' . print_r($this->enabled_post_types, true));
-        
         if (!in_array($typenow, $this->enabled_post_types)) {
-            error_log('Featured Posts: Post type not enabled, returning original columns');
             return $columns;
         }
         
@@ -464,11 +449,10 @@ class Voxel_Toolkit_Featured_Posts {
             $table = $voxel_post_type->get_index_table();
             if ($table && method_exists($table, 'index')) {
                 $table->index([$post_id]);
-                error_log("Voxel Toolkit Featured Posts: Reindexed post {$post_id}");
             }
             
         } catch (Exception $e) {
-            error_log("Voxel Toolkit Featured Posts: Error reindexing post {$post_id}: " . $e->getMessage());
+            // Silently handle reindexing errors
         }
     }
 }

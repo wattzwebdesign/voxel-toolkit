@@ -1,0 +1,393 @@
+/**
+ * Media Paste Styles
+ */
+
+/* Loading Indicator */
+.voxel-paste-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+}
+
+.voxel-paste-loading-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.voxel-paste-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0073aa;
+    border-radius: 50%;
+    animation: voxel-spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes voxel-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.voxel-paste-loading-text {
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+}
+
+/* Notifications */
+.voxel-paste-notification {
+    position: fixed;
+    top: 50px;
+    right: 20px;
+    z-index: 999999;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    animation: voxel-slide-in 0.3s ease-out;
+}
+
+.voxel-paste-notification.voxel-paste-success {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.voxel-paste-notification.voxel-paste-error {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.voxel-paste-notification-content {
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.voxel-paste-notification-text {
+    margin-right: 15px;
+    font-weight: 500;
+}
+
+.voxel-paste-notification-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0.7;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.voxel-paste-notification-close:hover {
+    opacity: 1;
+}
+
+@keyframes voxel-slide-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Paste Overlay */
+.voxel-paste-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 123, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+    border: 3px dashed #007cba;
+}
+
+.voxel-paste-overlay-content {
+    text-align: center;
+    color: #007cba;
+}
+
+.voxel-paste-overlay-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.voxel-paste-overlay-text {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* Paste Hint */
+.voxel-paste-hint {
+    background: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    border-radius: 4px;
+    padding: 12px 15px;
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #0073aa;
+}
+
+.voxel-paste-hint-icon {
+    font-size: 18px;
+}
+
+.voxel-paste-hint-text {
+    flex: 1;
+    font-weight: 500;
+}
+
+.voxel-paste-hint-close {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0.7;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0073aa;
+}
+
+.voxel-paste-hint-close:hover {
+    opacity: 1;
+}
+
+/* Elementor Specific Styles */
+.voxel-elementor-paste-zone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 123, 255, 0.05);
+    border: 2px dashed #007cba;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.elementor-control-media__preview:hover .voxel-elementor-paste-zone,
+.elementor-control-media__preview:focus .voxel-elementor-paste-zone {
+    display: flex;
+}
+
+.voxel-elementor-paste-content {
+    text-align: center;
+    color: #007cba;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.voxel-elementor-paste-icon {
+    display: block;
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.voxel-elementor-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+}
+
+.voxel-elementor-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007cba;
+    border-radius: 50%;
+    animation: voxel-spin 1s linear infinite;
+    margin-bottom: 8px;
+}
+
+.voxel-elementor-loading-text {
+    font-size: 11px;
+    color: #666;
+    text-align: center;
+}
+
+.voxel-elementor-feedback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    z-index: 30;
+    white-space: nowrap;
+}
+
+.voxel-elementor-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.voxel-elementor-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Enhanced media controls */
+.elementor-control-media__preview.voxel-paste-enhanced {
+    position: relative;
+    cursor: pointer;
+}
+
+.elementor-control-media__preview.voxel-paste-enhanced:focus {
+    outline: 2px solid #007cba;
+    outline-offset: 2px;
+}
+
+/* WordPress Media Library Integration */
+.upload-php .voxel-paste-hint {
+    margin: 20px 0;
+}
+
+.media-frame .voxel-paste-hint {
+    margin: 10px;
+}
+
+/* Elementor Media Frame Integration */
+.voxel-elementor-paste-hint {
+    background: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #0073aa;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.voxel-elementor-paste-hint .voxel-paste-icon {
+    font-size: 14px;
+}
+
+.voxel-frame-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+}
+
+.voxel-frame-loading-content {
+    text-align: center;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.voxel-frame-loading-text {
+    margin-top: 10px;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.voxel-frame-notification {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999999;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.voxel-frame-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.voxel-frame-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Enhanced media frames */
+.media-frame.voxel-paste-enhanced {
+    position: relative;
+}
+
+.media-frame.voxel-paste-enhanced:focus {
+    outline: 2px solid #007cba;
+    outline-offset: -2px;
+}
+
+.media-frame-content.voxel-paste-enhanced:focus,
+.media-frame-router.voxel-paste-enhanced:focus,
+.media-toolbar.voxel-paste-enhanced:focus {
+    outline: 1px solid #007cba;
+    outline-offset: -1px;
+}
+
+/* Highlight newly added media items */
+.voxel-just-added {
+    animation: voxel-highlight 2s ease-out;
+}
+
+@keyframes voxel-highlight {
+    0% {
+        background-color: #fff3cd;
+        transform: scale(1.05);
+    }
+    100% {
+        background-color: transparent;
+        transform: scale(1);
+    }
+}
