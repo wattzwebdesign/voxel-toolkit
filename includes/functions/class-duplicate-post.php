@@ -49,6 +49,7 @@ class Voxel_Toolkit_Duplicate_Post {
         
         // Add Elementor widget category
         add_action('elementor/elements/categories_registered', array($this, 'add_elementor_widget_category'));
+        
     }
     
     /**
@@ -227,70 +228,73 @@ class Voxel_Toolkit_Duplicate_Post {
      * Create a duplicate of the post
      */
     private function create_duplicate($post, $title_suffix = ' (Copy)') {
-        // Prepare post data
-        $new_post = array(
-            'post_title'    => wp_unslash($post->post_title) . ' ' . trim($title_suffix),
-            'post_content'  => $post->post_content,
-            'post_excerpt'  => $post->post_excerpt,
-            'post_status'   => 'draft',
-            'post_type'     => $post->post_type,
-            'post_author'   => get_current_user_id(),
-            'post_parent'   => $post->post_parent,
-            'menu_order'    => $post->menu_order,
+        // Check if this is an Elementor page
+        $is_elementor_page = get_post_meta($post->ID, '_elementor_data', true);
+        
+        // For Elementor pages, use original post status to avoid draft mode issues
+        // For non-Elementor pages, use draft status
+        $post_status = $is_elementor_page ? $post->post_status : 'draft';
+        
+        // Prepare post data - using exact duplicate-page approach
+        $args = array(
             'comment_status' => $post->comment_status,
-            'ping_status'   => $post->ping_status,
+            'ping_status' => $post->ping_status,
+            'post_author' => get_current_user_id(),
+            'post_content' => $post->post_content,
+            'post_excerpt' => $post->post_excerpt,
+            'post_parent' => $post->post_parent,
             'post_password' => $post->post_password,
+            'post_status' => $post_status,
+            'post_title' => $post->post_title . $title_suffix,
+            'post_type' => $post->post_type,
+            'to_ping' => $post->to_ping,
+            'menu_order' => $post->menu_order,
         );
         
         // Insert the new post
-        $new_post_id = wp_insert_post($new_post);
+        $new_post_id = wp_insert_post($args);
         
-        if (!$new_post_id || is_wp_error($new_post_id)) {
+        if (is_wp_error($new_post_id)) {
             return false;
         }
         
-        // Duplicate post meta
-        $this->duplicate_post_meta($post->ID, $new_post_id);
+        // Duplicate taxonomies - using exact duplicate-page approach
+        $taxonomies = array_map('sanitize_text_field', get_object_taxonomies($post->post_type));
+        if (!empty($taxonomies) && is_array($taxonomies)) {
+            foreach ($taxonomies as $taxonomy) {
+                $post_terms = wp_get_object_terms($post->ID, $taxonomy, array('fields' => 'slugs'));
+                wp_set_object_terms($new_post_id, $post_terms, $taxonomy, false);
+            }
+        }
         
-        // Duplicate taxonomies
-        $this->duplicate_post_taxonomies($post->ID, $new_post_id, $post->post_type);
+        // Duplicate all post meta - using exact duplicate-page approach
+        $post_meta_keys = get_post_custom_keys($post->ID);
+        if (!empty($post_meta_keys)) {
+            foreach ($post_meta_keys as $meta_key) {
+                $meta_values = get_post_custom_values($meta_key, $post->ID);
+                foreach ($meta_values as $meta_value) {
+                    $meta_value = maybe_unserialize($meta_value);
+                    update_post_meta($new_post_id, $meta_key, wp_slash($meta_value));
+                }
+            }
+        }
+        
+        // Elementor compatibility - using exact duplicate-page approach
+        if (is_plugin_active('elementor/elementor.php')) {
+            // Ensure Elementor recognizes this as an Elementor page immediately
+            update_post_meta($new_post_id, '_elementor_edit_mode', 'builder');
+            if (defined('ELEMENTOR_VERSION')) {
+                update_post_meta($new_post_id, '_elementor_version', ELEMENTOR_VERSION);
+            }
+            
+            // Generate CSS
+            $css = \Elementor\Core\Files\CSS\Post::create($new_post_id);
+            $css->update();
+        }
         
         return $new_post_id;
     }
     
-    /**
-     * Duplicate post meta
-     */
-    private function duplicate_post_meta($source_id, $target_id) {
-        global $wpdb;
-        
-        // Get all post meta
-        $post_meta = $wpdb->get_results(
-            $wpdb->prepare(
-                "SELECT meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id = %d",
-                $source_id
-            )
-        );
-        
-        if (empty($post_meta)) {
-            return;
-        }
-        
-        // Skip certain meta keys
-        $skip_keys = array('_edit_lock', '_edit_last', '_wp_old_slug', '_wp_old_date');
-        
-        foreach ($post_meta as $meta) {
-            if (in_array($meta->meta_key, $skip_keys)) {
-                continue;
-            }
-            
-            // Process meta value to fix unicode encoding issues
-            $meta_value = $this->fix_unicode_encoding($meta->meta_value);
-            
-            // Add meta to new post
-            add_post_meta($target_id, $meta->meta_key, maybe_unserialize($meta_value));
-        }
-    }
     
     /**
      * Fix unicode encoding issues with umlauts and other special characters
@@ -332,25 +336,9 @@ class Voxel_Toolkit_Duplicate_Post {
         return (json_last_error() === JSON_ERROR_NONE);
     }
     
-    /**
-     * Duplicate post taxonomies
-     */
-    private function duplicate_post_taxonomies($source_id, $target_id, $post_type) {
-        // Get all taxonomies for this post type
-        $taxonomies = get_object_taxonomies($post_type);
-        
-        if (empty($taxonomies)) {
-            return;
-        }
-        
-        foreach ($taxonomies as $taxonomy) {
-            $terms = wp_get_object_terms($source_id, $taxonomy, array('fields' => 'ids'));
-            
-            if (!empty($terms)) {
-                wp_set_object_terms($target_id, $terms, $taxonomy);
-            }
-        }
-    }
+    
+    
+    
     
     /**
      * Display admin notice after duplication
