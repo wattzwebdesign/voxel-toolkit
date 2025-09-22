@@ -214,6 +214,13 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Featured_Posts',
                 'file' => 'functions/class-featured-posts.php',
                 'settings_callback' => array($this, 'render_featured_posts_settings'),
+            ),
+            'google_analytics' => array(
+                'name' => __('Google Analytics & Custom Tags', 'voxel-toolkit'),
+                'description' => __('Add Google Analytics tracking code and custom scripts/tags to head, body, and footer sections of your site.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Google_Analytics',
+                'file' => 'functions/class-google-analytics.php',
+                'settings_callback' => array($this, 'render_google_analytics_settings'),
             )
         );
         
@@ -263,6 +270,12 @@ class Voxel_Toolkit_Functions {
                 'description' => __('Display photos from post reviews in a customizable gallery with masonry, grid, and justified layouts.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Timeline_Photos_Widget',
                 'file' => 'widgets/class-timeline-photos-widget.php',
+            ),
+            'users_purchased' => array(
+                'name' => __('Users Purchased', 'voxel-toolkit'),
+                'description' => __('Display users who have purchased the current product with avatar grid or list views.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Users_Purchased_Widget_Manager',
+                'file' => 'widgets/class-users-purchased-widget-manager.php',
             )
         );
         
@@ -3046,5 +3059,136 @@ class Voxel_Toolkit_Functions {
      */
     private function get_function_instance($function_key) {
         return isset($this->active_functions[$function_key]) ? $this->active_functions[$function_key] : null;
+    }
+    
+    /**
+     * Render Google Analytics settings
+     */
+    public function render_google_analytics_settings($settings) {
+        $voxel_toolkit_options = get_option('voxel_toolkit_options', array());
+        $ga_settings = isset($voxel_toolkit_options['google_analytics']) ? $voxel_toolkit_options['google_analytics'] : array();
+        
+        $ga4_measurement_id = isset($ga_settings['ga4_measurement_id']) ? $ga_settings['ga4_measurement_id'] : '';
+        $ua_tracking_id = isset($ga_settings['ua_tracking_id']) ? $ga_settings['ua_tracking_id'] : '';
+        $gtm_container_id = isset($ga_settings['gtm_container_id']) ? $ga_settings['gtm_container_id'] : '';
+        $custom_head_tags = isset($ga_settings['custom_head_tags']) ? $ga_settings['custom_head_tags'] : '';
+        $custom_body_tags = isset($ga_settings['custom_body_tags']) ? $ga_settings['custom_body_tags'] : '';
+        $custom_footer_tags = isset($ga_settings['custom_footer_tags']) ? $ga_settings['custom_footer_tags'] : '';
+        ?>
+        
+        <div class="vt-ga-warning">
+            <strong><?php _e('Important:', 'voxel-toolkit'); ?></strong> 
+            <?php _e('Only add tracking codes and scripts that you trust. Custom code will be executed on your website.', 'voxel-toolkit'); ?>
+        </div>
+        
+        <!-- Google Analytics Section -->
+        <div class="vt-ga-settings-section">
+            <h3><?php _e('Google Analytics', 'voxel-toolkit'); ?></h3>
+            
+            <div class="vt-ga-input-group">
+                <label for="ga4_measurement_id"><?php _e('Google Analytics 4 (GA4) Measurement ID', 'voxel-toolkit'); ?></label>
+                <input type="text" 
+                       id="ga4_measurement_id" 
+                       name="voxel_toolkit_options[google_analytics][ga4_measurement_id]" 
+                       value="<?php echo esc_attr($ga4_measurement_id); ?>"
+                       placeholder="G-XXXXXXXXXX" 
+                       class="regular-text" />
+                <p class="vt-ga-help-text"><?php _e('Enter your GA4 Measurement ID (e.g., G-XXXXXXXXXX). Recommended for new websites.', 'voxel-toolkit'); ?></p>
+            </div>
+            
+            <div class="vt-ga-input-group">
+                <label for="ua_tracking_id"><?php _e('Universal Analytics Tracking ID (Legacy)', 'voxel-toolkit'); ?></label>
+                <input type="text" 
+                       id="ua_tracking_id" 
+                       name="voxel_toolkit_options[google_analytics][ua_tracking_id]" 
+                       value="<?php echo esc_attr($ua_tracking_id); ?>"
+                       placeholder="UA-XXXXXXXX-X" 
+                       class="regular-text" />
+                <p class="vt-ga-help-text"><?php _e('Enter your Universal Analytics ID (e.g., UA-XXXXXXXX-X). Note: Universal Analytics stopped collecting data in July 2023.', 'voxel-toolkit'); ?></p>
+            </div>
+        </div>
+        
+        <!-- Google Tag Manager Section -->
+        <div class="vt-ga-settings-section">
+            <h3><?php _e('Google Tag Manager', 'voxel-toolkit'); ?></h3>
+            
+            <div class="vt-ga-input-group">
+                <label for="gtm_container_id"><?php _e('Google Tag Manager Container ID', 'voxel-toolkit'); ?></label>
+                <input type="text" 
+                       id="gtm_container_id" 
+                       name="voxel_toolkit_options[google_analytics][gtm_container_id]" 
+                       value="<?php echo esc_attr($gtm_container_id); ?>"
+                       placeholder="GTM-XXXXXXX" 
+                       class="regular-text" />
+                <p class="vt-ga-help-text"><?php _e('Enter your GTM Container ID (e.g., GTM-XXXXXXX). This will add both head and body GTM code.', 'voxel-toolkit'); ?></p>
+            </div>
+        </div>
+        
+        <!-- Custom Tags Section -->
+        <div class="vt-ga-settings-section">
+            <h3><?php _e('Custom Tags & Scripts', 'voxel-toolkit'); ?></h3>
+            
+            <div class="vt-ga-input-group">
+                <label for="custom_head_tags"><?php _e('Custom Head Tags', 'voxel-toolkit'); ?></label>
+                <textarea id="custom_head_tags" 
+                          name="voxel_toolkit_options[google_analytics][custom_head_tags]" 
+                          placeholder="<script>&#10;// Your custom head scripts&#10;</script>"><?php echo esc_textarea($custom_head_tags); ?></textarea>
+                <p class="vt-ga-help-text"><?php _e('Add custom scripts/tags to the <head> section. Include <script> tags for JavaScript code.', 'voxel-toolkit'); ?></p>
+            </div>
+            
+            <div class="vt-ga-input-group">
+                <label for="custom_body_tags"><?php _e('Custom Body Tags (After <body>)', 'voxel-toolkit'); ?></label>
+                <textarea id="custom_body_tags" 
+                          name="voxel_toolkit_options[google_analytics][custom_body_tags]" 
+                          placeholder="<script>&#10;// Your custom body scripts&#10;</script>"><?php echo esc_textarea($custom_body_tags); ?></textarea>
+                <p class="vt-ga-help-text"><?php _e('Add custom scripts/tags immediately after the opening <body> tag.', 'voxel-toolkit'); ?></p>
+            </div>
+            
+            <div class="vt-ga-input-group">
+                <label for="custom_footer_tags"><?php _e('Custom Footer Tags (Before </body>)', 'voxel-toolkit'); ?></label>
+                <textarea id="custom_footer_tags" 
+                          name="voxel_toolkit_options[google_analytics][custom_footer_tags]" 
+                          placeholder="<script>&#10;// Your custom footer scripts&#10;</script>"><?php echo esc_textarea($custom_footer_tags); ?></textarea>
+                <p class="vt-ga-help-text"><?php _e('Add custom scripts/tags before the closing </body> tag.', 'voxel-toolkit'); ?></p>
+            </div>
+        </div>
+        
+        <!-- Preview Section -->
+        <?php if (!empty($ga4_measurement_id) || !empty($ua_tracking_id) || !empty($gtm_container_id)): ?>
+        <div class="vt-ga-settings-section">
+            <h3><?php _e('Code Preview', 'voxel-toolkit'); ?></h3>
+            
+            <?php if (!empty($ga4_measurement_id)): ?>
+            <div class="vt-ga-preview-title"><?php _e('Google Analytics 4 Code (Head):', 'voxel-toolkit'); ?></div>
+            <div class="vt-ga-preview">&lt;script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html($ga4_measurement_id); ?>"&gt;&lt;/script&gt;
+&lt;script&gt;
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '<?php echo esc_html($ga4_measurement_id); ?>');
+&lt;/script&gt;</div>
+            <?php endif; ?>
+            
+            <?php if (!empty($gtm_container_id)): ?>
+            <div class="vt-ga-preview-title"><?php _e('Google Tag Manager Code (Head):', 'voxel-toolkit'); ?></div>
+            <div class="vt-ga-preview">&lt;script&gt;(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','<?php echo esc_html($gtm_container_id); ?>');&lt;/script&gt;</div>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #e7f3ff; border-left: 4px solid #2271b1;">
+            <strong><?php _e('Usage Instructions:', 'voxel-toolkit'); ?></strong>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li><?php _e('For Google Analytics 4: Use the GA4 Measurement ID (recommended)', 'voxel-toolkit'); ?></li>
+                <li><?php _e('For Google Tag Manager: Use the GTM Container ID (most flexible)', 'voxel-toolkit'); ?></li>
+                <li><?php _e('For other tracking: Use custom tag sections', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Test your setup using browser developer tools or Google Analytics Real-Time reports', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
+        <?php
     }
 }
