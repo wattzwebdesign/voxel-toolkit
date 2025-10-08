@@ -3,7 +3,7 @@
  * Plugin Name: Voxel Toolkit
  * Plugin URI: https://codewattz.com/voxel-toolkit-plugin/
  * Description: A comprehensive toolkit for extending Voxel theme functionality with toggleable features and customizable settings.
- * Version: 1.3.1
+ * Version: 1.4.0
  * Author: Code Wattz
  * Author URI: https://codewattz.com
  * License: GPL v2 or later
@@ -21,14 +21,23 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('VOXEL_TOOLKIT_VERSION', '1.3.1');
-define('VOXEL_TOOLKIT_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('VOXEL_TOOLKIT_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('VOXEL_TOOLKIT_PLUGIN_FILE', __FILE__);
+if (!defined('VOXEL_TOOLKIT_VERSION')) {
+    define('VOXEL_TOOLKIT_VERSION', '1.4.0');
+}
+if (!defined('VOXEL_TOOLKIT_PLUGIN_DIR')) {
+    define('VOXEL_TOOLKIT_PLUGIN_DIR', plugin_dir_path(__FILE__));
+}
+if (!defined('VOXEL_TOOLKIT_PLUGIN_URL')) {
+    define('VOXEL_TOOLKIT_PLUGIN_URL', plugin_dir_url(__FILE__));
+}
+if (!defined('VOXEL_TOOLKIT_PLUGIN_FILE')) {
+    define('VOXEL_TOOLKIT_PLUGIN_FILE', __FILE__);
+}
 
 /**
  * Main Voxel Toolkit Class
  */
+if (!class_exists('Voxel_Toolkit')) {
 class Voxel_Toolkit {
     
     private static $instance = null;
@@ -467,9 +476,12 @@ class Voxel_Toolkit {
         flush_rewrite_rules();
     }
 }
+} // End class_exists check
 
 // Initialize plugin
-Voxel_Toolkit::instance();
+if (class_exists('Voxel_Toolkit')) {
+    Voxel_Toolkit::instance();
+}
 
 // Activation hook to flush rewrite rules for embed endpoints
 register_activation_hook(__FILE__, function() {

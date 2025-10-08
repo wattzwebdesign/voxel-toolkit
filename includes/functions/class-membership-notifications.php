@@ -82,69 +82,120 @@ class Voxel_Toolkit_Membership_Notifications {
     /**
      * Run notifications check
      */
-    public function run_notifications() {
+    public function run_notifications($debug = false) {
         global $wpdb;
-        
+
+        $stats = array(
+            'total_users' => 0,
+            'legacy_format' => 0,
+            'new_format' => 0,
+            'active_memberships' => 0,
+            'notifications_sent' => 0,
+            'errors' => 0,
+            'skipped' => 0
+        );
+
         $results = $wpdb->get_results(
             "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'voxel:plan'"
         );
-        
+
         if (empty($results) || empty($this->notifications_config)) {
-            return;
+            return $stats;
         }
-        
+
+        $stats['total_users'] = count($results);
+
         foreach ($results as $row) {
-            $this->process_user_notification($row);
+            $result = $this->process_user_notification($row, $debug);
+            if ($result) {
+                $stats['legacy_format'] += $result['is_legacy'] ? 1 : 0;
+                $stats['new_format'] += !$result['is_legacy'] ? 1 : 0;
+                $stats['active_memberships'] += $result['is_active'] ? 1 : 0;
+                $stats['notifications_sent'] += $result['notification_sent'] ? 1 : 0;
+                $stats['errors'] += $result['error'] ? 1 : 0;
+            } else {
+                $stats['skipped']++;
+            }
         }
+
+        return $stats;
     }
     
     /**
      * Process notification for a single user
      */
-    private function process_user_notification($row) {
+    private function process_user_notification($row, $debug = false) {
+        $result = array(
+            'is_legacy' => false,
+            'is_active' => false,
+            'notification_sent' => false,
+            'error' => false
+        );
+
         $data = json_decode($row->meta_value, true);
-        if (!$data || empty($data['current_period_end'])) {
-            return;
+        if (!$data) {
+            $result['error'] = true;
+            return $result;
         }
-        
-        $exp = (int) $data['current_period_end'];
+
+        // Detect format
+        $result['is_legacy'] = $this->is_legacy_format($data);
+
+        // Extract and normalize data from either format
+        $membership_data = $this->extract_membership_data($data);
+        if (!$membership_data) {
+            $result['error'] = true;
+            return $result;
+        }
+
+        $result['is_active'] = $membership_data['is_active'];
+
+        if (!$membership_data['is_active']) {
+            return $result;
+        }
+
+        $exp = $membership_data['expiration_timestamp'];
         if ($exp <= time()) {
-            return; // Already expired
+            return $result;
         }
-        
+
         $seconds_left = $exp - time();
-        
+
         $user = get_user_by('id', $row->user_id);
         if (!$user || empty($user->user_email)) {
-            return;
+            $result['error'] = true;
+            return $result;
         }
-        
+
         $sent_json = get_user_meta($row->user_id, 'voxel_toolkit_membership_notifications_sent', true);
         $sent = json_decode($sent_json, true) ?? array();
         $updated_sent = false;
-        
+
         foreach ($this->notifications_config as $notif) {
             if (!$this->is_valid_notification($notif)) {
                 continue;
             }
-            
+
             $threshold_seconds = ($notif['unit'] === 'days') ? $notif['value'] * 86400 : $notif['value'] * 3600;
             $key = $notif['value'] . '-' . $notif['unit'];
-            
+
             if (in_array($key, $sent, true)) {
                 continue;
             }
-            
+
             if ($seconds_left <= $threshold_seconds) {
-                $this->send_notification($user->user_email, $notif, $data, $exp, $seconds_left);
+                $this->send_notification($user->user_email, $notif, $membership_data, $exp, $seconds_left);
                 $sent[] = $key;
                 $updated_sent = true;
+                $result['notification_sent'] = true;
             }
         }
-        
+
         if ($updated_sent) {
             update_user_meta($row->user_id, 'voxel_toolkit_membership_notifications_sent', json_encode($sent));
         }
+
+        return $result;
     }
     
     /**
@@ -158,28 +209,80 @@ class Voxel_Toolkit_Membership_Notifications {
     }
     
     /**
+     * Detect if data is in legacy or new format
+     */
+    private function is_legacy_format($data) {
+        return !isset($data['type']) || $data['type'] === 'subscription';
+    }
+
+    /**
+     * Extract and normalize membership data from either format
+     * Returns normalized array or false if invalid
+     */
+    private function extract_membership_data($data) {
+        if ($this->is_legacy_format($data)) {
+            // Legacy format validation
+            if (empty($data['current_period_end'])) {
+                return false;
+            }
+
+            $exp = (int) $data['current_period_end'];
+            $amount_raw = $data['amount'] ?? 0;
+
+            return array(
+                'expiration_timestamp' => $exp,
+                'amount' => number_format($amount_raw / 100, 2), // Convert cents to dollars
+                'currency' => strtoupper($data['currency'] ?? 'USD'),
+                'plan_name' => $data['plan'] ?? 'Unknown',
+                'is_active' => isset($data['status']) && $data['status'] === 'active'
+            );
+        } else {
+            // New format validation
+            if (empty($data['billing']['current_period']['end'])) {
+                return false;
+            }
+
+            $end_date = $data['billing']['current_period']['end'];
+            $exp = strtotime($end_date);
+
+            if ($exp === false) {
+                return false;
+            }
+
+            $amount = $data['billing']['amount'] ?? 0;
+
+            return array(
+                'expiration_timestamp' => $exp,
+                'amount' => number_format($amount, 2), // Already in dollars
+                'currency' => $data['billing']['currency'] ?? 'USD',
+                'plan_name' => $data['plan'] ?? 'Unknown',
+                'is_active' => isset($data['billing']['is_active']) && $data['billing']['is_active'] === true
+            );
+        }
+    }
+
+    /**
      * Send notification email
      */
-    private function send_notification($email, $notif, $data, $exp, $seconds_left) {
-        $plan_name = $data['plan'] ?? 'Unknown';
-        $amount_raw = $data['amount'] ?? 0;
-        $amount = number_format($amount_raw / 100, 2);
-        $currency = strtoupper($data['currency'] ?? 'USD');
+    private function send_notification($email, $notif, $membership_data, $exp, $seconds_left) {
+        $plan_name = $membership_data['plan_name'];
+        $amount = $membership_data['amount'];
+        $currency = $membership_data['currency'];
         $expiration_date = date_i18n(get_option('date_format'), $exp);
         $remaining_days = ceil($seconds_left / 86400);
-        
+
         $subject = str_replace(
             array('{expiration_date}', '{amount}', '{currency}', '{plan_name}', '{remaining_days}'),
             array($expiration_date, $amount, $currency, $plan_name, $remaining_days),
             $notif['subject']
         );
-        
+
         $body = str_replace(
             array('{expiration_date}', '{amount}', '{currency}', '{plan_name}', '{remaining_days}'),
             array($expiration_date, $amount, $currency, $plan_name, $remaining_days),
             $notif['body']
         );
-        
+
         $headers = array('Content-Type: text/html; charset=UTF-8');
         wp_mail($email, $subject, $body, $headers);
     }
@@ -245,11 +348,26 @@ class Voxel_Toolkit_Membership_Notifications {
         if (!wp_verify_nonce($_POST['nonce'], 'voxel_toolkit_nonce') || !current_user_can('manage_options')) {
             wp_send_json_error(__('Security check failed.', 'voxel-toolkit'));
         }
-        
-        $this->run_notifications();
-        wp_send_json_success(__('Manual notifications sent.', 'voxel-toolkit'));
+
+        $stats = $this->run_notifications(true);
+
+        $message = sprintf(
+            __('Manual notifications completed. Processed %d users (%d legacy format, %d new format). Active: %d, Sent: %d, Errors: %d, Skipped: %d', 'voxel-toolkit'),
+            $stats['total_users'],
+            $stats['legacy_format'],
+            $stats['new_format'],
+            $stats['active_memberships'],
+            $stats['notifications_sent'],
+            $stats['errors'],
+            $stats['skipped']
+        );
+
+        wp_send_json_success(array(
+            'message' => $message,
+            'stats' => $stats
+        ));
     }
-    
+
     /**
      * Deactivate cron when function is disabled
      */
