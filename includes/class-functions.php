@@ -33,6 +33,9 @@ class Voxel_Toolkit_Functions {
     private function __construct() {
         add_action('init', array($this, 'init'), 20);
         add_action('voxel_toolkit/settings_updated', array($this, 'on_settings_updated'), 10, 2);
+        
+        // AJAX handlers
+        add_action('wp_ajax_voxel_toolkit_sync_submissions', array($this, 'ajax_sync_submissions'));
     }
     
     /**
@@ -221,6 +224,13 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Google_Analytics',
                 'file' => 'functions/class-google-analytics.php',
                 'settings_callback' => array($this, 'render_google_analytics_settings'),
+            ),
+            'submission_reminder' => array(
+                'name' => __('Submission Reminder', 'voxel-toolkit'),
+                'description' => __('Track user post submissions by post type and send reminder emails at configurable intervals to encourage more submissions.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Submission_Reminder',
+                'file' => 'functions/class-submission-reminder.php',
+                'settings_callback' => array($this, 'render_submission_reminder_settings'),
             )
         );
         
@@ -891,13 +901,10 @@ class Voxel_Toolkit_Functions {
                 
                 <script type="text/javascript">
                 jQuery(document).ready(function($) {
-                    console.log('jQuery loaded and ready'); // Debug log
                     
                     let notificationIndex = <?php echo count($notifications); ?>;
                     let currentTestIndex = 0;
                     
-                    console.log('Initial notificationIndex:', notificationIndex); // Debug log
-                    console.log('Add button exists:', $('#add-notification-btn').length > 0); // Debug log
                     
                     // Copy to clipboard functionality for variable tags
                     $('.variable-tag').click(function() {
@@ -957,7 +964,6 @@ class Voxel_Toolkit_Functions {
                     $(document).on('click', '#add-notification-btn', function(e) {
                         e.preventDefault(); // Prevent form submission
                         e.stopPropagation(); // Stop event bubbling
-                        console.log('Add notification button clicked'); // Debug log
                         
                         // Remove the "no notifications" row if it exists
                         $('#no-notifications-row').remove();
@@ -1004,14 +1010,8 @@ class Voxel_Toolkit_Functions {
                         $('#notifications-table tbody').append(row);
                         notificationIndex++;
                         
-                        console.log('New row added, notificationIndex is now:', notificationIndex); // Debug log
                     });
                     
-                    // Test if button can be found immediately
-                    setTimeout(function() {
-                        console.log('Delayed check - Add button exists:', $('#add-notification-btn').length > 0);
-                        console.log('Button element:', $('#add-notification-btn')[0]);
-                    }, 1000);
                     
                     // Remove notification row
                     $(document).on('click', '.notification-remove-btn', function() {
@@ -3190,5 +3190,900 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </ul>
         </div>
         <?php
+    }
+    
+    /**
+     * Render Submission Reminder settings
+     */
+    public function render_submission_reminder_settings($settings) {
+        $voxel_toolkit_options = get_option('voxel_toolkit_options', array());
+        $sr_settings = isset($voxel_toolkit_options['submission_reminder']) ? $voxel_toolkit_options['submission_reminder'] : array();
+        
+        $post_types = isset($sr_settings['post_types']) ? $sr_settings['post_types'] : array();
+        $notifications = isset($sr_settings['notifications']) ? $sr_settings['notifications'] : array();
+        
+        // Get available post types - try to use existing instance or create new one
+        if (isset($this->active_functions['submission_reminder'])) {
+            $submission_reminder = $this->active_functions['submission_reminder'];
+        } else {
+            $submission_reminder = new Voxel_Toolkit_Submission_Reminder();
+        }
+        
+        $available_post_types_list = $submission_reminder->get_available_post_types();
+        
+        // Convert to objects for consistency with existing code
+        $available_post_types = array();
+        foreach ($available_post_types_list as $post_type_name => $post_type_label) {
+            $post_type_obj = get_post_type_object($post_type_name);
+            if ($post_type_obj) {
+                $available_post_types[] = $post_type_obj;
+            } else {
+                // Create a fake object if post type doesn't exist in WordPress but is in Voxel config
+                $fake_obj = new stdClass();
+                $fake_obj->name = $post_type_name;
+                $fake_obj->label = $post_type_label;
+                $available_post_types[] = $fake_obj;
+            }
+        }
+        
+        ?>
+        
+        <style>
+        .vt-submission-reminder-admin {
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+        .vt-sr-main-content {
+            min-width: 0;
+        }
+        .vt-sr-sidebar {
+            position: sticky;
+            top: 32px;
+            height: fit-content;
+            max-height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+        .vt-sr-sidebar-content {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .vt-sr-sidebar h3 {
+            margin-top: 0;
+            color: #2271b1;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .vt-sr-placeholder-group {
+            margin-bottom: 25px;
+        }
+        .vt-sr-placeholder-group h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .vt-sr-placeholder-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            margin-bottom: 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .vt-sr-placeholder-item:hover {
+            background: #f0f6fc;
+            border-color: #0969da;
+        }
+        .vt-sr-placeholder-item code {
+            background: #f6f8fa;
+            color: #0969da;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: auto;
+            border: 1px solid #d1d9e0;
+        }
+        .vt-sr-copy-icon {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        .vt-sr-placeholder-item:hover .vt-sr-copy-icon {
+            opacity: 1;
+        }
+        .vt-sr-placeholder-description {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 1000;
+            margin-bottom: 5px;
+        }
+        .vt-sr-placeholder-description::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #333;
+        }
+        .vt-sr-placeholder-item:hover .vt-sr-placeholder-description {
+            opacity: 1;
+        }
+        .vt-sr-post-type-section {
+            margin-bottom: 30px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .vt-sr-post-type-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .vt-sr-post-type-header input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .vt-sr-post-type-header h3 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            color: #2271b1;
+        }
+        .vt-sr-notification-list {
+            padding: 20px;
+        }
+        .vt-sr-notification-item {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            padding: 15px;
+        }
+        .vt-sr-notification-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .vt-sr-notification-title {
+            display: flex;
+            align-items: center;
+        }
+        .vt-sr-notification-title input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        .vt-sr-notification-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr 2fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .vt-sr-email-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .vt-sr-field {
+            display: flex;
+            flex-direction: column;
+        }
+        .vt-sr-field label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .vt-sr-field input,
+        .vt-sr-field select,
+        .vt-sr-field textarea {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .vt-sr-field textarea {
+            height: 80px;
+            resize: vertical;
+            font-size: 12px;
+        }
+        .vt-sr-add-notification {
+            text-align: center;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            background: #f8f9fa;
+        }
+        .vt-sr-add-notification button {
+            background: #2271b1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .vt-sr-add-notification button:hover {
+            background: #135e96;
+        }
+        .vt-sr-remove-notification {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .vt-sr-remove-notification:hover {
+            background: #c82333;
+        }
+        .vt-sr-main-content {
+            /* Main content area */
+        }
+        .vt-sr-sidebar {
+            position: sticky;
+            top: 32px;
+            height: fit-content;
+            max-height: calc(100vh - 50px);
+            overflow-y: auto;
+        }
+        .vt-sr-placeholders {
+            background: #e7f3ff;
+            border: 1px solid #b3d7ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .vt-sr-placeholders h4 {
+            margin: 0 0 15px 0;
+            color: #2271b1;
+            font-size: 16px;
+            border-bottom: 1px solid #b3d7ff;
+            padding-bottom: 8px;
+        }
+        .vt-sr-placeholder-group {
+            margin-bottom: 15px;
+        }
+        .vt-sr-placeholder-group h5 {
+            margin: 0 0 8px 0;
+            color: #333;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .vt-sr-placeholder-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin: 4px 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .vt-sr-placeholder-item:hover {
+            background: #f8f9fa;
+            border-color: #2271b1;
+            transform: translateX(2px);
+        }
+        .vt-sr-placeholder-item code {
+            font-family: Monaco, 'Courier New', monospace;
+            font-size: 11px;
+            color: #2271b1;
+            font-weight: 600;
+        }
+        .vt-sr-placeholder-item .copy-icon {
+            width: 14px;
+            height: 14px;
+            opacity: 0.5;
+            transition: opacity 0.2s ease;
+        }
+        .vt-sr-placeholder-item:hover .copy-icon {
+            opacity: 1;
+        }
+        .vt-sr-copy-feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #2271b1;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .vt-sr-copy-feedback.show {
+            opacity: 1;
+        }
+        </style>
+        
+        <div class="vt-submission-reminder-admin">
+            <!-- Main Content Column -->
+            <div class="vt-sr-main-content">
+                <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; margin-bottom: 20px; color: #856404;">
+                    <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li><?php _e('Automatically tracks submission counts when posts are published or set to pending', 'voxel-toolkit'); ?></li>
+                        <li><?php _e('Each post type can have multiple notification intervals (hours, days, weeks, months)', 'voxel-toolkit'); ?></li>
+                        <li><?php _e('Sends reminder emails based on time since last submission for each specific post type', 'voxel-toolkit'); ?></li>
+                        <li><?php _e('Anti-spam protection: maximum one reminder per notification per 24 hours', 'voxel-toolkit'); ?></li>
+                    </ul>
+                </div>
+                
+                <?php foreach ($available_post_types as $post_type): ?>
+                    <?php if (in_array($post_type->name, array('attachment', 'nav_menu_item', 'wp_block'))): continue; endif; ?>
+                    <?php 
+                    $is_enabled = in_array($post_type->name, $post_types);
+                    $post_type_notifications = isset($notifications[$post_type->name]) ? $notifications[$post_type->name] : array();
+                    ?>
+                    
+                    <div class="vt-sr-post-type-section">
+                        <div class="vt-sr-post-type-header">
+                            <h3>
+                                <input type="checkbox" 
+                                       name="voxel_toolkit_options[submission_reminder][post_types][]" 
+                                       value="<?php echo esc_attr($post_type->name); ?>"
+                                       <?php checked($is_enabled); ?>
+                                       onchange="togglePostTypeNotifications('<?php echo esc_js($post_type->name); ?>', this.checked)" />
+                                <?php echo esc_html($post_type->label); ?>
+                                <small style="font-weight: normal; color: #666; margin-left: 8px;">(<?php echo esc_html($post_type->name); ?>)</small>
+                            </h3>
+                            <span style="font-size: 12px; color: #666;">
+                                <?php echo sprintf(__('%d notifications configured', 'voxel-toolkit'), count($post_type_notifications)); ?>
+                            </span>
+                        </div>
+                        
+                        <div id="notifications-<?php echo esc_attr($post_type->name); ?>" class="vt-sr-notification-list" style="<?php echo $is_enabled ? '' : 'display: none;'; ?>">
+                            <?php if (empty($post_type_notifications)): ?>
+                                <p style="color: #666; text-align: center; margin: 20px 0;">
+                                    <?php _e('No notifications configured for this post type. Click "Add Notification" to create one.', 'voxel-toolkit'); ?>
+                                </p>
+                            <?php else: ?>
+                                <?php foreach ($post_type_notifications as $notification_id => $notification): ?>
+                                    <?php $this->render_notification_item($post_type->name, $notification_id, $notification); ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                            
+                            <div class="vt-sr-add-notification">
+                                <button type="button" onclick="addNotification('<?php echo esc_js($post_type->name); ?>', '<?php echo esc_js($post_type->label); ?>')">
+                                    <?php _e('Add Notification', 'voxel-toolkit'); ?>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+                
+                <!-- Sync Section -->
+                <div class="vt-sr-post-type-section" style="margin-top: 40px;">
+                    <div class="vt-sr-post-type-header">
+                        <h3>
+                            🔄 <?php _e('Sync Existing Posts', 'voxel-toolkit'); ?>
+                            <small style="font-weight: normal; color: #666; margin-left: 8px;"><?php _e('Populate tracking data from existing published posts', 'voxel-toolkit'); ?></small>
+                        </h3>
+                    </div>
+                    
+                    <?php 
+                    // Check if submission reminder is instantiated
+                    if (isset($this->active_functions['submission_reminder'])) {
+                        $sr_instance = $this->active_functions['submission_reminder'];
+                        $sync_stats = $sr_instance->get_sync_stats();
+                        
+                        if ($sync_stats && $sync_stats['total'] > 0) {
+                            echo '<div style="display: grid; grid-template-columns: 1fr 200px; gap: 20px; align-items: start; padding: 20px;">';
+                            
+                            // Left column - stats and description
+                            echo '<div>';
+                            echo '<p style="margin: 0 0 15px 0;">';
+                            echo sprintf(__('Found <strong>%d published posts</strong> that can be synced:', 'voxel-toolkit'), $sync_stats['total']);
+                            echo '</p>';
+                            
+                            echo '<div style="background: #f9f9f9; border: 1px solid #ddd; padding: 15px; border-radius: 4px; margin-bottom: 15px;">';
+                            foreach ($sync_stats['by_type'] as $post_type => $count) {
+                                $post_type_obj = get_post_type_object($post_type);
+                                $label = $post_type_obj ? $post_type_obj->label : $post_type;
+                                echo '<div style="display: flex; justify-content: space-between; margin-bottom: 5px;">';
+                                echo '<span>' . $label . ':</span>';
+                                echo '<strong>' . $count . '</strong>';
+                                echo '</div>';
+                            }
+                            echo '</div>';
+                            
+                            echo '<p style="font-size: 13px; color: #d63638; margin: 0;">';
+                            echo '<strong>' . __('Warning:', 'voxel-toolkit') . '</strong> ';
+                            echo __('This will clear existing submission data and recalculate from all published posts.', 'voxel-toolkit');
+                            echo '</p>';
+                            echo '</div>';
+                            
+                            // Right column - button
+                            echo '<div>';
+                            echo '<button type="button" id="vt-sync-posts-btn" class="button button-primary" style="width: 100%; height: 40px; font-size: 14px;">';
+                            echo __('Sync All Posts', 'voxel-toolkit');
+                            echo '</button>';
+                            echo '<div id="vt-sync-result" style="margin-top: 15px; display: none;"></div>';
+                            echo '</div>';
+                            
+                            echo '</div>';
+                        } else {
+                            echo '<div style="padding: 20px; text-align: center;">';
+                            echo '<p style="color: #d63638; margin: 0;">';
+                            echo __('No published posts found for selected post types.', 'voxel-toolkit');
+                            echo '</p>';
+                            echo '</div>';
+                        }
+                    } else {
+                        echo '<div style="padding: 20px; text-align: center;">';
+                        echo '<p style="color: #d63638; margin: 0;">';
+                        echo __('Submission Reminder function not active.', 'voxel-toolkit');
+                        echo '</p>';
+                        echo '</div>';
+                    }
+                    ?>
+                </div>
+                
+                
+            </div>
+            
+            <!-- Sidebar Column -->
+            <div class="vt-sr-sidebar">
+                <div class="vt-sr-sidebar-content">
+                    <h3><?php _e('Available Placeholders', 'voxel-toolkit'); ?></h3>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 20px;">
+                        <?php _e('Click any placeholder to copy it to your clipboard:', 'voxel-toolkit'); ?>
+                    </p>
+                    
+                    <!-- User Information -->
+                    <div class="vt-sr-placeholder-group">
+                        <h4><?php _e('User Information', 'voxel-toolkit'); ?></h4>
+                        <div class="vt-sr-placeholder-item" data-code="{user_name}">
+                            <code>{user_name}</code>
+                            <span class="vt-sr-copy-icon">📋</span>
+                            <div class="vt-sr-placeholder-description"><?php _e('User display name', 'voxel-toolkit'); ?></div>
+                        </div>
+                        <div class="vt-sr-placeholder-item" data-code="{user_email}">
+                            <code>{user_email}</code>
+                            <span class="vt-sr-copy-icon">📋</span>
+                            <div class="vt-sr-placeholder-description"><?php _e('User email address', 'voxel-toolkit'); ?></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submission Statistics -->
+                    <div class="vt-sr-placeholder-group">
+                        <h4><?php _e('Submission Statistics', 'voxel-toolkit'); ?></h4>
+                        <div class="vt-sr-placeholder-item" data-code="{total_submissions}">
+                            <code>{total_submissions}</code>
+                            <span class="vt-sr-copy-icon">📋</span>
+                            <div class="vt-sr-placeholder-description"><?php _e('Total submissions across all post types', 'voxel-toolkit'); ?></div>
+                        </div>
+                        <div class="vt-sr-placeholder-item" data-code="{days_since_last}">
+                            <code>{days_since_last}</code>
+                            <span class="vt-sr-copy-icon">📋</span>
+                            <div class="vt-sr-placeholder-description"><?php _e('Days since last submission for this post type', 'voxel-toolkit'); ?></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notification Settings -->
+                    <div class="vt-sr-placeholder-group">
+                        <h4><?php _e('Notification Settings', 'voxel-toolkit'); ?></h4>
+                        <div class="vt-sr-placeholder-item" data-code="{time_value}">
+                            <code>{time_value}</code>
+                            <span class="vt-sr-copy-icon">📋</span>
+                            <div class="vt-sr-placeholder-description"><?php _e('Time value from notification settings', 'voxel-toolkit'); ?></div>
+                        </div>
+                        <div class="vt-sr-placeholder-item" data-code="{time_unit}">
+                            <code>{time_unit}</code>
+                            <span class="vt-sr-copy-icon">📋</span>
+                            <div class="vt-sr-placeholder-description"><?php _e('Time unit from notification settings', 'voxel-toolkit'); ?></div>
+                        </div>
+                        <div class="vt-sr-placeholder-item" data-code="{post_type}">
+                            <code>{post_type}</code>
+                            <span class="vt-sr-copy-icon">📋</span>
+                            <div class="vt-sr-placeholder-description"><?php _e('Post type label', 'voxel-toolkit'); ?></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Site Information -->
+                    <div class="vt-sr-placeholder-group">
+                        <h4><?php _e('Site Information', 'voxel-toolkit'); ?></h4>
+                        <div class="vt-sr-placeholder-item" data-code="{site_name}">
+                            <code>{site_name}</code>
+                            <span class="vt-sr-copy-icon">📋</span>
+                            <div class="vt-sr-placeholder-description"><?php _e('Site name from WordPress settings', 'voxel-toolkit'); ?></div>
+                        </div>
+                        <div class="vt-sr-placeholder-item" data-code="{site_url}">
+                            <code>{site_url}</code>
+                            <span class="vt-sr-copy-icon">📋</span>
+                            <div class="vt-sr-placeholder-description"><?php _e('Site homepage URL', 'voxel-toolkit'); ?></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Post Type Submissions -->
+                    <div class="vt-sr-placeholder-group">
+                        <h4><?php _e('Post Type Submissions', 'voxel-toolkit'); ?></h4>
+                        <p style="font-size: 11px; color: #888; margin-bottom: 10px;">
+                            <?php _e('Dynamic placeholders based on enabled post types:', 'voxel-toolkit'); ?>
+                        </p>
+                        <?php foreach ($available_post_types as $pt_obj): ?>
+                            <?php if (in_array($pt_obj->name, array('attachment', 'nav_menu_item', 'wp_block')) || !in_array($pt_obj->name, $post_types)): continue; endif; ?>
+                            <?php $code = '{submissions_' . $pt_obj->name . '}'; ?>
+                            <div class="vt-sr-placeholder-item" data-code="<?php echo esc_attr($code); ?>">
+                                <code><?php echo esc_html($code); ?></code>
+                                <span class="vt-sr-copy-icon">📋</span>
+                                <div class="vt-sr-placeholder-description">
+                                    <?php echo sprintf(__('Number of %s submissions', 'voxel-toolkit'), $pt_obj->label); ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+        function togglePostTypeNotifications(postType, enabled) {
+            const container = document.getElementById('notifications-' + postType);
+            if (container) {
+                container.style.display = enabled ? 'block' : 'none';
+            }
+        }
+        
+        function addNotification(postType, postTypeLabel) {
+            const container = document.getElementById('notifications-' + postType);
+            const notificationId = 'notification_' + Date.now();
+            
+            const notificationHtml = `
+                <div class="vt-sr-notification-item" id="${notificationId}">
+                    <div class="vt-sr-notification-header">
+                        <div class="vt-sr-notification-title">
+                            <input type="checkbox" 
+                                   name="voxel_toolkit_options[submission_reminder][notifications][${postType}][${notificationId}][enabled]" 
+                                   value="yes" checked />
+                            <strong>New Notification</strong>
+                        </div>
+                        <button type="button" class="vt-sr-remove-notification" onclick="removeNotification('${notificationId}')">
+                            Remove
+                        </button>
+                    </div>
+                    
+                    <div class="vt-sr-notification-fields">
+                        <div class="vt-sr-field">
+                            <label>Time Value</label>
+                            <input type="number" 
+                                   name="voxel_toolkit_options[submission_reminder][notifications][${postType}][${notificationId}][time_value]" 
+                                   value="7" min="1" />
+                        </div>
+                        <div class="vt-sr-field">
+                            <label>Time Unit</label>
+                            <select name="voxel_toolkit_options[submission_reminder][notifications][${postType}][${notificationId}][time_unit]">
+                                <option value="hours">Hours</option>
+                                <option value="days" selected>Days</option>
+                                <option value="weeks">Weeks</option>
+                                <option value="months">Months</option>
+                            </select>
+                        </div>
+                        <div class="vt-sr-field">
+                            <label>Description</label>
+                            <input type="text" 
+                                   name="voxel_toolkit_options[submission_reminder][notifications][${postType}][${notificationId}][description]" 
+                                   placeholder="e.g., Weekly reminder for ${postTypeLabel}" />
+                        </div>
+                    </div>
+                    
+                    <div class="vt-sr-email-fields">
+                        <div class="vt-sr-field">
+                            <label>Email Subject</label>
+                            <input type="text" 
+                                   name="voxel_toolkit_options[submission_reminder][notifications][${postType}][${notificationId}][subject]" 
+                                   placeholder="Time to submit a new ${postTypeLabel}!" />
+                        </div>
+                        <div class="vt-sr-field">
+                            <label>Email Message</label>
+                            <textarea name="voxel_toolkit_options[submission_reminder][notifications][${postType}][${notificationId}][message]" 
+                                      placeholder="Hi {user_name}, it's been {time_value} {time_unit} since your last ${postTypeLabel} submission..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Insert before the add button
+            const addButton = container.querySelector('.vt-sr-add-notification');
+            addButton.insertAdjacentHTML('beforebegin', notificationHtml);
+            
+            // Hide the "no notifications" message if it exists
+            const noNotificationsMsg = container.querySelector('p');
+            if (noNotificationsMsg) {
+                noNotificationsMsg.style.display = 'none';
+            }
+        }
+        
+        function removeNotification(notificationId) {
+            const notification = document.getElementById(notificationId);
+            if (notification && confirm('Are you sure you want to remove this notification?')) {
+                notification.remove();
+            }
+        }
+        
+        // Copy functionality for placeholders
+        document.addEventListener('DOMContentLoaded', function() {
+            const placeholderItems = document.querySelectorAll('.vt-sr-placeholder-item');
+            
+            placeholderItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const code = this.dataset.code;
+                    if (code) {
+                        copyToClipboard(code);
+                        showCopyFeedback(this);
+                    }
+                });
+            });
+        });
+        
+        function copyToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                // Use modern clipboard API if available
+                navigator.clipboard.writeText(text).then(function() {
+                    console.log('Copied to clipboard: ' + text);
+                }).catch(function(err) {
+                    console.error('Failed to copy: ', err);
+                    fallbackCopyTextToClipboard(text);
+                });
+            } else {
+                // Fallback for older browsers
+                fallbackCopyTextToClipboard(text);
+            }
+        }
+        
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            
+            // Avoid scrolling to bottom
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+            
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    console.log('Fallback: Copied to clipboard: ' + text);
+                } else {
+                    console.error('Fallback: Unable to copy');
+                }
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+        
+        function showCopyFeedback(element) {
+            // Create feedback element
+            const feedback = document.createElement('div');
+            feedback.className = 'vt-sr-copy-feedback';
+            feedback.textContent = 'Copied!';
+            
+            // Position it relative to the clicked element
+            const rect = element.getBoundingClientRect();
+            feedback.style.position = 'fixed';
+            feedback.style.left = (rect.left + rect.width / 2) + 'px';
+            feedback.style.top = (rect.top - 30) + 'px';
+            feedback.style.transform = 'translateX(-50%)';
+            
+            document.body.appendChild(feedback);
+            
+            // Show and then hide
+            setTimeout(() => feedback.classList.add('show'), 10);
+            setTimeout(() => {
+                feedback.classList.remove('show');
+                setTimeout(() => document.body.removeChild(feedback), 300);
+            }, 1500);
+        }
+        
+        // Sync posts functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const syncButton = document.getElementById('vt-sync-posts-btn');
+            if (syncButton) {
+                syncButton.addEventListener('click', function() {
+                    if (!confirm('Are you sure you want to sync all posts? This will clear existing submission data and recalculate from all published posts.')) {
+                        return;
+                    }
+                    
+                    syncSubmissionData();
+                });
+            }
+        });
+        
+        function syncSubmissionData() {
+            const button = document.getElementById('vt-sync-posts-btn');
+            const resultDiv = document.getElementById('vt-sync-result');
+            
+            if (!button || !resultDiv) return;
+            
+            // Update button state
+            button.disabled = true;
+            button.textContent = 'Syncing...';
+            
+            // Show loading in result div
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<p style="color: #666; font-size: 12px;">Syncing posts, please wait...</p>';
+            
+            // Make AJAX request
+            const formData = new FormData();
+            formData.append('action', 'voxel_toolkit_sync_submissions');
+            formData.append('nonce', '<?php echo wp_create_nonce('voxel_toolkit_sync_submissions'); ?>');
+            
+            fetch(ajaxurl, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Reset button
+                button.disabled = false;
+                button.textContent = 'Sync All Posts';
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div style="background: #d1edcc; border: 1px solid #5cb85c; padding: 10px; border-radius: 4px; color: #3c763d; font-size: 12px;">
+                            <strong>Success!</strong><br>
+                            ${data.data.message}
+                        </div>
+                    `;
+                    
+                    // Refresh the page after 2 seconds to show updated data
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    resultDiv.innerHTML = `
+                        <div style="background: #f2dede; border: 1px solid #d9534f; padding: 10px; border-radius: 4px; color: #a94442; font-size: 12px;">
+                            <strong>Error:</strong><br>
+                            ${data.data || 'An unknown error occurred.'}
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                // Reset button
+                button.disabled = false;
+                button.textContent = 'Sync All Posts';
+                
+                resultDiv.innerHTML = `
+                    <div style="background: #f2dede; border: 1px solid #d9534f; padding: 10px; border-radius: 4px; color: #a94442; font-size: 12px;">
+                        <strong>Error:</strong><br>
+                        Failed to sync posts. Please try again.
+                    </div>
+                `;
+                
+                console.error('Sync error:', error);
+            });
+        }
+        </script>
+        <?php
+    }
+    
+    /**
+     * Render individual notification item
+     */
+    private function render_notification_item($post_type, $notification_id, $notification) {
+        $enabled = isset($notification['enabled']) ? $notification['enabled'] : 'no';
+        $time_value = isset($notification['time_value']) ? $notification['time_value'] : 7;
+        $time_unit = isset($notification['time_unit']) ? $notification['time_unit'] : 'days';
+        $description = isset($notification['description']) ? $notification['description'] : '';
+        $subject = isset($notification['subject']) ? $notification['subject'] : '';
+        $message = isset($notification['message']) ? $notification['message'] : '';
+        ?>
+        <div class="vt-sr-notification-item" id="<?php echo esc_attr($notification_id); ?>">
+            <div class="vt-sr-notification-header">
+                <div class="vt-sr-notification-title">
+                    <input type="checkbox" 
+                           name="voxel_toolkit_options[submission_reminder][notifications][<?php echo esc_attr($post_type); ?>][<?php echo esc_attr($notification_id); ?>][enabled]" 
+                           value="yes" 
+                           <?php checked($enabled, 'yes'); ?> />
+                    <strong><?php echo $description ? esc_html($description) : sprintf(__('%d %s notification', 'voxel-toolkit'), $time_value, $time_unit); ?></strong>
+                </div>
+                <button type="button" class="vt-sr-remove-notification" onclick="removeNotification('<?php echo esc_js($notification_id); ?>')">
+                    <?php _e('Remove', 'voxel-toolkit'); ?>
+                </button>
+            </div>
+            
+            <div class="vt-sr-notification-fields">
+                <div class="vt-sr-field">
+                    <label><?php _e('Time Value', 'voxel-toolkit'); ?></label>
+                    <input type="number" 
+                           name="voxel_toolkit_options[submission_reminder][notifications][<?php echo esc_attr($post_type); ?>][<?php echo esc_attr($notification_id); ?>][time_value]" 
+                           value="<?php echo esc_attr($time_value); ?>" 
+                           min="1" />
+                </div>
+                <div class="vt-sr-field">
+                    <label><?php _e('Time Unit', 'voxel-toolkit'); ?></label>
+                    <select name="voxel_toolkit_options[submission_reminder][notifications][<?php echo esc_attr($post_type); ?>][<?php echo esc_attr($notification_id); ?>][time_unit]">
+                        <option value="hours" <?php selected($time_unit, 'hours'); ?>><?php _e('Hours', 'voxel-toolkit'); ?></option>
+                        <option value="days" <?php selected($time_unit, 'days'); ?>><?php _e('Days', 'voxel-toolkit'); ?></option>
+                        <option value="weeks" <?php selected($time_unit, 'weeks'); ?>><?php _e('Weeks', 'voxel-toolkit'); ?></option>
+                        <option value="months" <?php selected($time_unit, 'months'); ?>><?php _e('Months', 'voxel-toolkit'); ?></option>
+                    </select>
+                </div>
+                <div class="vt-sr-field">
+                    <label><?php _e('Description', 'voxel-toolkit'); ?></label>
+                    <input type="text" 
+                           name="voxel_toolkit_options[submission_reminder][notifications][<?php echo esc_attr($post_type); ?>][<?php echo esc_attr($notification_id); ?>][description]" 
+                           value="<?php echo esc_attr($description); ?>"
+                           placeholder="<?php _e('e.g., Weekly reminder', 'voxel-toolkit'); ?>" />
+                </div>
+            </div>
+            
+            <div class="vt-sr-email-fields">
+                <div class="vt-sr-field">
+                    <label><?php _e('Email Subject', 'voxel-toolkit'); ?></label>
+                    <input type="text" 
+                           name="voxel_toolkit_options[submission_reminder][notifications][<?php echo esc_attr($post_type); ?>][<?php echo esc_attr($notification_id); ?>][subject]" 
+                           value="<?php echo esc_attr($subject); ?>"
+                           placeholder="<?php _e('Time to submit a new post!', 'voxel-toolkit'); ?>" />
+                </div>
+                <div class="vt-sr-field">
+                    <label><?php _e('Email Message', 'voxel-toolkit'); ?></label>
+                    <textarea name="voxel_toolkit_options[submission_reminder][notifications][<?php echo esc_attr($post_type); ?>][<?php echo esc_attr($notification_id); ?>][message]" 
+                              placeholder="<?php _e('Hi {user_name}, it\'s been {time_value} {time_unit} since your last submission...', 'voxel-toolkit'); ?>"><?php echo esc_textarea($message); ?></textarea>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+    
+    /**
+     * AJAX handler for syncing submission data
+     */
+    public function ajax_sync_submissions() {
+        // Security check
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Insufficient permissions.', 'voxel-toolkit'));
+        }
+        
+        // Verify nonce
+        check_ajax_referer('voxel_toolkit_sync_submissions', 'nonce');
+        
+        // Get submission reminder instance
+        if (!isset($this->active_functions['submission_reminder'])) {
+            wp_send_json_error(__('Submission Reminder function is not active.', 'voxel-toolkit'));
+        }
+        
+        $sr_instance = $this->active_functions['submission_reminder'];
+        
+        // Perform sync
+        $result = $sr_instance->sync_existing_posts();
+        
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result['message']);
+        }
     }
 }

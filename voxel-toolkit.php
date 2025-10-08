@@ -3,7 +3,7 @@
  * Plugin Name: Voxel Toolkit
  * Plugin URI: https://codewattz.com/voxel-toolkit-plugin/
  * Description: A comprehensive toolkit for extending Voxel theme functionality with toggleable features and customizable settings.
- * Version: 1.3.0
+ * Version: 1.3.1
  * Author: Code Wattz
  * Author URI: https://codewattz.com
  * License: GPL v2 or later
@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('VOXEL_TOOLKIT_VERSION', '1.3.0');
+define('VOXEL_TOOLKIT_VERSION', '1.3.1');
 define('VOXEL_TOOLKIT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('VOXEL_TOOLKIT_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('VOXEL_TOOLKIT_PLUGIN_FILE', __FILE__);
@@ -266,15 +266,16 @@ class Voxel_Toolkit {
             return;
         }
         
-        // Don't show on license page itself
-        if (isset($_GET['page']) && $_GET['page'] === 'voxel-toolkit-manage-license') {
-            return;
-        }
-        
         try {
             // Get license instance
             $licensing = \VoxelToolkit\FluentLicensing::getInstance();
             if (!$licensing) {
+                return;
+            }
+            
+            // Don't show on license page itself
+            $licenseSlug = $licensing->getConfig('slug');
+            if (isset($_GET['page']) && $_GET['page'] === $licenseSlug . '-manage-license') {
                 return;
             }
             
@@ -288,7 +289,10 @@ class Voxel_Toolkit {
             
             // Get current license key
             $currentKey = $licensing->getCurrentLicenseKey();
-            $licensePageUrl = admin_url('admin.php?page=voxel-toolkit-manage-license');
+            
+            // Get the correct license page URL dynamically
+            $licenseSlug = $licensing->getConfig('slug');
+            $licensePageUrl = admin_url('admin.php?page=' . $licenseSlug . '-manage-license');
             $purchaseUrl = 'https://codewattz.com/?fluent-cart=instant_checkout&item_id=10&quantity=1';
             
             ?>
