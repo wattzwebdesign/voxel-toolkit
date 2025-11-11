@@ -286,9 +286,15 @@ class Voxel_Toolkit_Functions {
                 'description' => __('Display users who have purchased the current product with avatar grid or list views.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Users_Purchased_Widget_Manager',
                 'file' => 'widgets/class-users-purchased-widget-manager.php',
+            ),
+            'article_helpful' => array(
+                'name' => __('Article Helpful', 'voxel-toolkit'),
+                'description' => __('Display "Was this Article Helpful?" widget with yes/no voting and admin statistics tracking.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Article_Helpful_Widget_Manager',
+                'file' => 'widgets/class-article-helpful-widget-manager.php',
             )
         );
-        
+
         // Allow other plugins/themes to register widgets
         $this->available_widgets = apply_filters('voxel_toolkit/available_widgets', $this->available_widgets);
     }
