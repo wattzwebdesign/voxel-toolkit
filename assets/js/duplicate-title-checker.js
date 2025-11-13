@@ -131,10 +131,13 @@
          * Create warning container near the title input
          */
         createWarningContainer($input) {
+            this.log('Creating warning container for input:', $input);
+
             // Check if container already exists
             let $container = $input.siblings('.' + config.selectors.warningContainer);
 
             if ($container.length === 0) {
+                this.log('Container does not exist, creating new one');
                 $container = $('<div>', {
                     class: config.selectors.warningContainer,
                     style: 'display: none; margin-top: 8px;'
@@ -142,11 +145,17 @@
 
                 // Insert after the input or its parent container
                 const $parent = $input.closest('.ts-form-group, .form-group, .voxel-input-container');
+                this.log('Parent container:', $parent);
+
                 if ($parent.length > 0) {
+                    this.log('Inserting after parent container');
                     $parent.after($container);
                 } else {
+                    this.log('Inserting after input directly');
                     $input.after($container);
                 }
+            } else {
+                this.log('Container already exists');
             }
 
             return $container;
@@ -239,16 +248,22 @@
          * Handle AJAX response
          */
         handleResponse($input, response) {
+            this.log('Handling response:', response);
+
             if (!response.success) {
+                this.log('Response not successful, clearing warning');
                 this.clearWarning($input);
                 return;
             }
 
             const data = response.data;
+            this.log('Response data:', data);
 
             if (data.has_duplicate) {
+                this.log('Duplicate found! Showing warning');
                 this.showWarning($input, data);
             } else {
+                this.log('No duplicate found, clearing warning');
                 this.clearWarning($input);
             }
         }
@@ -266,7 +281,9 @@
          * Show duplicate warning
          */
         showWarning($input, data) {
+            this.log('Showing warning with data:', data);
             const $container = this.getWarningContainer($input);
+            this.log('Warning container:', $container);
 
             let html = '<div class="voxel-toolkit-duplicate-alert" style="padding: 12px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; color: #856404;">';
             html += '<div style="display: flex; align-items: center; margin-bottom: 8px;">';
@@ -291,8 +308,10 @@
 
             html += '</div>';
 
+            this.log('Setting HTML and showing container');
             $container.html(html);
             $container.show();
+            this.log('Warning displayed');
         }
 
         /**
