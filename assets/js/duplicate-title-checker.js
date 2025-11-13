@@ -326,7 +326,19 @@
          * Get warning container for input
          */
         getWarningContainer($input) {
-            return $input.siblings('.' + config.selectors.warningContainer);
+            // First try to find as sibling of input
+            let $container = $input.siblings('.' + config.selectors.warningContainer);
+
+            // If not found, look for it after the parent container
+            if ($container.length === 0) {
+                const $parent = $input.closest('.ts-form-group, .form-group, .voxel-input-container');
+                if ($parent.length > 0) {
+                    $container = $parent.next('.' + config.selectors.warningContainer);
+                }
+            }
+
+            this.log('getWarningContainer found:', $container.length, 'containers');
+            return $container;
         }
 
         /**
