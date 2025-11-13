@@ -236,9 +236,9 @@ class Duplicate_Title_Checker {
 	/**
 	 * Render settings for this function
 	 */
-	public function render_settings( $current_settings ) {
-		$settings = isset( $current_settings['duplicate_title_checker'] ) ? $current_settings['duplicate_title_checker'] : array();
-		$block_duplicate = isset( $settings['block_duplicate'] ) ? $settings['block_duplicate'] : false;
+	public function render_settings( $function_settings ) {
+		// $function_settings is already the settings for this specific function
+		$block_duplicate = isset( $function_settings['block_duplicate'] ) ? $function_settings['block_duplicate'] : false;
 		?>
 		<div class="voxel-toolkit-setting">
 			<h3><?php _e( 'Duplicate Title Checker Settings', 'voxel-toolkit' ); ?></h3>

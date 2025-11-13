@@ -292,28 +292,119 @@
             const $container = this.getWarningContainer($input);
             this.log('Warning container:', $container);
 
-            let html = '<div class="voxel-toolkit-duplicate-alert" style="padding: 12px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; color: #856404;">';
-            html += '<div style="display: flex; align-items: center; margin-bottom: 8px;">';
-            html += '<svg width="20" height="20" style="margin-right: 8px; flex-shrink: 0;" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>';
-            html += '<strong>' + data.message + '</strong>';
+            // Modern, Voxel-styled warning box
+            let html = '<div class="voxel-toolkit-duplicate-alert" style="';
+            html += 'background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);';
+            html += 'border-left: 4px solid #f59e0b;';
+            html += 'border-radius: 8px;';
+            html += 'padding: 16px 20px;';
+            html += 'margin-top: 12px;';
+            html += 'box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);';
+            html += 'font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;';
+            html += '">';
+
+            // Header with icon and title
+            html += '<div style="display: flex; align-items: flex-start; gap: 12px;">';
+
+            // Warning icon
+            html += '<div style="flex-shrink: 0; margin-top: 2px;">';
+            html += '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="color: #f59e0b;">';
+            html += '<path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+            html += '</svg>';
             html += '</div>';
 
-            // Add links to duplicate posts
+            // Content
+            html += '<div style="flex: 1;">';
+
+            // Title
+            html += '<div style="';
+            html += 'font-size: 15px;';
+            html += 'font-weight: 600;';
+            html += 'color: #92400e;';
+            html += 'margin-bottom: 8px;';
+            html += 'line-height: 1.4;';
+            html += '">';
+            html += data.message;
+            html += '</div>';
+
+            // Duplicate posts list
             if (data.duplicates && data.duplicates.length > 0) {
-                html += '<div style="margin-top: 8px; font-size: 13px;">';
-                html += '<div style="margin-bottom: 4px;">Similar posts:</div>';
-                html += '<ul style="margin: 4px 0 0 20px; padding: 0;">';
+                html += '<div style="';
+                html += 'background: rgba(255, 255, 255, 0.7);';
+                html += 'border-radius: 6px;';
+                html += 'padding: 12px 14px;';
+                html += 'margin-top: 10px;';
+                html += '">';
+
+                html += '<div style="';
+                html += 'font-size: 13px;';
+                html += 'font-weight: 600;';
+                html += 'color: #78350f;';
+                html += 'margin-bottom: 8px;';
+                html += '">Similar posts found:</div>';
+
+                html += '<div style="display: flex; flex-direction: column; gap: 6px;">';
 
                 data.duplicates.forEach((duplicate) => {
-                    const statusBadge = duplicate.status !== 'publish' ? ` <span style="font-size: 11px; opacity: 0.7;">(${duplicate.status})</span>` : '';
-                    html += `<li style="margin-bottom: 4px;"><a href="${duplicate.url}" target="_blank" style="color: #856404; text-decoration: underline;">${this.escapeHtml(duplicate.title)}</a>${statusBadge}</li>`;
+                    html += '<div style="';
+                    html += 'display: flex;';
+                    html += 'align-items: center;';
+                    html += 'gap: 8px;';
+                    html += 'padding: 8px 10px;';
+                    html += 'background: white;';
+                    html += 'border-radius: 4px;';
+                    html += 'border: 1px solid #fde68a;';
+                    html += 'transition: all 0.2s;';
+                    html += '">';
+
+                    // Post icon
+                    html += '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink: 0; color: #f59e0b;">';
+                    html += '<path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4z" stroke="currentColor" stroke-width="1.5"/>';
+                    html += '<path d="M5 7h6M5 10h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>';
+                    html += '</svg>';
+
+                    // Post title and status
+                    html += '<div style="flex: 1; min-width: 0;">';
+                    html += `<a href="${duplicate.url}" target="_blank" style="`;
+                    html += 'color: #92400e;';
+                    html += 'text-decoration: none;';
+                    html += 'font-size: 13px;';
+                    html += 'font-weight: 500;';
+                    html += 'white-space: nowrap;';
+                    html += 'overflow: hidden;';
+                    html += 'text-overflow: ellipsis;';
+                    html += 'display: block;';
+                    html += '">';
+                    html += this.escapeHtml(duplicate.title);
+                    html += '</a>';
+                    html += '</div>';
+
+                    // Status badge
+                    if (duplicate.status !== 'publish') {
+                        html += '<span style="';
+                        html += 'font-size: 11px;';
+                        html += 'padding: 2px 8px;';
+                        html += 'background: #fef3c7;';
+                        html += 'color: #78350f;';
+                        html += 'border-radius: 12px;';
+                        html += 'font-weight: 500;';
+                        html += 'text-transform: capitalize;';
+                        html += 'flex-shrink: 0;';
+                        html += '">';
+                        html += duplicate.status;
+                        html += '</span>';
+                    }
+
+                    html += '</div>';
                 });
 
-                html += '</ul>';
+                html += '</div>';
                 html += '</div>';
             }
 
-            html += '</div>';
+            html += '</div>'; // Close content div
+            html += '</div>'; // Close flex container
+            html += '</div>'; // Close alert div
 
             this.log('Setting HTML and showing container');
             $container.html(html);
