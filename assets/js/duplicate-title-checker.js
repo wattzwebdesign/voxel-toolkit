@@ -50,7 +50,7 @@
         }
 
         log(...args) {
-            if (this.debug || true) { // Always log for now during testing
+            if (this.debug) {
                 console.log('[Voxel Toolkit - Duplicate Checker]', ...args);
             }
         }
@@ -253,6 +253,7 @@
             if (!response.success) {
                 this.log('Response not successful, clearing warning');
                 this.clearWarning($input);
+                this.enableSubmitButton();
                 return;
             }
 
@@ -262,9 +263,15 @@
             if (data.has_duplicate) {
                 this.log('Duplicate found! Showing warning');
                 this.showWarning($input, data);
+
+                // Block submission if setting is enabled
+                if (window.voxelToolkitDuplicateChecker?.block_duplicate) {
+                    this.disableSubmitButton();
+                }
             } else {
                 this.log('No duplicate found, clearing warning');
                 this.clearWarning($input);
+                this.enableSubmitButton();
             }
         }
 
@@ -412,6 +419,61 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        /**
+         * Disable submit/publish button when duplicates found
+         */
+        disableSubmitButton() {
+            this.log('Disabling submit button due to duplicate title');
+
+            // Find common submit button selectors in Voxel forms
+            const $submitButtons = $(
+                'button[type="submit"], ' +
+                'input[type="submit"], ' +
+                '.ts-btn.create-btn, ' +
+                'button.create-btn, ' +
+                'button:contains("Publish"), ' +
+                'button:contains("Submit")'
+            );
+
+            $submitButtons.each((index, button) => {
+                const $button = $(button);
+                if (!$button.data('original-disabled-state')) {
+                    $button.data('original-disabled-state', $button.prop('disabled'));
+                }
+                $button.prop('disabled', true);
+                $button.addClass('voxel-toolkit-blocked-duplicate');
+                $button.attr('title', 'Cannot submit: duplicate title detected');
+            });
+
+            this.log('Disabled', $submitButtons.length, 'submit buttons');
+        }
+
+        /**
+         * Enable submit/publish button
+         */
+        enableSubmitButton() {
+            this.log('Enabling submit button');
+
+            const $blockedButtons = $('.voxel-toolkit-blocked-duplicate');
+
+            $blockedButtons.each((index, button) => {
+                const $button = $(button);
+                const originalState = $button.data('original-disabled-state');
+
+                if (originalState !== undefined) {
+                    $button.prop('disabled', originalState);
+                    $button.removeData('original-disabled-state');
+                } else {
+                    $button.prop('disabled', false);
+                }
+
+                $button.removeClass('voxel-toolkit-blocked-duplicate');
+                $button.removeAttr('title');
+            });
+
+            this.log('Enabled', $blockedButtons.length, 'submit buttons');
         }
     }
 

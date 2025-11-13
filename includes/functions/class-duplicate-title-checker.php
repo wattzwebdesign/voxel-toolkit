@@ -39,6 +39,8 @@ class Duplicate_Title_Checker {
 			return;
 		}
 
+		$settings = $this->get_settings();
+
 		wp_enqueue_script(
 			'voxel-toolkit-duplicate-checker',
 			VOXEL_TOOLKIT_URL . 'assets/js/duplicate-title-checker.js',
@@ -48,9 +50,10 @@ class Duplicate_Title_Checker {
 		);
 
 		wp_localize_script( 'voxel-toolkit-duplicate-checker', 'voxelToolkitDuplicateChecker', array(
-			'ajax_url' => admin_url( 'admin-ajax.php' ),
-			'nonce'    => wp_create_nonce( 'voxel_toolkit_duplicate_title_check' ),
-			'debug'    => defined( 'WP_DEBUG' ) && WP_DEBUG,
+			'ajax_url'        => admin_url( 'admin-ajax.php' ),
+			'nonce'           => wp_create_nonce( 'voxel_toolkit_duplicate_title_check' ),
+			'debug'           => defined( 'WP_DEBUG' ) && WP_DEBUG,
+			'block_duplicate' => ! empty( $settings['block_duplicate'] ),
 		) );
 	}
 
@@ -212,15 +215,63 @@ class Duplicate_Title_Checker {
 
 	/**
 	 * Get settings for duplicate title checker
-	 * Can be extended to add admin settings in the future
 	 */
 	private function get_settings() {
-		return array(
+		$options = get_option( 'voxel_toolkit_options', array() );
+		$defaults = array(
 			'enabled' => true,
+			'block_duplicate' => false,
 			'min_title_length' => 3,
 			'check_delay' => 500, // milliseconds
 			'post_types' => array(), // empty = all post types
 		);
+
+		if ( isset( $options['duplicate_title_checker'] ) ) {
+			return wp_parse_args( $options['duplicate_title_checker'], $defaults );
+		}
+
+		return $defaults;
+	}
+
+	/**
+	 * Render settings for this function
+	 */
+	public function render_settings( $current_settings ) {
+		$settings = isset( $current_settings['duplicate_title_checker'] ) ? $current_settings['duplicate_title_checker'] : array();
+		$block_duplicate = isset( $settings['block_duplicate'] ) ? $settings['block_duplicate'] : false;
+		?>
+		<div class="voxel-toolkit-setting">
+			<h3><?php _e( 'Duplicate Title Checker Settings', 'voxel-toolkit' ); ?></h3>
+			<p class="description">
+				<?php _e( 'Configure how duplicate title checking behaves on post creation forms.', 'voxel-toolkit' ); ?>
+			</p>
+
+			<table class="form-table">
+				<tr>
+					<th scope="row">
+						<label for="duplicate_title_checker_block_duplicate">
+							<?php _e( 'Block Duplicate Submissions', 'voxel-toolkit' ); ?>
+						</label>
+					</th>
+					<td>
+						<label>
+							<input
+								type="checkbox"
+								name="voxel_toolkit_options[duplicate_title_checker][block_duplicate]"
+								id="duplicate_title_checker_block_duplicate"
+								value="1"
+								<?php checked( $block_duplicate, true ); ?>
+							/>
+							<?php _e( 'Prevent users from submitting posts with duplicate titles', 'voxel-toolkit' ); ?>
+						</label>
+						<p class="description">
+							<?php _e( 'When enabled, the publish button will be disabled if a duplicate title is detected. When disabled, users will see a warning but can still publish.', 'voxel-toolkit' ); ?>
+						</p>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<?php
 	}
 
 	/**

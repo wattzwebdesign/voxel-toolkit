@@ -237,6 +237,7 @@ class Voxel_Toolkit_Functions {
                 'description' => __('Check for duplicate post titles in real-time while creating or editing posts to prevent duplicate content.', 'voxel-toolkit'),
                 'class' => '\VoxelToolkit\Functions\Duplicate_Title_Checker',
                 'file' => 'functions/class-duplicate-title-checker.php',
+                'settings_callback' => array($this, 'render_duplicate_title_checker_settings'),
                 'always_enabled' => true, // Always enabled as it's a passive check that doesn't interfere
             )
         );
@@ -4097,6 +4098,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             wp_send_json_success($result);
         } else {
             wp_send_json_error($result['message']);
+        }
+    }
+
+    /**
+     * Render settings for Duplicate Title Checker
+     */
+    public function render_duplicate_title_checker_settings($settings) {
+        // Get duplicate title checker instance
+        if (isset($this->active_functions['duplicate_title_checker'])) {
+            $instance = $this->active_functions['duplicate_title_checker'];
+            $instance->render_settings($settings);
         }
     }
 }
