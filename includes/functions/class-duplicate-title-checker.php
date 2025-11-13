@@ -34,8 +34,8 @@ class Duplicate_Title_Checker {
 	 * Enqueue JavaScript for real-time duplicate checking
 	 */
 	public function enqueue_scripts() {
-		// Only enqueue on Voxel create/edit post pages
-		if ( ! $this->is_voxel_post_page() ) {
+		// Only enqueue on frontend, not admin
+		if ( is_admin() ) {
 			return;
 		}
 
@@ -50,6 +50,7 @@ class Duplicate_Title_Checker {
 		wp_localize_script( 'voxel-toolkit-duplicate-checker', 'voxelToolkitDuplicateChecker', array(
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
 			'nonce'    => wp_create_nonce( 'voxel_toolkit_duplicate_title_check' ),
+			'debug'    => defined( 'WP_DEBUG' ) && WP_DEBUG,
 		) );
 	}
 

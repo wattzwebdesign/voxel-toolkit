@@ -32,12 +32,22 @@
             this.checkTimeout = null;
             this.currentRequest = null;
             this.lastCheckedTitle = '';
+            this.debug = window.voxelToolkitDuplicateChecker?.debug || false;
             this.init();
         }
 
+        log(...args) {
+            if (this.debug || true) { // Always log for now during testing
+                console.log('[Voxel Toolkit - Duplicate Checker]', ...args);
+            }
+        }
+
         init() {
+            this.log('Initializing Duplicate Title Checker');
+
             // Wait for DOM to be ready
             $(document).ready(() => {
+                this.log('DOM ready, attaching event handlers');
                 this.attachEventHandlers();
 
                 // Also listen for dynamically added forms (Voxel loads some via AJAX)
@@ -49,9 +59,13 @@
          * Attach event handlers to title input fields
          */
         attachEventHandlers() {
+            this.log('Looking for title inputs with selectors:', config.selectors.titleInputs);
             const $titleInputs = $(config.selectors.titleInputs);
 
+            this.log('Found title inputs:', $titleInputs.length);
+
             if ($titleInputs.length === 0) {
+                this.log('No title inputs found, will retry in 1 second');
                 // Try again after a short delay (for dynamically loaded forms)
                 setTimeout(() => this.attachEventHandlers(), 1000);
                 return;
@@ -62,9 +76,11 @@
 
                 // Skip if already initialized
                 if ($input.data('duplicate-checker-initialized')) {
+                    this.log('Input already initialized, skipping:', input);
                     return;
                 }
 
+                this.log('Initializing duplicate checker on input:', input);
                 $input.data('duplicate-checker-initialized', true);
 
                 // Create warning container
@@ -72,15 +88,17 @@
 
                 // Attach input event with debounce
                 $input.on('input', (e) => {
+                    this.log('Input event triggered');
                     this.handleTitleInput($(e.target));
                 });
 
                 // Also check on blur
                 $input.on('blur', (e) => {
+                    this.log('Blur event triggered');
                     this.handleTitleInput($(e.target), true);
                 });
 
-                console.log('Voxel Toolkit: Duplicate Title Checker initialized');
+                this.log('Duplicate Title Checker initialized on input #' + index);
             });
         }
 
@@ -137,8 +155,11 @@
          * Check for duplicate titles via AJAX
          */
         checkDuplicateTitle($input, title) {
+            this.log('Checking for duplicates of title:', title);
+
             // Cancel any pending request
             if (this.currentRequest) {
+                this.log('Aborting previous request');
                 this.currentRequest.abort();
             }
 
@@ -147,34 +168,43 @@
 
             // Get post type from form data or URL
             const postType = this.getPostType($input);
+            this.log('Post type detected:', postType);
 
             // Get current post ID (if editing)
             const postId = this.getCurrentPostId();
+            this.log('Current post ID:', postId);
 
             // Store the title being checked
             this.lastCheckedTitle = title;
+
+            const ajaxData = {
+                action: 'voxel_toolkit_check_duplicate_title',
+                nonce: voxelToolkitDuplicateChecker.nonce,
+                title: title,
+                post_type: postType,
+                post_id: postId
+            };
+
+            this.log('Sending AJAX request with data:', ajaxData);
 
             // Make AJAX request
             this.currentRequest = $.ajax({
                 url: voxelToolkitDuplicateChecker.ajax_url,
                 type: 'POST',
-                data: {
-                    action: 'voxel_toolkit_check_duplicate_title',
-                    nonce: voxelToolkitDuplicateChecker.nonce,
-                    title: title,
-                    post_type: postType,
-                    post_id: postId
-                },
+                data: ajaxData,
                 success: (response) => {
+                    this.log('AJAX response received:', response);
                     this.handleResponse($input, response);
                 },
                 error: (xhr, status, error) => {
                     if (status !== 'abort') {
+                        this.log('AJAX error:', status, error, xhr);
                         console.error('Duplicate title check failed:', error);
                         this.clearWarning($input);
                     }
                 },
                 complete: () => {
+                    this.log('AJAX request complete');
                     this.currentRequest = null;
                 }
             });
