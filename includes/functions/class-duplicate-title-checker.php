@@ -52,8 +52,9 @@ class Duplicate_Title_Checker {
 		wp_localize_script( 'voxel-toolkit-duplicate-checker', 'voxelToolkitDuplicateChecker', array(
 			'ajax_url'        => admin_url( 'admin-ajax.php' ),
 			'nonce'           => wp_create_nonce( 'voxel_toolkit_duplicate_title_check' ),
-			'debug'           => defined( 'WP_DEBUG' ) && WP_DEBUG,
 			'block_duplicate' => ! empty( $settings['block_duplicate'] ),
+			'error_message'   => ! empty( $settings['error_message'] ) ? $settings['error_message'] : 'Title is taken. Please choose another.',
+			'success_message' => ! empty( $settings['success_message'] ) ? $settings['success_message'] : 'Title is available.',
 		) );
 	}
 
@@ -239,6 +240,8 @@ class Duplicate_Title_Checker {
 	public function render_settings( $function_settings ) {
 		// $function_settings is already the settings for this specific function
 		$block_duplicate = isset( $function_settings['block_duplicate'] ) ? $function_settings['block_duplicate'] : false;
+		$error_message = isset( $function_settings['error_message'] ) ? $function_settings['error_message'] : 'Title is taken. Please choose another.';
+		$success_message = isset( $function_settings['success_message'] ) ? $function_settings['success_message'] : 'Title is available.';
 		?>
 		<div class="voxel-toolkit-setting">
 			<h3><?php _e( 'Duplicate Title Checker Settings', 'voxel-toolkit' ); ?></h3>
@@ -266,6 +269,46 @@ class Duplicate_Title_Checker {
 						</label>
 						<p class="description">
 							<?php _e( 'When enabled, the publish button will be disabled if a duplicate title is detected. When disabled, users will see a warning but can still publish.', 'voxel-toolkit' ); ?>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">
+						<label for="duplicate_title_checker_error_message">
+							<?php _e( 'Error Message', 'voxel-toolkit' ); ?>
+						</label>
+					</th>
+					<td>
+						<input
+							type="text"
+							name="voxel_toolkit_options[duplicate_title_checker][error_message]"
+							id="duplicate_title_checker_error_message"
+							value="<?php echo esc_attr( $error_message ); ?>"
+							class="regular-text"
+							placeholder="Title is taken. Please choose another."
+						/>
+						<p class="description">
+							<?php _e( 'Message shown when a duplicate title is detected.', 'voxel-toolkit' ); ?>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">
+						<label for="duplicate_title_checker_success_message">
+							<?php _e( 'Success Message', 'voxel-toolkit' ); ?>
+						</label>
+					</th>
+					<td>
+						<input
+							type="text"
+							name="voxel_toolkit_options[duplicate_title_checker][success_message]"
+							id="duplicate_title_checker_success_message"
+							value="<?php echo esc_attr( $success_message ); ?>"
+							class="regular-text"
+							placeholder="Title is available."
+						/>
+						<p class="description">
+							<?php _e( 'Message shown when the title is unique and available.', 'voxel-toolkit' ); ?>
 						</p>
 					</td>
 				</tr>

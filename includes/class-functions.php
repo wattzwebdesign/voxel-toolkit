@@ -238,7 +238,6 @@ class Voxel_Toolkit_Functions {
                 'class' => '\VoxelToolkit\Functions\Duplicate_Title_Checker',
                 'file' => 'functions/class-duplicate-title-checker.php',
                 'settings_callback' => array($this, 'render_duplicate_title_checker_settings'),
-                'always_enabled' => true, // Always enabled as it's a passive check that doesn't interfere
             )
         );
         
