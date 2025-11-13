@@ -12,8 +12,10 @@
         minTitleLength: 3, // Minimum title length before checking
         selectors: {
             // Common title field selectors for Voxel forms
-            // More specific selectors to avoid matching filter/search fields
+            // Target the input inside the title field container
             titleInputs: [
+                '.field-key-title input',
+                '.ts-form-group.field-key-title input.ts-filter',
                 'input[name="title"]',
                 'input[name="post_title"]',
                 'input.voxel-post-title',
@@ -24,11 +26,11 @@
                 'input.elementor-field[type="text"][name*="title"]'
             ].join(', '),
 
-            // Selectors to EXCLUDE (filter/search fields)
+            // Selectors to EXCLUDE (non-title filter/search fields)
+            // These are excluded UNLESS they're inside .field-key-title
             excludeInputs: [
-                '.ts-filter',
-                '[class*="search"]',
-                '[class*="filter"]',
+                '.ts-filter:not(.field-key-title .ts-filter)',
+                '[class*="search"]:not(.field-key-title *)',
                 '[placeholder*="Search"]',
                 '[placeholder*="Filter"]'
             ].join(', '),
