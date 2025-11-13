@@ -12,14 +12,25 @@
         minTitleLength: 3, // Minimum title length before checking
         selectors: {
             // Common title field selectors for Voxel forms
+            // More specific selectors to avoid matching filter/search fields
             titleInputs: [
                 'input[name="title"]',
                 'input[name="post_title"]',
                 'input.voxel-post-title',
                 'input[data-field="title"]',
-                '.create-post-form input[type="text"]:first',
-                '.ts-form input[name*="title"]',
-                '.ts-form .ts-filter input[type="text"]'
+                'input[data-key="title"]',
+                'input[data-field-key="title"]',
+                '.elementor-field-type-text input[name*="title"]',
+                'input.elementor-field[type="text"][name*="title"]'
+            ].join(', '),
+
+            // Selectors to EXCLUDE (filter/search fields)
+            excludeInputs: [
+                '.ts-filter',
+                '[class*="search"]',
+                '[class*="filter"]',
+                '[placeholder*="Search"]',
+                '[placeholder*="Filter"]'
             ].join(', '),
 
             // Container for duplicate warning message
@@ -60,9 +71,21 @@
          */
         attachEventHandlers() {
             this.log('Looking for title inputs with selectors:', config.selectors.titleInputs);
-            const $titleInputs = $(config.selectors.titleInputs);
+            let $titleInputs = $(config.selectors.titleInputs);
 
-            this.log('Found title inputs:', $titleInputs.length);
+            this.log('Found potential title inputs (before filtering):', $titleInputs.length);
+
+            // Filter out excluded inputs (search/filter fields)
+            $titleInputs = $titleInputs.filter((index, input) => {
+                const $input = $(input);
+                const isExcluded = $input.is(config.selectors.excludeInputs);
+                if (isExcluded) {
+                    this.log('Excluding input (matches exclude selector):', input);
+                }
+                return !isExcluded;
+            });
+
+            this.log('Found title inputs after filtering:', $titleInputs.length);
 
             if ($titleInputs.length === 0) {
                 this.log('No title inputs found, will retry in 1 second');
