@@ -256,6 +256,7 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Weather_Widget_Manager',
                 'file' => 'widgets/class-weather-widget-manager.php',
                 'icon' => 'eicon-flash',
+                'widget_name' => 'voxel-toolkit-weather',
             ),
             'reading_time' => array(
                 'name' => __('Reading Time', 'voxel-toolkit'),
@@ -264,6 +265,7 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-reading-time-widget.php',
                 'settings_callback' => array($this, 'render_reading_time_widget_settings'),
                 'icon' => 'eicon-clock-o',
+                'widget_name' => 'voxel-reading-time',
             ),
             'table_of_contents' => array(
                 'name' => __('Table of Contents', 'voxel-toolkit'),
@@ -271,6 +273,7 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Table_Of_Contents_Widget',
                 'file' => 'widgets/class-table-of-contents-widget.php',
                 'icon' => 'eicon-bullet-list',
+                'widget_name' => 'voxel-table-of-contents',
             ),
             'review_collection' => array(
                 'name' => __('Review Collection', 'voxel-toolkit'),
@@ -278,6 +281,7 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Review_Collection_Widget_Manager',
                 'file' => 'widgets/class-review-collection-widget-manager.php',
                 'icon' => 'eicon-review',
+                'widget_name' => 'voxel_toolkit_review_collection',
             ),
             'prev_next_widget' => array(
                 'name' => __('Previous/Next Navigation', 'voxel-toolkit'),
@@ -285,6 +289,7 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Prev_Next_Widget_Manager',
                 'file' => 'widgets/class-prev-next-widget-manager.php',
                 'icon' => 'eicon-navigation-horizontal',
+                'widget_name' => 'voxel_prev_next_navigation',
             ),
             'timeline_photos' => array(
                 'name' => __('Timeline Photos', 'voxel-toolkit'),
@@ -292,6 +297,7 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Timeline_Photos_Widget',
                 'file' => 'widgets/class-timeline-photos-widget.php',
                 'icon' => 'eicon-gallery-grid',
+                'widget_name' => 'voxel-timeline-photos',
             ),
             'users_purchased' => array(
                 'name' => __('Users Purchased', 'voxel-toolkit'),
@@ -299,6 +305,7 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Users_Purchased_Widget_Manager',
                 'file' => 'widgets/class-users-purchased-widget-manager.php',
                 'icon' => 'eicon-cart',
+                'widget_name' => 'voxel-toolkit-users-purchased',
             ),
             'article_helpful' => array(
                 'name' => __('Article Helpful', 'voxel-toolkit'),
@@ -306,6 +313,7 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Article_Helpful_Widget_Manager',
                 'file' => 'widgets/class-article-helpful-widget-manager.php',
                 'icon' => 'eicon-favorite',
+                'widget_name' => 'voxel-article-helpful',
             )
         );
 

@@ -923,11 +923,20 @@ class Voxel_Toolkit_Admin {
     private function get_widget_usage_pages($widget_key) {
         global $wpdb;
 
-        // Build the exact widget type identifier
-        $widget_type = 'voxel-' . $widget_key;
+        // Get widget data to find the actual widget name
+        $available_widgets = $this->functions_manager->get_available_widgets();
+        $widget_data = isset($available_widgets[$widget_key]) ? $available_widgets[$widget_key] : null;
+
+        // Get the actual widget name used in Elementor
+        // Use widget_name field if available, otherwise fall back to old format
+        if ($widget_data && isset($widget_data['widget_name'])) {
+            $widget_type = $widget_data['widget_name'];
+        } else {
+            $widget_type = 'voxel-' . $widget_key;
+        }
 
         // Search for the specific widget type in Elementor JSON data
-        // Using JSON pattern to be more precise: "widgetType":"voxel-widget_key"
+        // Using JSON pattern to be more precise: "widgetType":"widget_name"
         $widget_pattern = '%"widgetType":"' . $widget_type . '"%';
 
         $results = $wpdb->get_results($wpdb->prepare(
@@ -1088,7 +1097,7 @@ class Voxel_Toolkit_Admin {
     private function render_widget_card($widget_key, $widget_data) {
         $widget_key_full = 'widget_' . $widget_key;
         $is_enabled = $this->settings->is_function_enabled($widget_key_full);
-        $usage_count = $this->get_widget_usage_count($widget_key);
+        $usage_count = $this->get_widget_usage_count($widget_key, $widget_data);
         ?>
         <div class="voxel-toolkit-widget-card"
              data-widget-key="<?php echo esc_attr($widget_key); ?>"
@@ -1159,15 +1168,25 @@ class Voxel_Toolkit_Admin {
      * @param string $widget_key Widget key
      * @return int Usage count
      */
-    private function get_widget_usage_count($widget_key) {
+    private function get_widget_usage_count($widget_key, $widget_data = null) {
         global $wpdb;
 
-        // Build the exact widget type identifier
-        // Voxel Toolkit widgets use the format: voxel-{widget_key}
-        $widget_type = 'voxel-' . $widget_key;
+        // Get widget data if not provided
+        if ($widget_data === null) {
+            $available_widgets = $this->functions_manager->get_available_widgets();
+            $widget_data = isset($available_widgets[$widget_key]) ? $available_widgets[$widget_key] : null;
+        }
+
+        // Get the actual widget name used in Elementor
+        // Use widget_name field if available, otherwise fall back to old format
+        if (isset($widget_data['widget_name'])) {
+            $widget_type = $widget_data['widget_name'];
+        } else {
+            $widget_type = 'voxel-' . $widget_key;
+        }
 
         // Search for the specific widget type in Elementor JSON data
-        // Using JSON pattern to be more precise: "widgetType":"voxel-widget_key"
+        // Using JSON pattern to be more precise: "widgetType":"widget_name"
         $widget_pattern = '%"widgetType":"' . $widget_type . '"%';
 
         $results = $wpdb->get_results($wpdb->prepare(
