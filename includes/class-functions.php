@@ -46,6 +46,22 @@ class Voxel_Toolkit_Functions {
         $this->register_widgets();
         $this->init_active_functions();
         $this->init_active_widgets();
+        $this->init_dynamic_tags();
+    }
+
+    /**
+     * Initialize dynamic tags
+     */
+    private function init_dynamic_tags() {
+        // Load dynamic tags class
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-dynamic-tags.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-dynamic-tags.php';
+
+            // Initialize dynamic tags (always active)
+            if (class_exists('Voxel_Toolkit_Dynamic_Tags')) {
+                new Voxel_Toolkit_Dynamic_Tags();
+            }
+        }
     }
     
     /**
