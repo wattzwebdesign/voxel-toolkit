@@ -928,6 +928,7 @@ class Voxel_Toolkit_Admin {
             INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
             WHERE pm.meta_key = '_elementor_data'
             AND pm.meta_value LIKE %s
+            AND p.post_type != 'revision'
             AND p.post_status != 'trash'
             AND p.post_status != 'auto-draft'
             ORDER BY p.post_modified DESC",
@@ -1163,6 +1164,7 @@ class Voxel_Toolkit_Admin {
             INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
             WHERE pm.meta_key = '_elementor_data'
             AND pm.meta_value LIKE %s
+            AND p.post_type != 'revision'
             AND p.post_status != 'trash'
             AND p.post_status != 'auto-draft'",
             $widget_pattern

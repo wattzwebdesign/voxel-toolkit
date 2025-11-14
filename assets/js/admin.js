@@ -662,18 +662,23 @@ jQuery(document).ready(function($) {
 
         $modal.append($content);
 
-        // Close modal handlers
-        $modal.on('click', '.voxel-toolkit-modal-close, .voxel-toolkit-modal-overlay', function(e) {
-            if (e.target === this || $(e.target).hasClass('voxel-toolkit-modal-close') || $(e.target).parent().hasClass('voxel-toolkit-modal-close')) {
+        // Close modal on overlay click
+        $modal.on('click', function(e) {
+            if ($(e.target).hasClass('voxel-toolkit-modal-overlay')) {
                 $modal.fadeOut(200, function() {
                     $(this).remove();
+                    $(document).off('keydown.voxelModal');
                 });
             }
         });
 
-        // Prevent modal content clicks from closing
-        $content.on('click', function(e) {
-            e.stopPropagation();
+        // Close modal on X button click
+        $modal.on('click', '.voxel-toolkit-modal-close', function(e) {
+            e.preventDefault();
+            $modal.fadeOut(200, function() {
+                $(this).remove();
+                $(document).off('keydown.voxelModal');
+            });
         });
 
         // Close on escape key
