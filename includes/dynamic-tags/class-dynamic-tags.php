@@ -50,6 +50,9 @@ class Voxel_Toolkit_Dynamic_Tags {
         if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-file-modifiers.php')) {
             require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-file-modifiers.php';
         }
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-address-modifier.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-address-modifier.php';
+        }
     }
 
     /**
@@ -86,6 +89,14 @@ class Voxel_Toolkit_Dynamic_Tags {
     public function register_author_methods($methods) {
         $methods['profile_completion'] = \Voxel_Toolkit_Profile_Completion_Method::class;
         return $methods;
+    }
+
+    /**
+     * Register modifiers with Voxel
+     */
+    public function register_modifiers($modifiers) {
+        $modifiers['address_part'] = \Voxel_Toolkit_Address_Part_Modifier::class;
+        return $modifiers;
     }
 
     /**

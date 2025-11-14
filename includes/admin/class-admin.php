@@ -1299,6 +1299,7 @@ class Voxel_Toolkit_Admin {
                         <tr>
                             <th><?php _e('Modifier', 'voxel-toolkit'); ?></th>
                             <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Parameters', 'voxel-toolkit'); ?></th>
                             <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
                             <th><?php _e('Output Example', 'voxel-toolkit'); ?></th>
                         </tr>
@@ -1307,14 +1308,29 @@ class Voxel_Toolkit_Admin {
                         <tr>
                             <td><code>file_size</code></td>
                             <td><?php _e('Get formatted file size from file ID', 'voxel-toolkit'); ?></td>
+                            <td><?php _e('None', 'voxel-toolkit'); ?></td>
                             <td><code>@post(upload-media.id).file_size()</code></td>
                             <td><em>2.45 MB</em></td>
                         </tr>
                         <tr>
                             <td><code>file_extension</code></td>
                             <td><?php _e('Get file extension from file ID', 'voxel-toolkit'); ?></td>
+                            <td><?php _e('None', 'voxel-toolkit'); ?></td>
                             <td><code>@post(upload-media.id).file_extension()</code></td>
                             <td><em>zip</em></td>
+                        </tr>
+                        <tr>
+                            <td><code>address_part</code></td>
+                            <td><?php _e('Extract specific component from address field', 'voxel-toolkit'); ?></td>
+                            <td><?php _e('Component: number, street, city, state, postal_code, country', 'voxel-toolkit'); ?></td>
+                            <td>
+                                <code>@post(location.address).address_part(city)</code><br>
+                                <code>@post(location.address).address_part(postal_code)</code>
+                            </td>
+                            <td>
+                                <em>New York</em><br>
+                                <em>10001</em>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
