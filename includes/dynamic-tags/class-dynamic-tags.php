@@ -32,6 +32,8 @@ class Voxel_Toolkit_Dynamic_Tags {
 
         // Register properties with Voxel
         add_filter('voxel/dynamic-data/groups/post/properties', array($this, 'register_post_properties'), 10, 2);
+        add_filter('voxel/dynamic-data/groups/user/properties', array($this, 'register_user_properties'), 10, 2);
+        add_filter('voxel/dynamic-data/groups/author/properties', array($this, 'register_author_properties'), 10, 2);
     }
 
     /**
@@ -52,6 +54,9 @@ class Voxel_Toolkit_Dynamic_Tags {
         }
         if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-word-count-property.php')) {
             require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-word-count-property.php';
+        }
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-membership-expiration-property.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-membership-expiration-property.php';
         }
     }
 
@@ -83,6 +88,30 @@ class Voxel_Toolkit_Dynamic_Tags {
         // Add word count property
         if (class_exists('Voxel_Toolkit_Word_Count_Property')) {
             $properties['word_count'] = \Voxel_Toolkit_Word_Count_Property::register();
+        }
+
+        return $properties;
+    }
+
+    /**
+     * Register properties for user group
+     */
+    public function register_user_properties($properties, $group) {
+        // Add membership expiration property
+        if (class_exists('Voxel_Toolkit_Membership_Expiration_Property')) {
+            $properties['membership_expiration'] = \Voxel_Toolkit_Membership_Expiration_Property::register();
+        }
+
+        return $properties;
+    }
+
+    /**
+     * Register properties for author group
+     */
+    public function register_author_properties($properties, $group) {
+        // Add membership expiration property
+        if (class_exists('Voxel_Toolkit_Membership_Expiration_Property')) {
+            $properties['membership_expiration'] = \Voxel_Toolkit_Membership_Expiration_Property::register();
         }
 
         return $properties;
