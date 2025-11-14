@@ -1,0 +1,28 @@
+/**
+ * Table of Contents Widget Styles
+ */
+
+.voxel-table-of-contents {
+    box-sizing: border-box;
+}
+
+.voxel-toc-title {
+    font-weight: 600;
+}
+
+.voxel-toc-list {
+    list-style-position: inside;
+}
+
+.voxel-toc-item {
+    transition: color 0.3s ease, font-weight 0.3s ease;
+    cursor: default;
+}
+
+.voxel-toc-item.active {
+    font-weight: 600;
+}
+
+.voxel-toc-item:last-child {
+    margin-bottom: 0 !important;
+}

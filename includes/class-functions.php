@@ -256,6 +256,12 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-reading-time-widget.php',
                 'settings_callback' => array($this, 'render_reading_time_widget_settings'),
             ),
+            'table_of_contents' => array(
+                'name' => __('Table of Contents', 'voxel-toolkit'),
+                'description' => __('Display a table of contents showing all ui-step fields from any Voxel post type form with customizable styling.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Table_Of_Contents_Widget',
+                'file' => 'widgets/class-table-of-contents-widget.php',
+            ),
             'review_collection' => array(
                 'name' => __('Review Collection', 'voxel-toolkit'),
                 'description' => __('Display a collection of user reviews with advanced filtering and styling options.', 'voxel-toolkit'),
