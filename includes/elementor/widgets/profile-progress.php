@@ -112,15 +112,23 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
         
         // Profile Fields Repeater
         $repeater = new \Elementor\Repeater();
-        
+
+        // Get available profile fields
+        $profile_fields = Voxel_Toolkit_Profile_Progress_Widget::get_available_profile_fields();
+
         $repeater->add_control(
             'field_key',
             [
-                'label' => __('Field Key', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'placeholder' => __('Enter field key (e.g., first_name)', 'voxel-toolkit'),
+                'label' => __('Profile Field', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SELECT2,
+                'options' => $profile_fields,
+                'default' => !empty($profile_fields) ? array_key_first($profile_fields) : '',
                 'label_block' => true,
                 'render_type' => 'none',
+                'select2options' => [
+                    'tags' => true,
+                    'placeholder' => __('Select or type field key', 'voxel-toolkit'),
+                ],
             ]
         );
         
@@ -147,22 +155,40 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
             ]
         );
         
+        // Build default fields
+        $default_fields = [];
+        if (!empty($profile_fields) && is_array($profile_fields)) {
+            $field_keys = array_keys($profile_fields);
+            $count = 0;
+            foreach ($field_keys as $key) {
+                if ($count >= 2) break; // Only add first 2 fields as defaults
+                if (!empty($key)) {
+                    $default_fields[] = [
+                        'field_key' => $key,
+                        'field_label' => $profile_fields[$key],
+                    ];
+                    $count++;
+                }
+            }
+        }
+
+        // Fallback if no profile fields found
+        if (empty($default_fields)) {
+            $default_fields = [
+                [
+                    'field_key' => '',
+                    'field_label' => __('No fields available', 'voxel-toolkit'),
+                ],
+            ];
+        }
+
         $this->add_control(
             'profile_fields',
             [
                 'label' => __('Profile Fields', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::REPEATER,
                 'fields' => $repeater->get_controls(),
-                'default' => [
-                    [
-                        'field_key' => 'first_name',
-                        'field_label' => 'First Name',
-                    ],
-                    [
-                        'field_key' => 'last_name',
-                        'field_label' => 'Last Name',
-                    ],
-                ],
+                'default' => $default_fields,
                 'title_field' => '{{{ field_label }}} ({{{ field_key }}})',
             ]
         );
@@ -877,7 +903,13 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
             // Special case: voxel:avatar is stored in wp_usermeta, not wp_postmeta
             if ($field_key === 'voxel:avatar') {
                 $meta_value = get_user_meta($user_id, 'voxel:avatar', true);
-            } else {
+            }
+            // Special case: description is stored in wp_posts.post_content
+            elseif ($field_key === 'description') {
+                $post = get_post($profile_id);
+                $meta_value = $post ? $post->post_content : '';
+            }
+            else {
                 // Step 2: Check if field exists in wp_postmeta using the profile_id as post_id
                 $meta_value = get_post_meta($profile_id, $field_key, true);
             }
@@ -938,20 +970,25 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
      */
     protected function render() {
         $settings = $this->get_settings_for_display();
-        
+
         // Get current user ID
         $user_id = get_current_user_id();
-        
+
+        // Get available profile fields for validation
+        $available_fields = Voxel_Toolkit_Profile_Progress_Widget::get_available_profile_fields();
+
         // Extract field keys from repeater
         $field_keys = [];
         if (!empty($settings['profile_fields'])) {
             foreach ($settings['profile_fields'] as $field) {
                 if (!empty($field['field_key'])) {
+                    // Backwards compatibility: Accept any field_key value
+                    // even if it's not in the current dropdown options
                     $field_keys[] = $field['field_key'];
                 }
             }
         }
-        
+
         // Get field data or use sample for editor
         if (!$user_id && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
             // Sample data for editor

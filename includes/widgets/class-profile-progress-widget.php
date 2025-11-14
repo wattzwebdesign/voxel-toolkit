@@ -33,37 +33,131 @@ class Voxel_Toolkit_Profile_Progress_Widget {
     }
     
     /**
-     * Register Elementor widget
+     * Register Elementor widget (only for existing users who already have it)
      */
     public function register_elementor_widget($widgets_manager) {
-        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/elementor/widgets/profile-progress.php';
-        $widgets_manager->register(new \Voxel_Toolkit_Elementor_Profile_Progress());
+        // Check if widget is already in use (legacy support)
+        $widget_in_use = $this->is_widget_in_use();
+
+        // Only register if widget is already being used
+        if ($widget_in_use) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/elementor/widgets/profile-progress.php';
+            $widgets_manager->register(new \Voxel_Toolkit_Elementor_Profile_Progress());
+        }
     }
-    
+
+    /**
+     * Check if widget is already in use on the site
+     */
+    private function is_widget_in_use() {
+        global $wpdb;
+
+        // Check if widget exists in any Elementor data
+        $query = $wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->postmeta}
+            WHERE meta_key = '_elementor_data'
+            AND meta_value LIKE %s",
+            '%voxel-profile-progress%'
+        );
+
+        $count = $wpdb->get_var($query);
+
+        return $count > 0;
+    }
+
+    /**
+     * Get profile fields from voxel:post_types option
+     */
+    public static function get_available_profile_fields() {
+        $post_types = get_option('voxel:post_types', array());
+
+        // Handle serialized data
+        if (is_string($post_types)) {
+            $post_types = maybe_unserialize($post_types);
+        }
+
+        // Try JSON decode if it's a JSON string
+        if (is_string($post_types)) {
+            $decoded = json_decode($post_types, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $post_types = $decoded;
+            }
+        }
+
+        if (empty($post_types) || !is_array($post_types)) {
+            return array('' => __('No profile fields found', 'voxel-toolkit'));
+        }
+
+        // Look for 'profile' post type
+        if (!isset($post_types['profile']) || !is_array($post_types['profile'])) {
+            return array('' => __('Profile post type not found', 'voxel-toolkit'));
+        }
+
+        $profile_data = $post_types['profile'];
+
+        // Get fields array
+        if (!isset($profile_data['fields']) || !is_array($profile_data['fields'])) {
+            return array('' => __('No profile fields found', 'voxel-toolkit'));
+        }
+
+        $available_fields = array();
+
+        // Loop through fields and extract key and label
+        foreach ($profile_data['fields'] as $field) {
+            if (isset($field['key']) && !empty($field['key'])) {
+                // Skip ui-step fields as they're not data fields
+                if (isset($field['type']) && $field['type'] === 'ui-step') {
+                    continue;
+                }
+
+                $label = isset($field['label']) && !empty($field['label'])
+                    ? $field['label']
+                    : $field['key'];
+
+                // Capitalize first letter for proper display
+                $label = ucfirst($label);
+
+                $available_fields[$field['key']] = $label;
+            }
+        }
+
+        if (empty($available_fields)) {
+            return array('' => __('No profile fields found', 'voxel-toolkit'));
+        }
+
+        return $available_fields;
+    }
+
     /**
      * Get user profile field data
      */
     public static function get_user_profile_fields($user_id, $field_keys) {
         global $wpdb;
-        
+
         if (!$user_id || empty($field_keys)) {
             return [];
         }
-        
+
         // Step 1: Get user's profile ID from wp_usermeta
         $profile_id = get_user_meta($user_id, 'voxel:profile_id', true);
-        
+
         if (!$profile_id) {
             return [];
         }
-        
+
         $field_data = [];
-        
+
         foreach ($field_keys as $field_key) {
             // Special case: voxel:avatar is stored in wp_usermeta, not wp_postmeta
             if ($field_key === 'voxel:avatar') {
                 $meta_value = get_user_meta($user_id, 'voxel:avatar', true);
-            } else {
+            }
+            // Special case: description is stored in wp_posts.post_content
+            elseif ($field_key === 'description') {
+                $post = get_post($profile_id);
+                $meta_value = $post ? $post->post_content : '';
+            }
+            else {
                 // Step 2: Check if field exists in wp_postmeta using the profile_id as post_id
                 $meta_value = get_post_meta($profile_id, $field_key, true);
             }

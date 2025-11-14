@@ -379,19 +379,19 @@ class Voxel_Toolkit_Admin {
     public function render_settings_page() {
         // Handle form submission
         if (isset($_POST['submit']) && check_admin_referer('voxel_toolkit_settings_nonce', 'voxel_toolkit_settings_nonce')) {
-            
+
             $this->handle_settings_save($_POST);
             echo '<div class="notice notice-success is-dismissible"><p>' . __('Settings saved successfully.', 'voxel-toolkit') . '</p></div>';
         }
-        
+
         $available_functions = $this->functions_manager->get_available_functions();
         ?>
         <div class="wrap">
             <h1><?php _e('Voxel Toolkit - Settings', 'voxel-toolkit'); ?></h1>
-            
+
             <form method="post" action="">
                 <?php wp_nonce_field('voxel_toolkit_settings_nonce', 'voxel_toolkit_settings_nonce'); ?>
-                
+
                 <div class="voxel-toolkit-settings">
                     <?php foreach ($available_functions as $function_key => $function_data): ?>
                         <?php if ($this->settings->is_function_enabled($function_key)): ?>
@@ -399,7 +399,7 @@ class Voxel_Toolkit_Admin {
                         <?php endif; ?>
                     <?php endforeach; ?>
                 </div>
-                
+
                 <?php submit_button(); ?>
             </form>
         </div>
