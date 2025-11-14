@@ -37,6 +37,9 @@ class Voxel_Toolkit_Dynamic_Tags {
         add_filter('voxel/dynamic-data/groups/user/methods', array($this, 'register_user_methods'), 10, 1);
         add_filter('voxel/dynamic-data/groups/author/methods', array($this, 'register_author_methods'), 10, 1);
 
+        // Register modifiers with Voxel
+        add_filter('voxel/dynamic-data/modifiers', array($this, 'register_modifiers'), 10, 1);
+
         // Register properties with Voxel
         add_filter('voxel/dynamic-data/groups/post/properties', array($this, 'register_post_properties'), 10, 2);
         add_filter('voxel/dynamic-data/groups/user/properties', array($this, 'register_user_properties'), 10, 2);
@@ -49,6 +52,9 @@ class Voxel_Toolkit_Dynamic_Tags {
     public function load_methods() {
         if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-profile-completion-method.php')) {
             require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-profile-completion-method.php';
+        }
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-address-modifier.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-address-modifier.php';
         }
     }
 
@@ -77,6 +83,14 @@ class Voxel_Toolkit_Dynamic_Tags {
     public function register_author_methods($methods) {
         $methods['profile_completion'] = \Voxel_Toolkit_Profile_Completion_Method::class;
         return $methods;
+    }
+
+    /**
+     * Register modifiers with Voxel
+     */
+    public function register_modifiers($modifiers) {
+        $modifiers['address_part'] = \Voxel_Toolkit_Address_Part_Modifier::class;
+        return $modifiers;
     }
 
     /**

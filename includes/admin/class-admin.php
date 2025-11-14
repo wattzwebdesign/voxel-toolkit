@@ -1289,6 +1289,39 @@ class Voxel_Toolkit_Admin {
                 </table>
             </div>
 
+            <!-- Modifiers -->
+            <div class="settings-section" style="margin-top: 30px;">
+                <h2><?php _e('Modifiers', 'voxel-toolkit'); ?></h2>
+                <p class="description"><?php _e('Dynamic modifiers that can be applied to any value. Use with .modifier() syntax.', 'voxel-toolkit'); ?></p>
+
+                <table class="widefat striped">
+                    <thead>
+                        <tr>
+                            <th><?php _e('Modifier', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Parameters', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Output Example', 'voxel-toolkit'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>address_part</code></td>
+                            <td><?php _e('Extract specific component from address field', 'voxel-toolkit'); ?></td>
+                            <td><?php _e('Component: number, street, city, state, postal_code, country, formatted', 'voxel-toolkit'); ?></td>
+                            <td>
+                                <code>@post(location).address_part(city)</code><br>
+                                <code>@post(location).address_part(postal_code)</code>
+                            </td>
+                            <td>
+                                <em>New York</em><br>
+                                <em>10001</em>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
             <!-- User/Author Methods -->
             <div class="settings-section" style="margin-top: 30px;">
                 <h2><?php _e('User & Author Methods', 'voxel-toolkit'); ?></h2>
