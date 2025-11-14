@@ -33,16 +33,9 @@ class Voxel_Toolkit_Profile_Completion_Method extends \Voxel\Dynamic_Data\Modifi
      */
     protected function define_args(): void {
         $this->define_arg([
-            'type' => 'repeater',
-            'label' => 'Profile fields to check',
-            'fields' => [
-                [
-                    'key' => 'field_key',
-                    'type' => 'text',
-                    'label' => 'Field key',
-                    'description' => 'Enter the profile field key (e.g., first_name, description, etc.)',
-                ],
-            ],
+            'type' => 'text',
+            'label' => 'Field keys (comma-separated)',
+            'description' => 'Enter profile field keys separated by commas (e.g., description,email,location,gallery)',
         ]);
     }
 
@@ -60,16 +53,15 @@ class Voxel_Toolkit_Profile_Completion_Method extends \Voxel\Dynamic_Data\Modifi
             return 0;
         }
 
-        // Get field keys from arguments
-        $fields_arg = $this->get_arg(0);
+        // Get field keys from argument (comma-separated string)
+        $fields_string = $this->get_arg(0);
         $field_keys = [];
 
-        if (is_array($fields_arg)) {
-            foreach ($fields_arg as $field) {
-                if (isset($field['field_key']) && !empty($field['field_key'])) {
-                    $field_keys[] = $field['field_key'];
-                }
-            }
+        if (!empty($fields_string)) {
+            // Split by comma and trim whitespace
+            $field_keys = array_map('trim', explode(',', $fields_string));
+            // Remove empty values
+            $field_keys = array_filter($field_keys);
         }
 
         // If no fields specified, return 0
