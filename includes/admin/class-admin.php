@@ -362,17 +362,14 @@ class Voxel_Toolkit_Admin {
                     <?php endif; ?>
                 </div>
                 <div class="function-toggle">
-                    <?php if ($is_always_enabled): ?>
-                        <span class="always-enabled-badge"><?php _e('Always Active', 'voxel-toolkit'); ?></span>
-                    <?php else: ?>
-                        <label class="toggle-switch">
-                            <input type="checkbox" 
-                                   class="function-toggle-checkbox" 
-                                   data-function="<?php echo esc_attr($function_key); ?>"
-                                   <?php checked($is_enabled); ?>>
-                            <span class="slider"></span>
-                        </label>
-                    <?php endif; ?>
+                    <label class="toggle-switch">
+                        <input type="checkbox"
+                               class="function-toggle-checkbox"
+                               data-function="<?php echo esc_attr($function_key); ?>"
+                               <?php checked($is_enabled); ?>
+                               <?php disabled($is_always_enabled); ?>>
+                        <span class="slider"></span>
+                    </label>
                 </div>
             </div>
             
