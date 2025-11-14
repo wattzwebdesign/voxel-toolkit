@@ -567,3 +567,656 @@ body.vx-dark-mode #wpwrap #wpbody i {
         margin-top: 8px;
     }
 }
+/* ===================================
+   Widgets Page - Modern Design
+   =================================== */
+
+/* Widgets Page Controls */
+.voxel-toolkit-widgets-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 25px 0;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.voxel-toolkit-widgets-search {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+}
+
+.voxel-toolkit-search-input {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.voxel-toolkit-search-input:focus {
+    border-color: #667eea;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.voxel-toolkit-widgets-search .dashicons {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    pointer-events: none;
+}
+
+.voxel-toolkit-widgets-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Widgets Grid */
+.voxel-toolkit-widgets-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 30px;
+}
+
+@media (max-width: 1400px) {
+    .voxel-toolkit-widgets-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .voxel-toolkit-widgets-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Widget Card */
+.voxel-toolkit-widget-card {
+    background: #fff;
+    border: 1px solid #e1e5e9;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.voxel-toolkit-widget-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #667eea;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.voxel-toolkit-widget-card:hover {
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+}
+
+.voxel-toolkit-widget-card:hover::before {
+    opacity: 1;
+}
+
+/* Widget Header */
+.voxel-toolkit-widget-header {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.voxel-toolkit-widget-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    background: #667eea;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.voxel-toolkit-widget-icon .dashicons {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #fff;
+}
+
+.voxel-toolkit-widget-icon i {
+    font-size: 24px;
+    color: #fff;
+}
+
+.voxel-toolkit-widget-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.voxel-toolkit-widget-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.voxel-toolkit-widget-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: #1e293b;
+    line-height: 1.4;
+}
+
+.voxel-toolkit-widget-description {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Widget Badges */
+.voxel-toolkit-widget-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.voxel-toolkit-badge-enabled {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.voxel-toolkit-badge-disabled {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+/* Widget Footer */
+.voxel-toolkit-widget-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.voxel-toolkit-widget-usage {
+    flex: 1;
+}
+
+.voxel-toolkit-usage-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.voxel-toolkit-usage-badge .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+.voxel-toolkit-usage-badge:hover {
+    background: #667eea;
+    border-color: #667eea;
+    color: #fff;
+}
+
+.voxel-toolkit-usage-none {
+    background: transparent;
+    border: 1px dashed #e2e8f0;
+    cursor: default;
+}
+
+.voxel-toolkit-usage-none:hover {
+    background: transparent;
+    border-color: #e2e8f0;
+    color: #475569;
+}
+
+/* Modern Toggle Switch */
+.voxel-toolkit-widget-toggle {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
+}
+
+.voxel-toolkit-widget-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.voxel-toolkit-widget-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 28px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.voxel-toolkit-widget-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.voxel-toolkit-widget-toggle input:checked + .voxel-toolkit-widget-toggle-slider {
+    background: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+}
+
+.voxel-toolkit-widget-toggle input:checked + .voxel-toolkit-widget-toggle-slider:before {
+    transform: translateX(24px);
+}
+
+.voxel-toolkit-widget-toggle input:focus + .voxel-toolkit-widget-toggle-slider {
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+/* Widget Settings */
+.voxel-toolkit-widget-settings {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* No Results State */
+.voxel-toolkit-no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.voxel-toolkit-no-results-inner {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.voxel-toolkit-no-results .dashicons {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #cbd5e1;
+    margin-bottom: 20px;
+}
+
+.voxel-toolkit-no-results p {
+    font-size: 16px;
+    color: #64748b;
+    margin: 0;
+}
+
+/* Empty State */
+.voxel-toolkit-no-widgets {
+    grid-column: 1 / -1;
+    background: #f8fafc;
+    border: 2px dashed #e2e8f0;
+    border-radius: 12px;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.voxel-toolkit-no-widgets p {
+    color: #64748b;
+    font-size: 16px;
+    margin: 0;
+}
+
+/* Hidden class for search */
+.voxel-toolkit-widget-card.hidden {
+    display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 782px) {
+    .voxel-toolkit-widgets-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .voxel-toolkit-widgets-search {
+        max-width: none;
+    }
+
+    .voxel-toolkit-widgets-actions {
+        justify-content: stretch;
+    }
+
+    .voxel-toolkit-widgets-actions button {
+        flex: 1;
+    }
+
+    .voxel-toolkit-widget-card {
+        padding: 20px;
+    }
+
+    .voxel-toolkit-widget-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .voxel-toolkit-widget-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .voxel-toolkit-widget-icon .dashicons {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+    }
+}
+
+
+/* ===================================
+   Widget Usage Modal
+   =================================== */
+
+/* Modal Overlay */
+.voxel-toolkit-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 100000;
+    backdrop-filter: blur(4px);
+}
+
+/* Modal Container */
+.voxel-toolkit-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -45%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* Modal Header */
+.voxel-toolkit-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 30px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #667eea;
+    border-radius: 12px 12px 0 0;
+}
+
+.voxel-toolkit-modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.voxel-toolkit-modal-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.voxel-toolkit-modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.voxel-toolkit-modal-close .dashicons {
+    color: #fff;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+/* Modal Body */
+.voxel-toolkit-modal-body {
+    padding: 30px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Loading State */
+.voxel-toolkit-modal-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 40px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* Empty State */
+.voxel-toolkit-modal-empty {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.voxel-toolkit-modal-empty .dashicons {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #cbd5e1;
+    margin-bottom: 16px;
+}
+
+.voxel-toolkit-modal-empty p {
+    color: #64748b;
+    font-size: 15px;
+    margin: 0;
+}
+
+/* Usage List */
+.voxel-toolkit-usage-count {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0 0 20px 0;
+}
+
+.voxel-toolkit-usage-count strong {
+    color: #667eea;
+}
+
+.voxel-toolkit-page-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Page Item */
+.voxel-toolkit-page-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.2s ease;
+}
+
+.voxel-toolkit-page-item:hover {
+    border-color: #667eea;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.voxel-toolkit-page-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.voxel-toolkit-page-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.voxel-toolkit-page-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.voxel-toolkit-page-meta span {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.voxel-toolkit-page-type {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.voxel-toolkit-page-status {
+    font-weight: 600;
+}
+
+.voxel-toolkit-page-status.status-publish {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.voxel-toolkit-page-status.status-draft {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.voxel-toolkit-page-id {
+    background: #ede9fe;
+    color: #6b21a8;
+}
+
+.voxel-toolkit-page-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.voxel-toolkit-page-actions .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.voxel-toolkit-page-actions .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Responsive Modal */
+@media (max-width: 782px) {
+    .voxel-toolkit-modal {
+        width: 95%;
+        max-height: 90vh;
+    }
+
+    .voxel-toolkit-modal-header {
+        padding: 20px;
+    }
+
+    .voxel-toolkit-modal-header h2 {
+        font-size: 18px;
+    }
+
+    .voxel-toolkit-modal-body {
+        padding: 20px;
+    }
+
+    .voxel-toolkit-page-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .voxel-toolkit-page-actions {
+        width: 100%;
+    }
+
+    .voxel-toolkit-page-actions .button {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
