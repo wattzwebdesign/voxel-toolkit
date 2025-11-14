@@ -290,14 +290,14 @@ class Voxel_Toolkit_Table_Of_Contents_Widget {
     public function enqueue_styles() {
         wp_enqueue_style(
             'voxel-toolkit-table-of-contents',
-            VOXEL_TOOLKIT_URL . 'assets/css/table-of-contents.css',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/table-of-contents.css',
             array(),
             VOXEL_TOOLKIT_VERSION
         );
 
         wp_enqueue_script(
             'voxel-toolkit-table-of-contents',
-            VOXEL_TOOLKIT_URL . 'assets/js/table-of-contents.js',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/table-of-contents.js',
             array('jquery'),
             VOXEL_TOOLKIT_VERSION,
             true
