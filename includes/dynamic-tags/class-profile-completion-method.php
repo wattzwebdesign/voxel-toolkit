@@ -54,14 +54,22 @@ class Voxel_Toolkit_Profile_Completion_Method extends \Voxel\Dynamic_Data\Modifi
         }
 
         // Get field keys from argument (comma-separated string)
-        $fields_string = $this->get_arg(0);
+        $fields_string = $this->get_arg_raw(0);
         $field_keys = [];
 
         if (!empty($fields_string)) {
-            // Split by comma and trim whitespace
-            $field_keys = array_map('trim', explode(',', $fields_string));
-            // Remove empty values
-            $field_keys = array_filter($field_keys);
+            // Extract field keys from Voxel dynamic tag syntax
+            // Supports: @user(profile.field_name) or just field_name
+            preg_match_all('/@user\(profile\.([a-zA-Z0-9_-]+)(?:\.[a-zA-Z0-9_-]+)?\)|([a-zA-Z0-9_-]+)/', $fields_string, $matches);
+
+            // Combine matches from both patterns
+            $field_keys = array_merge(
+                array_filter($matches[1]), // Fields from @user(profile.xxx)
+                array_filter($matches[2])  // Plain field names
+            );
+
+            // Remove duplicates and empty values
+            $field_keys = array_unique(array_filter($field_keys));
         }
 
         // If no fields specified, return 0
