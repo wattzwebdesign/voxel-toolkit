@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dynamic Tags: Added admin documentation page with usage examples and syntax guide
 - Modifiers: New `.file_size()` modifier to get formatted file size from file ID (e.g., `@post(upload-media.id).file_size()`)
 - Modifiers: New `.file_extension()` modifier to get file extension from file ID (e.g., `@post(upload-media.id).file_extension()`)
+- Modifiers: New `.address_part()` modifier to extract specific components from address fields
+  - Supports: street number, street name, city, state, postal code, country
+  - Uses Google Geocoding API with 24-hour caching
+  - Works with international addresses
+  - Usage: `@post(location.address).address_part(city)` or `@post(location.address).address_part(postal_code)`
 
 ### Changed
 - Widgets page: Widgets now display in alphabetical order by name
