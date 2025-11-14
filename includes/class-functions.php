@@ -281,12 +281,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Prev_Next_Widget_Manager',
                 'file' => 'widgets/class-prev-next-widget-manager.php',
             ),
-            'profile_progress' => array(
-                'name' => __('Profile Progress', 'voxel-toolkit'),
-                'description' => __('Display user profile completion progress with customizable field tracking and visual styles.', 'voxel-toolkit'),
-                'class' => 'Voxel_Toolkit_Profile_Progress_Widget',
-                'file' => 'widgets/class-profile-progress-widget.php',
-            ),
             'timeline_photos' => array(
                 'name' => __('Timeline Photos', 'voxel-toolkit'),
                 'description' => __('Display photos from post reviews in a customizable gallery with masonry, grid, and justified layouts.', 'voxel-toolkit'),
@@ -332,7 +326,15 @@ class Voxel_Toolkit_Functions {
      */
     private function init_active_widgets() {
         $settings = Voxel_Toolkit_Settings::instance();
-        
+
+        // Always initialize Profile Progress widget (required for dynamic tags)
+        $this->init_widget('profile_progress', array(
+            'name' => __('Profile Progress', 'voxel-toolkit'),
+            'description' => __('Display user profile completion progress with customizable field tracking and visual styles.', 'voxel-toolkit'),
+            'class' => 'Voxel_Toolkit_Profile_Progress_Widget',
+            'file' => 'widgets/class-profile-progress-widget.php',
+        ));
+
         foreach ($this->available_widgets as $widget_key => $widget_data) {
             $widget_key_full = 'widget_' . $widget_key;
             if ($settings->is_function_enabled($widget_key_full)) {
