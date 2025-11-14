@@ -195,6 +195,11 @@ class Voxel_Toolkit {
                 new Voxel_Toolkit_Dynamic_Tags();
             }
 
+            // Always initialize Profile Progress Widget for dynamic tag support
+            if (class_exists('Voxel_Toolkit_Profile_Progress_Widget')) {
+                new Voxel_Toolkit_Profile_Progress_Widget();
+            }
+
             // Add hook to refresh Elementor widget cache on init
             add_action('elementor/init', array($this, 'force_elementor_widget_refresh'));
 
