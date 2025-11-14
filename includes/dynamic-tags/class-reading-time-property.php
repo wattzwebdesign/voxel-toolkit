@@ -20,7 +20,7 @@ class Voxel_Toolkit_Reading_Time_Property {
      * Register the property
      */
     public static function register() {
-        return [
+        return (object) [
             'type' => 'string',
             'label' => 'Reading time',
             'callback' => function($post_group) {

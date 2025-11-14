@@ -20,7 +20,7 @@ class Voxel_Toolkit_Word_Count_Property {
      * Register the property
      */
     public static function register() {
-        return [
+        return (object) [
             'type' => 'number',
             'label' => 'Word count',
             'callback' => function($post_group) {

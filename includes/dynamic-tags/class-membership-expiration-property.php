@@ -20,7 +20,7 @@ class Voxel_Toolkit_Membership_Expiration_Property {
      * Register the property
      */
     public static function register() {
-        return [
+        return (object) [
             'type' => 'string',
             'label' => 'Membership expiration date',
             'callback' => function($user_group) {
