@@ -22,8 +22,8 @@ class Voxel_Toolkit_Dynamic_Tags {
      * Initialize hooks
      */
     private function init_hooks() {
-        // Load method classes
-        add_action('after_setup_theme', array($this, 'load_methods'), 5);
+        // Load method classes immediately
+        $this->load_methods();
 
         // Register methods with Voxel
         add_filter('voxel/dynamic-data/groups/user/methods', array($this, 'register_user_methods'));
@@ -34,7 +34,9 @@ class Voxel_Toolkit_Dynamic_Tags {
      * Load method classes
      */
     public function load_methods() {
-        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-profile-completion-method.php';
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-profile-completion-method.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-profile-completion-method.php';
+        }
     }
 
     /**
