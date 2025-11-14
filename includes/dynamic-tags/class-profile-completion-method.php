@@ -32,11 +32,7 @@ class Voxel_Toolkit_Profile_Completion_Method extends \Voxel\Dynamic_Data\Modifi
      * Define method arguments
      */
     protected function define_args(): void {
-        $this->define_arg([
-            'type' => 'text',
-            'label' => 'Field keys (comma-separated)',
-            'description' => 'Enter profile field keys separated by commas (e.g., description,email,location,gallery)',
-        ]);
+        // No arguments needed - will use fields from widget settings
     }
 
     /**
@@ -53,18 +49,10 @@ class Voxel_Toolkit_Profile_Completion_Method extends \Voxel\Dynamic_Data\Modifi
             return 0;
         }
 
-        // Get field keys from argument (comma-separated string)
-        $fields_string = $this->get_arg(0);
-        $field_keys = [];
+        // Get field keys from the widget settings stored in options
+        $field_keys = get_option('voxel_toolkit_profile_completion_fields', []);
 
-        if (!empty($fields_string)) {
-            // Split by comma and trim whitespace
-            $field_keys = array_map('trim', explode(',', $fields_string));
-            // Remove empty values
-            $field_keys = array_filter($field_keys);
-        }
-
-        // If no fields specified, return 0
+        // If no fields configured, return 0
         if (empty($field_keys)) {
             return 0;
         }
