@@ -1032,6 +1032,11 @@ class Voxel_Toolkit_Admin {
      */
     public function render_widgets_page() {
         $available_widgets = $this->functions_manager->get_available_widgets();
+
+        // Sort widgets alphabetically by name
+        uasort($available_widgets, function($a, $b) {
+            return strcasecmp($a['name'], $b['name']);
+        });
         ?>
         <div class="wrap voxel-toolkit-widgets-page">
             <h1><?php _e('Voxel Toolkit - Elementor Widgets', 'voxel-toolkit'); ?></h1>
