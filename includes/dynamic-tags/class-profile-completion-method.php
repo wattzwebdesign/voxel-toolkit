@@ -53,8 +53,9 @@ class Voxel_Toolkit_Profile_Completion_Method extends \Voxel\Dynamic_Data\Modifi
             return 0;
         }
 
-        // Get field keys from argument (comma-separated string)
-        $fields_string = $this->get_arg_raw(0);
+        // Get the raw argument value before evaluation
+        $raw_args = $this->get_args();
+        $fields_string = isset($raw_args[0]['value']) ? $raw_args[0]['value'] : '';
         $field_keys = [];
 
         if (!empty($fields_string)) {
