@@ -41,6 +41,7 @@ class Voxel_Toolkit_Admin {
         // Handle AJAX requests
         add_action('wp_ajax_voxel_toolkit_toggle_function', array($this, 'ajax_toggle_function'));
         add_action('wp_ajax_voxel_toolkit_toggle_widget', array($this, 'ajax_toggle_widget'));
+        add_action('wp_ajax_voxel_toolkit_bulk_toggle_widgets', array($this, 'ajax_bulk_toggle_widgets'));
         add_action('wp_ajax_voxel_toolkit_reset_settings', array($this, 'ajax_reset_settings'));
         add_action('wp_ajax_vt_admin_notifications_user_search', array($this, 'ajax_admin_notifications_user_search'));
     }
@@ -127,6 +128,17 @@ class Voxel_Toolkit_Admin {
             VOXEL_TOOLKIT_VERSION,
             true
         );
+
+        // Localize script with data for JavaScript
+        wp_localize_script('voxel-toolkit-admin', 'voxelToolkitAdmin', array(
+            'widgetNonce' => wp_create_nonce('voxel_toolkit_widget_nonce'),
+            'i18n' => array(
+                'enabled' => __('Enabled', 'voxel-toolkit'),
+                'disabled' => __('Disabled', 'voxel-toolkit'),
+                'confirmEnableAll' => __('Are you sure you want to enable all widgets?', 'voxel-toolkit'),
+                'confirmDisableAll' => __('Are you sure you want to disable all widgets?', 'voxel-toolkit'),
+            )
+        ));
         
         // Add inline styles and JS for Voxel taxonomies page
         if (isset($_GET['page']) && $_GET['page'] === 'voxel-taxonomies' && isset($_GET['action']) && $_GET['action'] === 'reorder-terms') {
@@ -813,6 +825,56 @@ class Voxel_Toolkit_Admin {
     }
     
     /**
+     * Handle bulk toggle widgets AJAX request
+     */
+    public function ajax_bulk_toggle_widgets() {
+        // Verify nonce
+        if (!wp_verify_nonce($_POST['nonce'], 'voxel_toolkit_widget_nonce')) {
+            wp_send_json_error(__('Security check failed.', 'voxel-toolkit'));
+        }
+
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('You do not have sufficient permissions.', 'voxel-toolkit'));
+        }
+
+        $action = sanitize_text_field($_POST['bulk_action']); // 'enable' or 'disable'
+        $available_widgets = $this->functions_manager->get_available_widgets();
+
+        $success_count = 0;
+        $total_count = count($available_widgets);
+
+        foreach ($available_widgets as $widget_key => $widget_data) {
+            $widget_key_full = 'widget_' . $widget_key;
+
+            if ($action === 'enable') {
+                $result = $this->settings->enable_function($widget_key_full);
+            } else {
+                $result = $this->settings->disable_function($widget_key_full);
+            }
+
+            if ($result) {
+                $success_count++;
+            }
+        }
+
+        if ($success_count === $total_count) {
+            wp_send_json_success(array(
+                'message' => $action === 'enable'
+                    ? __('All widgets enabled successfully.', 'voxel-toolkit')
+                    : __('All widgets disabled successfully.', 'voxel-toolkit'),
+                'count' => $success_count
+            ));
+        } else {
+            wp_send_json_error(sprintf(
+                __('Only %d of %d widgets were updated.', 'voxel-toolkit'),
+                $success_count,
+                $total_count
+            ));
+        }
+    }
+
+    /**
      * Handle AJAX settings reset
      */
     public function ajax_reset_settings() {
@@ -843,180 +905,111 @@ class Voxel_Toolkit_Admin {
     public function render_widgets_page() {
         $available_widgets = $this->functions_manager->get_available_widgets();
         ?>
-        <div class="wrap">
+        <div class="wrap voxel-toolkit-widgets-page">
             <h1><?php _e('Voxel Toolkit - Elementor Widgets', 'voxel-toolkit'); ?></h1>
-            
+
             <div class="voxel-toolkit-intro">
                 <p><?php _e('Enhance your Elementor page builder with these additional widgets. Each widget can be enabled/disabled independently and includes comprehensive styling controls.', 'voxel-toolkit'); ?></p>
             </div>
-            
-            <div class="voxel-toolkit-widgets">
+
+            <!-- Controls Bar -->
+            <div class="voxel-toolkit-widgets-controls">
+                <div class="voxel-toolkit-widgets-search">
+                    <input type="text"
+                           id="voxel-widgets-search"
+                           class="voxel-toolkit-search-input"
+                           placeholder="<?php _e('Search widgets...', 'voxel-toolkit'); ?>"
+                           autocomplete="off">
+                    <span class="dashicons dashicons-search"></span>
+                </div>
+                <div class="voxel-toolkit-widgets-actions">
+                    <button type="button" class="button button-secondary" id="voxel-widgets-disable-all">
+                        <?php _e('Disable All', 'voxel-toolkit'); ?>
+                    </button>
+                    <button type="button" class="button button-primary" id="voxel-widgets-enable-all">
+                        <?php _e('Enable All', 'voxel-toolkit'); ?>
+                    </button>
+                </div>
+            </div>
+
+            <div class="voxel-toolkit-widgets-grid">
                 <?php foreach ($available_widgets as $widget_key => $widget_data): ?>
                     <?php $this->render_widget_card($widget_key, $widget_data); ?>
                 <?php endforeach; ?>
-                
+
                 <?php if (empty($available_widgets)): ?>
                     <div class="voxel-toolkit-no-widgets">
                         <p><?php _e('No widgets are currently available. More widgets will be added in future updates!', 'voxel-toolkit'); ?></p>
                     </div>
                 <?php endif; ?>
             </div>
+
+            <div class="voxel-toolkit-no-results" style="display: none;">
+                <div class="voxel-toolkit-no-results-inner">
+                    <span class="dashicons dashicons-search"></span>
+                    <p><?php _e('No widgets found matching your search.', 'voxel-toolkit'); ?></p>
+                </div>
+            </div>
         </div>
-        
-        <style>
-            .voxel-toolkit-widgets {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 20px;
-                margin-top: 20px;
-            }
-            
-            @media (max-width: 1200px) {
-                .voxel-toolkit-widgets {
-                    grid-template-columns: repeat(2, 1fr);
-                }
-            }
-            
-            @media (max-width: 768px) {
-                .voxel-toolkit-widgets {
-                    grid-template-columns: 1fr;
-                }
-            }
-            .voxel-toolkit-widget-card {
-                background: #fff;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                padding: 12px 12px 8px 12px;
-                transition: border-color 0.2s ease;
-            }
-            .voxel-toolkit-widget-card:hover {
-                border-color: #999;
-            }
-            .voxel-toolkit-widget-content {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            .voxel-toolkit-widget-title {
-                font-size: 14px;
-                font-weight: 500;
-                margin: 0;
-                color: #1e1e1e;
-            }
-            .voxel-toolkit-widget-toggle {
-                position: relative;
-                display: inline-block;
-                width: 40px;
-                height: 20px;
-            }
-            .voxel-toolkit-widget-toggle input {
-                opacity: 0;
-                width: 0;
-                height: 0;
-            }
-            .voxel-toolkit-widget-toggle-slider {
-                position: absolute;
-                cursor: pointer;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background-color: #ccc;
-                transition: .2s;
-                border-radius: 20px;
-            }
-            .voxel-toolkit-widget-toggle-slider:before {
-                position: absolute;
-                content: "";
-                height: 16px;
-                width: 16px;
-                left: 2px;
-                bottom: 2px;
-                background-color: white;
-                transition: .2s;
-                border-radius: 50%;
-            }
-            .voxel-toolkit-widget-toggle input:checked + .voxel-toolkit-widget-toggle-slider {
-                background-color: #2271b1;
-            }
-            .voxel-toolkit-widget-toggle input:checked + .voxel-toolkit-widget-toggle-slider:before {
-                transform: translateX(20px);
-            }
-            .voxel-toolkit-widget-settings {
-                margin-top: 12px;
-            }
-            .voxel-toolkit-no-widgets {
-                background: #f8f9fa;
-                border: 1px solid #e1e5e9;
-                border-radius: 8px;
-                padding: 40px 20px;
-                text-align: center;
-                color: #666;
-            }
-        </style>
-        
-        <script>
-        jQuery(document).ready(function($) {
-            $('.voxel-toolkit-widget-toggle input').on('change', function() {
-                const widgetKey = $(this).data('widget');
-                const enabled = $(this).is(':checked');
-                
-                $.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    data: {
-                        action: 'voxel_toolkit_toggle_widget',
-                        widget_key: widgetKey,
-                        enabled: enabled ? 1 : 0,
-                        nonce: '<?php echo wp_create_nonce('voxel_toolkit_widget_nonce'); ?>'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            // Show success message
-                            const message = $('<div class="notice notice-success is-dismissible"><p>' + response.data.message + '</p></div>');
-                            $('.wrap h1').after(message);
-                            setTimeout(function() {
-                                message.fadeOut();
-                            }, 3000);
-                        } else {
-                            alert('Error: ' + response.data.message);
-                            // Revert toggle
-                            $(this).prop('checked', !enabled);
-                        }
-                    }.bind(this),
-                    error: function() {
-                        alert('Error updating widget status');
-                        // Revert toggle
-                        $(this).prop('checked', !enabled);
-                    }.bind(this)
-                });
-            });
-        });
-        </script>
         <?php
     }
     
     /**
      * Render widget card
-     * 
+     *
      * @param string $widget_key Widget key
      * @param array $widget_data Widget data
      */
     private function render_widget_card($widget_key, $widget_data) {
         $widget_key_full = 'widget_' . $widget_key;
         $is_enabled = $this->settings->is_function_enabled($widget_key_full);
+        $usage_count = $this->get_widget_usage_count($widget_key);
         ?>
-        <div class="voxel-toolkit-widget-card" title="<?php echo esc_attr($widget_data['description']); ?>">
-            <div class="voxel-toolkit-widget-content">
-                <h3 class="voxel-toolkit-widget-title"><?php echo esc_html($widget_data['name']); ?></h3>
+        <div class="voxel-toolkit-widget-card"
+             data-widget-key="<?php echo esc_attr($widget_key); ?>"
+             data-widget-name="<?php echo esc_attr(strtolower($widget_data['name'])); ?>"
+             data-widget-description="<?php echo esc_attr(strtolower($widget_data['description'])); ?>">
+
+            <div class="voxel-toolkit-widget-header">
+                <div class="voxel-toolkit-widget-icon">
+                    <span class="dashicons dashicons-admin-customizer"></span>
+                </div>
+                <div class="voxel-toolkit-widget-meta">
+                    <div class="voxel-toolkit-widget-title-row">
+                        <h3 class="voxel-toolkit-widget-title"><?php echo esc_html($widget_data['name']); ?></h3>
+                        <?php if ($is_enabled): ?>
+                            <span class="voxel-toolkit-widget-badge voxel-toolkit-badge-enabled"><?php _e('Enabled', 'voxel-toolkit'); ?></span>
+                        <?php else: ?>
+                            <span class="voxel-toolkit-widget-badge voxel-toolkit-badge-disabled"><?php _e('Disabled', 'voxel-toolkit'); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <p class="voxel-toolkit-widget-description"><?php echo esc_html($widget_data['description']); ?></p>
+                </div>
+            </div>
+
+            <div class="voxel-toolkit-widget-footer">
+                <div class="voxel-toolkit-widget-usage">
+                    <?php if ($usage_count > 0): ?>
+                        <span class="voxel-toolkit-usage-badge"
+                              data-widget="<?php echo esc_attr($widget_key); ?>"
+                              title="<?php _e('Click to see where this widget is used', 'voxel-toolkit'); ?>">
+                            <span class="dashicons dashicons-admin-page"></span>
+                            <?php printf(_n('Used in %d page', 'Used in %d pages', $usage_count, 'voxel-toolkit'), $usage_count); ?>
+                        </span>
+                    <?php else: ?>
+                        <span class="voxel-toolkit-usage-badge voxel-toolkit-usage-none">
+                            <?php _e('Not used yet', 'voxel-toolkit'); ?>
+                        </span>
+                    <?php endif; ?>
+                </div>
                 <label class="voxel-toolkit-widget-toggle">
-                    <input type="checkbox" 
-                           data-widget="<?php echo esc_attr($widget_key); ?>" 
+                    <input type="checkbox"
+                           data-widget="<?php echo esc_attr($widget_key); ?>"
                            <?php checked($is_enabled); ?>>
                     <span class="voxel-toolkit-widget-toggle-slider"></span>
                 </label>
             </div>
-            
+
             <?php if ($is_enabled && isset($widget_data['settings_callback']) && is_callable($widget_data['settings_callback'])): ?>
                 <div class="voxel-toolkit-widget-settings">
                     <?php
@@ -1029,6 +1022,28 @@ class Voxel_Toolkit_Admin {
             <?php endif; ?>
         </div>
         <?php
+    }
+
+    /**
+     * Get widget usage count
+     *
+     * @param string $widget_key Widget key
+     * @return int Usage count
+     */
+    private function get_widget_usage_count($widget_key) {
+        global $wpdb;
+
+        // Search for widget usage in Elementor data
+        $widget_pattern = '%voxel-' . $widget_key . '%';
+        $count = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(DISTINCT post_id)
+            FROM {$wpdb->postmeta}
+            WHERE meta_key = '_elementor_data'
+            AND meta_value LIKE %s",
+            $widget_pattern
+        ));
+
+        return intval($count);
     }
     
     /**
