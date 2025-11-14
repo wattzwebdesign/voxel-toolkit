@@ -394,7 +394,11 @@ class Voxel_Toolkit_Admin {
 
                 <div class="voxel-toolkit-settings">
                     <?php foreach ($available_functions as $function_key => $function_data): ?>
-                        <?php if ($this->settings->is_function_enabled($function_key)): ?>
+                        <?php
+                        $is_enabled = $this->settings->is_function_enabled($function_key);
+                        $is_always_enabled = isset($function_data['always_enabled']) && $function_data['always_enabled'];
+                        ?>
+                        <?php if ($is_enabled || $is_always_enabled): ?>
                             <?php $this->render_function_settings_section($function_key, $function_data); ?>
                         <?php endif; ?>
                     <?php endforeach; ?>

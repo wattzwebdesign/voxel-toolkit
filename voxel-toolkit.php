@@ -30,6 +30,9 @@ if (!defined('VOXEL_TOOLKIT_PLUGIN_DIR')) {
 if (!defined('VOXEL_TOOLKIT_PLUGIN_URL')) {
     define('VOXEL_TOOLKIT_PLUGIN_URL', plugin_dir_url(__FILE__));
 }
+if (!defined('VOXEL_TOOLKIT_URL')) {
+    define('VOXEL_TOOLKIT_URL', plugin_dir_url(__FILE__));
+}
 if (!defined('VOXEL_TOOLKIT_PLUGIN_FILE')) {
     define('VOXEL_TOOLKIT_PLUGIN_FILE', __FILE__);
 }
