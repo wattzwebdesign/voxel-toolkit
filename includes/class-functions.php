@@ -31,9 +31,12 @@ class Voxel_Toolkit_Functions {
      * Constructor
      */
     private function __construct() {
+        // Initialize dynamic tags early
+        add_action('after_setup_theme', array($this, 'init_dynamic_tags'), 5);
+
         add_action('init', array($this, 'init'), 20);
         add_action('voxel_toolkit/settings_updated', array($this, 'on_settings_updated'), 10, 2);
-        
+
         // AJAX handlers
         add_action('wp_ajax_voxel_toolkit_sync_submissions', array($this, 'ajax_sync_submissions'));
     }
@@ -46,6 +49,21 @@ class Voxel_Toolkit_Functions {
         $this->register_widgets();
         $this->init_active_functions();
         $this->init_active_widgets();
+    }
+
+    /**
+     * Initialize dynamic tags
+     */
+    public function init_dynamic_tags() {
+        // Load dynamic tags class
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-dynamic-tags.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-dynamic-tags.php';
+
+            // Initialize dynamic tags (always active)
+            if (class_exists('Voxel_Toolkit_Dynamic_Tags')) {
+                new Voxel_Toolkit_Dynamic_Tags();
+            }
+        }
     }
     
     /**

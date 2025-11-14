@@ -78,7 +78,16 @@ class Voxel_Toolkit_Admin {
             'voxel-toolkit-widgets',
             array($this, 'render_widgets_page')
         );
-        
+
+        add_submenu_page(
+            'voxel-toolkit',
+            __('Dynamic Tags', 'voxel-toolkit'),
+            __('Dynamic Tags', 'voxel-toolkit'),
+            'manage_options',
+            'voxel-toolkit-dynamic-tags',
+            array($this, 'render_dynamic_tags_page')
+        );
+
         add_submenu_page(
             'voxel-toolkit',
             __('Settings', 'voxel-toolkit'),
@@ -1211,7 +1220,135 @@ class Voxel_Toolkit_Admin {
 
         return $count;
     }
-    
+
+    /**
+     * Render dynamic tags page
+     */
+    public function render_dynamic_tags_page() {
+        ?>
+        <div class="wrap voxel-toolkit-dynamic-tags-page">
+            <h1><?php _e('Voxel Toolkit - Dynamic Tags', 'voxel-toolkit'); ?></h1>
+
+            <div class="voxel-toolkit-intro">
+                <p><?php _e('Custom dynamic data properties and methods that extend Voxel\'s built-in dynamic tags. Use these tags in any Voxel template, Elementor widget, or anywhere dynamic data is supported.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <!-- Post Properties -->
+            <div class="settings-section">
+                <h2><?php _e('Post Properties', 'voxel-toolkit'); ?></h2>
+                <p class="description"><?php _e('Dynamic properties available for post objects. Use with @post() syntax.', 'voxel-toolkit'); ?></p>
+
+                <table class="widefat striped">
+                    <thead>
+                        <tr>
+                            <th><?php _e('Property', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Output Example', 'voxel-toolkit'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>reading_time</code></td>
+                            <td><?php _e('Estimated reading time based on word count (200 words per minute)', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(reading_time)</code></td>
+                            <td><em>5 min</em> or <em>1 hr 30 min</em></td>
+                        </tr>
+                        <tr>
+                            <td><code>word_count</code></td>
+                            <td><?php _e('Total word count in post content', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(word_count)</code></td>
+                            <td><em>1250</em></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- User/Author Properties -->
+            <div class="settings-section" style="margin-top: 30px;">
+                <h2><?php _e('User & Author Properties', 'voxel-toolkit'); ?></h2>
+                <p class="description"><?php _e('Dynamic properties available for user and author objects. Use with @user() or @author() syntax.', 'voxel-toolkit'); ?></p>
+
+                <table class="widefat striped">
+                    <thead>
+                        <tr>
+                            <th><?php _e('Property', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Output Example', 'voxel-toolkit'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>membership_expiration</code></td>
+                            <td><?php _e('User\'s membership expiration date from Voxel plan (formatted per WordPress date settings)', 'voxel-toolkit'); ?></td>
+                            <td><code>@user(membership_expiration)</code><br><code>@author(membership_expiration)</code></td>
+                            <td><em>February 24, 2026</em></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- User/Author Methods -->
+            <div class="settings-section" style="margin-top: 30px;">
+                <h2><?php _e('User & Author Methods', 'voxel-toolkit'); ?></h2>
+                <p class="description"><?php _e('Dynamic methods available for user and author objects. Methods accept parameters and use @user().method() or @author().method() syntax.', 'voxel-toolkit'); ?></p>
+
+                <table class="widefat striped">
+                    <thead>
+                        <tr>
+                            <th><?php _e('Method', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Parameters', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Output Example', 'voxel-toolkit'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>profile_completion</code></td>
+                            <td><?php _e('Calculate profile completion percentage based on specified fields', 'voxel-toolkit'); ?></td>
+                            <td><?php _e('Comma-separated list of profile field keys', 'voxel-toolkit'); ?></td>
+                            <td><code>@user().profile_completion(description,email,location)</code></td>
+                            <td><em>75</em></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Usage Tips -->
+            <div class="settings-section" style="margin-top: 30px;">
+                <h2><?php _e('Usage Tips', 'voxel-toolkit'); ?></h2>
+                <div class="voxel-toolkit-info-box">
+                    <h3><?php _e('Where to use dynamic tags:', 'voxel-toolkit'); ?></h3>
+                    <ul style="margin-left: 20px;">
+                        <li><?php _e('Elementor widgets and templates', 'voxel-toolkit'); ?></li>
+                        <li><?php _e('Voxel theme templates', 'voxel-toolkit'); ?></li>
+                        <li><?php _e('Post type and taxonomy templates', 'voxel-toolkit'); ?></li>
+                        <li><?php _e('Custom fields and descriptions', 'voxel-toolkit'); ?></li>
+                        <li><?php _e('Email templates and notifications', 'voxel-toolkit'); ?></li>
+                    </ul>
+
+                    <h3 style="margin-top: 20px;"><?php _e('Syntax examples:', 'voxel-toolkit'); ?></h3>
+                    <ul style="margin-left: 20px;">
+                        <li><strong><?php _e('Properties:', 'voxel-toolkit'); ?></strong> <code>@post(reading_time)</code></li>
+                        <li><strong><?php _e('Methods:', 'voxel-toolkit'); ?></strong> <code>@user().profile_completion(field1,field2)</code></li>
+                        <li><strong><?php _e('Combining with text:', 'voxel-toolkit'); ?></strong> <?php _e('This article takes @post(reading_time) to read', 'voxel-toolkit'); ?></li>
+                        <li><strong><?php _e('In conditionals:', 'voxel-toolkit'); ?></strong> <code>@if(@post(word_count) > 1000)Long article@endif</code></li>
+                    </ul>
+
+                    <h3 style="margin-top: 20px;"><?php _e('Notes:', 'voxel-toolkit'); ?></h3>
+                    <ul style="margin-left: 20px;">
+                        <li><?php _e('All dynamic tags are automatically registered when the respective function/widget is enabled', 'voxel-toolkit'); ?></li>
+                        <li><?php _e('Date formats follow WordPress settings (Settings > General > Date Format)', 'voxel-toolkit'); ?></li>
+                        <li><?php _e('Tags return empty strings when data is unavailable', 'voxel-toolkit'); ?></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
     /**
      * AJAX handler for admin notifications user search
      */
