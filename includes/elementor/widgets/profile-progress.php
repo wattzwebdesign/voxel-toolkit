@@ -899,7 +899,13 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
             // Special case: voxel:avatar is stored in wp_usermeta, not wp_postmeta
             if ($field_key === 'voxel:avatar') {
                 $meta_value = get_user_meta($user_id, 'voxel:avatar', true);
-            } else {
+            }
+            // Special case: description is stored in wp_posts.post_content
+            elseif ($field_key === 'description') {
+                $post = get_post($profile_id);
+                $meta_value = $post ? $post->post_content : '';
+            }
+            else {
                 // Step 2: Check if field exists in wp_postmeta using the profile_id as post_id
                 $meta_value = get_post_meta($profile_id, $field_key, true);
             }

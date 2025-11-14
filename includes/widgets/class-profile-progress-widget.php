@@ -105,25 +105,31 @@ class Voxel_Toolkit_Profile_Progress_Widget {
      */
     public static function get_user_profile_fields($user_id, $field_keys) {
         global $wpdb;
-        
+
         if (!$user_id || empty($field_keys)) {
             return [];
         }
-        
+
         // Step 1: Get user's profile ID from wp_usermeta
         $profile_id = get_user_meta($user_id, 'voxel:profile_id', true);
-        
+
         if (!$profile_id) {
             return [];
         }
-        
+
         $field_data = [];
-        
+
         foreach ($field_keys as $field_key) {
             // Special case: voxel:avatar is stored in wp_usermeta, not wp_postmeta
             if ($field_key === 'voxel:avatar') {
                 $meta_value = get_user_meta($user_id, 'voxel:avatar', true);
-            } else {
+            }
+            // Special case: description is stored in wp_posts.post_content
+            elseif ($field_key === 'description') {
+                $post = get_post($profile_id);
+                $meta_value = $post ? $post->post_content : '';
+            }
+            else {
                 // Step 2: Check if field exists in wp_postmeta using the profile_id as post_id
                 $meta_value = get_post_meta($profile_id, $field_key, true);
             }
