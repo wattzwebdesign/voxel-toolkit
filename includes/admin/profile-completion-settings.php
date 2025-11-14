@@ -61,7 +61,13 @@ function voxel_toolkit_render_profile_completion_settings() {
                 </tr>
             </table>
 
-            <?php submit_button(__('Save Profile Completion Settings', 'voxel-toolkit')); ?>
+            <p class="submit">
+                <?php submit_button(__('Save Profile Completion Settings', 'voxel-toolkit'), 'primary', 'submit', false); ?>
+                &nbsp;
+                <button type="submit" name="voxel_toolkit_reset_profile_completion" value="1" class="button button-secondary" onclick="return confirm('<?php echo esc_js(__('Are you sure you want to reset the profile completion fields? This will clear all selected fields.', 'voxel-toolkit')); ?>');">
+                    <?php _e('Reset Fields', 'voxel-toolkit'); ?>
+                </button>
+            </p>
         </form>
     </div>
 
@@ -90,6 +96,24 @@ function voxel_toolkit_render_profile_completion_settings() {
  * Handle profile completion settings save
  */
 function voxel_toolkit_save_profile_completion_settings() {
+    // Handle reset
+    if (isset($_POST['voxel_toolkit_reset_profile_completion']) &&
+        isset($_POST['voxel_toolkit_profile_completion_nonce']) &&
+        wp_verify_nonce($_POST['voxel_toolkit_profile_completion_nonce'], 'voxel_toolkit_profile_completion') &&
+        current_user_can('manage_options')) {
+
+        delete_option('voxel_toolkit_profile_completion_fields');
+
+        add_settings_error(
+            'voxel_toolkit_messages',
+            'voxel_toolkit_message',
+            __('Profile completion fields have been reset.', 'voxel-toolkit'),
+            'success'
+        );
+        return;
+    }
+
+    // Handle save
     if (!isset($_POST['voxel_toolkit_profile_completion_nonce'])) {
         return;
     }
@@ -99,6 +123,10 @@ function voxel_toolkit_save_profile_completion_settings() {
     }
 
     if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    if (!isset($_POST['submit'])) {
         return;
     }
 
