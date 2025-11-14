@@ -154,13 +154,14 @@ class Voxel_Toolkit {
             'includes/functions/class-auto-verify-posts.php',
             'includes/functions/class-admin-menu-hide.php',
             'includes/functions/class-admin-notifications.php',
-            'includes/functions/class-featured-posts.php'
+            'includes/functions/class-featured-posts.php',
+            'includes/dynamic-tags/class-dynamic-tags.php'
         );
-        
+
         if (is_admin()) {
             $files[] = 'includes/admin/class-admin.php';
         }
-        
+
         foreach ($files as $file) {
             $file_path = VOXEL_TOOLKIT_PLUGIN_DIR . $file;
             if (file_exists($file_path)) {
@@ -180,15 +181,20 @@ class Voxel_Toolkit {
             if (class_exists('Voxel_Toolkit_Settings')) {
                 Voxel_Toolkit_Settings::instance();
             }
-            
+
             // Initialize functions manager
             if (class_exists('Voxel_Toolkit_Functions')) {
                 Voxel_Toolkit_Functions::instance();
             }
-            
+
+            // Initialize dynamic tags
+            if (class_exists('Voxel_Toolkit_Dynamic_Tags')) {
+                new Voxel_Toolkit_Dynamic_Tags();
+            }
+
             // Add hook to refresh Elementor widget cache on init
             add_action('elementor/init', array($this, 'force_elementor_widget_refresh'));
-            
+
         } catch (Exception $e) {
             error_log('Voxel Toolkit: Error initializing hooks - ' . $e->getMessage());
         }
