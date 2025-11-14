@@ -680,12 +680,11 @@ body.vx-dark-mode #wpwrap #wpbody i {
     flex-shrink: 0;
     width: 48px;
     height: 48px;
-    background: #667eea;
+    background: #1e3a5f;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .voxel-toolkit-widget-icon .dashicons {
@@ -842,8 +841,7 @@ body.vx-dark-mode #wpwrap #wpbody i {
 }
 
 .voxel-toolkit-widget-toggle input:checked + .voxel-toolkit-widget-toggle-slider {
-    background: #667eea;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+    background: #1e3a5f;
 }
 
 .voxel-toolkit-widget-toggle input:checked + .voxel-toolkit-widget-toggle-slider:before {
