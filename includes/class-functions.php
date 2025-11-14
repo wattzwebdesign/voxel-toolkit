@@ -281,13 +281,6 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Prev_Next_Widget_Manager',
                 'file' => 'widgets/class-prev-next-widget-manager.php',
             ),
-            'profile_progress' => array(
-                'name' => __('Profile Progress', 'voxel-toolkit'),
-                'description' => __('Display user profile completion progress with customizable field tracking and visual styles.', 'voxel-toolkit'),
-                'class' => 'Voxel_Toolkit_Profile_Progress_Widget',
-                'file' => 'widgets/class-profile-progress-widget.php',
-                'settings_callback' => array($this, 'render_profile_progress_widget_settings'),
-            ),
             'timeline_photos' => array(
                 'name' => __('Timeline Photos', 'voxel-toolkit'),
                 'description' => __('Display photos from post reviews in a customizable gallery with masonry, grid, and justified layouts.', 'voxel-toolkit'),
@@ -2190,13 +2183,6 @@ class Voxel_Toolkit_Functions {
         // All configuration is done through the Elementor widget
     }
     
-    /**
-     * Render Profile Progress widget settings
-     */
-    public function render_profile_progress_widget_settings($settings) {
-        // No additional settings needed for profile progress widget
-        // All configuration is done through the Elementor widget
-    }
     
     /**
      * Render Pending Posts Badge settings
