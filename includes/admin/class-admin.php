@@ -1252,7 +1252,7 @@ class Voxel_Toolkit_Admin {
                             <td><code>reading_time</code></td>
                             <td><?php _e('Estimated reading time based on word count (200 words per minute)', 'voxel-toolkit'); ?></td>
                             <td><code>@post(reading_time)</code></td>
-                            <td><em>5 min read</em></td>
+                            <td><em>5 min</em> or <em>1 hr 30 min</em></td>
                         </tr>
                         <tr>
                             <td><code>word_count</code></td>

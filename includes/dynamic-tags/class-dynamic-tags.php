@@ -15,12 +15,18 @@ class Voxel_Toolkit_Dynamic_Tags {
      * Constructor
      */
     public function __construct() {
+        // Debug logging
+        error_log('Voxel_Toolkit_Dynamic_Tags: Constructor called');
+
         // Load classes first
         $this->load_methods();
         $this->load_properties();
 
         // Register filters - these need to be added immediately, not on a hook
         $this->init_hooks();
+
+        // Debug logging
+        error_log('Voxel_Toolkit_Dynamic_Tags: Hooks registered');
     }
 
     /**
@@ -32,10 +38,9 @@ class Voxel_Toolkit_Dynamic_Tags {
         add_filter('voxel/dynamic-data/groups/author/methods', array($this, 'register_author_methods'), 10, 1);
 
         // Register properties with Voxel
-        // Temporarily disabled until proper Property classes are implemented
-        // add_filter('voxel/dynamic-data/groups/post/properties', array($this, 'register_post_properties'), 10, 2);
-        // add_filter('voxel/dynamic-data/groups/user/properties', array($this, 'register_user_properties'), 10, 2);
-        // add_filter('voxel/dynamic-data/groups/author/properties', array($this, 'register_author_properties'), 10, 2);
+        add_filter('voxel/dynamic-data/groups/post/properties', array($this, 'register_post_properties'), 10, 2);
+        add_filter('voxel/dynamic-data/groups/user/properties', array($this, 'register_user_properties'), 10, 2);
+        add_filter('voxel/dynamic-data/groups/author/properties', array($this, 'register_author_properties'), 10, 2);
     }
 
     /**
@@ -49,17 +54,13 @@ class Voxel_Toolkit_Dynamic_Tags {
 
     /**
      * Load property classes
+     *
+     * Note: Properties are now registered inline using Tag::String() and Tag::Number()
+     * No separate class files needed for properties.
      */
     public function load_properties() {
-        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-reading-time-property.php')) {
-            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-reading-time-property.php';
-        }
-        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-word-count-property.php')) {
-            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-word-count-property.php';
-        }
-        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-membership-expiration-property.php')) {
-            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-membership-expiration-property.php';
-        }
+        // Properties are registered inline in register_*_properties methods
+        // No class loading needed
     }
 
     /**
@@ -82,15 +83,66 @@ class Voxel_Toolkit_Dynamic_Tags {
      * Register properties for post group
      */
     public function register_post_properties($properties, $group) {
+        error_log('Voxel_Toolkit_Dynamic_Tags: register_post_properties called');
+
         // Add reading time property
-        if (class_exists('Voxel_Toolkit_Reading_Time_Property')) {
-            $properties['reading_time'] = \Voxel_Toolkit_Reading_Time_Property::register();
-        }
+        $properties['reading_time'] = \Voxel\Dynamic_Data\Tag::String('Reading Time')
+            ->render( function() use ( $group ) {
+                // Access the post directly - Voxel\Post extends WP_Post
+                if (!$group->post || !$group->post->get_id()) {
+                    return '';
+                }
+
+                // Get post content
+                $content = get_post_field('post_content', $group->post->get_id());
+
+                // Strip shortcodes and HTML tags
+                $content = strip_shortcodes($content);
+                $content = wp_strip_all_tags($content);
+
+                // Count words
+                $word_count = str_word_count($content);
+
+                // Calculate reading time (average reading speed: 200 words per minute)
+                $reading_time = ceil($word_count / 200);
+
+                // Format output
+                if ($reading_time < 1) {
+                    return '< 1 min';
+                } elseif ($reading_time < 60) {
+                    return $reading_time . ' min';
+                } else {
+                    // Convert to hours if 60+ minutes
+                    $hours = floor($reading_time / 60);
+                    $minutes = $reading_time % 60;
+                    if ($minutes > 0) {
+                        return $hours . ' hr ' . $minutes . ' min';
+                    } else {
+                        return $hours . ' hr';
+                    }
+                }
+            } );
 
         // Add word count property
-        if (class_exists('Voxel_Toolkit_Word_Count_Property')) {
-            $properties['word_count'] = \Voxel_Toolkit_Word_Count_Property::register();
-        }
+        $properties['word_count'] = \Voxel\Dynamic_Data\Tag::Number('Word Count')
+            ->render( function() use ( $group ) {
+                // Access the post directly - Voxel\Post extends WP_Post
+                if (!$group->post || !$group->post->get_id()) {
+                    return 0;
+                }
+
+                // Get post content
+                $content = get_post_field('post_content', $group->post->get_id());
+
+                // Strip shortcodes and HTML tags
+                $content = strip_shortcodes($content);
+                $content = wp_strip_all_tags($content);
+
+                // Count words
+                $word_count = str_word_count($content);
+
+                return $word_count;
+            } );
 
         return $properties;
     }
@@ -100,9 +152,62 @@ class Voxel_Toolkit_Dynamic_Tags {
      */
     public function register_user_properties($properties, $group) {
         // Add membership expiration property
-        if (class_exists('Voxel_Toolkit_Membership_Expiration_Property')) {
-            $properties['membership_expiration'] = \Voxel_Toolkit_Membership_Expiration_Property::register();
-        }
+        $properties['membership_expiration'] = \Voxel\Dynamic_Data\Tag::String('Membership Expiration Date')
+            ->render( function() use ( $group ) {
+                // Get user ID from the group
+                $user_id = null;
+                if (isset($group->user) && method_exists($group->user, 'get_id')) {
+                    $user_id = $group->user->get_id();
+                } elseif (isset($group->user) && $group->user instanceof \WP_User) {
+                    $user_id = $group->user->ID;
+                }
+
+                if (!$user_id) {
+                    return '';
+                }
+
+                // Get the voxel:plan meta
+                $plan_meta = get_user_meta($user_id, 'voxel:plan', true);
+
+                if (empty($plan_meta)) {
+                    return '';
+                }
+
+                // Decode JSON if it's a string
+                if (is_string($plan_meta)) {
+                    $plan_data = json_decode($plan_meta, true);
+                } else {
+                    $plan_data = $plan_meta;
+                }
+
+                // Validate plan data structure
+                if (!is_array($plan_data) || !isset($plan_data['billing']['current_period']['end'])) {
+                    return '';
+                }
+
+                // Get the end date
+                $end_date = $plan_data['billing']['current_period']['end'];
+
+                if (empty($end_date)) {
+                    return '';
+                }
+
+                // Parse the date
+                try {
+                    $timestamp = strtotime($end_date);
+                    if ($timestamp === false) {
+                        return '';
+                    }
+
+                    // Format according to WordPress date settings
+                    $date_format = get_option('date_format');
+                    $formatted_date = date_i18n($date_format, $timestamp);
+
+                    return $formatted_date;
+                } catch (Exception $e) {
+                    return '';
+                }
+            } );
 
         return $properties;
     }
@@ -112,9 +217,62 @@ class Voxel_Toolkit_Dynamic_Tags {
      */
     public function register_author_properties($properties, $group) {
         // Add membership expiration property
-        if (class_exists('Voxel_Toolkit_Membership_Expiration_Property')) {
-            $properties['membership_expiration'] = \Voxel_Toolkit_Membership_Expiration_Property::register();
-        }
+        $properties['membership_expiration'] = \Voxel\Dynamic_Data\Tag::String('Membership Expiration Date')
+            ->render( function() use ( $group ) {
+                // Get user ID from the group
+                $user_id = null;
+                if (isset($group->user) && method_exists($group->user, 'get_id')) {
+                    $user_id = $group->user->get_id();
+                } elseif (isset($group->user) && $group->user instanceof \WP_User) {
+                    $user_id = $group->user->ID;
+                }
+
+                if (!$user_id) {
+                    return '';
+                }
+
+                // Get the voxel:plan meta
+                $plan_meta = get_user_meta($user_id, 'voxel:plan', true);
+
+                if (empty($plan_meta)) {
+                    return '';
+                }
+
+                // Decode JSON if it's a string
+                if (is_string($plan_meta)) {
+                    $plan_data = json_decode($plan_meta, true);
+                } else {
+                    $plan_data = $plan_meta;
+                }
+
+                // Validate plan data structure
+                if (!is_array($plan_data) || !isset($plan_data['billing']['current_period']['end'])) {
+                    return '';
+                }
+
+                // Get the end date
+                $end_date = $plan_data['billing']['current_period']['end'];
+
+                if (empty($end_date)) {
+                    return '';
+                }
+
+                // Parse the date
+                try {
+                    $timestamp = strtotime($end_date);
+                    if ($timestamp === false) {
+                        return '';
+                    }
+
+                    // Format according to WordPress date settings
+                    $date_format = get_option('date_format');
+                    $formatted_date = date_i18n($date_format, $timestamp);
+
+                    return $formatted_date;
+                } catch (Exception $e) {
+                    return '';
+                }
+            } );
 
         return $properties;
     }

@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Timeline Photos Widget: Added "Photo Limit" control to limit the maximum number of photos displayed
 - Timeline Photos Widget: Added "Photo Offset" control to skip photos from the beginning of the gallery
+- Dynamic Tags: New `@post(reading_time)` property showing estimated reading time (e.g., "5 min" or "1 hr 30 min")
+- Dynamic Tags: New `@post(word_count)` property showing total word count in post content
+- Dynamic Tags: New `@user(membership_expiration)` and `@author(membership_expiration)` properties showing membership expiration date
+- Dynamic Tags: Added admin documentation page with usage examples and syntax guide
 
 ### Changed
 - Widgets page: Widgets now display in alphabetical order by name
