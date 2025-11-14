@@ -353,7 +353,14 @@ class Voxel_Toolkit_Admin {
              data-function-name="<?php echo esc_attr(strtolower($function_data['name'])); ?>"
              data-function-description="<?php echo esc_attr(strtolower($function_data['description'])); ?>">
             <div class="function-header">
-                <h3><?php echo esc_html($function_data['name']); ?></h3>
+                <div class="function-title-row">
+                    <h3><?php echo esc_html($function_data['name']); ?></h3>
+                    <?php if ($is_enabled): ?>
+                        <span class="voxel-toolkit-function-badge voxel-toolkit-badge-enabled"><?php _e('Enabled', 'voxel-toolkit'); ?></span>
+                    <?php else: ?>
+                        <span class="voxel-toolkit-function-badge voxel-toolkit-badge-disabled"><?php _e('Disabled', 'voxel-toolkit'); ?></span>
+                    <?php endif; ?>
+                </div>
                 <div class="function-toggle">
                     <?php if ($is_always_enabled): ?>
                         <span class="always-enabled-badge"><?php _e('Always Active', 'voxel-toolkit'); ?></span>
