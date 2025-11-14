@@ -201,6 +201,28 @@ class Voxel_Toolkit_Elementor_Timeline_Photos extends \Elementor\Widget_Base {
         );
         
         $this->add_control(
+            'photo_limit',
+            [
+                'label' => __('Photo Limit', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::NUMBER,
+                'default' => 0,
+                'min' => 0,
+                'description' => __('Maximum number of photos to display (0 = unlimited)', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'photo_offset',
+            [
+                'label' => __('Photo Offset', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::NUMBER,
+                'default' => 0,
+                'min' => 0,
+                'description' => __('Number of photos to skip from the beginning (e.g., 2 will skip the first 2 photos)', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
             'show_empty_message',
             [
                 'label' => __('Show Empty Message', 'voxel-toolkit'),
@@ -211,7 +233,7 @@ class Voxel_Toolkit_Elementor_Timeline_Photos extends \Elementor\Widget_Base {
                 'default' => 'yes',
             ]
         );
-        
+
         $this->add_control(
             'empty_message',
             [
@@ -223,7 +245,7 @@ class Voxel_Toolkit_Elementor_Timeline_Photos extends \Elementor\Widget_Base {
                 ],
             ]
         );
-        
+
         $this->end_controls_section();
         
         // Style Section - Gallery Style
@@ -475,7 +497,21 @@ class Voxel_Toolkit_Elementor_Timeline_Photos extends \Elementor\Widget_Base {
         }
         
         $photos = $this->get_timeline_photos($post_id);
-        
+
+        // Apply offset and limit
+        $offset = isset($settings['photo_offset']) ? intval($settings['photo_offset']) : 0;
+        $limit = isset($settings['photo_limit']) ? intval($settings['photo_limit']) : 0;
+
+        // Apply offset
+        if ($offset > 0 && !empty($photos)) {
+            $photos = array_slice($photos, $offset);
+        }
+
+        // Apply limit
+        if ($limit > 0 && !empty($photos)) {
+            $photos = array_slice($photos, 0, $limit);
+        }
+
         if (empty($photos)) {
             if ($settings['show_empty_message'] === 'yes') {
                 echo '<div class="timeline-photos-empty">' . esc_html($settings['empty_message']) . '</div>';
