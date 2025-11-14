@@ -42,6 +42,7 @@ class Voxel_Toolkit_Admin {
         add_action('wp_ajax_voxel_toolkit_toggle_function', array($this, 'ajax_toggle_function'));
         add_action('wp_ajax_voxel_toolkit_toggle_widget', array($this, 'ajax_toggle_widget'));
         add_action('wp_ajax_voxel_toolkit_bulk_toggle_widgets', array($this, 'ajax_bulk_toggle_widgets'));
+        add_action('wp_ajax_voxel_toolkit_get_widget_usage', array($this, 'ajax_get_widget_usage'));
         add_action('wp_ajax_voxel_toolkit_reset_settings', array($this, 'ajax_reset_settings'));
         add_action('wp_ajax_vt_admin_notifications_user_search', array($this, 'ajax_admin_notifications_user_search'));
     }
@@ -875,6 +876,121 @@ class Voxel_Toolkit_Admin {
     }
 
     /**
+     * Get widget usage details AJAX handler
+     */
+    public function ajax_get_widget_usage() {
+        // Verify nonce
+        if (!wp_verify_nonce($_POST['nonce'], 'voxel_toolkit_widget_nonce')) {
+            wp_send_json_error(__('Security check failed.', 'voxel-toolkit'));
+        }
+
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('You do not have sufficient permissions.', 'voxel-toolkit'));
+        }
+
+        $widget_key = sanitize_text_field($_POST['widget_key']);
+        $pages = $this->get_widget_usage_pages($widget_key);
+
+        if (!empty($pages)) {
+            wp_send_json_success(array(
+                'pages' => $pages,
+                'count' => count($pages)
+            ));
+        } else {
+            wp_send_json_success(array(
+                'pages' => array(),
+                'count' => 0,
+                'message' => __('This widget is not currently used on any pages.', 'voxel-toolkit')
+            ));
+        }
+    }
+
+    /**
+     * Get detailed list of pages using a widget
+     *
+     * @param string $widget_key Widget key
+     * @return array List of pages with title, ID, edit link, and view link
+     */
+    private function get_widget_usage_pages($widget_key) {
+        global $wpdb;
+
+        // Build the exact widget type identifier
+        $widget_type = 'voxel-' . $widget_key;
+
+        // Search for the specific widget type in Elementor JSON data
+        // Using JSON pattern to be more precise: "widgetType":"voxel-widget_key"
+        $widget_pattern = '%"widgetType":"' . $widget_type . '"%';
+
+        $results = $wpdb->get_results($wpdb->prepare(
+            "SELECT pm.post_id, pm.meta_value, p.post_title, p.post_type, p.post_status
+            FROM {$wpdb->postmeta} pm
+            INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
+            WHERE pm.meta_key = '_elementor_data'
+            AND pm.meta_value LIKE %s
+            AND p.post_status != 'trash'
+            AND p.post_status != 'auto-draft'
+            ORDER BY p.post_modified DESC",
+            $widget_pattern
+        ));
+
+        $pages = array();
+        foreach ($results as $result) {
+            // Double-check by parsing JSON to verify widget actually exists
+            // (not just a string match in a text field or similar)
+            $elementor_data = json_decode($result->meta_value, true);
+            if ($this->widget_exists_in_elementor_data($elementor_data, $widget_type)) {
+                $post_type_obj = get_post_type_object($result->post_type);
+
+                $pages[] = array(
+                    'id' => $result->post_id,
+                    'title' => $result->post_title ?: __('(no title)', 'voxel-toolkit'),
+                    'type' => $post_type_obj ? $post_type_obj->labels->singular_name : $result->post_type,
+                    'status' => $result->post_status,
+                    'edit_link' => get_edit_post_link($result->post_id),
+                    'view_link' => get_permalink($result->post_id),
+                    'elementor_edit_link' => admin_url('post.php?post=' . $result->post_id . '&action=elementor')
+                );
+            }
+        }
+
+        return $pages;
+    }
+
+    /**
+     * Recursively check if widget exists in Elementor data structure
+     *
+     * @param array $data Elementor data array
+     * @param string $widget_type Widget type to search for
+     * @return bool True if widget found
+     */
+    private function widget_exists_in_elementor_data($data, $widget_type) {
+        if (!is_array($data)) {
+            return false;
+        }
+
+        foreach ($data as $element) {
+            if (!is_array($element)) {
+                continue;
+            }
+
+            // Check if this element is the widget we're looking for
+            if (isset($element['widgetType']) && $element['widgetType'] === $widget_type) {
+                return true;
+            }
+
+            // Recursively check nested elements
+            if (isset($element['elements']) && is_array($element['elements'])) {
+                if ($this->widget_exists_in_elementor_data($element['elements'], $widget_type)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Handle AJAX settings reset
      */
     public function ajax_reset_settings() {
@@ -1033,13 +1149,22 @@ class Voxel_Toolkit_Admin {
     private function get_widget_usage_count($widget_key) {
         global $wpdb;
 
-        // Search for widget usage in Elementor data
-        $widget_pattern = '%voxel-' . $widget_key . '%';
+        // Build the exact widget type identifier
+        // Voxel Toolkit widgets use the format: voxel-{widget_key}
+        $widget_type = 'voxel-' . $widget_key;
+
+        // Search for the specific widget type in Elementor JSON data
+        // Using JSON pattern to be more precise: "widgetType":"voxel-widget_key"
+        $widget_pattern = '%"widgetType":"' . $widget_type . '"%';
+
         $count = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(DISTINCT post_id)
-            FROM {$wpdb->postmeta}
-            WHERE meta_key = '_elementor_data'
-            AND meta_value LIKE %s",
+            "SELECT COUNT(DISTINCT pm.post_id)
+            FROM {$wpdb->postmeta} pm
+            INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
+            WHERE pm.meta_key = '_elementor_data'
+            AND pm.meta_value LIKE %s
+            AND p.post_status != 'trash'
+            AND p.post_status != 'auto-draft'",
             $widget_pattern
         ));
 
