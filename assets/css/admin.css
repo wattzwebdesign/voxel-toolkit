@@ -695,6 +695,11 @@ body.vx-dark-mode #wpwrap #wpbody i {
     color: #fff;
 }
 
+.voxel-toolkit-widget-icon i {
+    font-size: 24px;
+    color: #fff;
+}
+
 .voxel-toolkit-widget-meta {
     flex: 1;
     min-width: 0;

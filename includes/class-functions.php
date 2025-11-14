@@ -255,6 +255,7 @@ class Voxel_Toolkit_Functions {
                 'description' => __('Display current weather, forecasts with customizable styling using OpenWeatherMap API.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Weather_Widget_Manager',
                 'file' => 'widgets/class-weather-widget-manager.php',
+                'icon' => 'eicon-flash',
             ),
             'reading_time' => array(
                 'name' => __('Reading Time', 'voxel-toolkit'),
@@ -262,42 +263,49 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Reading_Time_Widget',
                 'file' => 'widgets/class-reading-time-widget.php',
                 'settings_callback' => array($this, 'render_reading_time_widget_settings'),
+                'icon' => 'eicon-clock-o',
             ),
             'table_of_contents' => array(
                 'name' => __('Table of Contents', 'voxel-toolkit'),
                 'description' => __('Display a table of contents showing all ui-step fields from any Voxel post type form with customizable styling.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Table_Of_Contents_Widget',
                 'file' => 'widgets/class-table-of-contents-widget.php',
+                'icon' => 'eicon-bullet-list',
             ),
             'review_collection' => array(
                 'name' => __('Review Collection', 'voxel-toolkit'),
                 'description' => __('Display a collection of user reviews with advanced filtering and styling options.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Review_Collection_Widget_Manager',
                 'file' => 'widgets/class-review-collection-widget-manager.php',
+                'icon' => 'eicon-review',
             ),
             'prev_next_widget' => array(
                 'name' => __('Previous/Next Navigation', 'voxel-toolkit'),
                 'description' => __('Navigate between posts with customizable previous/next buttons and post information display.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Prev_Next_Widget_Manager',
                 'file' => 'widgets/class-prev-next-widget-manager.php',
+                'icon' => 'eicon-navigation-horizontal',
             ),
             'timeline_photos' => array(
                 'name' => __('Timeline Photos', 'voxel-toolkit'),
                 'description' => __('Display photos from post reviews in a customizable gallery with masonry, grid, and justified layouts.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Timeline_Photos_Widget',
                 'file' => 'widgets/class-timeline-photos-widget.php',
+                'icon' => 'eicon-gallery-grid',
             ),
             'users_purchased' => array(
                 'name' => __('Users Purchased', 'voxel-toolkit'),
                 'description' => __('Display users who have purchased the current product with avatar grid or list views.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Users_Purchased_Widget_Manager',
                 'file' => 'widgets/class-users-purchased-widget-manager.php',
+                'icon' => 'eicon-cart',
             ),
             'article_helpful' => array(
                 'name' => __('Article Helpful', 'voxel-toolkit'),
                 'description' => __('Display "Was this Article Helpful?" widget with yes/no voting and admin statistics tracking.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Article_Helpful_Widget_Manager',
                 'file' => 'widgets/class-article-helpful-widget-manager.php',
+                'icon' => 'eicon-favorite',
             )
         );
 

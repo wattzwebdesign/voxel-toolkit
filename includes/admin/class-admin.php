@@ -109,7 +109,15 @@ class Voxel_Toolkit_Admin {
             array(),
             VOXEL_TOOLKIT_VERSION
         );
-        
+
+        // Enqueue Elementor icons for widget cards
+        wp_enqueue_style(
+            'elementor-icons',
+            plugins_url('elementor/assets/lib/eicons/css/elementor-icons.min.css'),
+            array(),
+            VOXEL_TOOLKIT_VERSION
+        );
+
         // Load full scripts on our plugin pages and Voxel taxonomies pages
         $load_full_scripts = (strpos($hook, 'voxel-toolkit') !== false) || 
                             (isset($_GET['page']) && $_GET['page'] === 'voxel-taxonomies');
@@ -1089,7 +1097,11 @@ class Voxel_Toolkit_Admin {
 
             <div class="voxel-toolkit-widget-header">
                 <div class="voxel-toolkit-widget-icon">
-                    <span class="dashicons dashicons-admin-customizer"></span>
+                    <?php if (isset($widget_data['icon'])): ?>
+                        <i class="<?php echo esc_attr($widget_data['icon']); ?>"></i>
+                    <?php else: ?>
+                        <span class="dashicons dashicons-admin-customizer"></span>
+                    <?php endif; ?>
                 </div>
                 <div class="voxel-toolkit-widget-meta">
                     <div class="voxel-toolkit-widget-title-row">
