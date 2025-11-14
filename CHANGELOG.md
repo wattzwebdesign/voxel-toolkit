@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dynamic Tags: New `@post(word_count)` property showing total word count in post content
 - Dynamic Tags: New `@user(membership_expiration)` and `@author(membership_expiration)` properties showing membership expiration date
 - Dynamic Tags: Added admin documentation page with usage examples and syntax guide
+- Modifiers: New `.file_size()` modifier to get formatted file size from file ID (e.g., `@post(upload-media.id).file_size()`)
+- Modifiers: New `.file_extension()` modifier to get file extension from file ID (e.g., `@post(upload-media.id).file_extension()`)
 
 ### Changed
 - Widgets page: Widgets now display in alphabetical order by name

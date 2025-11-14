@@ -15,18 +15,12 @@ class Voxel_Toolkit_Dynamic_Tags {
      * Constructor
      */
     public function __construct() {
-        // Debug logging
-        error_log('Voxel_Toolkit_Dynamic_Tags: Constructor called');
-
         // Load classes first
         $this->load_methods();
         $this->load_properties();
 
         // Register filters - these need to be added immediately, not on a hook
         $this->init_hooks();
-
-        // Debug logging
-        error_log('Voxel_Toolkit_Dynamic_Tags: Hooks registered');
     }
 
     /**
@@ -36,6 +30,9 @@ class Voxel_Toolkit_Dynamic_Tags {
         // Register methods with Voxel - always active
         add_filter('voxel/dynamic-data/groups/user/methods', array($this, 'register_user_methods'), 10, 1);
         add_filter('voxel/dynamic-data/groups/author/methods', array($this, 'register_author_methods'), 10, 1);
+
+        // Register modifiers with Voxel
+        add_filter('voxel/dynamic-data/modifiers', array($this, 'register_modifiers'), 10, 1);
 
         // Register properties with Voxel
         add_filter('voxel/dynamic-data/groups/post/properties', array($this, 'register_post_properties'), 10, 2);
@@ -50,6 +47,9 @@ class Voxel_Toolkit_Dynamic_Tags {
         if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-profile-completion-method.php')) {
             require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-profile-completion-method.php';
         }
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-file-modifiers.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-file-modifiers.php';
+        }
     }
 
     /**
@@ -61,6 +61,15 @@ class Voxel_Toolkit_Dynamic_Tags {
     public function load_properties() {
         // Properties are registered inline in register_*_properties methods
         // No class loading needed
+    }
+
+    /**
+     * Register modifiers with Voxel
+     */
+    public function register_modifiers($modifiers) {
+        $modifiers['file_size'] = \Voxel_Toolkit_File_Size_Modifier::class;
+        $modifiers['file_extension'] = \Voxel_Toolkit_File_Extension_Modifier::class;
+        return $modifiers;
     }
 
     /**
@@ -83,8 +92,6 @@ class Voxel_Toolkit_Dynamic_Tags {
      * Register properties for post group
      */
     public function register_post_properties($properties, $group) {
-        error_log('Voxel_Toolkit_Dynamic_Tags: register_post_properties called');
-
         // Add reading time property
         $properties['reading_time'] = \Voxel\Dynamic_Data\Tag::String('Reading Time')
             ->render( function() use ( $group ) {
