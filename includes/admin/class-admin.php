@@ -376,17 +376,7 @@ class Voxel_Toolkit_Admin {
             <div class="function-description">
                 <p><?php echo esc_html($function_data['description']); ?></p>
             </div>
-            
-            <div class="function-status">
-                <span class="status-indicator <?php echo $is_active ? 'active' : 'inactive'; ?>">
-                    <?php echo $is_active ? __('Active', 'voxel-toolkit') : __('Inactive', 'voxel-toolkit'); ?>
-                </span>
-                
-                <?php if (isset($function_data['version'])): ?>
-                    <span class="version">v<?php echo esc_html($function_data['version']); ?></span>
-                <?php endif; ?>
-            </div>
-            
+
             <?php if ($is_enabled): ?>
                 <div class="function-actions">
                     <a href="<?php echo esc_url($settings_url); ?>" class="button button-secondary">

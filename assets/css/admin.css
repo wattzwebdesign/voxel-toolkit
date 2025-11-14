@@ -149,56 +149,6 @@ input:checked + .slider:before {
     line-height: 1.5;
 }
 
-.function-status {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.status-indicator {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-    text-transform: uppercase;
-}
-
-.status-indicator:before {
-    content: "";
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    margin-right: 6px;
-}
-
-.status-indicator.active {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-indicator.active:before {
-    background: #28a745;
-}
-
-.status-indicator.inactive {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-.status-indicator.inactive:before {
-    background: #dc3545;
-}
-
-.version {
-    font-size: 12px;
-    color: #646970;
-    background: #f1f1f1;
-    padding: 2px 6px;
-    border-radius: 3px;
-}
 
 .function-actions {
     border-top: 1px solid #e1e5e9;
@@ -568,12 +518,6 @@ body.vx-dark-mode #wpwrap #wpbody i {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
-    }
-    
-    .function-status {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
     }
     
     .controls-row {
