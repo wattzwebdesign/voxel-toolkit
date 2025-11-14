@@ -32,7 +32,23 @@ class Voxel_Toolkit_Profile_Completion_Method extends \Voxel\Dynamic_Data\Modifi
      * Define method arguments
      */
     protected function define_args(): void {
-        // No arguments needed - will use fields from widget settings
+        // Get available profile fields for dynamic options
+        $available_fields = array();
+        if (class_exists('Voxel_Toolkit_Profile_Progress_Widget')) {
+            $available_fields = Voxel_Toolkit_Profile_Progress_Widget::get_available_profile_fields();
+        }
+
+        // Add up to 10 field selection arguments
+        for ($i = 1; $i <= 10; $i++) {
+            $this->define_arg([
+                'type' => 'select',
+                'label' => sprintf('Field %d', $i),
+                'options' => array_merge(
+                    ['' => '-- Select field --'],
+                    $available_fields
+                ),
+            ]);
+        }
     }
 
     /**
@@ -49,10 +65,21 @@ class Voxel_Toolkit_Profile_Completion_Method extends \Voxel\Dynamic_Data\Modifi
             return 0;
         }
 
-        // Get field keys from the widget settings stored in options
-        $field_keys = get_option('voxel_toolkit_profile_completion_fields', []);
+        // Collect field keys from arguments
+        $field_keys = [];
+        for ($i = 0; $i < 10; $i++) {
+            $field_key = $this->get_arg($i);
+            if (!empty($field_key)) {
+                $field_keys[] = $field_key;
+            }
+        }
 
-        // If no fields configured, return 0
+        // Fallback to global settings if no fields specified in arguments
+        if (empty($field_keys)) {
+            $field_keys = get_option('voxel_toolkit_profile_completion_fields', []);
+        }
+
+        // If still no fields configured, return 0
         if (empty($field_keys)) {
             return 0;
         }
