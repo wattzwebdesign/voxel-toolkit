@@ -33,13 +33,38 @@ class Voxel_Toolkit_Profile_Progress_Widget {
     }
     
     /**
-     * Register Elementor widget
+     * Register Elementor widget (only for existing users who already have it)
      */
     public function register_elementor_widget($widgets_manager) {
-        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/elementor/widgets/profile-progress.php';
-        $widgets_manager->register(new \Voxel_Toolkit_Elementor_Profile_Progress());
+        // Check if widget is already in use (legacy support)
+        $widget_in_use = $this->is_widget_in_use();
+
+        // Only register if widget is already being used
+        if ($widget_in_use) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/elementor/widgets/profile-progress.php';
+            $widgets_manager->register(new \Voxel_Toolkit_Elementor_Profile_Progress());
+        }
     }
-    
+
+    /**
+     * Check if widget is already in use on the site
+     */
+    private function is_widget_in_use() {
+        global $wpdb;
+
+        // Check if widget exists in any Elementor data
+        $query = $wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->postmeta}
+            WHERE meta_key = '_elementor_data'
+            AND meta_value LIKE %s",
+            '%voxel-profile-progress%'
+        );
+
+        $count = $wpdb->get_var($query);
+
+        return $count > 0;
+    }
+
     /**
      * Get profile fields from voxel:post_types option
      */

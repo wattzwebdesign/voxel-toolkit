@@ -989,12 +989,6 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
             }
         }
 
-        // Sync field keys to options for use in dynamic tag (only if not already set via settings)
-        $existing_fields = get_option('voxel_toolkit_profile_completion_fields', array());
-        if (empty($existing_fields) && !empty($field_keys)) {
-            update_option('voxel_toolkit_profile_completion_fields', $field_keys, false);
-        }
-
         // Get field data or use sample for editor
         if (!$user_id && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
             // Sample data for editor
