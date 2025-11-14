@@ -1001,7 +1001,7 @@ body.vx-dark-mode #wpwrap #wpbody i {
     align-items: center;
     padding: 25px 30px;
     border-bottom: 1px solid #e2e8f0;
-    background: #667eea;
+    background: #1e3a5f;
     border-radius: 12px 12px 0 0;
 }
 
@@ -1084,7 +1084,7 @@ body.vx-dark-mode #wpwrap #wpbody i {
 }
 
 .voxel-toolkit-usage-count strong {
-    color: #667eea;
+    color: #1e3a5f;
 }
 
 .voxel-toolkit-page-list {
@@ -1108,9 +1108,9 @@ body.vx-dark-mode #wpwrap #wpbody i {
 }
 
 .voxel-toolkit-page-item:hover {
-    border-color: #667eea;
+    border-color: #1e3a5f;
     background: #fff;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 2px 8px rgba(30, 58, 95, 0.1);
 }
 
 .voxel-toolkit-page-info {
