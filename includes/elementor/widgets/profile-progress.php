@@ -120,11 +120,15 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
             'field_key',
             [
                 'label' => __('Profile Field', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::SELECT,
+                'type' => \Elementor\Controls_Manager::SELECT2,
                 'options' => $profile_fields,
                 'default' => !empty($profile_fields) ? array_key_first($profile_fields) : '',
                 'label_block' => true,
                 'render_type' => 'none',
+                'select2options' => [
+                    'tags' => true,
+                    'placeholder' => __('Select or type field key', 'voxel-toolkit'),
+                ],
             ]
         );
         
@@ -966,15 +970,20 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
      */
     protected function render() {
         $settings = $this->get_settings_for_display();
-        
+
         // Get current user ID
         $user_id = get_current_user_id();
-        
+
+        // Get available profile fields for validation
+        $available_fields = Voxel_Toolkit_Profile_Progress_Widget::get_available_profile_fields();
+
         // Extract field keys from repeater
         $field_keys = [];
         if (!empty($settings['profile_fields'])) {
             foreach ($settings['profile_fields'] as $field) {
                 if (!empty($field['field_key'])) {
+                    // Backwards compatibility: Accept any field_key value
+                    // even if it's not in the current dropdown options
                     $field_keys[] = $field['field_key'];
                 }
             }
