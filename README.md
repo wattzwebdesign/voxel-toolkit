@@ -24,7 +24,7 @@ Voxel Toolkit provides a modular approach to extending your Voxel theme with add
 ## Requirements
 
 - WordPress 5.0 or higher
-- PHP 7.4 or higher
+- PHP 8.3 or higher
 - Voxel theme (active)
 
 ## Usage
