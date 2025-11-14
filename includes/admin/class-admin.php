@@ -1158,8 +1158,8 @@ class Voxel_Toolkit_Admin {
         // Using JSON pattern to be more precise: "widgetType":"voxel-widget_key"
         $widget_pattern = '%"widgetType":"' . $widget_type . '"%';
 
-        $count = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(DISTINCT pm.post_id)
+        $results = $wpdb->get_results($wpdb->prepare(
+            "SELECT pm.post_id, pm.meta_value
             FROM {$wpdb->postmeta} pm
             INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
             WHERE pm.meta_key = '_elementor_data'
@@ -1170,7 +1170,16 @@ class Voxel_Toolkit_Admin {
             $widget_pattern
         ));
 
-        return intval($count);
+        // Verify each result by parsing JSON to avoid false positives
+        $count = 0;
+        foreach ($results as $result) {
+            $elementor_data = json_decode($result->meta_value, true);
+            if ($this->widget_exists_in_elementor_data($elementor_data, $widget_type)) {
+                $count++;
+            }
+        }
+
+        return $count;
     }
     
     /**
