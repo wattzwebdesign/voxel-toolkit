@@ -41,6 +41,66 @@ class Voxel_Toolkit_Profile_Progress_Widget {
     }
     
     /**
+     * Get profile fields from voxel:post_types option
+     */
+    public static function get_available_profile_fields() {
+        $post_types = get_option('voxel:post_types', array());
+
+        // Handle serialized data
+        if (is_string($post_types)) {
+            $post_types = maybe_unserialize($post_types);
+        }
+
+        // Try JSON decode if it's a JSON string
+        if (is_string($post_types)) {
+            $decoded = json_decode($post_types, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $post_types = $decoded;
+            }
+        }
+
+        if (empty($post_types) || !is_array($post_types)) {
+            return array('' => __('No profile fields found', 'voxel-toolkit'));
+        }
+
+        // Look for 'profile' post type
+        if (!isset($post_types['profile']) || !is_array($post_types['profile'])) {
+            return array('' => __('Profile post type not found', 'voxel-toolkit'));
+        }
+
+        $profile_data = $post_types['profile'];
+
+        // Get fields array
+        if (!isset($profile_data['fields']) || !is_array($profile_data['fields'])) {
+            return array('' => __('No profile fields found', 'voxel-toolkit'));
+        }
+
+        $available_fields = array();
+
+        // Loop through fields and extract key and label
+        foreach ($profile_data['fields'] as $field) {
+            if (isset($field['key']) && !empty($field['key'])) {
+                // Skip ui-step fields as they're not data fields
+                if (isset($field['type']) && $field['type'] === 'ui-step') {
+                    continue;
+                }
+
+                $label = isset($field['label']) && !empty($field['label'])
+                    ? $field['label']
+                    : $field['key'];
+
+                $available_fields[$field['key']] = $label;
+            }
+        }
+
+        if (empty($available_fields)) {
+            return array('' => __('No profile fields found', 'voxel-toolkit'));
+        }
+
+        return $available_fields;
+    }
+
+    /**
      * Get user profile field data
      */
     public static function get_user_profile_fields($user_id, $field_keys) {

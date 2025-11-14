@@ -112,13 +112,17 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
         
         // Profile Fields Repeater
         $repeater = new \Elementor\Repeater();
-        
+
+        // Get available profile fields
+        $profile_fields = Voxel_Toolkit_Profile_Progress_Widget::get_available_profile_fields();
+
         $repeater->add_control(
             'field_key',
             [
-                'label' => __('Field Key', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'placeholder' => __('Enter field key (e.g., first_name)', 'voxel-toolkit'),
+                'label' => __('Profile Field', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => $profile_fields,
+                'default' => !empty($profile_fields) ? array_key_first($profile_fields) : '',
                 'label_block' => true,
                 'render_type' => 'none',
             ]
@@ -147,22 +151,40 @@ class Voxel_Toolkit_Elementor_Profile_Progress extends \Elementor\Widget_Base {
             ]
         );
         
+        // Build default fields
+        $default_fields = [];
+        if (!empty($profile_fields) && is_array($profile_fields)) {
+            $field_keys = array_keys($profile_fields);
+            $count = 0;
+            foreach ($field_keys as $key) {
+                if ($count >= 2) break; // Only add first 2 fields as defaults
+                if (!empty($key)) {
+                    $default_fields[] = [
+                        'field_key' => $key,
+                        'field_label' => $profile_fields[$key],
+                    ];
+                    $count++;
+                }
+            }
+        }
+
+        // Fallback if no profile fields found
+        if (empty($default_fields)) {
+            $default_fields = [
+                [
+                    'field_key' => '',
+                    'field_label' => __('No fields available', 'voxel-toolkit'),
+                ],
+            ];
+        }
+
         $this->add_control(
             'profile_fields',
             [
                 'label' => __('Profile Fields', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::REPEATER,
                 'fields' => $repeater->get_controls(),
-                'default' => [
-                    [
-                        'field_key' => 'first_name',
-                        'field_label' => 'First Name',
-                    ],
-                    [
-                        'field_key' => 'last_name',
-                        'field_label' => 'Last Name',
-                    ],
-                ],
+                'default' => $default_fields,
                 'title_field' => '{{{ field_label }}} ({{{ field_key }}})',
             ]
         );
