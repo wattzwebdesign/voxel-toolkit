@@ -15,6 +15,11 @@ class Voxel_Toolkit_Dynamic_Tags {
      * Constructor
      */
     public function __construct() {
+        // Load classes first
+        $this->load_methods();
+        $this->load_properties();
+
+        // Register filters - these need to be added immediately, not on a hook
         $this->init_hooks();
     }
 
@@ -22,13 +27,9 @@ class Voxel_Toolkit_Dynamic_Tags {
      * Initialize hooks
      */
     private function init_hooks() {
-        // Load method and property classes immediately
-        $this->load_methods();
-        $this->load_properties();
-
-        // Register methods with Voxel
-        add_filter('voxel/dynamic-data/groups/user/methods', array($this, 'register_user_methods'));
-        add_filter('voxel/dynamic-data/groups/author/methods', array($this, 'register_author_methods'));
+        // Register methods with Voxel - always active
+        add_filter('voxel/dynamic-data/groups/user/methods', array($this, 'register_user_methods'), 10, 1);
+        add_filter('voxel/dynamic-data/groups/author/methods', array($this, 'register_author_methods'), 10, 1);
 
         // Register properties with Voxel
         // Temporarily disabled until proper Property classes are implemented
