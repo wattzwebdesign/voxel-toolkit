@@ -89,6 +89,9 @@ class Voxel_Toolkit_Profile_Progress_Widget {
                     ? $field['label']
                     : $field['key'];
 
+                // Capitalize first letter for proper display
+                $label = ucfirst($label);
+
                 $available_fields[$field['key']] = $label;
             }
         }
