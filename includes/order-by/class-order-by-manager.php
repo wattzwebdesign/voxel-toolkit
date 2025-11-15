@@ -33,6 +33,8 @@ class Voxel_Toolkit_Order_By_Manager {
      */
     private function __construct() {
         // Filter is registered at top level in this file
+        // Add hook to inject view count preset via JavaScript
+        add_action('admin_footer', array($this, 'inject_view_count_preset_js'));
     }
 
     /**
@@ -44,6 +46,35 @@ class Voxel_Toolkit_Order_By_Manager {
     public function add_view_count_order($orderby_types) {
         $orderby_types['view-count'] = \Voxel_Toolkit\Order_By\View_Count_Order::class;
         return $orderby_types;
+    }
+
+    /**
+     * Inject JavaScript to add view count preset to Post_Type_Options
+     */
+    public function inject_view_count_preset_js() {
+        // Only run on admin pages
+        if (!is_admin()) {
+            return;
+        }
+
+        ?>
+        <script type="text/javascript">
+        (function() {
+            if (typeof window.Post_Type_Options !== 'undefined' && window.Post_Type_Options.orderby_presets) {
+                // Add "Most viewed" preset
+                window.Post_Type_Options.orderby_presets['most-viewed'] = {
+                    key: 'most-viewed',
+                    label: 'Most viewed',
+                    clauses: [{
+                        type: 'view-count',
+                        order: 'DESC',
+                        period: 'all'
+                    }]
+                };
+            }
+        })();
+        </script>
+        <?php
     }
 }
 
