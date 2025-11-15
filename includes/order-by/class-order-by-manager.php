@@ -32,19 +32,7 @@ class Voxel_Toolkit_Order_By_Manager {
      * Constructor
      */
     private function __construct() {
-        // Register early, before Voxel initializes post types
-        add_action('after_setup_theme', array($this, 'register_order_by_types'), 5);
-    }
-
-    /**
-     * Register custom order by types
-     */
-    public function register_order_by_types() {
-        // Load the view count order class
-        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/order-by/class-view-count-order.php';
-
-        // Register with Voxel
-        add_filter('voxel/orderby-types', array($this, 'add_view_count_order'));
+        // Filter is registered at top level in this file
     }
 
     /**
@@ -59,5 +47,18 @@ class Voxel_Toolkit_Order_By_Manager {
     }
 }
 
-// Initialize the manager
+// Register filter at the top level (before any theme hooks)
+// Load the class file INSIDE the filter callback to ensure Voxel classes exist first
+add_filter('voxel/orderby-types', function($orderby_types) {
+    // Load view count order class NOW (when filter is called, Voxel classes exist)
+    if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/order-by/class-view-count-order.php')) {
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/order-by/class-view-count-order.php';
+    }
+
+    $orderby_types['view-count'] = \Voxel_Toolkit\Order_By\View_Count_Order::class;
+
+    return $orderby_types;
+});
+
+// Initialize the manager (for any future functionality)
 Voxel_Toolkit_Order_By_Manager::instance();

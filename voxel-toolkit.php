@@ -38,6 +38,14 @@ if (!defined('VOXEL_TOOLKIT_PLUGIN_FILE')) {
 }
 
 /**
+ * Load Order By Manager early (before theme config loads)
+ * This must be loaded at the top level to register filters before Voxel theme config is processed
+ */
+if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/order-by/class-order-by-manager.php')) {
+    require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/order-by/class-order-by-manager.php';
+}
+
+/**
  * Main Voxel Toolkit Class
  */
 if (!class_exists('Voxel_Toolkit')) {
@@ -158,8 +166,8 @@ class Voxel_Toolkit {
             'includes/functions/class-admin-menu-hide.php',
             'includes/functions/class-admin-notifications.php',
             'includes/functions/class-featured-posts.php',
-            'includes/dynamic-tags/class-dynamic-tags.php',
-            'includes/order-by/class-order-by-manager.php'
+            'includes/dynamic-tags/class-dynamic-tags.php'
+            // Note: order-by-manager is loaded at top level before theme config
         );
 
         if (is_admin()) {
