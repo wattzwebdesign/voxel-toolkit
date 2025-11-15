@@ -21,6 +21,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Uses Google Geocoding API
   - Works with international addresses
   - Usage: `@post(location.address).address_part(city)` or `@post(location.address).address_part(postal_code)`
+- Campaign Progress Widget: GoFundMe-style donation/crowdfunding progress tracker
+  - Display campaign goal with visual progress bar
+  - Show total raised, remaining amount, and percentage complete
+  - Recent donor list with avatars, names, dates, and amounts
+  - Integrates with Voxel orders system (wp_vx_orders)
+  - Customizable text labels for all elements
+  - Full styling controls: progress bar colors, donor list styling, typography
+  - 5-minute caching for optimal performance
 
 ### Changed
 - Widgets page: Widgets now display in alphabetical order by name
