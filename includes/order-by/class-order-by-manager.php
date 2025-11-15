@@ -61,10 +61,10 @@ class Voxel_Toolkit_Order_By_Manager {
         <script type="text/javascript">
         (function() {
             if (typeof window.Post_Type_Options !== 'undefined' && window.Post_Type_Options.orderby_presets) {
-                // Add "Most viewed" preset
-                window.Post_Type_Options.orderby_presets['most-viewed'] = {
-                    key: 'most-viewed',
-                    label: 'Most viewed',
+                // Add "View Count" preset
+                window.Post_Type_Options.orderby_presets['view-count-preset'] = {
+                    key: 'view-count-preset',
+                    label: 'View Count',
                     clauses: [{
                         type: 'view-count',
                         order: 'DESC',

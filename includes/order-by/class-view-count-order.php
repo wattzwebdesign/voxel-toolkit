@@ -26,7 +26,7 @@ class View_Count_Order extends \Voxel\Post_Types\Order_By\Base_Search_Order {
      * Get order by label
      */
     public function get_label(): string {
-        return 'View Count';
+        return 'Views';
     }
 
     /**
