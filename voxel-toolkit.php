@@ -46,6 +46,14 @@ if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/order-by/class-order-by-man
 }
 
 /**
+ * Load Filter Manager early (before theme config loads)
+ * This must be loaded at the top level to register filters before Voxel theme config is processed
+ */
+if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/filters/class-filter-manager.php')) {
+    require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/filters/class-filter-manager.php';
+}
+
+/**
  * Main Voxel Toolkit Class
  */
 if (!class_exists('Voxel_Toolkit')) {
