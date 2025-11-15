@@ -28,7 +28,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Integrates with Voxel orders system (wp_vx_orders)
   - Customizable text labels for all elements
   - Full styling controls: progress bar colors, donor list styling, typography
-  - 5-minute caching for optimal performance
+- Search Order: View Count sorting option
+  - Sort posts by view counts in ascending or descending order
+  - Support for multiple time periods: all time, 30 days, 7 days, 24 hours
+  - Queries view count data from post meta using JSON extraction
+  - Available through Custom order option in post type search order settings
 
 ### Changed
 - Widgets page: Widgets now display in alphabetical order by name
