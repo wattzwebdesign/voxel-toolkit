@@ -32,7 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Sort posts by view counts in ascending or descending order
   - Support for multiple time periods: all time, 30 days, 7 days, 24 hours
   - Queries view count data from post meta using JSON extraction
-  - Available through Custom order option in post type search order settings
+  - "Most viewed" preset button for one-click access
+  - Also available through Custom order option for advanced configuration
 
 ### Changed
 - Widgets page: Widgets now display in alphabetical order by name
