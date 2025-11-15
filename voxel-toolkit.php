@@ -158,7 +158,8 @@ class Voxel_Toolkit {
             'includes/functions/class-admin-menu-hide.php',
             'includes/functions/class-admin-notifications.php',
             'includes/functions/class-featured-posts.php',
-            'includes/dynamic-tags/class-dynamic-tags.php'
+            'includes/dynamic-tags/class-dynamic-tags.php',
+            'includes/order-by/class-order-by-manager.php'
         );
 
         if (is_admin()) {
