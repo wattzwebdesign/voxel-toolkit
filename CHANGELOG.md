@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.5.1] - 2025-01-14
 
 ### Added
+- **Custom Search Filters**: Two new filter types for Voxel search forms
+  - **Membership Plan Filter**: Filter posts by author's membership plan
+    - Retrieves active plans from Voxel Paid Memberships module
+    - Includes "Guest" option for users without membership
+    - Supports multiple plan selection
+    - Display modes: Popup or Buttons
+    - Search functionality when 5+ plans available
+    - Configurable default values in Elementor
+  - **User Role Filter**: Filter posts by author's WordPress role
+    - Dynamically retrieves all WordPress roles
+    - Supports multiple role selection (Administrator, Editor, Subscriber, Customer, etc.)
+    - Display modes: Popup or Buttons
+    - Search functionality when 5+ roles available
+    - Configurable default values in Elementor
 - Timeline Photos Widget: Added "Photo Limit" control to limit the maximum number of photos displayed
 - Timeline Photos Widget: Added "Photo Offset" control to skip photos from the beginning of the gallery
 - Dynamic Tags: New `@post(reading_time)` property showing estimated reading time (e.g., "5 min" or "1 hr 30 min")
