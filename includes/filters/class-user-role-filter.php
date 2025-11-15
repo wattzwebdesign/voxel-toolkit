@@ -19,6 +19,7 @@ class User_Role_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
         'type' => 'user-role',
         'label' => 'User Role',
         'placeholder' => 'Select user role(s)',
+        'selected_roles' => [],
     ];
 
     /**
@@ -36,28 +37,68 @@ class User_Role_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
             'label' => $this->get_label_model(),
             'placeholder' => $this->get_placeholder_model(),
             'key' => $this->get_model('key', ['classes' => 'x-col-6']),
+            'selected_roles' => [
+                'type' => \Voxel\Utils\Form_Models\Checkboxes_Model::class,
+                'label' => 'Select roles to display',
+                'description' => 'Choose which user roles can be filtered. Leave empty to show all roles.',
+                'classes' => 'x-col-12',
+                'columns' => 'two',
+                'choices' => $this->_get_all_roles_for_config(),
+            ],
             'icon' => $this->get_icon_model(),
         ];
     }
 
     /**
-     * Get user role choices
+     * Get all roles for backend configuration
+     */
+    protected function _get_all_roles_for_config() {
+        $choices = [];
+
+        if (function_exists('wp_roles')) {
+            $wp_roles = wp_roles();
+            foreach ($wp_roles->roles as $role_key => $role_info) {
+                $choices[$role_key] = $role_info['name'];
+            }
+        }
+
+        return $choices;
+    }
+
+    /**
+     * Get user role choices (filtered by backend selection)
      */
     protected function _get_choices() {
-        $choices = [];
+        $all_roles = [];
 
         // Get all WordPress roles
         if (function_exists('wp_roles')) {
             $wp_roles = wp_roles();
             foreach ($wp_roles->roles as $role_key => $role_info) {
-                $choices[$role_key] = [
+                $all_roles[$role_key] = [
                     'key' => $role_key,
                     'label' => $role_info['name'],
                 ];
             }
         }
 
-        return $choices;
+        // Filter by selected roles in backend settings
+        $selected_roles = (array) ($this->props['selected_roles'] ?? []);
+
+        // If no roles selected in backend, show all roles
+        if (empty($selected_roles)) {
+            return $all_roles;
+        }
+
+        // Return only selected roles
+        $filtered_roles = [];
+        foreach ($selected_roles as $role_key) {
+            if (isset($all_roles[$role_key])) {
+                $filtered_roles[$role_key] = $all_roles[$role_key];
+            }
+        }
+
+        return $filtered_roles;
     }
 
     /**
