@@ -332,6 +332,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-article-helpful-widget-manager.php',
                 'icon' => 'eicon-favorite',
                 'widget_name' => 'voxel-article-helpful',
+            ),
+            'campaign_progress' => array(
+                'name' => __('Campaign Progress', 'voxel-toolkit'),
+                'description' => __('Display donation/crowdfunding progress with goal tracking, progress bar, and donor list.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Campaign_Progress_Widget_Manager',
+                'file' => 'widgets/class-campaign-progress-widget-manager.php',
+                'icon' => 'eicon-product-rating',
+                'widget_name' => 'voxel-toolkit-campaign-progress',
             )
         );
 

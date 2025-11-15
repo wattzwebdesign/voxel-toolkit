@@ -1,0 +1,160 @@
+/**
+ * Campaign Progress Widget Styles
+ *
+ * Minimal, clean design matching GoFundMe-style progress display
+ */
+
+.vt-campaign-progress-widget {
+    max-width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+/* Progress Summary */
+.vt-campaign-progress-summary {
+    margin-bottom: 12px;
+    text-align: right;
+}
+
+.vt-campaign-progress-text {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Progress Bar */
+.vt-campaign-progress-bar {
+    position: relative;
+    height: 40px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.vt-campaign-progress-fill {
+    position: relative;
+    height: 100%;
+    background-color: #9ACD8F;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    min-width: 120px;
+}
+
+.vt-campaign-progress-amount,
+.vt-campaign-progress-percentage {
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    z-index: 1;
+}
+
+/* Donation Count */
+.vt-campaign-donation-count {
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #333;
+}
+
+.vt-campaign-donation-count strong {
+    font-weight: 700;
+}
+
+/* Donor List */
+.vt-donor-list {
+    margin-top: 20px;
+}
+
+.vt-donor-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    transition: box-shadow 0.2s ease;
+}
+
+.vt-donor-item:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.vt-donor-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Donor Avatar */
+.vt-donor-avatar {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vt-donor-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Donor Info */
+.vt-donor-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.vt-donor-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vt-donor-date {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Donor Amount */
+.vt-donor-amount {
+    flex-shrink: 0;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .vt-campaign-progress-fill {
+        padding: 0 12px;
+        min-width: 100px;
+    }
+
+    .vt-campaign-progress-amount,
+    .vt-campaign-progress-percentage {
+        font-size: 12px;
+    }
+
+    .vt-donor-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .vt-donor-item {
+        gap: 10px;
+        padding: 10px;
+    }
+}

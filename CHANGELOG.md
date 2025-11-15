@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modifiers: New `.file_extension()` modifier to get file extension from file ID (e.g., `@post(upload-media.id).file_extension()`)
 - Modifiers: New `.address_part()` modifier to extract specific components from address fields
   - Supports: street number, street name, city, state, postal code, country
-  - Uses Google Geocoding API with 24-hour caching
+  - Uses Google Geocoding API
   - Works with international addresses
   - Usage: `@post(location.address).address_part(city)` or `@post(location.address).address_part(postal_code)`
 
