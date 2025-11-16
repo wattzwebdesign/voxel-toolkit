@@ -5,6 +5,22 @@ All notable changes to Voxel Toolkit will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Onboarding Widget**: Interactive step-by-step tours for first-time users using intro.js
+  - Auto-start with configurable delay and session-based tracking
+  - Manual start button with customizable text and styling
+  - CSS selector targeting for tour steps with tooltip positioning
+  - Tour version system for one-click reset for all users
+  - Preview mode to prevent auto-start while editing in Elementor
+  - Comprehensive styling controls for tooltips, navigation buttons, skip button, progress bar, and bullets
+  - Elementor editor detection to prevent interruptions while editing
+  - Skip confirmation password fields automatically
+
+### Removed
+- **Password Visibility Toggle**: Removed custom password visibility toggle feature as Voxel now includes native password visibility functionality
+
 ## [1.5.1] - 2025-01-14
 
 ### Added
