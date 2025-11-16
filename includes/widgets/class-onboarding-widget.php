@@ -57,19 +57,6 @@ class Onboarding_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
-            'preview_mode',
-            [
-                'label' => __('Preview Mode', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::SWITCHER,
-                'label_on' => __('On', 'voxel-toolkit'),
-                'label_off' => __('Off', 'voxel-toolkit'),
-                'return_value' => 'yes',
-                'default' => 'no',
-                'description' => __('Enable this while editing to prevent auto-start. Disable before publishing.', 'voxel-toolkit'),
-            ]
-        );
-
-        $this->add_control(
             'auto_start',
             [
                 'label' => __('Auto-start Tour', 'voxel-toolkit'),
@@ -151,6 +138,21 @@ class Onboarding_Widget extends \Elementor\Widget_Base {
             [
                 'type' => \Elementor\Controls_Manager::RAW_HTML,
                 'raw' => __('<div style="margin-bottom: 10px;"><strong>Current Tour Version:</strong> <span class="voxel-tour-version-display">1</span></div><button type="button" class="elementor-button elementor-button-default voxel-reset-tour-btn" style="width: 100%;">Reset Tour for All Users</button><div style="margin-top: 10px; font-size: 12px; color: #7a7a7a;">Click this button to increment the tour version and make the tour appear again for all users, even if they\'ve already completed it.</div>', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'preview_divider',
+            [
+                'type' => \Elementor\Controls_Manager::DIVIDER,
+            ]
+        );
+
+        $this->add_control(
+            'preview_tour_button',
+            [
+                'type' => \Elementor\Controls_Manager::RAW_HTML,
+                'raw' => __('<button type="button" class="elementor-button elementor-button-success voxel-preview-tour-btn" style="width: 100%; background-color: #39b54a; color: white;">Preview Tour</button><div style="margin-top: 10px; font-size: 12px; color: #7a7a7a;">Click this button to preview the tour without affecting the auto-start behavior or completion status.</div>', 'voxel-toolkit'),
             ]
         );
 
@@ -1061,7 +1063,6 @@ class Onboarding_Widget extends \Elementor\Widget_Base {
             data-widget-id="<?php echo esc_attr($widget_id); ?>"
             data-page-id="<?php echo esc_attr($page_id); ?>"
             data-tour-version="<?php echo esc_attr($settings['reset_tour_version'] ?? 1); ?>"
-            data-preview-mode="<?php echo esc_attr($settings['preview_mode'] ?? 'no'); ?>"
             data-tour-steps="<?php echo esc_attr(wp_json_encode($tour_steps)); ?>"
             data-auto-start="<?php echo esc_attr($settings['auto_start'] ?? 'no'); ?>"
             data-auto-start-delay="<?php echo esc_attr(($settings['auto_start_delay']['size'] ?? 0.5) * 1000); ?>"

@@ -10,7 +10,6 @@
             this.widgetId = $widget.data('widget-id');
             this.pageId = $widget.data('page-id');
             this.tourVersion = $widget.data('tour-version') || 1;
-            this.previewMode = $widget.data('preview-mode') === 'yes';
             this.tourSteps = $widget.data('tour-steps');
             this.autoStart = $widget.data('auto-start') === 'yes';
             this.autoStartDelay = parseInt($widget.data('auto-start-delay')) || 500;
@@ -45,14 +44,13 @@
             // Setup the tour
             this.setupTour();
 
-            // Auto-start if enabled, not in preview mode, not in editor, and not completed
-            if (this.autoStart && !this.previewMode && !isElementorEditor && !this.isTourCompleted()) {
+            // Auto-start if enabled, not in editor, and not completed
+            if (this.autoStart && !isElementorEditor && !this.isTourCompleted()) {
                 console.log('Voxel Onboarding: Auto-starting tour');
                 setTimeout(() => this.start(), this.autoStartDelay);
             } else {
                 console.log('Voxel Onboarding: Auto-start blocked', {
                     autoStart: this.autoStart,
-                    previewMode: this.previewMode,
                     isElementorEditor: isElementorEditor,
                     isTourCompleted: this.isTourCompleted()
                 });
@@ -199,7 +197,10 @@
      */
     function initOnboardingTours() {
         $('.voxel-onboarding-tour-widget').each(function() {
-            new VoxelOnboardingTour($(this));
+            const $widget = $(this);
+            const tourInstance = new VoxelOnboardingTour($widget);
+            // Store the instance on the widget element for later access
+            $widget.data('voxelTourInstance', tourInstance);
         });
     }
 

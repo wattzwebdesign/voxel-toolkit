@@ -19,7 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Skip confirmation password fields automatically
 - **Show Field Description**: Elementor editor preview support and styling controls for Create Post and Login/Register widgets
   - **Elementor Editor Preview**: Field descriptions now display in Elementor editor preview iframe
-    - Intelligent polling system detects when Voxel dynamically loads form fields
     - Automatically converts tooltip descriptions to visible subtitles in editor
     - Seamless preview experience matching frontend behavior
     - Works in both Create Post forms and Login/Register forms
@@ -31,23 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Responsive margin top control (supports px, em units)
     - Responsive margin bottom control (supports px, em units)
     - Styles apply instantly in both Elementor editor and frontend
-
-### Changed
-- **Admin Notifications**: Removed debug logging (32 error_log statements) that was filling up the debug log
-- **Show Field Description**: Simplified and enhanced for better user experience
-  - Removed admin backend styling settings - all styling now controlled per-page in Elementor
-  - Streamlined implementation for both frontend and Elementor editor
-  - Clean, production-ready code with no debug logging
-  - Default styling provides good out-of-the-box appearance
-  - Per-page customization available in Elementor's Create Post and Login/Register widgets
-  - Now supports both Create Post forms and Login/Register forms
-
-### Removed
-- **Password Visibility Toggle**: Removed custom password visibility toggle feature as Voxel now includes native password visibility functionality
-
-## [1.5.1] - 2025-01-14
-
-### Added
 - **Custom Search Filters**: Two new filter types for Voxel search forms
   - **Membership Plan Filter**: Filter posts by author's membership plan
     - Retrieves active plans from Voxel Paid Memberships module
@@ -62,27 +44,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Display modes: Popup or Buttons
     - Search functionality when 5+ roles available
     - Configurable default values in Elementor
-- Timeline Photos Widget: Added "Photo Limit" control to limit the maximum number of photos displayed
-- Timeline Photos Widget: Added "Photo Offset" control to skip photos from the beginning of the gallery
-- Dynamic Tags: New `@post(reading_time)` property showing estimated reading time (e.g., "5 min" or "1 hr 30 min")
-- Dynamic Tags: New `@post(word_count)` property showing total word count in post content
-- Dynamic Tags: New `@user(membership_expiration)` and `@author(membership_expiration)` properties showing membership expiration date
-- Dynamic Tags: Added admin documentation page with usage examples and syntax guide
-- Modifiers: New `.file_size()` modifier to get formatted file size from file ID (e.g., `@post(upload-media.id).file_size()`)
-- Modifiers: New `.file_extension()` modifier to get file extension from file ID (e.g., `@post(upload-media.id).file_extension()`)
-- Modifiers: New `.address_part()` modifier to extract specific components from address fields
-  - Supports: street number, street name, city, state, postal code, country
-  - Uses Google Geocoding API
-  - Works with international addresses
-  - Usage: `@post(location.address).address_part(city)` or `@post(location.address).address_part(postal_code)`
-- Campaign Progress Widget: GoFundMe-style donation/crowdfunding progress tracker
+- **Timeline Photos Widget**: Added "Photo Limit" and "Photo Offset" controls
+  - Photo Limit: Limit the maximum number of photos displayed
+  - Photo Offset: Skip photos from the beginning of the gallery
+- **Dynamic Tags**: New properties and methods for posts and users
+  - `@post(reading_time)`: Estimated reading time (e.g., "5 min" or "1 hr 30 min")
+  - `@post(word_count)`: Total word count in post content
+  - `@user(membership_expiration)` and `@author(membership_expiration)`: Membership expiration date
+  - `@user().profile_completion()` and `@author().profile_completion()`: Calculate profile completion percentage based on specified fields
+    - Accepts comma-separated field keys or dynamic tags as parameters
+    - Example: `@user().profile_completion(@user(profile.content)\,@user(profile.title))`
+  - Admin documentation page with usage examples and syntax guide
+- **Modifiers**: New data manipulation modifiers
+  - `.file_size()`: Get formatted file size from file ID (e.g., `@post(upload-media.id).file_size()`)
+  - `.file_extension()`: Get file extension from file ID (e.g., `@post(upload-media.id).file_extension()`)
+  - `.address_part()`: Extract specific components from address fields (street number, street name, city, state, postal code, country)
+    - Uses Google Geocoding API
+    - Works with international addresses
+    - Usage: `@post(location.address).address_part(city)`
+- **Campaign Progress Widget**: GoFundMe-style donation/crowdfunding progress tracker
   - Display campaign goal with visual progress bar
   - Show total raised, remaining amount, and percentage complete
   - Recent donor list with avatars, names, dates, and amounts
-  - Integrates with Voxel orders system (wp_vx_orders)
+  - Integrates with Voxel orders system
   - Customizable text labels for all elements
   - Full styling controls: progress bar colors, donor list styling, typography
-- Search Order: View Count sorting option
+- **Sort by Views**: View Count sorting option
   - Sort posts by view counts in ascending or descending order
   - Support for multiple time periods: all time, 30 days, 7 days, 24 hours
   - Queries view count data from post meta using JSON extraction
@@ -90,22 +77,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Also available through Custom order option for advanced configuration
 
 ### Changed
-- Widgets page: Widgets now display in alphabetical order by name
-- Configure button styling on Functions page now matches Usage badge styling
-- Required PHP version adjusted to 8.1 for broader compatibility
+- **Admin Notifications**: Removed debug logging (32 error_log statements) that was filling up the debug log
+- **Widgets page**: Widgets now display in alphabetical order by name
+- **Configure button**: Styling on Functions page now matches Usage badge styling
+- **Required PHP version**: Adjusted to 8.1 for broader compatibility
 
-### Improved
-- Functions page: Added enabled/disabled status badges to match Widgets page design
-- Functions page: Cards now match exact styling of Widgets page (hover effects, toggle switches, colors)
-- Admin UI: Updated all purple accent colors to navy (#1e3a5f) for consistent branding
-- Search inputs: Improved styling with consistent 40px height and navy focus color
-- All page controls: Updated buttons and filters to use navy color scheme
-
-## [1.5.0] - Previous Release
-
-### Features
-- Initial widget redesign implementation
-- Modern card-based UI for widgets and functions pages
-- Enhanced widget usage tracking and display
-- Improved admin interface styling
-
+### Removed
+- **Password Visibility Toggle**: Removed custom password visibility toggle feature as Voxel now includes native password visibility functionality

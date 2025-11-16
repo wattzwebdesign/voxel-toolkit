@@ -1356,7 +1356,7 @@ class Voxel_Toolkit_Admin {
                             <td><code>profile_completion</code></td>
                             <td><?php _e('Calculate profile completion percentage based on specified fields', 'voxel-toolkit'); ?></td>
                             <td><?php _e('Comma-separated list of profile field keys', 'voxel-toolkit'); ?></td>
-                            <td><code>@user().profile_completion(description,email,location)</code></td>
+                            <td><code>@user().profile_completion(@user(profile.content)\,@user(profile.title))</code></td>
                             <td><em>75</em></td>
                         </tr>
                     </tbody>
