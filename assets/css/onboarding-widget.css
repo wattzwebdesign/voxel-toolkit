@@ -1,0 +1,29 @@
+/**
+ * Voxel Onboarding Widget Custom Styles
+ *
+ * Fixes and enhancements for intro.js integration
+ */
+
+/* Fix button label overlap when showStepNumbers is enabled */
+.introjs-button {
+    /* Ensure button text is properly aligned */
+    display: inline-block;
+    white-space: nowrap;
+    /* Remove text shadow that creates ghost text effect */
+    text-shadow: none !important;
+}
+
+/* Remove step number prefix from buttons to prevent overlap */
+.introjs-button::before {
+    content: none !important;
+}
+
+/* Ensure progress indicator has proper spacing */
+.introjs-tooltip-header {
+    margin-bottom: 10px;
+}
+
+/* Ensure proper spacing between elements */
+.introjs-tooltipbuttons {
+    margin-top: 10px;
+}

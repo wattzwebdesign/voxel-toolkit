@@ -340,6 +340,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-campaign-progress-widget-manager.php',
                 'icon' => 'eicon-product-rating',
                 'widget_name' => 'voxel-toolkit-campaign-progress',
+            ),
+            'onboarding' => array(
+                'name' => __('Onboarding', 'voxel-toolkit'),
+                'description' => __('Create interactive onboarding tours for first-time users using intro.js library.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit\Widgets\Onboarding_Widget_Manager',
+                'file' => 'widgets/class-onboarding-widget-manager.php',
+                'icon' => 'eicon-navigator',
+                'widget_name' => 'voxel-onboarding',
             )
         );
 
