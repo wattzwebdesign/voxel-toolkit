@@ -72,6 +72,7 @@ class Voxel_Toolkit_Dynamic_Tags {
     public function register_modifiers($modifiers) {
         $modifiers['file_size'] = \Voxel_Toolkit_File_Size_Modifier::class;
         $modifiers['file_extension'] = \Voxel_Toolkit_File_Extension_Modifier::class;
+        $modifiers['address_part'] = \Voxel_Toolkit_Address_Part_Modifier::class;
         return $modifiers;
     }
 
@@ -89,14 +90,6 @@ class Voxel_Toolkit_Dynamic_Tags {
     public function register_author_methods($methods) {
         $methods['profile_completion'] = \Voxel_Toolkit_Profile_Completion_Method::class;
         return $methods;
-    }
-
-    /**
-     * Register modifiers with Voxel
-     */
-    public function register_modifiers($modifiers) {
-        $modifiers['address_part'] = \Voxel_Toolkit_Address_Part_Modifier::class;
-        return $modifiers;
     }
 
     /**

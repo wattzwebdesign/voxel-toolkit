@@ -17,9 +17,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Comprehensive styling controls for tooltips, navigation buttons, skip button, progress bar, and bullets
   - Elementor editor detection to prevent interruptions while editing
   - Skip confirmation password fields automatically
+- **Show Field Description**: Added comprehensive styling controls
+  - **Admin Settings**: Global styling controls in Toolkit settings
+    - Text color picker with live preview
+    - Font size control (supports em, px, rem units)
+    - Font weight selection (Light, Normal, Medium, Semi Bold, Bold)
+    - Line height customization
+    - Margin top and bottom controls
+    - CSS variable support for advanced customization
+  - **Elementor Widget Integration**: Per-widget styling in Voxel's Create Post widget
+    - New "Field Description Style (VT)" section in Style tab
+    - Color control with live preview
+    - Full typography group control (font family, size, weight, line height, etc.)
+    - Responsive margin top control (supports px, em units)
+    - Responsive margin bottom control (supports px, em units)
+    - Styles apply instantly in Elementor editor preview
 
 ### Changed
 - **Admin Notifications**: Removed debug logging (32 error_log statements) that was filling up the debug log
+- **Show Field Description**: Major enhancement with Voxel configuration integration
+  - **Now works in Elementor editor preview!** Reads field descriptions directly from `voxel:post_types` option in database
+  - Automatically detects post type and loads corresponding field descriptions
+  - Matches fields by input name attribute to inject descriptions even when tooltips aren't rendered
+  - Fallback system: Uses Voxel tooltips on frontend, uses database config in editor
+  - Injected styling controls into Voxel's create-post widget via `elementor/element/before_section_end` hook
+  - Widget-level styling controls added to existing Style tab sections
+  - Improved settings options storage and retrieval from `voxel_toolkit_functions` option
+  - Widget-level styling overrides global settings for per-page customization
 
 ### Removed
 - **Password Visibility Toggle**: Removed custom password visibility toggle feature as Voxel now includes native password visibility functionality

@@ -1587,35 +1587,42 @@ class Voxel_Toolkit_Functions {
     
     /**
      * Render settings for Show Field Description function
-     * 
+     *
      * @param array $settings Current settings
      */
     public function render_show_field_description_settings($settings) {
         ?>
         <tr>
             <th scope="row">
-                <label><?php _e('Show Field Description Settings', 'voxel-toolkit'); ?></label>
+                <label><?php _e('Show Field Description', 'voxel-toolkit'); ?></label>
             </th>
             <td>
-                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 600px;">
+                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 700px;">
                     <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px;">
                         <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
-                        <?php _e('This function automatically converts Voxel form field tooltip icons into visible descriptions displayed below field labels. No additional configuration needed - simply enable the function and it will work on all Voxel forms site-wide.', 'voxel-toolkit'); ?>
+                        <?php _e('This function automatically converts Voxel form field tooltip icons into visible descriptions displayed below field labels.', 'voxel-toolkit'); ?>
                     </div>
-                    
+
+                    <div style="margin-top: 20px; background: #e7f3ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 15px; font-size: 14px;">
+                        <strong style="color: #004085;"><?php _e('Styling Controls:', 'voxel-toolkit'); ?></strong>
+                        <p style="margin: 10px 0 0 0; color: #004085;">
+                            <?php _e('Style the field descriptions directly in Elementor using the "Field Description Style (VT)" section in the Create Post widget\'s Style tab. This allows you to customize the appearance per-page.', 'voxel-toolkit'); ?>
+                        </p>
+                    </div>
+
                     <div style="margin-top: 20px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; font-size: 14px;">
-                        <strong style="color: #856404;"><?php _e('Effect:', 'voxel-toolkit'); ?></strong>
+                        <strong style="color: #856404;"><?php _e('Features:', 'voxel-toolkit'); ?></strong>
                         <ul style="margin: 10px 0 0 20px; color: #856404;">
-                            <li><?php _e('Tooltip icons are hidden', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('Field descriptions appear as subtitles below labels', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Tooltip icons are automatically hidden', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Field descriptions appear as visible subtitles below labels', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Works on frontend and in Elementor editor preview', 'voxel-toolkit'); ?></li>
                             <li><?php _e('Improves form accessibility and user experience', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('Works on all create/edit post forms', 'voxel-toolkit'); ?></li>
                         </ul>
                     </div>
-                    
+
                     <div style="margin-top: 20px; padding: 12px; background: #f8f9fa; border-radius: 4px; text-align: center; border-top: 1px solid #dee2e6;">
                         <p style="margin: 0; font-size: 13px; color: #6c757d;">
-                            <?php _e('Show Field Description developed by', 'voxel-toolkit'); ?> 
+                            <?php _e('Show Field Description developed by', 'voxel-toolkit'); ?>
                             <strong style="color: #495057;">Michał Maciak</strong>
                         </p>
                     </div>

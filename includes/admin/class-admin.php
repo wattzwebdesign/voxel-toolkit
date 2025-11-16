@@ -675,7 +675,7 @@ class Voxel_Toolkit_Admin {
                         break;
                     
                     case 'show_field_description':
-                        // No additional settings needed - just enabled/disabled
+                        // No settings needed - styling controlled via Elementor widget
                         break;
                     
                     case 'auto_promotion':
