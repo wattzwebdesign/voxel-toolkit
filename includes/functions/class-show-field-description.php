@@ -143,7 +143,7 @@ class Voxel_Toolkit_Show_Field_Description {
     }
 
     /**
-     * Add styling controls to Voxel's create post widget
+     * Add styling controls to Voxel's Create Post and Login/Register widgets
      *
      * @param object $section The section instance
      * @param string $section_id The section ID
@@ -152,13 +152,18 @@ class Voxel_Toolkit_Show_Field_Description {
     public function add_elementor_controls($section, $section_id, $args) {
         $widget_name = $section->get_name();
 
-        // Only add controls to Voxel's create-post widget
-        if ($widget_name !== 'ts-create-post') {
+        // Only add controls to Voxel's create-post and login widgets
+        if ($widget_name !== 'ts-create-post' && $widget_name !== 'ts-login') {
             return;
         }
 
-        // Add to the fields general styling section
-        if ($section_id !== 'ts_sf1_fields_general') {
+        // Add to the fields general styling section for create-post widget
+        if ($widget_name === 'ts-create-post' && $section_id !== 'ts_sf1_fields_general') {
+            return;
+        }
+
+        // Add to the Form: Input & Textarea section for login widget (in Field style tab)
+        if ($widget_name === 'ts-login' && $section_id !== 'ts_sf_intxt') {
             return;
         }
 

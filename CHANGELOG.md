@@ -17,13 +17,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Comprehensive styling controls for tooltips, navigation buttons, skip button, progress bar, and bullets
   - Elementor editor detection to prevent interruptions while editing
   - Skip confirmation password fields automatically
-- **Show Field Description**: Elementor editor preview support and styling controls
+- **Show Field Description**: Elementor editor preview support and styling controls for Create Post and Login/Register widgets
   - **Elementor Editor Preview**: Field descriptions now display in Elementor editor preview iframe
     - Intelligent polling system detects when Voxel dynamically loads form fields
     - Automatically converts tooltip descriptions to visible subtitles in editor
     - Seamless preview experience matching frontend behavior
-  - **Elementor Widget Styling**: Per-page styling controls integrated into Voxel's Create Post widget
-    - New "Field Description Style (VT)" section in the Style tab under Fields General section
+    - Works in both Create Post forms and Login/Register forms
+  - **Elementor Widget Styling**: Per-page styling controls integrated into multiple Voxel widgets
+    - **Create Post Widget**: New "Field Description Style (VT)" section in Style tab → Fields General section
+    - **Login/Register Widget**: New "Field Description Style (VT)" section in Field style tab → Form: Input & Textarea section
     - Color control with live preview
     - Full typography group control (font family, size, weight, line height, letter spacing, etc.)
     - Responsive margin top control (supports px, em units)
@@ -37,7 +39,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Streamlined implementation for both frontend and Elementor editor
   - Clean, production-ready code with no debug logging
   - Default styling provides good out-of-the-box appearance
-  - Per-page customization available in Elementor's Create Post widget Style tab
+  - Per-page customization available in Elementor's Create Post and Login/Register widgets
+  - Now supports both Create Post forms and Login/Register forms
 
 ### Removed
 - **Password Visibility Toggle**: Removed custom password visibility toggle feature as Voxel now includes native password visibility functionality
