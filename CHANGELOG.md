@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Elementor editor detection to prevent interruptions while editing
   - Skip confirmation password fields automatically
 
+### Changed
+- **Admin Notifications**: Removed debug logging (32 error_log statements) that was filling up the debug log
+
 ### Removed
 - **Password Visibility Toggle**: Removed custom password visibility toggle feature as Voxel now includes native password visibility functionality
 
