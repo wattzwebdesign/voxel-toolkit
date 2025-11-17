@@ -256,7 +256,7 @@
 
                 case 'error':
                     const errorMsg = window.voxelToolkitDuplicateChecker?.error_message || 'Title is taken. Please choose another.';
-                    errorHTML = `<span class="vx-error voxel-toolkit-error">${this.escapeHtml(errorMsg)}</span>`;
+                    errorHTML = `<span class="vx-error voxel-toolkit-error" style="color: #dc2626;">${this.escapeHtml(errorMsg)}</span>`;
                     break;
 
                 case 'success':
