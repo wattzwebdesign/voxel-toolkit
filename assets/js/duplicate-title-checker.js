@@ -232,80 +232,75 @@
         }
 
         /**
-         * Render validation UI - this runs every time to ensure persistence
+         * Render validation UI - using Voxel's error slot
          */
         renderValidation($input, state) {
-            const $parent = $input.parent();
+            const $formGroup = $input.closest('.ts-form-group');
 
             // Remove any existing validation elements
-            $parent.find('.voxel-validation-icon').remove();
-            $input.siblings('.voxel-validation-message').remove();
+            $formGroup.find('.voxel-validation-icon').remove();
+            $formGroup.find('.voxel-toolkit-error').remove();
 
             if (state === 'none') {
                 return;
             }
 
+            // Find the label and error slot
+            const $label = $formGroup.find('label').first();
+
             // Create icon
             let iconHTML = '';
-            let messageHTML = '';
+            let errorHTML = '';
 
             switch (state) {
                 case 'loading':
                     iconHTML = `
-                        <div class="voxel-validation-icon" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); z-index: 10; line-height: 0;">
+                        <span class="voxel-validation-icon" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); z-index: 10; line-height: 0;">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <circle cx="12" cy="12" r="10" stroke="#d1d5db" stroke-width="2" fill="none"/>
                                 <path d="M12 2 A10 10 0 0 1 22 12" stroke="#6b7280" stroke-width="2" fill="none" stroke-linecap="round">
                                     <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/>
                                 </path>
                             </svg>
-                        </div>
+                        </span>
                     `;
                     break;
 
                 case 'error':
+                    const errorMsg = window.voxelToolkitDuplicateChecker?.error_message || 'Title is taken. Please choose another.';
+                    errorHTML = `<span class="vx-error voxel-toolkit-error">${this.escapeHtml(errorMsg)}</span>`;
                     iconHTML = `
-                        <div class="voxel-validation-icon" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); z-index: 10; line-height: 0; pointer-events: none;">
+                        <span class="voxel-validation-icon" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); z-index: 10; line-height: 0; pointer-events: none;">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <circle cx="12" cy="12" r="10" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
                                 <path d="M8 8l8 8M16 8l-8 8" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
                             </svg>
-                        </div>
-                    `;
-                    const errorMsg = window.voxelToolkitDuplicateChecker?.error_message || 'Title is taken. Please choose another.';
-                    messageHTML = `
-                        <div class="voxel-validation-message" style="margin-top: 8px; text-align: center; font-size: 14px; line-height: 1.5; color: #dc2626; font-weight: 500;">
-                            ${this.escapeHtml(errorMsg)}
-                        </div>
+                        </span>
                     `;
                     break;
 
                 case 'success':
+                    const successMsg = window.voxelToolkitDuplicateChecker?.success_message || 'Title is available.';
+                    errorHTML = `<span class="vx-success voxel-toolkit-error" style="color: #10b981;">${this.escapeHtml(successMsg)}</span>`;
                     iconHTML = `
-                        <div class="voxel-validation-icon" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); z-index: 10; line-height: 0; pointer-events: none;">
+                        <span class="voxel-validation-icon" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); z-index: 10; line-height: 0; pointer-events: none;">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <circle cx="12" cy="12" r="10" fill="#10b981" stroke="#059669" stroke-width="2"/>
                                 <path d="M8 12l3 3l5-5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                        </div>
-                    `;
-                    const successMsg = window.voxelToolkitDuplicateChecker?.success_message || 'Title is available.';
-                    messageHTML = `
-                        <div class="voxel-validation-message" style="margin-top: 8px; text-align: center; font-size: 14px; line-height: 1.5; color: #059669; font-weight: 500;">
-                            ${this.escapeHtml(successMsg)}
-                        </div>
+                        </span>
                     `;
                     break;
             }
 
-            // Insert icon into parent
-            if (iconHTML) {
-                $parent.append(iconHTML);
+            // Insert error message into Voxel's error slot (inside label)
+            if (errorHTML && $label.length > 0) {
+                $label.append(errorHTML);
             }
 
-            // Insert message after input
-            if (messageHTML) {
-                $input.after(messageHTML);
+            // Insert icon into form group
+            if (iconHTML) {
+                $input.parent().css('position', 'relative').append(iconHTML);
             }
 
             // Store state
@@ -335,9 +330,9 @@
 
             // Check every 500ms if validation elements still exist, recreate if missing
             const intervalId = setInterval(() => {
-                const $parent = $input.parent();
-                const hasIcon = $parent.find('.voxel-validation-icon').length > 0;
-                const hasMessage = $input.siblings('.voxel-validation-message').length > 0;
+                const $formGroup = $input.closest('.ts-form-group');
+                const hasIcon = $formGroup.find('.voxel-validation-icon').length > 0;
+                const hasMessage = $formGroup.find('.voxel-toolkit-error').length > 0;
 
                 if (!hasIcon || !hasMessage) {
                     this.renderValidation($input, state);
