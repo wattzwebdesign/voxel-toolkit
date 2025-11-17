@@ -734,7 +734,6 @@ class Voxel_Toolkit_Admin {
                 
                 } catch (Exception $e) {
                     // Log error but don't break the sanitization process
-                    error_log('Voxel Toolkit sanitization error for ' . $function_key . ': ' . $e->getMessage());
                     // Ensure we still have a valid sanitized function array
                     if (!isset($sanitized_function['enabled'])) {
                         $sanitized_function['enabled'] = false;

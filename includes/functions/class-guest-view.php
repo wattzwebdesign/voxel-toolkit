@@ -70,10 +70,6 @@ class Voxel_Toolkit_Guest_View {
         
         // Debug logging
         if (isset($_GET['debug'])) {
-            error_log('Guest View Debug - Action detected: ' . $_REQUEST['action']);
-            error_log('Guest View Debug - Request data: ' . print_r($_REQUEST, true));
-            error_log('Guest View Debug - User logged in: ' . (is_user_logged_in() ? 'YES' : 'NO'));
-            error_log('Guest View Debug - Current user ID: ' . get_current_user_id());
         }
         
         switch ($_REQUEST['action']) {

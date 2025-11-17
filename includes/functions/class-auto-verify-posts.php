@@ -83,7 +83,6 @@ class Voxel_Toolkit_Auto_Verify_Posts {
             $this->verify_post($post_id);
             
             // Log the action
-            error_log(sprintf(
                 'Voxel Toolkit: Auto-verified post ID %d of type %s via admin save',
                 $post_id,
                 $post_type
@@ -108,7 +107,6 @@ class Voxel_Toolkit_Auto_Verify_Posts {
             $this->verify_post($post->ID);
             
             // Log the action
-            error_log(sprintf(
                 'Voxel Toolkit: Auto-verified post ID %d of type %s via status transition',
                 $post->ID,
                 $post->post_type
@@ -179,7 +177,6 @@ class Voxel_Toolkit_Auto_Verify_Posts {
             $this->verify_post($post_id);
             
             // Log the action
-            error_log(sprintf(
                 'Voxel Toolkit: Auto-verified post ID %d of type %s via post insertion',
                 $post_id,
                 $post->post_type
@@ -220,7 +217,6 @@ class Voxel_Toolkit_Auto_Verify_Posts {
             $this->verify_post($post_id);
             
             // Log the action
-            error_log(sprintf(
                 'Voxel Toolkit: Auto-verified post ID %d of type %s via AJAX submission',
                 $post_id,
                 $post->post_type
@@ -362,7 +358,6 @@ function voxel_toolkit_delayed_verify_handler($post_id) {
     do_action('voxel/post/verified', $post_id);
     
     // Log the verification
-    error_log(sprintf(
         'Voxel Toolkit: Delayed verification completed for post ID %d',
         $post_id
     ));

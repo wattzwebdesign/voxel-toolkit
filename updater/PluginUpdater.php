@@ -139,8 +139,13 @@ class PluginUpdater
     {
         global $pagenow;
 
-        // If updater page then force fetch.
-        if ('update-core.php' === $pagenow || ($pagenow === 'plugin-install.php' && !empty($_GET['plugin']))) {
+        // Only force fetch when explicitly checking for updates or viewing this specific plugin's info
+        if ('update-core.php' === $pagenow) {
+            return false;
+        }
+
+        // Only bypass cache when viewing THIS specific plugin's information page
+        if ($pagenow === 'plugin-install.php' && !empty($_GET['plugin']) && $_GET['plugin'] === $this->config['slug']) {
             return false;
         }
 
@@ -159,7 +164,7 @@ class PluginUpdater
             return;
         }
 
-        set_transient($this->cache_key, $value, 3 * HOUR_IN_SECONDS); // cache for 3 hours.
+        set_transient($this->cache_key, $value, 12 * HOUR_IN_SECONDS); // cache for 12 hours.
     }
 
     /**

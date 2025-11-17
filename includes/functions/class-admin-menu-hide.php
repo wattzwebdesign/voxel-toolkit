@@ -83,7 +83,6 @@ class Voxel_Toolkit_Admin_Menu_Hide {
         
         // Log the action
         if (defined('WP_DEBUG') && WP_DEBUG && !empty($this->hidden_menus)) {
-            error_log('Voxel Toolkit: Hidden admin menus - ' . implode(', ', $this->hidden_menus));
         }
     }
     

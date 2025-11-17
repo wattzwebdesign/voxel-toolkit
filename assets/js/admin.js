@@ -71,7 +71,6 @@
                     nonce: voxelToolkit.nonce
                 },
                 success: function(response) {
-                    console.log('Toggle response for', functionKey, ':', response); // Debug log
                     if (response.success) {
                         // Update card state
                         $card.toggleClass('enabled', enabled);
@@ -268,9 +267,7 @@
             const $resultsInfo = $('#controls-results-info');
             let visibleCount = 0;
             let totalCount = $functions.length;
-            
-            console.log('Applying filters - Search:', searchTerm, 'Filter:', filterValue); // Debug
-            
+
             // Filter through functions
             $functions.each(function() {
                 const $card = $(this);
@@ -302,9 +299,7 @@
                 // 'all' matches everything, so no additional check needed
                 
                 const shouldShow = matchesSearch && matchesFilter;
-                
-                console.log('Function:', functionKey, 'Enabled:', isEnabled, 'Always:', isAlwaysEnabled, 'Matches search:', matchesSearch, 'Matches filter:', matchesFilter, 'Show:', shouldShow); // Debug
-                
+
                 if (shouldShow) {
                     $card.show();
                     visibleCount++;
@@ -312,9 +307,7 @@
                     $card.hide();
                 }
             });
-            
-            console.log('Visible count:', visibleCount); // Debug
-            
+
             // Update results info
             this.updateResultsInfo(searchTerm, filterValue, visibleCount, totalCount);
         },
@@ -362,16 +355,14 @@
          */
         handleControlsReset: function(e) {
             e.preventDefault();
-            
+
             const $searchInput = $('#voxel-toolkit-search');
             const $allRadio = $('input[name="function-filter"][value="all"]');
-            
-            console.log('Resetting all controls'); // Debug
-            
+
             // Clear search input and reset filter
             $searchInput.val('');
             $allRadio.prop('checked', true);
-            
+
             // Re-apply filters (which will show all functions)
             this.applyFilters();
             

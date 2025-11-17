@@ -58,7 +58,6 @@ class Voxel_Toolkit_Html_Field {
         
         // Debug output for testing
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('Voxel Toolkit: HTML field class loaded');
         }
     }
     
@@ -100,8 +99,6 @@ class Voxel_Toolkit_Html_Field {
     public function register_html_field($field_types) {
         // Debug output
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('Voxel Toolkit: voxel/field-types filter called');
-            error_log('Voxel Toolkit: Current field types: ' . implode(', ', array_keys($field_types)));
         }
         
         // Ensure field class is loaded
@@ -110,7 +107,6 @@ class Voxel_Toolkit_Html_Field {
         // Check if our class exists
         if (!class_exists('Voxel_Toolkit_Voxel_Html_Field')) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('Voxel Toolkit: HTML field class not found!');
             }
             return $field_types;
         }
@@ -119,7 +115,6 @@ class Voxel_Toolkit_Html_Field {
         $field_types['html'] = 'Voxel_Toolkit_Voxel_Html_Field';
         
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('Voxel Toolkit: HTML field registered');
         }
         
         return $field_types;

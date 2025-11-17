@@ -129,20 +129,13 @@ class Membership_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
      * Modify the search query to filter by membership plan
      */
     public function query(\Voxel\Post_Types\Index_Query $query, array $args): void {
-        error_log('Membership Plan Filter - query() called');
-        error_log('Filter key: ' . $this->get_key());
-        error_log('Args received: ' . print_r($args, true));
-        error_log('Raw value: ' . print_r($args[$this->get_key()] ?? 'NOT SET', true));
 
         $value = $this->parse_value($args[$this->get_key()] ?? null);
-        error_log('Parsed value: ' . print_r($value, true));
 
         if (empty($value)) {
-            error_log('Membership Plan Filter - value is empty, returning');
             return;
         }
 
-        error_log('Membership Plan Filter - proceeding with query modification');
         global $wpdb;
         $join_key = esc_sql($this->db_key());
 
@@ -154,11 +147,9 @@ class Membership_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
         // Sanitize plan keys
         $plan_keys = array_map('esc_sql', $value);
         $plan_keys_list = "'" . implode("','", $plan_keys) . "'";
-        error_log('Plan keys to filter: ' . $plan_keys_list);
 
         // Check if 'default' (Guest) is in the selected plans
         $include_guest = in_array('default', $plan_keys, true);
-        error_log('Include guest users: ' . ($include_guest ? 'yes' : 'no'));
 
         // Join with posts table to get author
         $join_sql = sprintf(
@@ -167,7 +158,6 @@ class Membership_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
             $query->table->get_escaped_name(),
             $join_key
         );
-        error_log('Join posts SQL: ' . $join_sql);
         $query->join($join_sql);
 
         // Join with usermeta to get membership plan
@@ -181,7 +171,6 @@ class Membership_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
             $join_key,
             $join_key
         );
-        error_log('Join usermeta SQL: ' . $join_plan_sql);
         $query->join($join_plan_sql);
 
         // Build WHERE clause
@@ -204,7 +193,6 @@ class Membership_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
                 $plan_keys_list
             );
         }
-        error_log('WHERE SQL: ' . $where_sql);
         $query->where($where_sql);
     }
 

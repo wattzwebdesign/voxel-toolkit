@@ -2838,7 +2838,6 @@ class Voxel_Toolkit_Functions {
      */
     public function render_featured_posts_settings($settings) {
         // Debug what we're receiving
-        error_log('Voxel Toolkit: Featured Posts settings received: ' . print_r($settings, true));
         
         $enabled_post_types = isset($settings['post_types']) ? $settings['post_types'] : array();
         $priority_values = isset($settings['priority_values']) ? $settings['priority_values'] : array();

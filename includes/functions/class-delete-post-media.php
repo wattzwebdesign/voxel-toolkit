@@ -206,7 +206,6 @@ class Voxel_Toolkit_Delete_Post_Media {
         
         // Log the deletion for debugging
         if ($deleted_count > 0) {
-            error_log("Voxel Toolkit: Deleted {$deleted_count} media files for post {$post_id}: " . implode(', ', $deleted_files));
         }
     }
     
@@ -383,7 +382,6 @@ class Voxel_Toolkit_Delete_Post_Media {
             }
             
         } catch (Exception $e) {
-            error_log('Voxel Toolkit: Error extracting Voxel media for post ' . $post_id . ': ' . $e->getMessage());
         }
         
         return array_map('intval', array_filter($media_ids));

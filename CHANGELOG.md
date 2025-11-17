@@ -82,5 +82,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Configure button**: Styling on Functions page now matches Usage badge styling
 - **Required PHP version**: Adjusted to 8.1 for broader compatibility
 
+### Performance Improvements
+- **License Validation Caching**: Significantly improved admin page load times
+  - Fixed license validation to properly use transient caching (12-hour cache)
+  - Reduced unnecessary HTTP requests to license server on every admin page load
+  - Cache now only bypasses on update-core.php page or when viewing plugin info
+  - Eliminates 770ms blocking HTTP request on most admin page loads
+- **Removed Debug Logging**: Cleaned up codebase for production
+  - Removed all console.log statements from JavaScript files (40+ instances)
+  - Removed all debug error_log statements from PHP files (50+ instances)
+  - Kept only critical error logging (console.error, console.warn)
+  - Reduced browser console noise and server log file sizes
+
 ### Removed
 - **Password Visibility Toggle**: Removed custom password visibility toggle feature as Voxel now includes native password visibility functionality

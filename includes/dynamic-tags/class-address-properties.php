@@ -20,7 +20,6 @@ class Voxel_Toolkit_Address_Properties {
      * Register address sub-properties
      */
     public static function register($properties, $group) {
-        error_log('Address Properties: Registering address sub-properties');
 
         // We need to add sub-properties to location fields
         // This will be called when Voxel builds the property list
@@ -32,8 +31,6 @@ class Voxel_Toolkit_Address_Properties {
      * Get a specific component from address data
      */
     public static function get_component($address_data, $component) {
-        error_log('Address Properties: get_component called with component = ' . $component);
-        error_log('Address Properties: address_data = ' . print_r($address_data, true));
 
         if (!is_array($address_data)) {
             return '';

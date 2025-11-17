@@ -251,7 +251,6 @@ class Voxel_Toolkit_Submission_Reminder {
             update_user_meta($user->ID, $reminder_key, current_time('mysql'));
             
             // Log for admin
-            error_log("Voxel Toolkit: Submission reminder sent to {$user->user_email} ({$post_type}: {$time_value} {$time_unit})");
         }
     }
     

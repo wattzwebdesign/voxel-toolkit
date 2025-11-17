@@ -1,11 +1,8 @@
 jQuery(document).ready(function($) {
-    console.log('Voxel Toolkit Featured Posts JS loaded');
-    console.log('voxelFeaturedPosts object:', voxelFeaturedPosts);
     
     // Handle featured post toggle
     $(document).on('click', '.toggle-featured', function(e) {
         e.preventDefault();
-        console.log('Featured toggle clicked');
         
         var $link = $(this);
         var $icon = $link.find('.dashicons');

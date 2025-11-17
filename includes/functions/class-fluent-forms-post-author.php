@@ -380,21 +380,18 @@ if (class_exists('\FluentForm\App\Services\FormBuilder\BaseFieldManager')) {
     class Voxel_Post_Author_Field extends \FluentForm\App\Services\FormBuilder\BaseFieldManager {
         
         public function __construct() {
-            error_log('Voxel Toolkit: Voxel_Post_Author_Field constructor called');
             parent::__construct(
                 'voxel_post_author',
                 'Voxel Post Author',
                 ['email', 'author', 'post'],
                 'advanced'
             );
-            error_log('Voxel Toolkit: Voxel_Post_Author_Field initialized successfully');
         }
         
         /**
          * Get the component for the form editor
          */
         public function getComponent() {
-            error_log('Voxel Toolkit: getComponent() called for Voxel_Post_Author_Field');
             return array(
                 'index' => 25,
                 'element' => $this->key,

@@ -6,29 +6,19 @@
     'use strict';
     
     $(document).ready(function() {
-        console.log('=== VOXEL TOOLKIT GUEST VIEW V2 DEBUG ===');
-        console.log('Guest View JS V2 loaded');
-        console.log('voxelToolkitGuestView object:', voxelToolkitGuestView);
-        console.log('Is Guest View Active:', voxelToolkitGuestView.isGuestView);
-        console.log('Is Logged In:', voxelToolkitGuestView.isLoggedIn);
-        console.log('Current URL:', voxelToolkitGuestView.currentUrl);
         
         // Check if button exists
         setTimeout(function() {
             const buttonCount = $('.voxel-toolkit-guest-view-btn').length;
-            console.log('Guest view buttons found:', buttonCount);
             if (buttonCount > 0) {
-                console.log('Button elements:', $('.voxel-toolkit-guest-view-btn'));
             }
         }, 1000);
         
         // Handle guest view button click
         $(document).on('click', '.voxel-toolkit-guest-view-btn', function(e) {
-            console.log('=== BUTTON CLICKED V2 ===');
             e.preventDefault();
             e.stopPropagation();
             
-            console.log('Button clicked, logged in:', voxelToolkitGuestView.isLoggedIn);
             
             if (!voxelToolkitGuestView.isLoggedIn) {
                 alert('You must be logged in to use guest view.');
@@ -39,7 +29,6 @@
             const $buttonText = $button.find('.button-text');
             const originalText = $buttonText.length ? $buttonText.text() : $button.text();
             
-            console.log('Original button text:', originalText);
             
             // Show confirmation
             if (!confirm('View the site as a guest? You can switch back anytime using the floating button.')) {
@@ -54,7 +43,6 @@
                 $button.text('Switching to Guest View...');
             }
             
-            console.log('Making AJAX request...');
             
             // Make AJAX request
             $.ajax({
@@ -67,9 +55,7 @@
                     nonce: voxelToolkitGuestView.nonce
                 },
                 success: function(response) {
-                    console.log('AJAX Success response:', response);
                     if (response.success) {
-                        console.log('Success! Redirecting to:', response.data.redirect_url);
                         // Redirect to the switch URL instead of reloading
                         window.location.href = response.data.redirect_url;
                     } else {
@@ -101,11 +87,8 @@
         
         // Add visual feedback when in guest view
         if (voxelToolkitGuestView.isGuestView) {
-            console.log('Guest View V2 is ACTIVE - user is actually logged out');
-            console.log('Current User ID should be 0, and floating button should show');
         }
         
-        console.log('=== END GUEST VIEW V2 DEBUG ===');
     });
     
 })(jQuery);

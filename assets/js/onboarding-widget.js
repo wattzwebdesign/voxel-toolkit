@@ -46,14 +46,7 @@
 
             // Auto-start if enabled, not in editor, and not completed
             if (this.autoStart && !isElementorEditor && !this.isTourCompleted()) {
-                console.log('Voxel Onboarding: Auto-starting tour');
                 setTimeout(() => this.start(), this.autoStartDelay);
-            } else {
-                console.log('Voxel Onboarding: Auto-start blocked', {
-                    autoStart: this.autoStart,
-                    isElementorEditor: isElementorEditor,
-                    isTourCompleted: this.isTourCompleted()
-                });
             }
 
             // Bind start button - always allow manual restart
@@ -111,7 +104,6 @@
 
                 // Add element selector if provided
                 if (step.element) {
-                    console.log(`Voxel Onboarding: Looking for element with selector: "${step.element}"`);
                     const element = document.querySelector(step.element);
 
                     if (!element) {
@@ -119,12 +111,8 @@
                         // Skip this step entirely if element not found
                         return;
                     } else {
-                        console.log(`Voxel Onboarding: Element found!`, element);
                         processedStep.element = element;
                     }
-                } else {
-                    // No element selector - show as floating tooltip in center
-                    console.log(`Voxel Onboarding: Step ${index + 1} has no target element - will show as centered overlay`);
                 }
 
                 steps.push(processedStep);
@@ -146,7 +134,6 @@
          * Handle tour completion
          */
         onComplete() {
-            console.log('Voxel Onboarding: Tour completed');
             this.markAsCompleted();
         }
 
@@ -154,7 +141,6 @@
          * Handle tour exit
          */
         onExit() {
-            console.log('Voxel Onboarding: Tour exited');
             // Optionally mark as completed even if exited early
             // this.markAsCompleted();
         }
@@ -188,7 +174,6 @@
         clearCompletion() {
             const storageKey = this.getStorageKey();
             sessionStorage.removeItem(storageKey);
-            console.log('Voxel Onboarding: Completion status cleared');
         }
     }
 
@@ -230,7 +215,6 @@
                 if (tourSteps && tourSteps.length > 0) {
                     tourSteps.forEach(function(step) {
                         if (step.element && !document.querySelector(step.element)) {
-                            console.log(`Voxel Onboarding: Waiting for element "${step.element}" to load...`);
                             allElementsExist = false;
                         }
                     });
@@ -244,7 +228,6 @@
             }
 
             // Initialize tours
-            console.log(`Voxel Onboarding: Initializing tours (attempt ${attempts})`);
             initOnboardingTours();
         }
 

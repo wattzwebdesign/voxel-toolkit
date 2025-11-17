@@ -56,9 +56,6 @@ class Voxel_Toolkit_Address_Part_Method extends \Voxel\Dynamic_Data\Modifiers\Gr
      * Run the method
      */
     public function run($group) {
-        error_log('Address_Part Method: run() called');
-        error_log('Address_Part Method: group type = ' . get_class($group));
-        error_log('Address_Part Method: group dump keys = ' . implode(', ', array_keys(get_object_vars($group))));
 
         // Get the part to extract from arguments
         $part = isset($this->args[0]) ? $this->args[0] : 'city';
@@ -66,37 +63,30 @@ class Voxel_Toolkit_Address_Part_Method extends \Voxel\Dynamic_Data\Modifiers\Gr
             $part = $part['content'];
         }
 
-        error_log('Address_Part Method: part = ' . $part);
 
         // Try to get the value directly from the group
         $value = null;
 
         // Check if this is a property group with a value
         if (isset($group->_property)) {
-            error_log('Address_Part Method: group has _property');
             $property = $group->_property;
             if (method_exists($property, 'get_value')) {
                 $value = $property->get_value();
-                error_log('Address_Part Method: got value from property->get_value()');
             }
         }
 
         // Check if group has a get_value method
         if ($value === null && method_exists($group, 'get_value')) {
             $value = $group->get_value();
-            error_log('Address_Part Method: got value from group->get_value()');
         }
 
-        error_log('Address_Part Method: value = ' . print_r($value, true));
 
         if (!is_array($value)) {
-            error_log('Address_Part Method: Value is not array');
             return '';
         }
 
         // Extract the requested part
         $result = $this->extract_address_part($value, $part);
-        error_log('Address_Part Method: result = ' . $result);
         return $result;
     }
 
