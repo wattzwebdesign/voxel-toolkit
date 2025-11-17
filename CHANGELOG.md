@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Improved
+- **Duplicate Title Checker**: Revamped validation display for better efficiency and consistency
+  - Now uses Voxel's native error slot mechanism for validation messages
+  - Removed validation icons for cleaner UI
+  - Error messages display in red, success messages in green
+  - Matches Voxel's native field validation styling
+  - More efficient DOM manipulation and reduced visual clutter
+
 ### Added
 - **Onboarding Widget**: Interactive step-by-step tours for first-time users using intro.js
   - Auto-start with configurable delay and session-based tracking
