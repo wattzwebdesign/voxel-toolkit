@@ -9,7 +9,7 @@
 
             // Update version display when panel opens
             setTimeout(function() {
-                updateVersionDisplay(model);
+                updateVersionDisplay(panel, model);
             }, 100);
 
             // Handle reset button click
@@ -23,22 +23,30 @@
                 // Update the model
                 model.setSetting('reset_tour_version', newVersion);
 
-                // Mark the document as changed so Elementor enables the Update button
-                elementor.saver.setFlagEditorChange(true);
-
-                // Update the display
-                panel.$el.find('.voxel-tour-version-display').text(newVersion);
+                // Update the display in THIS panel only
+                updateVersionDisplay(panel, model);
 
                 // Show confirmation
                 const $btn = $(this);
                 const originalText = $btn.text();
-                $btn.text('Tour Reset! Version: ' + newVersion);
-                $btn.css('background-color', '#5cb85c');
+                $btn.text('Saving...');
+                $btn.prop('disabled', true);
 
-                setTimeout(function() {
-                    $btn.text(originalText);
-                    $btn.css('background-color', '');
-                }, 2000);
+                // Auto-save the page to persist the change
+                elementor.saver.setFlagEditorChange(true);
+                $e.run('document/save/auto', {
+                    force: true,
+                    onSuccess: function() {
+                        $btn.text('Tour Reset! Version: ' + newVersion);
+                        $btn.css('background-color', '#5cb85c');
+                        $btn.prop('disabled', false);
+
+                        setTimeout(function() {
+                            $btn.text(originalText);
+                            $btn.css('background-color', '');
+                        }, 2000);
+                    }
+                });
             });
 
             // Handle preview tour button click
@@ -113,9 +121,10 @@
     /**
      * Update version display
      */
-    function updateVersionDisplay(model) {
+    function updateVersionDisplay(panel, model) {
         const version = parseInt(model.getSetting('reset_tour_version')) || 1;
-        $('.voxel-tour-version-display').text(version);
+        // Update only in the current panel to avoid affecting other widgets
+        panel.$el.find('.voxel-tour-version-display').text(version);
     }
 
 })(jQuery);
