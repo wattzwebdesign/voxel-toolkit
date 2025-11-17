@@ -81,12 +81,6 @@ class Voxel_Toolkit_Auto_Verify_Posts {
         
         if ($this->should_auto_verify_post_type($post_type)) {
             $this->verify_post($post_id);
-            
-            // Log the action
-                'Voxel Toolkit: Auto-verified post ID %d of type %s via admin save',
-                $post_id,
-                $post_type
-            ));
         }
     }
     
@@ -105,12 +99,6 @@ class Voxel_Toolkit_Auto_Verify_Posts {
         
         if ($this->should_auto_verify_post_type($post->post_type)) {
             $this->verify_post($post->ID);
-            
-            // Log the action
-                'Voxel Toolkit: Auto-verified post ID %d of type %s via status transition',
-                $post->ID,
-                $post->post_type
-            ));
         }
     }
     
@@ -175,12 +163,6 @@ class Voxel_Toolkit_Auto_Verify_Posts {
             
             // Also verify immediately in case the scheduled event doesn't work
             $this->verify_post($post_id);
-            
-            // Log the action
-                'Voxel Toolkit: Auto-verified post ID %d of type %s via post insertion',
-                $post_id,
-                $post->post_type
-            ));
         }
         
         // Remove the hook to prevent it from running on other posts
@@ -215,12 +197,6 @@ class Voxel_Toolkit_Auto_Verify_Posts {
     public function on_ajax_post_inserted($post_id, $post, $update) {
         if (!$update && $this->should_auto_verify_post_type($post->post_type)) {
             $this->verify_post($post_id);
-            
-            // Log the action
-                'Voxel Toolkit: Auto-verified post ID %d of type %s via AJAX submission',
-                $post_id,
-                $post->post_type
-            ));
         }
     }
     
@@ -356,9 +332,4 @@ function voxel_toolkit_delayed_verify_handler($post_id) {
     // Fire hooks
     do_action('voxel_toolkit/post_auto_verified', $post_id, get_post_type($post_id));
     do_action('voxel/post/verified', $post_id);
-    
-    // Log the verification
-        'Voxel Toolkit: Delayed verification completed for post ID %d',
-        $post_id
-    ));
 }
