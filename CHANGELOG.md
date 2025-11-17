@@ -15,6 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Matches Voxel's native field validation styling
   - More efficient DOM manipulation and reduced visual clutter
 
+## [1.5.2]
+
+### Fixed
+- **Onboarding Widget**: Fixed tour reset button issues
+  - Fixed version display updating wrong widget when multiple widgets on page
+  - Fixed version numbers skipping by using panel-scoped selectors
+  - Added auto-save functionality after reset button click
+  - Tour version now persists immediately without requiring manual Update click
+
+## [1.5.1]
+
 ### Added
 - **Onboarding Widget**: Interactive step-by-step tours for first-time users using intro.js
   - Auto-start with configurable delay and session-based tracking
