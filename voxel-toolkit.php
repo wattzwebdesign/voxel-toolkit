@@ -305,22 +305,30 @@ class Voxel_Toolkit {
         if (!current_user_can('manage_options')) {
             return;
         }
-        
+
         try {
             // Get license instance
             $licensing = \VoxelToolkit\FluentLicensing::getInstance();
             if (!$licensing) {
                 return;
             }
-            
+
             // Don't show on license page itself
             $licenseSlug = $licensing->getConfig('slug');
             if (isset($_GET['page']) && $_GET['page'] === $licenseSlug . '-manage-license') {
                 return;
             }
-            
-            // Check license status
-            $status = $licensing->getStatus();
+
+            // Check cached license status to avoid repeated checks
+            $cache_key = 'voxel_toolkit_license_notice_status';
+            $status = get_transient($cache_key);
+
+            if (false === $status) {
+                // Cache miss - get fresh status
+                $status = $licensing->getStatus();
+                // Cache for 6 hours
+                set_transient($cache_key, $status, 6 * HOUR_IN_SECONDS);
+            }
             
             // Only show notice if license is not valid
             if (!is_wp_error($status) && isset($status['status']) && $status['status'] === 'valid') {

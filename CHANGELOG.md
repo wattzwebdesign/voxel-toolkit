@@ -84,10 +84,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Performance Improvements
 - **License Validation Caching**: Significantly improved admin page load times
+  - Added 6-hour transient cache for license status in admin notices
+  - Cache automatically clears when license is activated/deactivated
   - Fixed license validation to properly use transient caching (12-hour cache)
   - Reduced unnecessary HTTP requests to license server on every admin page load
   - Cache now only bypasses on update-core.php page or when viewing plugin info
-  - Eliminates 770ms blocking HTTP request on most admin page loads
+  - Eliminates 770ms+ blocking HTTP request on most admin page loads
 - **Removed Debug Logging**: Cleaned up codebase for production
   - Removed all console.log statements from JavaScript files (40+ instances)
   - Removed all debug error_log statements from PHP files (50+ instances)

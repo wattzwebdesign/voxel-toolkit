@@ -92,6 +92,9 @@ class FluentLicensing
         // Save the license data to the database.
         update_option($this->settingsKey, $saveData, false);
 
+        // Clear any cached license status
+        delete_transient('voxel_toolkit_license_notice_status');
+
         return $saveData; // Return the saved data.
     }
 
@@ -102,6 +105,9 @@ class FluentLicensing
         ]);
 
         delete_option($this->settingsKey); // Remove the license data from the database.
+
+        // Clear any cached license status
+        delete_transient('voxel_toolkit_license_notice_status');
 
         return $deactivated;
     }
