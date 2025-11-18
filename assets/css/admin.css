@@ -504,27 +504,37 @@ input:checked + .slider:before {
     line-height: 1.6;
 }
 
-.ts-terms-order .field-level-1>.field-head {
+/* Voxel dark mode overrides - only apply light backgrounds when light mode is enabled */
+body.voxel-toolkit-light-mode .ts-terms-order .field-level-1>.field-head {
     background: #e9e9e9 !important;
 }
 
-.ts-terms-order .field-level-2>.field-head {
+body.voxel-toolkit-light-mode .ts-terms-order .field-level-2>.field-head {
     background: #e9e9e9 !important;
 }
 
-.ts-form-group select[multiple] {
+body.voxel-toolkit-light-mode .ts-form-group select[multiple] {
     background: #e9e9e9 !important;
 }
 
-.ts-form-group select[multiple] option {
+body.voxel-toolkit-light-mode .ts-form-group select[multiple] option {
     padding: 5px !important;
     color: black !important;
 }
 
-.ts-form-group select[multiple] option:checked {
+body.voxel-toolkit-light-mode .ts-form-group select[multiple] option:checked {
     background: #393e42 linear-gradient(0deg, #393e42, #393e42) !important;
     color: #fff !important;
     font-weight: 400 !important;
+}
+
+/* Set correct dark backgrounds on Voxel pages when light mode is NOT enabled */
+body:not(.voxel-toolkit-light-mode) .single-field .field-head,
+body:not(.voxel-toolkit-light-mode) .ts-terms-order .field-level-1 > .field-head,
+body:not(.voxel-toolkit-light-mode) .ts-terms-order .field-level-2 > .field-head,
+body:not(.voxel-toolkit-light-mode) div[class*="field-level"] > .field-head {
+    background: #40464a !important;
+    background-color: #40464a !important;
 }
 
 /* Dark mode styles - excluding admin bar */

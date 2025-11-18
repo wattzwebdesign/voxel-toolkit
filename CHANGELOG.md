@@ -34,6 +34,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Matches Voxel's native field validation styling
   - More efficient DOM manipulation and reduced visual clutter
 
+### Fixed
+- **Light Mode**: Fixed white backgrounds appearing on Voxel admin pages when Light Mode is disabled
+  - Field headers now display correct dark background (`#40464a`) when Light Mode is disabled
+  - White backgrounds (`#e9e9e9`) only appear when Light Mode is enabled
+  - Removed inline styles that were unconditionally applying light backgrounds
+  - Improved conditional rendering based on Light Mode function status
+
 ## [1.5.2]
 
 ### Fixed
