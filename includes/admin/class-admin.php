@@ -88,6 +88,18 @@ class Voxel_Toolkit_Admin {
             array($this, 'render_dynamic_tags_page')
         );
 
+        // Add Site Options submenu if options page is enabled
+        if ($this->settings->is_function_enabled('options_page')) {
+            add_submenu_page(
+                'voxel-toolkit',
+                __('Site Options', 'voxel-toolkit'),
+                __('Site Options', 'voxel-toolkit'),
+                'manage_options',
+                'voxel-toolkit-site-options',
+                array($this, 'render_site_options_page')
+            );
+        }
+
         add_submenu_page(
             'voxel-toolkit',
             __('Settings', 'voxel-toolkit'),
@@ -157,6 +169,18 @@ class Voxel_Toolkit_Admin {
                 'confirmDisableAll' => __('Are you sure you want to disable all widgets?', 'voxel-toolkit'),
             )
         ));
+
+        // Enqueue media library and options page scripts for Site Options page
+        if (isset($_GET['page']) && $_GET['page'] === 'voxel-toolkit-site-options') {
+            wp_enqueue_media();
+            wp_enqueue_script(
+                'voxel-toolkit-options-page',
+                VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/options-page.js',
+                array('jquery'),
+                VOXEL_TOOLKIT_VERSION,
+                true
+            );
+        }
         
         // Add inline styles and JS for Voxel taxonomies page
         if (isset($_GET['page']) && $_GET['page'] === 'voxel-taxonomies' && isset($_GET['action']) && $_GET['action'] === 'reorder-terms') {
@@ -472,26 +496,80 @@ class Voxel_Toolkit_Admin {
                 if (!isset($current_options[$function_key])) {
                     $current_options[$function_key] = array();
                 }
-                
+
+                // Special handling for options_page field configuration
+                if ($function_key === 'options_page') {
+                    $current_options[$function_key] = $this->handle_options_page_config($function_settings, $current_options[$function_key]);
+                    continue;
+                }
+
                 // IMPORTANT: Preserve the 'enabled' status when saving settings
                 // Only merge the new settings, don't overwrite the enabled status
                 $enabled_status = isset($current_options[$function_key]['enabled']) ? $current_options[$function_key]['enabled'] : false;
-                
+
                 // Merge settings, preserving existing ones
                 $current_options[$function_key] = array_merge($current_options[$function_key], $function_settings);
-                
+
                 // Ensure the enabled status is preserved
                 $current_options[$function_key]['enabled'] = $enabled_status;
             }
-            
+
             // Update the options
             update_option('voxel_toolkit_options', $current_options);
-            
+
             // Refresh the settings cache
             $this->settings->refresh_options();
         }
     }
-    
+
+    /**
+     * Handle options page field configuration
+     */
+    private function handle_options_page_config($new_settings, $current_settings) {
+        // Preserve enabled status
+        $enabled_status = isset($current_settings['enabled']) ? $current_settings['enabled'] : false;
+
+        // Get existing fields
+        $existing_fields = isset($current_settings['fields']) ? $current_settings['fields'] : array();
+
+        // Handle delete fields (comma-separated list)
+        if (isset($new_settings['delete_fields']) && !empty($new_settings['delete_fields'])) {
+            $fields_to_delete = explode(',', $new_settings['delete_fields']);
+            foreach ($fields_to_delete as $delete_field) {
+                $delete_field = sanitize_key(trim($delete_field));
+                if (!empty($delete_field) && isset($existing_fields[$delete_field])) {
+                    unset($existing_fields[$delete_field]);
+                    // Also delete the option value
+                    delete_option('voxel_options_' . $delete_field);
+                }
+            }
+        }
+
+        // Handle add new field (only if not deleting)
+        if (isset($new_settings['new_field']['name']) && !empty(trim($new_settings['new_field']['name']))) {
+            $field_name = Voxel_Toolkit_Options_Page::sanitize_field_name($new_settings['new_field']['name']);
+            $field_label = isset($new_settings['new_field']['label']) && !empty(trim($new_settings['new_field']['label']))
+                ? sanitize_text_field($new_settings['new_field']['label'])
+                : ucwords(str_replace('_', ' ', $field_name));
+            $field_type = isset($new_settings['new_field']['type']) ? Voxel_Toolkit_Options_Page::validate_field_type($new_settings['new_field']['type']) : 'text';
+            $field_default = isset($new_settings['new_field']['default']) ? sanitize_text_field($new_settings['new_field']['default']) : '';
+
+            // Only add if field name is valid and doesn't exist, and under limit
+            if (!empty($field_name) && !isset($existing_fields[$field_name]) && count($existing_fields) < Voxel_Toolkit_Options_Page::MAX_FIELDS) {
+                $existing_fields[$field_name] = array(
+                    'label' => $field_label,
+                    'type' => $field_type,
+                    'default' => $field_default,
+                );
+            }
+        }
+
+        return array(
+            'enabled' => $enabled_status,
+            'fields' => $existing_fields,
+        );
+    }
+
     /**
      * Render function settings section
      * 
@@ -1288,6 +1366,56 @@ class Voxel_Toolkit_Admin {
                 </table>
             </div>
 
+            <!-- Site Options -->
+            <?php if ($this->settings->is_function_enabled('options_page')): ?>
+                <?php
+                $options_config = $this->settings->get_function_settings('options_page');
+                $options_fields = isset($options_config['fields']) ? $options_config['fields'] : array();
+                ?>
+                <div class="settings-section" style="margin-top: 30px;">
+                    <h2><?php _e('Site Options', 'voxel-toolkit'); ?></h2>
+                    <p class="description"><?php _e('Custom site-wide options configured in the Options Page function. Use with @site(options.field_name) syntax.', 'voxel-toolkit'); ?></p>
+
+                    <?php if (!empty($options_fields)): ?>
+                        <table class="widefat striped">
+                            <thead>
+                                <tr>
+                                    <th><?php _e('Field Name', 'voxel-toolkit'); ?></th>
+                                    <th><?php _e('Type', 'voxel-toolkit'); ?></th>
+                                    <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                                    <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($options_fields as $field_name => $field_config): ?>
+                                    <tr>
+                                        <td><code><?php echo esc_html($field_name); ?></code></td>
+                                        <td><?php echo esc_html(ucfirst($field_config['type'])); ?></td>
+                                        <td><code>@site(options.<?php echo esc_html($field_name); ?>)</code><?php if ($field_config['type'] === 'image'): ?><br><code>@site(options.<?php echo esc_html($field_name); ?>).url</code><?php endif; ?></td>
+                                        <td><?php echo esc_html($field_config['label']); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                        <p style="margin-top: 15px;">
+                            <a href="<?php echo admin_url('admin.php?page=voxel-toolkit-site-options'); ?>" class="button">
+                                <?php _e('Edit Site Options', 'voxel-toolkit'); ?>
+                            </a>
+                            <a href="<?php echo admin_url('admin.php?page=voxel-toolkit-settings#section-options_page'); ?>" class="button">
+                                <?php _e('Configure Fields', 'voxel-toolkit'); ?>
+                            </a>
+                        </p>
+                    <?php else: ?>
+                        <p><em><?php _e('No fields configured yet.', 'voxel-toolkit'); ?></em></p>
+                        <p>
+                            <a href="<?php echo admin_url('admin.php?page=voxel-toolkit-settings#section-options_page'); ?>" class="button">
+                                <?php _e('Configure Fields', 'voxel-toolkit'); ?>
+                            </a>
+                        </p>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
             <!-- Modifiers -->
             <div class="settings-section" style="margin-top: 30px;">
                 <h2><?php _e('Modifiers', 'voxel-toolkit'); ?></h2>
@@ -1451,5 +1579,26 @@ class Voxel_Toolkit_Admin {
 
         wp_send_json($results);
     }
-    
+
+    /**
+     * Render Site Options page
+     */
+    public function render_site_options_page() {
+        // Get the options page instance
+        $functions = Voxel_Toolkit_Functions::instance()->get_active_functions();
+
+        if (isset($functions['options_page']) && $functions['options_page'] instanceof Voxel_Toolkit_Options_Page) {
+            $functions['options_page']->render_options_page();
+        } else {
+            ?>
+            <div class="wrap">
+                <h1><?php _e('Site Options', 'voxel-toolkit'); ?></h1>
+                <div class="notice notice-error">
+                    <p><?php _e('Options Page function is not properly initialized.', 'voxel-toolkit'); ?></p>
+                </div>
+            </div>
+            <?php
+        }
+    }
+
 }

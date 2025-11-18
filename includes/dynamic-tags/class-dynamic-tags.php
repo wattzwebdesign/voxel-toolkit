@@ -38,7 +38,7 @@ class Voxel_Toolkit_Dynamic_Tags {
         add_filter('voxel/dynamic-data/groups/post/properties', array($this, 'register_post_properties'), 10, 2);
         add_filter('voxel/dynamic-data/groups/user/properties', array($this, 'register_user_properties'), 10, 2);
         add_filter('voxel/dynamic-data/groups/author/properties', array($this, 'register_author_properties'), 10, 2);
-
+        add_filter('voxel/dynamic-data/groups/site/properties', array($this, 'register_site_properties'), 10, 2);
     }
 
     /**
@@ -249,6 +249,74 @@ class Voxel_Toolkit_Dynamic_Tags {
                     return '';
                 }
             } );
+
+        return $properties;
+    }
+
+    /**
+     * Register properties for site group (Options Page)
+     */
+    public function register_site_properties($properties, $group) {
+        // Check if options page is enabled
+        $settings = Voxel_Toolkit_Settings::instance();
+        if (!$settings->is_function_enabled('options_page')) {
+            return $properties;
+        }
+
+        // Get configured fields
+        $config = $settings->get_function_settings('options_page');
+        $fields = isset($config['fields']) ? $config['fields'] : array();
+
+        if (empty($fields)) {
+            return $properties;
+        }
+
+        // Create an 'options' object property
+        $properties['options'] = \Voxel\Dynamic_Data\Tag::Object('Site Options')->properties(function() use ($fields) {
+            $option_properties = array();
+
+            foreach ($fields as $field_name => $field_config) {
+                $option_name = 'voxel_options_' . $field_name;
+                $type = $field_config['type'];
+                $label = $field_config['label'];
+                $default = isset($field_config['default']) ? $field_config['default'] : '';
+
+                switch ($type) {
+                    case 'text':
+                    case 'textarea':
+                        $option_properties[$field_name] = \Voxel\Dynamic_Data\Tag::String($label)
+                            ->render(function() use ($option_name, $default) {
+                                return get_option($option_name, $default);
+                            });
+                        break;
+
+                    case 'number':
+                        $option_properties[$field_name] = \Voxel\Dynamic_Data\Tag::Number($label)
+                            ->render(function() use ($option_name, $default) {
+                                $value = get_option($option_name, $default);
+                                return is_numeric($value) ? intval($value) : 0;
+                            });
+                        break;
+
+                    case 'url':
+                        $option_properties[$field_name] = \Voxel\Dynamic_Data\Tag::URL($label)
+                            ->render(function() use ($option_name, $default) {
+                                return get_option($option_name, $default);
+                            });
+                        break;
+
+                    case 'image':
+                        $option_properties[$field_name] = \Voxel\Dynamic_Data\Tag::Number($label)
+                            ->render(function() use ($option_name, $default) {
+                                $value = get_option($option_name, $default);
+                                return is_numeric($value) ? intval($value) : 0;
+                            });
+                        break;
+                }
+            }
+
+            return $option_properties;
+        });
 
         return $properties;
     }

@@ -249,6 +249,13 @@ class Voxel_Toolkit_Functions {
                 'class' => '\VoxelToolkit\Functions\Duplicate_Title_Checker',
                 'file' => 'functions/class-duplicate-title-checker.php',
                 'settings_callback' => array($this, 'render_duplicate_title_checker_settings'),
+            ),
+            'options_page' => array(
+                'name' => __('Site Options', 'voxel-toolkit'),
+                'description' => __('Create global site options accessible via dynamic tags like @site(options.field_name). Perfect for site-wide settings like contact info, social links, and branding.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Options_Page',
+                'file' => 'functions/class-options-page.php',
+                'settings_callback' => array('Voxel_Toolkit_Options_Page', 'render_settings'),
             )
         );
         
