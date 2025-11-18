@@ -38,6 +38,7 @@ class Voxel_Toolkit_Dynamic_Tags {
         add_filter('voxel/dynamic-data/groups/post/properties', array($this, 'register_post_properties'), 10, 2);
         add_filter('voxel/dynamic-data/groups/user/properties', array($this, 'register_user_properties'), 10, 2);
         add_filter('voxel/dynamic-data/groups/author/properties', array($this, 'register_author_properties'), 10, 2);
+
     }
 
     /**
@@ -52,6 +53,9 @@ class Voxel_Toolkit_Dynamic_Tags {
         }
         if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-address-modifier.php')) {
             require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-address-modifier.php';
+        }
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-tally-modifier.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-tally-modifier.php';
         }
     }
 
@@ -73,6 +77,7 @@ class Voxel_Toolkit_Dynamic_Tags {
         $modifiers['file_size'] = \Voxel_Toolkit_File_Size_Modifier::class;
         $modifiers['file_extension'] = \Voxel_Toolkit_File_Extension_Modifier::class;
         $modifiers['address_part'] = \Voxel_Toolkit_Address_Part_Modifier::class;
+        $modifiers['tally'] = \Voxel_Toolkit_Tally_Modifier::class;
         return $modifiers;
     }
 
@@ -114,18 +119,16 @@ class Voxel_Toolkit_Dynamic_Tags {
                 // Count words
                 $word_count = str_word_count($content);
 
-                // Calculate reading time (average reading speed: 200 words per minute)
-                $reading_time = ceil($word_count / 200);
+                // Average reading speed: 200-250 words per minute (we'll use 225)
+                $reading_time_minutes = ceil($word_count / 225);
 
-                // Format output
-                if ($reading_time < 1) {
-                    return '< 1 min';
-                } elseif ($reading_time < 60) {
-                    return $reading_time . ' min';
+                if ($reading_time_minutes < 1) {
+                    return '1 min';
+                } else if ($reading_time_minutes < 60) {
+                    return $reading_time_minutes . ' min';
                 } else {
-                    // Convert to hours if 60+ minutes
-                    $hours = floor($reading_time / 60);
-                    $minutes = $reading_time % 60;
+                    $hours = floor($reading_time_minutes / 60);
+                    $minutes = $reading_time_minutes % 60;
                     if ($minutes > 0) {
                         return $hours . ' hr ' . $minutes . ' min';
                     } else {
@@ -163,61 +166,35 @@ class Voxel_Toolkit_Dynamic_Tags {
      */
     public function register_user_properties($properties, $group) {
         // Add membership expiration property
-        $properties['membership_expiration'] = \Voxel\Dynamic_Data\Tag::String('Membership Expiration Date')
+        $properties['membership_expiration'] = \Voxel\Dynamic_Data\Tag::Date('Membership Expiration')
             ->render( function() use ( $group ) {
-                // Get user ID from the group
-                $user_id = null;
-                if (isset($group->user) && method_exists($group->user, 'get_id')) {
-                    $user_id = $group->user->get_id();
-                } elseif (isset($group->user) && $group->user instanceof \WP_User) {
-                    $user_id = $group->user->ID;
+                // Get user object
+                $user = $group->get_user();
+
+                if (!$user || !method_exists($user, 'get_membership')) {
+                    return null;
                 }
 
-                if (!$user_id) {
-                    return '';
+                // Get membership
+                $membership = $user->get_membership();
+
+                if (!$membership || !method_exists($membership, 'get_expiration_date')) {
+                    return null;
                 }
 
-                // Get the voxel:plan meta
-                $plan_meta = get_user_meta($user_id, 'voxel:plan', true);
+                // Get expiration date
+                $expiration = $membership->get_expiration_date();
 
-                if (empty($plan_meta)) {
-                    return '';
+                if (!$expiration) {
+                    return null;
                 }
 
-                // Decode JSON if it's a string
-                if (is_string($plan_meta)) {
-                    $plan_data = json_decode($plan_meta, true);
-                } else {
-                    $plan_data = $plan_meta;
+                // Return the DateTime object or timestamp
+                if ($expiration instanceof \DateTime) {
+                    return $expiration->format('Y-m-d H:i:s');
                 }
 
-                // Validate plan data structure
-                if (!is_array($plan_data) || !isset($plan_data['billing']['current_period']['end'])) {
-                    return '';
-                }
-
-                // Get the end date
-                $end_date = $plan_data['billing']['current_period']['end'];
-
-                if (empty($end_date)) {
-                    return '';
-                }
-
-                // Parse the date
-                try {
-                    $timestamp = strtotime($end_date);
-                    if ($timestamp === false) {
-                        return '';
-                    }
-
-                    // Format according to WordPress date settings
-                    $date_format = get_option('date_format');
-                    $formatted_date = date_i18n($date_format, $timestamp);
-
-                    return $formatted_date;
-                } catch (Exception $e) {
-                    return '';
-                }
+                return $expiration;
             } );
 
         return $properties;
@@ -227,56 +204,44 @@ class Voxel_Toolkit_Dynamic_Tags {
      * Register properties for author group
      */
     public function register_author_properties($properties, $group) {
-        // Add membership expiration property
-        $properties['membership_expiration'] = \Voxel\Dynamic_Data\Tag::String('Membership Expiration Date')
+        // Add membership expiration property for author
+        $properties['membership_expiration'] = \Voxel\Dynamic_Data\Tag::Date('Membership Expiration')
             ->render( function() use ( $group ) {
-                // Get user ID from the group
-                $user_id = null;
-                if (isset($group->user) && method_exists($group->user, 'get_id')) {
-                    $user_id = $group->user->get_id();
-                } elseif (isset($group->user) && $group->user instanceof \WP_User) {
-                    $user_id = $group->user->ID;
+                // Get author from post
+                if (!$group->post || !$group->post->get_author()) {
+                    return null;
                 }
 
-                if (!$user_id) {
-                    return '';
+                $author = $group->post->get_author();
+
+                if (!method_exists($author, 'get_membership')) {
+                    return null;
                 }
 
-                // Get the voxel:plan meta
-                $plan_meta = get_user_meta($user_id, 'voxel:plan', true);
+                // Get membership
+                $membership = $author->get_membership();
 
-                if (empty($plan_meta)) {
-                    return '';
+                if (!$membership || !method_exists($membership, 'get_expiration_date')) {
+                    return null;
                 }
 
-                // Decode JSON if it's a string
-                if (is_string($plan_meta)) {
-                    $plan_data = json_decode($plan_meta, true);
-                } else {
-                    $plan_data = $plan_meta;
+                // Get expiration date
+                $expiration = $membership->get_expiration_date();
+
+                if (!$expiration) {
+                    return null;
                 }
 
-                // Validate plan data structure
-                if (!is_array($plan_data) || !isset($plan_data['billing']['current_period']['end'])) {
-                    return '';
+                // Return the DateTime object or timestamp
+                if ($expiration instanceof \DateTime) {
+                    return $expiration->format('Y-m-d H:i:s');
                 }
 
-                // Get the end date
-                $end_date = $plan_data['billing']['current_period']['end'];
-
-                if (empty($end_date)) {
-                    return '';
-                }
-
-                // Parse the date
+                // Try to format if it's a string or timestamp
                 try {
-                    $timestamp = strtotime($end_date);
-                    if ($timestamp === false) {
-                        return '';
-                    }
-
-                    // Format according to WordPress date settings
-                    $date_format = get_option('date_format');
+                    $date = new \DateTime($expiration);
+                    $date_format = get_option('date_format') . ' ' . get_option('time_format');
+                    $timestamp = $date->getTimestamp();
                     $formatted_date = date_i18n($date_format, $timestamp);
 
                     return $formatted_date;

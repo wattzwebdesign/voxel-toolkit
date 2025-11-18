@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Dynamic Tags**: New `.tally()` modifier for counting published posts in a post type
+  - Usage: `@site(post_types.member.singular).tally()` - Returns count of published posts
+  - Works with any post type property (singular, plural, icon, etc.)
+  - Perfect for dynamic labels like "500 Members", "1,234 Events"
+  - Uses efficient WordPress `wp_count_posts()` function
+  - Automatically counts only published posts
+
 ### Improved
 - **Duplicate Title Checker**: Revamped validation display for better efficiency and consistency
   - Now uses Voxel's native error slot mechanism for validation messages

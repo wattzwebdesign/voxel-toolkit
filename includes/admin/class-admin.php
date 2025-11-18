@@ -1331,6 +1331,19 @@ class Voxel_Toolkit_Admin {
                                 <em>10001</em>
                             </td>
                         </tr>
+                        <tr>
+                            <td><code>tally</code></td>
+                            <td><?php _e('Count published posts in a post type', 'voxel-toolkit'); ?></td>
+                            <td><?php _e('None (detects post type from chain)', 'voxel-toolkit'); ?></td>
+                            <td>
+                                <code>@site(post_types.member.singular).tally</code><br>
+                                <code>@site(post_types.event.plural).tally</code>
+                            </td>
+                            <td>
+                                <em>500</em><br>
+                                <em>1234</em>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
