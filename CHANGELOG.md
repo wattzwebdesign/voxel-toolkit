@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Site Options**: Create global site options accessible via dynamic tags
+  - Configure custom fields from Settings page (text, textarea, number, url, image)
+  - Maximum 30 fields for optimal performance
+  - Values stored in individual autoloaded WordPress options for efficiency
+  - Access via `@site(options.field_name)` dynamic tags
+  - Image fields return attachment ID (use `.url` modifier for image source)
+  - New "Site Options" submenu under Voxel Toolkit menu (appears when function is enabled)
+  - Field configuration UI with add/delete functionality
+  - Perfect for site-wide settings like contact info, social links, branding elements
+  - Fully integrated with Voxel's dynamic tags system
+  - Media library integration for image fields
 - **Dynamic Tags**: New `.tally()` modifier for counting published posts in a post type
   - Usage: `@site(post_types.member.singular).tally()` - Returns count of published posts
   - Works with any post type property (singular, plural, icon, etc.)
@@ -22,6 +33,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Error messages display in red, success messages in green
   - Matches Voxel's native field validation styling
   - More efficient DOM manipulation and reduced visual clutter
+
+### Fixed
+- **Light Mode**: Fixed white backgrounds appearing on Voxel admin pages when Light Mode is disabled
+  - Field headers now display correct dark background (`#40464a`) when Light Mode is disabled
+  - White backgrounds (`#e9e9e9`) only appear when Light Mode is enabled
+  - Removed inline styles that were unconditionally applying light backgrounds
+  - Improved conditional rendering based on Light Mode function status
 
 ## [1.5.2]
 

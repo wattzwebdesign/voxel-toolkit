@@ -45,6 +45,7 @@ class Voxel_Toolkit_Admin {
         add_action('wp_ajax_voxel_toolkit_get_widget_usage', array($this, 'ajax_get_widget_usage'));
         add_action('wp_ajax_voxel_toolkit_reset_settings', array($this, 'ajax_reset_settings'));
         add_action('wp_ajax_vt_admin_notifications_user_search', array($this, 'ajax_admin_notifications_user_search'));
+        add_action('wp_ajax_voxel_toolkit_reorder_fields', array($this, 'ajax_reorder_fields'));
     }
     
     /**
@@ -88,6 +89,29 @@ class Voxel_Toolkit_Admin {
             array($this, 'render_dynamic_tags_page')
         );
 
+        // Add Site Options as separate top-level menu if enabled
+        if ($this->settings->is_function_enabled('options_page')) {
+            add_menu_page(
+                __('Site Options', 'voxel-toolkit'),
+                __('Site Options', 'voxel-toolkit'),
+                'manage_options',
+                'voxel-toolkit-site-options',
+                array($this, 'render_site_options_page'),
+                'dashicons-admin-settings',
+                30
+            );
+
+            // Add Configure Fields as submenu under Site Options
+            add_submenu_page(
+                'voxel-toolkit-site-options',
+                __('Configure Fields', 'voxel-toolkit'),
+                __('Configure Fields', 'voxel-toolkit'),
+                'manage_options',
+                'voxel-toolkit-configure-fields',
+                array($this, 'render_configure_fields_page')
+            );
+        }
+
         add_submenu_page(
             'voxel-toolkit',
             __('Settings', 'voxel-toolkit'),
@@ -102,7 +126,15 @@ class Voxel_Toolkit_Admin {
      * Initialize admin
      */
     public function admin_init() {
-        // No need to register settings since we handle saving manually
+        // Handle configure fields form submission
+        $has_save_button = isset($_POST['voxel_toolkit_save_fields']) || isset($_POST['voxel_toolkit_save_field']);
+        $has_page = isset($_GET['page']) && $_GET['page'] === 'voxel-toolkit-configure-fields';
+
+        if ($has_save_button && $has_page) {
+            if (check_admin_referer('voxel_toolkit_configure_fields', 'voxel_toolkit_fields_nonce')) {
+                $this->save_configure_fields();
+            }
+        }
     }
     
     /**
@@ -135,10 +167,13 @@ class Voxel_Toolkit_Admin {
             return;
         }
         
+        // Enqueue jQuery UI Sortable
+        wp_enqueue_script('jquery-ui-sortable');
+
         // Enqueue Select2 for user search functionality
         wp_enqueue_style('select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css');
         wp_enqueue_script('select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js', array('jquery'), '', true);
-        
+
         wp_enqueue_script(
             'voxel-toolkit-admin',
             VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/admin.js',
@@ -157,57 +192,69 @@ class Voxel_Toolkit_Admin {
                 'confirmDisableAll' => __('Are you sure you want to disable all widgets?', 'voxel-toolkit'),
             )
         ));
+
+        // Enqueue media library and options page scripts for Site Options page
+        if (isset($_GET['page']) && $_GET['page'] === 'voxel-toolkit-site-options') {
+            wp_enqueue_media();
+            wp_enqueue_script(
+                'voxel-toolkit-options-page',
+                VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/options-page.js',
+                array('jquery'),
+                VOXEL_TOOLKIT_VERSION,
+                true
+            );
+        }
         
-        // Add inline styles and JS for Voxel taxonomies page
+        // Add inline styles and JS for Voxel taxonomies page - only if Light Mode is enabled
         if (isset($_GET['page']) && $_GET['page'] === 'voxel-taxonomies' && isset($_GET['action']) && $_GET['action'] === 'reorder-terms') {
-            wp_add_inline_style('voxel-toolkit-admin', '
-                .ts-terms-order .field-level-1>.field-head {
-                    background: #e9e9e9 !important;
-                }
-                .ts-terms-order .field-level-2>.field-head {
-                    background: #e9e9e9 !important;
-                }
-                .ts-form-group select[multiple] {
-                    background: #e9e9e9 !important;
-                }
-                .ts-form-group select[multiple] option {
-                    padding: 5px !important;
-                    color: black !important;
-                    background: #f5f5f5 !important;
-                }
-                .ts-form-group select[multiple] option:hover {
-                    background: #e0e0e0 !important;
-                }
-                .ts-form-group select[multiple] option:checked {
-                    background: #393e42 linear-gradient(0deg, #393e42, #393e42) !important;
-                    color: #fff !important;
-                    font-weight: 400 !important;
-                }
-                /* Dark mode styles - excluding admin bar */
-                body.vx-dark-mode #wpwrap #wpcontent i,
-                body.vx-dark-mode #wpwrap #wpbody i {
-                    color: white !important;
-                }
-            ');
-            
-            wp_add_inline_script('voxel-toolkit-admin', "
-                jQuery(document).ready(function($) {
-                    // Apply styles once on load - no continuous monitoring to prevent freezing
-                    setTimeout(function() {
-                        // Multi-select styles
-                        $('.ts-form-group select[multiple]').each(function() {
-                            if (!$(this).data('voxel-styled')) {
-                                $(this).attr('style', 'background: #e9e9e9 !important; background-color: #e9e9e9 !important;');
-                                $(this).data('voxel-styled', true);
-                            }
-                        });
-                        
-                        $('.ts-form-group select[multiple] option').each(function() {
-                            if (!$(this).data('voxel-styled')) {
-                                $(this).attr('style', 'padding: 5px !important; color: black !important; background: #f5f5f5 !important;');
-                                $(this).data('voxel-styled', true);
-                            }
-                        });
+            // Check if Light Mode is enabled
+            $settings = Voxel_Toolkit_Settings::instance();
+            $light_mode_enabled = $settings->is_function_enabled('light_mode');
+
+            if ($light_mode_enabled) {
+                wp_add_inline_style('voxel-toolkit-admin', '
+                    .ts-terms-order .field-level-1>.field-head {
+                        background: #e9e9e9 !important;
+                    }
+                    .ts-terms-order .field-level-2>.field-head {
+                        background: #e9e9e9 !important;
+                    }
+                    .ts-form-group select[multiple] {
+                        background: #e9e9e9 !important;
+                    }
+                    .ts-form-group select[multiple] option {
+                        padding: 5px !important;
+                        color: black !important;
+                        background: #f5f5f5 !important;
+                    }
+                    .ts-form-group select[multiple] option:hover {
+                        background: #e0e0e0 !important;
+                    }
+                    .ts-form-group select[multiple] option:checked {
+                        background: #393e42 linear-gradient(0deg, #393e42, #393e42) !important;
+                        color: #fff !important;
+                        font-weight: 400 !important;
+                    }
+                ');
+
+                wp_add_inline_script('voxel-toolkit-admin', "
+                    jQuery(document).ready(function($) {
+                        // Apply styles once on load - no continuous monitoring to prevent freezing
+                        setTimeout(function() {
+                            // Multi-select styles
+                            $('.ts-form-group select[multiple]').each(function() {
+                                if (!$(this).data('voxel-styled')) {
+                                    $(this).attr('style', 'background: #e9e9e9 !important; background-color: #e9e9e9 !important;');
+                                    $(this).data('voxel-styled', true);
+                                }
+                            });
+
+                            $('.ts-form-group select[multiple] option').each(function() {
+                                if (!$(this).data('voxel-styled')) {
+                                    $(this).attr('style', 'padding: 5px !important; color: black !important; background: #f5f5f5 !important;');
+                                    $(this).data('voxel-styled', true);
+                                }
+                            });
                         
                         $('.ts-form-group select[multiple] option:checked').each(function() {
                             $(this).attr('style', 'background: #393e42 linear-gradient(0deg, #393e42, #393e42) !important; color: #fff !important; font-weight: 400 !important;');
@@ -229,6 +276,7 @@ class Voxel_Toolkit_Admin {
                     });
                 });
             ");
+            }
         }
         
         // Localize script
@@ -388,7 +436,10 @@ class Voxel_Toolkit_Admin {
 
             <?php if ($is_enabled): ?>
                 <div class="function-actions">
-                    <a href="<?php echo esc_url($settings_url); ?>" class="button button-secondary">
+                    <?php
+                    $configure_url = isset($function_data['configure_url']) ? $function_data['configure_url'] : $settings_url;
+                    ?>
+                    <a href="<?php echo esc_url($configure_url); ?>" class="button button-secondary">
                         <?php _e('Configure', 'voxel-toolkit'); ?>
                     </a>
                 </div>
@@ -472,26 +523,95 @@ class Voxel_Toolkit_Admin {
                 if (!isset($current_options[$function_key])) {
                     $current_options[$function_key] = array();
                 }
-                
+
+                // Special handling for options_page field configuration
+                if ($function_key === 'options_page') {
+                    $current_options[$function_key] = $this->handle_options_page_config($function_settings, $current_options[$function_key]);
+                    continue;
+                }
+
                 // IMPORTANT: Preserve the 'enabled' status when saving settings
                 // Only merge the new settings, don't overwrite the enabled status
                 $enabled_status = isset($current_options[$function_key]['enabled']) ? $current_options[$function_key]['enabled'] : false;
-                
+
                 // Merge settings, preserving existing ones
                 $current_options[$function_key] = array_merge($current_options[$function_key], $function_settings);
-                
+
                 // Ensure the enabled status is preserved
                 $current_options[$function_key]['enabled'] = $enabled_status;
             }
-            
+
             // Update the options
             update_option('voxel_toolkit_options', $current_options);
-            
+
             // Refresh the settings cache
             $this->settings->refresh_options();
         }
     }
-    
+
+    /**
+     * Handle options page field configuration
+     */
+    private function handle_options_page_config($new_settings, $current_settings) {
+        error_log('OPTIONS PAGE DEBUG: handle_options_page_config called');
+        error_log('OPTIONS PAGE DEBUG: new_settings: ' . print_r($new_settings, true));
+
+        // Preserve enabled status
+        $enabled_status = isset($current_settings['enabled']) ? $current_settings['enabled'] : false;
+
+        // Get existing fields
+        $existing_fields = isset($current_settings['fields']) ? $current_settings['fields'] : array();
+
+        // Handle delete fields (comma-separated list)
+        if (isset($new_settings['delete_fields']) && !empty($new_settings['delete_fields'])) {
+            $fields_to_delete = explode(',', $new_settings['delete_fields']);
+            foreach ($fields_to_delete as $delete_field) {
+                $delete_field = sanitize_key(trim($delete_field));
+                if (!empty($delete_field) && isset($existing_fields[$delete_field])) {
+                    unset($existing_fields[$delete_field]);
+                    // Also delete the option value
+                    delete_option('voxel_options_' . $delete_field);
+                }
+            }
+        }
+
+        // Handle add multiple new fields (JSON array)
+        if (isset($new_settings['new_fields']) && !empty($new_settings['new_fields'])) {
+            error_log('OPTIONS PAGE DEBUG: new_fields received: ' . $new_settings['new_fields']);
+            $new_fields = json_decode($new_settings['new_fields'], true);
+            error_log('OPTIONS PAGE DEBUG: decoded fields: ' . print_r($new_fields, true));
+
+            if (is_array($new_fields)) {
+                foreach ($new_fields as $new_field) {
+                    if (!isset($new_field['name']) || empty(trim($new_field['name']))) {
+                        continue;
+                    }
+
+                    $field_name = Voxel_Toolkit_Options_Page::sanitize_field_name($new_field['name']);
+                    $field_label = isset($new_field['label']) && !empty(trim($new_field['label']))
+                        ? sanitize_text_field($new_field['label'])
+                        : ucwords(str_replace('_', ' ', $field_name));
+                    $field_type = isset($new_field['type']) ? Voxel_Toolkit_Options_Page::validate_field_type($new_field['type']) : 'text';
+                    $field_default = isset($new_field['default']) ? sanitize_text_field($new_field['default']) : '';
+
+                    // Only add if field name is valid and doesn't exist, and under limit
+                    if (!empty($field_name) && !isset($existing_fields[$field_name]) && count($existing_fields) < Voxel_Toolkit_Options_Page::MAX_FIELDS) {
+                        $existing_fields[$field_name] = array(
+                            'label' => $field_label,
+                            'type' => $field_type,
+                            'default' => $field_default,
+                        );
+                    }
+                }
+            }
+        }
+
+        return array(
+            'enabled' => $enabled_status,
+            'fields' => $existing_fields,
+        );
+    }
+
     /**
      * Render function settings section
      * 
@@ -1288,6 +1408,56 @@ class Voxel_Toolkit_Admin {
                 </table>
             </div>
 
+            <!-- Site Options -->
+            <?php if ($this->settings->is_function_enabled('options_page')): ?>
+                <?php
+                $options_config = $this->settings->get_function_settings('options_page');
+                $options_fields = isset($options_config['fields']) ? $options_config['fields'] : array();
+                ?>
+                <div class="settings-section" style="margin-top: 30px;">
+                    <h2><?php _e('Site Options', 'voxel-toolkit'); ?></h2>
+                    <p class="description"><?php _e('Custom site-wide options configured in the Options Page function. Use with @site(options.field_name) syntax.', 'voxel-toolkit'); ?></p>
+
+                    <?php if (!empty($options_fields)): ?>
+                        <table class="widefat striped">
+                            <thead>
+                                <tr>
+                                    <th><?php _e('Field Name', 'voxel-toolkit'); ?></th>
+                                    <th><?php _e('Type', 'voxel-toolkit'); ?></th>
+                                    <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                                    <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($options_fields as $field_name => $field_config): ?>
+                                    <tr>
+                                        <td><code><?php echo esc_html($field_name); ?></code></td>
+                                        <td><?php echo esc_html(ucfirst($field_config['type'])); ?></td>
+                                        <td><code>@site(options.<?php echo esc_html($field_name); ?>)</code><?php if ($field_config['type'] === 'image'): ?><br><code>@site(options.<?php echo esc_html($field_name); ?>).url</code><?php endif; ?></td>
+                                        <td><?php echo esc_html($field_config['label']); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                        <p style="margin-top: 15px;">
+                            <a href="<?php echo admin_url('admin.php?page=voxel-toolkit-site-options'); ?>" class="button">
+                                <?php _e('Edit Site Options', 'voxel-toolkit'); ?>
+                            </a>
+                            <a href="<?php echo admin_url('admin.php?page=voxel-toolkit-settings#section-options_page'); ?>" class="button">
+                                <?php _e('Configure Fields', 'voxel-toolkit'); ?>
+                            </a>
+                        </p>
+                    <?php else: ?>
+                        <p><em><?php _e('No fields configured yet.', 'voxel-toolkit'); ?></em></p>
+                        <p>
+                            <a href="<?php echo admin_url('admin.php?page=voxel-toolkit-settings#section-options_page'); ?>" class="button">
+                                <?php _e('Configure Fields', 'voxel-toolkit'); ?>
+                            </a>
+                        </p>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
             <!-- Modifiers -->
             <div class="settings-section" style="margin-top: 30px;">
                 <h2><?php _e('Modifiers', 'voxel-toolkit'); ?></h2>
@@ -1451,5 +1621,580 @@ class Voxel_Toolkit_Admin {
 
         wp_send_json($results);
     }
-    
+
+    /**
+     * Render Site Options page
+     */
+    public function render_site_options_page() {
+        // Get the options page instance
+        $functions = Voxel_Toolkit_Functions::instance()->get_active_functions();
+
+        if (isset($functions['options_page']) && $functions['options_page'] instanceof Voxel_Toolkit_Options_Page) {
+            $functions['options_page']->render_options_page();
+        } else {
+            ?>
+            <div class="wrap">
+                <h1><?php _e('Site Options', 'voxel-toolkit'); ?></h1>
+                <div class="notice notice-error">
+                    <p><?php _e('Options Page function is not properly initialized.', 'voxel-toolkit'); ?></p>
+                </div>
+            </div>
+            <?php
+        }
+    }
+
+    /**
+     * Render Configure Fields page
+     */
+    public function render_configure_fields_page() {
+        $settings = Voxel_Toolkit_Settings::instance();
+        $config = $settings->get_function_settings('options_page');
+        $fields = isset($config['fields']) ? $config['fields'] : array();
+        $field_types = array(
+            'text' => 'Text',
+            'textarea' => 'Textarea',
+            'number' => 'Number',
+            'url' => 'URL',
+            'image' => 'Image',
+        );
+        ?>
+        <div class="wrap voxel-toolkit-configure-fields-page">
+            <h1><?php _e('Site Options - Configure Fields', 'voxel-toolkit'); ?></h1>
+
+            <div class="voxel-toolkit-intro">
+                <p><?php _e('Configure custom fields that will be available site-wide via dynamic tags. Perfect for contact info, social links, and other global settings.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <?php if (isset($_GET['saved']) && $_GET['saved'] == '1'): ?>
+                <div class="notice notice-success is-dismissible">
+                    <p><?php _e('Fields saved successfully!', 'voxel-toolkit'); ?></p>
+                </div>
+            <?php endif; ?>
+
+            <style>
+                .voxel-toolkit-configure-fields-page .voxel-toolkit-intro {
+                    margin-bottom: 20px;
+                }
+                .vt-add-field-card {
+                    background: #fff;
+                    border: 1px solid #e1e5e9;
+                    border-radius: 12px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+                    padding: 30px;
+                    margin-bottom: 20px;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                .vt-add-field-card h2 {
+                    margin-top: 0;
+                    font-size: 18px;
+                    margin-bottom: 15px;
+                    color: #1d2327;
+                }
+                .vt-form-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 15px;
+                    margin-bottom: 15px;
+                }
+                .vt-form-row label {
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 5px;
+                    font-size: 13px;
+                }
+                .vt-form-row input[type="text"],
+                .vt-form-row select {
+                    width: 100%;
+                }
+                .vt-form-row .description {
+                    font-size: 12px;
+                    color: #646970;
+                    margin-top: 3px;
+                }
+                .vt-fields-container {
+                    background: #fff;
+                    border: 1px solid #e1e5e9;
+                    border-radius: 12px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+                    margin-top: 20px;
+                    overflow: hidden;
+                }
+                .vt-field-row {
+                    padding: 25px 30px;
+                    border-bottom: 1px solid #e1e5e9;
+                    transition: background-color 0.2s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    cursor: move;
+                }
+                .vt-field-row:last-child {
+                    border-bottom: none;
+                }
+                .vt-field-row:hover {
+                    background-color: #f8f9fa;
+                }
+                .vt-field-row.ui-sortable-helper {
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    background: #fff;
+                }
+                .vt-field-row.ui-sortable-placeholder {
+                    background: #f0f6ff;
+                    border: 2px dashed #1e3a5f;
+                    visibility: visible !important;
+                }
+                .vt-drag-handle {
+                    margin-right: 15px;
+                    color: #a7aaad;
+                    cursor: grab;
+                    display: flex;
+                    align-items: center;
+                }
+                .vt-drag-handle:active {
+                    cursor: grabbing;
+                }
+                .vt-drag-handle .dashicons {
+                    font-size: 20px;
+                    width: 20px;
+                    height: 20px;
+                }
+                .vt-field-info {
+                    flex: 1;
+                }
+                .vt-field-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    margin-bottom: 8px;
+                }
+                .vt-field-title {
+                    font-family: monospace;
+                    font-weight: 600;
+                    color: #1d2327;
+                    font-size: 14px;
+                    margin: 0;
+                }
+                .vt-field-type {
+                    display: inline-block;
+                    background: #e8f4f8;
+                    color: #0c5d8c;
+                    padding: 4px 12px;
+                    border-radius: 12px;
+                    font-size: 11px;
+                    text-transform: uppercase;
+                    font-weight: 600;
+                    letter-spacing: 0.5px;
+                }
+                .vt-field-label {
+                    color: #646970;
+                    font-size: 13px;
+                    margin-bottom: 6px;
+                }
+                .vt-field-tag {
+                    font-size: 12px;
+                    color: #646970;
+                }
+                .vt-field-tag code {
+                    background: #f8f9fa;
+                    padding: 3px 8px;
+                    border-radius: 4px;
+                    font-size: 11px;
+                    border: 1px solid #e1e5e9;
+                    font-family: monospace;
+                    color: #1e3a5f;
+                }
+                .vt-field-actions {
+                    margin-left: 20px;
+                    display: flex;
+                    gap: 8px;
+                }
+                .vt-field-actions .edit-field {
+                    background: #fff;
+                    border: 1px solid #e1e5e9;
+                    color: #1e3a5f;
+                    padding: 6px 16px;
+                    border-radius: 6px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .vt-field-actions .edit-field:hover {
+                    background: #1e3a5f;
+                    color: #fff;
+                    border-color: #1e3a5f;
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 4px rgba(30, 58, 95, 0.2);
+                }
+                .vt-field-actions .delete-field {
+                    background: #fff;
+                    border: 1px solid #e1e5e9;
+                    color: #d63638;
+                    padding: 6px 16px;
+                    border-radius: 6px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .vt-field-actions .delete-field:hover {
+                    background: #d63638;
+                    color: #fff;
+                    border-color: #d63638;
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 4px rgba(214, 54, 56, 0.2);
+                }
+            </style>
+
+            <form method="post">
+                <?php wp_nonce_field('voxel_toolkit_configure_fields', 'voxel_toolkit_fields_nonce'); ?>
+
+                <!-- Add New Field Card -->
+                <div class="vt-add-field-card">
+                    <h2><?php _e('Add New Field', 'voxel-toolkit'); ?></h2>
+
+                    <div class="vt-form-grid">
+                        <div class="vt-form-row">
+                            <label for="field_name"><?php _e('Field Name', 'voxel-toolkit'); ?></label>
+                            <input type="text" id="field_name" name="field_name" class="regular-text" placeholder="e.g., company_phone">
+                            <p class="description"><?php _e('Lowercase, numbers, underscores only', 'voxel-toolkit'); ?></p>
+                        </div>
+
+                        <div class="vt-form-row">
+                            <label for="field_label"><?php _e('Label', 'voxel-toolkit'); ?></label>
+                            <input type="text" id="field_label" name="field_label" class="regular-text" placeholder="e.g., Company Phone">
+                            <p class="description"><?php _e('Human-readable label', 'voxel-toolkit'); ?></p>
+                        </div>
+
+                        <div class="vt-form-row">
+                            <label for="field_type"><?php _e('Type', 'voxel-toolkit'); ?></label>
+                            <select id="field_type" name="field_type" class="regular-text">
+                                <?php foreach ($field_types as $type => $label): ?>
+                                    <option value="<?php echo esc_attr($type); ?>"><?php echo esc_html($label); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="vt-form-row">
+                            <label for="field_default"><?php _e('Default Value', 'voxel-toolkit'); ?> <span style="font-weight:normal;color:#646970;">(<?php _e('optional', 'voxel-toolkit'); ?>)</span></label>
+                            <input type="text" id="field_default" name="field_default" class="regular-text" placeholder="">
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="is_update" id="is_update" value="">
+
+                    <button type="submit" name="voxel_toolkit_save_field" class="button button-primary">
+                        <?php _e('Save Field', 'voxel-toolkit'); ?>
+                    </button>
+                </div>
+
+                <!-- Existing Fields -->
+                <h2 style="margin-top: 30px;">
+                    <?php _e('Configured Fields', 'voxel-toolkit'); ?>
+                </h2>
+
+                <?php if (!empty($fields)): ?>
+                    <div class="vt-fields-container" id="sortable-fields">
+                        <?php foreach ($fields as $field_name => $field_config): ?>
+                            <div class="vt-field-row" data-field-name="<?php echo esc_attr($field_name); ?>">
+                                <div class="vt-drag-handle">
+                                    <span class="dashicons dashicons-move"></span>
+                                </div>
+                                <div class="vt-field-info">
+                                    <div class="vt-field-header">
+                                        <h3 class="vt-field-title"><?php echo esc_html($field_name); ?></h3>
+                                        <span class="vt-field-type"><?php echo esc_html($field_types[$field_config['type']]); ?></span>
+                                    </div>
+                                    <div class="vt-field-label"><?php echo esc_html($field_config['label']); ?></div>
+                                    <div class="vt-field-tag">
+                                        <code>@site(options.<?php echo esc_html($field_name); ?>)</code>
+                                    </div>
+                                </div>
+                                <div class="vt-field-actions">
+                                    <button type="button" class="button button-small edit-field" data-field="<?php echo esc_attr($field_name); ?>" data-label="<?php echo esc_attr($field_config['label']); ?>" data-type="<?php echo esc_attr($field_config['type']); ?>" data-default="<?php echo esc_attr($field_config['default']); ?>">
+                                        <?php _e('Edit', 'voxel-toolkit'); ?>
+                                    </button>
+                                    <button type="button" class="button button-small delete-field" data-field="<?php echo esc_attr($field_name); ?>">
+                                        <?php _e('Delete', 'voxel-toolkit'); ?>
+                                    </button>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <input type="hidden" name="field_order" id="field_order" value="">
+                <?php else: ?>
+                    <div class="vt-add-field-card">
+                        <p style="text-align: center; color: #646970; margin: 20px 0;">
+                            <?php _e('No fields configured yet. Add your first field above!', 'voxel-toolkit'); ?>
+                        </p>
+                    </div>
+                <?php endif; ?>
+            </form>
+
+            <script>
+            jQuery(document).ready(function($) {
+                // Initialize sortable for field reordering
+                $('#sortable-fields').sortable({
+                    handle: '.vt-drag-handle',
+                    placeholder: 'ui-sortable-placeholder',
+                    helper: function(e, ui) {
+                        ui.children().each(function() {
+                            $(this).width($(this).width());
+                        });
+                        return ui;
+                    },
+                    update: function(event, ui) {
+                        // Get the new order
+                        var order = [];
+                        $('#sortable-fields .vt-field-row').each(function() {
+                            order.push($(this).data('field-name'));
+                        });
+
+                        // Save order via AJAX
+                        $.post(ajaxurl, {
+                            action: 'voxel_toolkit_reorder_fields',
+                            nonce: '<?php echo wp_create_nonce('voxel_toolkit_reorder_fields'); ?>',
+                            order: order
+                        }, function(response) {
+                            if (response.success) {
+                                // Show brief success indicator
+                                var $notice = $('<div class="notice notice-success" style="position: fixed; top: 32px; right: 20px; z-index: 9999; padding: 10px 15px;"><p>Field order saved!</p></div>');
+                                $('body').append($notice);
+                                setTimeout(function() {
+                                    $notice.fadeOut(function() { $(this).remove(); });
+                                }, 2000);
+                            }
+                        });
+                    }
+                });
+
+                // Auto-format field name
+                $('#field_name').on('input', function() {
+                    var value = $(this).val();
+                    var formatted = value.toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
+                    $(this).val(formatted);
+                });
+
+                // Edit existing field
+                $(document).on('click', '.edit-field', function(e) {
+                    e.preventDefault();
+                    var $button = $(this);
+                    var fieldName = $button.data('field');
+                    var fieldLabel = $button.data('label');
+                    var fieldType = $button.data('type');
+                    var fieldDefault = $button.data('default');
+
+                    // Populate the form with existing values
+                    $('#field_name').val(fieldName).prop('readonly', true);
+                    $('#field_label').val(fieldLabel);
+                    $('#field_type').val(fieldType);
+                    $('#field_default').val(fieldDefault);
+                    $('#is_update').val('1');
+
+                    // Scroll to the add field card
+                    $('html, body').animate({
+                        scrollTop: $('.vt-add-field-card').offset().top - 50
+                    }, 500);
+
+                    // Update card title
+                    $('.vt-add-field-card h2').text('<?php _e('Update Field', 'voxel-toolkit'); ?>');
+
+                    // Show cancel button if it doesn't exist
+                    if ($('#cancel-edit').length === 0) {
+                        $('button[name="voxel_toolkit_save_field"]').after('<button type="button" id="cancel-edit" class="button" style="margin-left: 10px;">Cancel</button>');
+                    }
+                });
+
+                // Cancel edit mode
+                $(document).on('click', '#cancel-edit', function() {
+                    $('#field_name').val('').prop('readonly', false);
+                    $('#field_label').val('');
+                    $('#field_type').val('text');
+                    $('#field_default').val('');
+                    $('#is_update').val('');
+                    $('.vt-add-field-card h2').text('<?php _e('Add New Field', 'voxel-toolkit'); ?>');
+                    $(this).remove();
+                });
+
+                // Delete existing field
+                $(document).on('click', '.delete-field', function(e) {
+                    e.preventDefault();
+                    var field = $(this).data('field');
+
+                    if (confirm('Delete this field? This will remove all data and reload the page.')) {
+                        var $form = $('<form>', {
+                            method: 'POST',
+                            action: ''
+                        });
+
+                        $form.append($('<input>', {
+                            type: 'hidden',
+                            name: 'voxel_toolkit_fields_nonce',
+                            value: '<?php echo wp_create_nonce('voxel_toolkit_configure_fields'); ?>'
+                        }));
+
+                        $form.append($('<input>', {
+                            type: 'hidden',
+                            name: 'delete_fields',
+                            value: field
+                        }));
+
+                        $form.append($('<input>', {
+                            type: 'hidden',
+                            name: 'voxel_toolkit_save_fields',
+                            value: '1'
+                        }));
+
+                        $('body').append($form);
+                        $form.submit();
+                    }
+                });
+
+                // Form submit validation
+                $('form').on('submit', function(e) {
+                    var name = $('#field_name').val().trim();
+                    var label = $('#field_label').val().trim();
+
+                    if (!name) {
+                        alert('Please enter a field name');
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    // Auto-generate label if empty
+                    if (!label) {
+                        label = name.split('_').map(function(word) {
+                            return word.charAt(0).toUpperCase() + word.slice(1);
+                        }).join(' ');
+                        $('#field_label').val(label);
+                    }
+                });
+            });
+            </script>
+        </div>
+        <?php
+    }
+
+    /**
+     * Save configure fields
+     */
+    private function save_configure_fields() {
+        error_log('=== SAVE CONFIGURE FIELDS CALLED ===');
+        error_log('POST data: ' . print_r($_POST, true));
+
+        $current_options = get_option('voxel_toolkit_options', array());
+        $config = isset($current_options['options_page']) ? $current_options['options_page'] : array();
+        $fields = isset($config['fields']) ? $config['fields'] : array();
+
+        error_log('Existing fields: ' . print_r($fields, true));
+
+        $is_delete = false;
+
+        // Handle deletes
+        if (!empty($_POST['delete_fields'])) {
+            $is_delete = true;
+            $to_delete = explode(',', $_POST['delete_fields']);
+            foreach ($to_delete as $field_name) {
+                $field_name = sanitize_key(trim($field_name));
+                if (isset($fields[$field_name])) {
+                    unset($fields[$field_name]);
+                    delete_option('voxel_options_' . $field_name);
+                }
+            }
+        }
+
+        // Handle single field add/update
+        if (isset($_POST['voxel_toolkit_save_field'])) {
+            error_log('Processing single field save...');
+            $name = !empty($_POST['field_name']) ? Voxel_Toolkit_Options_Page::sanitize_field_name($_POST['field_name']) : '';
+            $label = !empty($_POST['field_label']) ? sanitize_text_field($_POST['field_label']) : '';
+            $type = !empty($_POST['field_type']) ? Voxel_Toolkit_Options_Page::validate_field_type($_POST['field_type']) : 'text';
+            $default = !empty($_POST['field_default']) ? sanitize_text_field($_POST['field_default']) : '';
+            $is_update = !empty($_POST['is_update']);
+
+            error_log("Field data - name: $name, label: $label, type: $type, default: $default, is_update: " . ($is_update ? 'yes' : 'no'));
+
+            if (!empty($name)) {
+                // Auto-generate label if empty
+                if (empty($label)) {
+                    $label = ucwords(str_replace('_', ' ', $name));
+                }
+
+                // Allow updates to existing fields or new fields
+                if ($is_update || !isset($fields[$name])) {
+                    $fields[$name] = array(
+                        'label' => $label,
+                        'type' => $type,
+                        'default' => $default,
+                    );
+                    error_log("Field added/updated: $name");
+                } else {
+                    error_log("Field already exists and not in update mode: $name");
+                }
+            } else {
+                error_log('Field name is empty!');
+            }
+        } else {
+            error_log('voxel_toolkit_save_field not set in POST');
+        }
+
+        // Save
+        $current_options['options_page']['fields'] = $fields;
+        update_option('voxel_toolkit_options', $current_options);
+
+        // Refresh settings cache
+        Voxel_Toolkit_Settings::instance()->refresh_options();
+
+        // Redirect back to configure fields page
+        wp_safe_redirect(admin_url('admin.php?page=voxel-toolkit-configure-fields&saved=1'));
+        exit;
+    }
+
+    /**
+     * AJAX handler for reordering fields
+     */
+    public function ajax_reorder_fields() {
+        check_ajax_referer('voxel_toolkit_reorder_fields', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied');
+        }
+
+        $order = isset($_POST['order']) ? $_POST['order'] : array();
+
+        if (empty($order)) {
+            wp_send_json_error('No order provided');
+        }
+
+        // Get current options
+        $current_options = get_option('voxel_toolkit_options', array());
+        $config = isset($current_options['options_page']) ? $current_options['options_page'] : array();
+        $fields = isset($config['fields']) ? $config['fields'] : array();
+
+        // Reorder fields based on the new order
+        $reordered_fields = array();
+        foreach ($order as $field_name) {
+            $field_name = sanitize_key($field_name);
+            if (isset($fields[$field_name])) {
+                $reordered_fields[$field_name] = $fields[$field_name];
+            }
+        }
+
+        // Add any fields that weren't in the order (shouldn't happen, but just in case)
+        foreach ($fields as $field_name => $field_config) {
+            if (!isset($reordered_fields[$field_name])) {
+                $reordered_fields[$field_name] = $field_config;
+            }
+        }
+
+        // Save the reordered fields
+        $current_options['options_page']['fields'] = $reordered_fields;
+        update_option('voxel_toolkit_options', $current_options);
+
+        // Refresh settings cache
+        Voxel_Toolkit_Settings::instance()->refresh_options();
+
+        wp_send_json_success();
+    }
+
 }

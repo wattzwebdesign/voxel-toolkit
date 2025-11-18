@@ -260,6 +260,11 @@
          * Apply both search and filter
          */
         applyFilters: function() {
+            // Only run if search element exists (Functions page)
+            if (!$('#voxel-toolkit-search').length) {
+                return;
+            }
+
             const searchTerm = $('#voxel-toolkit-search').val().toLowerCase().trim();
             const filterValue = $('input[name="function-filter"]:checked').val();
             

@@ -249,6 +249,14 @@ class Voxel_Toolkit_Functions {
                 'class' => '\VoxelToolkit\Functions\Duplicate_Title_Checker',
                 'file' => 'functions/class-duplicate-title-checker.php',
                 'settings_callback' => array($this, 'render_duplicate_title_checker_settings'),
+            ),
+            'options_page' => array(
+                'name' => __('Site Options', 'voxel-toolkit'),
+                'description' => __('Create global site options accessible via dynamic tags like @site(options.field_name). Perfect for site-wide settings like contact info, social links, and branding.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Options_Page',
+                'file' => 'functions/class-options-page.php',
+                'settings_callback' => array('Voxel_Toolkit_Options_Page', 'render_settings'),
+                'configure_url' => admin_url('admin.php?page=voxel-toolkit-configure-fields'),
             )
         );
         
@@ -428,7 +436,7 @@ class Voxel_Toolkit_Functions {
         if (isset($this->active_functions[$function_key])) {
             return; // Already initialized
         }
-        
+
         // Include function file if specified
         if (isset($function_data['file'])) {
             $file_path = VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/' . $function_data['file'];
@@ -436,11 +444,11 @@ class Voxel_Toolkit_Functions {
                 require_once $file_path;
             }
         }
-        
+
         // Initialize function class if specified
         if (isset($function_data['class']) && class_exists($function_data['class'])) {
             $class_name = $function_data['class'];
-            
+
             // Check if class has instance method (singleton pattern)
             if (method_exists($class_name, 'instance')) {
                 $this->active_functions[$function_key] = $class_name::instance();
