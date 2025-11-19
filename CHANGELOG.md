@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2025-01-18
+
 ### Added
 - **Widget CSS Class & ID**: Inject custom CSS classes and IDs to individual items in Voxel widgets
   - **Supported Widgets**: Navbar (VX), User Bar (VX), Advanced List (VX)
