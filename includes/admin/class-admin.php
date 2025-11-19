@@ -112,6 +112,33 @@ class Voxel_Toolkit_Admin {
             );
         }
 
+        // Add Suggested Edits submenu under each enabled post type
+        if ($this->settings->is_function_enabled('suggest_edits')) {
+            $se_config = $this->settings->get_function_settings('suggest_edits');
+            $enabled_post_types = isset($se_config['post_types']) ? $se_config['post_types'] : array();
+
+            foreach ($enabled_post_types as $post_type) {
+                $post_type_obj = get_post_type_object($post_type);
+                if ($post_type_obj) {
+                    $pending_count = Voxel_Toolkit_Suggest_Edits::instance()->get_pending_count($post_type);
+                    $menu_title = __('Suggested Edits', 'voxel-toolkit');
+
+                    if ($pending_count > 0) {
+                        $menu_title .= sprintf(' <span class="awaiting-mod">%d</span>', $pending_count);
+                    }
+
+                    add_submenu_page(
+                        'edit.php?post_type=' . $post_type,
+                        __('Suggested Edits', 'voxel-toolkit'),
+                        $menu_title,
+                        'edit_posts',
+                        'vt-suggested-edits',
+                        array($this, 'render_suggested_edits_page')
+                    );
+                }
+            }
+        }
+
         add_submenu_page(
             'voxel-toolkit',
             __('Settings', 'voxel-toolkit'),
@@ -2147,6 +2174,471 @@ class Voxel_Toolkit_Admin {
 
         // Redirect back to configure fields page
         wp_safe_redirect(admin_url('admin.php?page=voxel-toolkit-configure-fields&saved=1'));
+        exit;
+    }
+
+    /**
+     * Render Suggested Edits admin page
+     */
+    public function render_suggested_edits_page() {
+        if (!current_user_can('edit_posts')) {
+            wp_die(__('You do not have permission to access this page.', 'voxel-toolkit'));
+        }
+
+        // Get current post type from URL
+        $post_type = isset($_GET['post_type']) ? sanitize_key($_GET['post_type']) : 'post';
+        $post_type_obj = get_post_type_object($post_type);
+
+        // Handle single suggestion view
+        if (isset($_GET['suggestion_id'])) {
+            $this->render_single_suggestion($_GET['suggestion_id']);
+            return;
+        }
+
+        // Handle bulk actions
+        if (isset($_POST['bulk_action']) && isset($_POST['suggestion_ids'])) {
+            check_admin_referer('vt_bulk_suggestions');
+            $this->handle_bulk_actions($_POST['bulk_action'], $_POST['suggestion_ids']);
+        }
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'voxel_edit_suggestions';
+
+        // Get filter parameters
+        $status_filter = isset($_GET['status']) ? sanitize_key($_GET['status']) : 'pending';
+        $paged = isset($_GET['paged']) ? absint($_GET['paged']) : 1;
+        $per_page = 20;
+        $offset = ($paged - 1) * $per_page;
+
+        // Build query
+        $where = "WHERE p.post_type = %s";
+        $params = array($post_type);
+
+        if ($status_filter !== 'all') {
+            $where .= " AND es.status = %s";
+            $params[] = $status_filter;
+        }
+
+        // Get total count
+        $total_sql = "SELECT COUNT(*) FROM {$table_name} es
+            INNER JOIN {$wpdb->posts} p ON es.post_id = p.ID
+            {$where}";
+        $total = $wpdb->get_var($wpdb->prepare($total_sql, $params));
+
+        // Get suggestions
+        $sql = "SELECT es.*, p.post_title
+            FROM {$table_name} es
+            INNER JOIN {$wpdb->posts} p ON es.post_id = p.ID
+            {$where}
+            ORDER BY es.created_at DESC
+            LIMIT %d OFFSET %d";
+        $params[] = $per_page;
+        $params[] = $offset;
+
+        $suggestions = $wpdb->get_results($wpdb->prepare($sql, $params));
+
+        // Calculate pagination
+        $total_pages = ceil($total / $per_page);
+        ?>
+        <div class="wrap">
+            <h1 class="wp-heading-inline">
+                <?php printf(__('Suggested Edits - %s', 'voxel-toolkit'), $post_type_obj->label); ?>
+            </h1>
+
+            <hr class="wp-header-end">
+
+            <div class="vt-admin-filters" style="margin: 20px 0;">
+                <form method="get">
+                    <input type="hidden" name="post_type" value="<?php echo esc_attr($post_type); ?>">
+                    <input type="hidden" name="page" value="vt-suggested-edits">
+
+                    <select name="status">
+                        <option value="all" <?php selected($status_filter, 'all'); ?>><?php _e('All Statuses', 'voxel-toolkit'); ?></option>
+                        <option value="pending" <?php selected($status_filter, 'pending'); ?>><?php _e('Pending', 'voxel-toolkit'); ?></option>
+                        <option value="queued" <?php selected($status_filter, 'queued'); ?>><?php _e('Queued', 'voxel-toolkit'); ?></option>
+                        <option value="accepted" <?php selected($status_filter, 'accepted'); ?>><?php _e('Accepted', 'voxel-toolkit'); ?></option>
+                        <option value="rejected" <?php selected($status_filter, 'rejected'); ?>><?php _e('Rejected', 'voxel-toolkit'); ?></option>
+                    </select>
+
+                    <input type="submit" class="button" value="<?php _e('Filter', 'voxel-toolkit'); ?>">
+                </form>
+            </div>
+
+            <?php if (empty($suggestions)): ?>
+                <p><?php _e('No suggestions found.', 'voxel-toolkit'); ?></p>
+            <?php else: ?>
+                <form method="post">
+                    <?php wp_nonce_field('vt_bulk_suggestions'); ?>
+
+                    <div class="tablenav top">
+                        <div class="alignleft actions bulkactions">
+                            <select name="bulk_action">
+                                <option value=""><?php _e('Bulk Actions', 'voxel-toolkit'); ?></option>
+                                <option value="accept"><?php _e('Accept', 'voxel-toolkit'); ?></option>
+                                <option value="reject"><?php _e('Reject', 'voxel-toolkit'); ?></option>
+                                <option value="delete"><?php _e('Delete', 'voxel-toolkit'); ?></option>
+                            </select>
+                            <input type="submit" class="button action" value="<?php _e('Apply', 'voxel-toolkit'); ?>">
+                        </div>
+                    </div>
+
+                    <table class="wp-list-table widefat fixed striped">
+                        <thead>
+                            <tr>
+                                <td class="manage-column column-cb check-column">
+                                    <input type="checkbox" id="cb-select-all">
+                                </td>
+                                <th><?php _e('Post', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Field', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Current Value', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Suggested Value', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Status', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Suggester', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Date', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Actions', 'voxel-toolkit'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($suggestions as $suggestion): ?>
+                                <?php
+                                $field_label = $this->get_field_label_for_suggestion($suggestion->post_id, $suggestion->field_key);
+                                $status_badge_class = 'vt-status-' . $suggestion->status;
+                                ?>
+                                <tr>
+                                    <th scope="row" class="check-column">
+                                        <input type="checkbox" name="suggestion_ids[]" value="<?php echo esc_attr($suggestion->id); ?>">
+                                    </th>
+                                    <td>
+                                        <strong>
+                                            <a href="<?php echo get_edit_post_link($suggestion->post_id); ?>">
+                                                <?php echo esc_html($suggestion->post_title); ?>
+                                            </a>
+                                        </strong>
+                                    </td>
+                                    <td><?php echo esc_html($field_label); ?></td>
+                                    <td>
+                                        <?php if (!empty($suggestion->current_value)): ?>
+                                            <code><?php echo esc_html(wp_trim_words($suggestion->current_value, 10)); ?></code>
+                                        <?php else: ?>
+                                            <em style="color: #999;"><?php _e('(not captured)', 'voxel-toolkit'); ?></em>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($suggestion->suggested_value)): ?>
+                                            <code><?php echo esc_html(wp_trim_words($suggestion->suggested_value, 10)); ?></code>
+                                            <?php if ($suggestion->is_incorrect): ?>
+                                                <br><em style="color: #d63638; font-size: 11px;"><?php _e('(Also marked as incorrect)', 'voxel-toolkit'); ?></em>
+                                            <?php endif; ?>
+                                        <?php elseif ($suggestion->is_incorrect): ?>
+                                            <em style="color: #d63638;"><?php _e('(Marked as incorrect)', 'voxel-toolkit'); ?></em>
+                                        <?php else: ?>
+                                            <em style="color: #999;"><?php _e('(empty)', 'voxel-toolkit'); ?></em>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <span class="vt-status-badge <?php echo esc_attr($status_badge_class); ?>">
+                                            <?php echo esc_html(ucfirst($suggestion->status)); ?>
+                                        </span>
+                                    </td>
+                                    <td><?php echo esc_html($suggestion->suggester_name); ?></td>
+                                    <td><?php echo human_time_diff(strtotime($suggestion->created_at), time()) . ' ' . __('ago', 'voxel-toolkit'); ?></td>
+                                    <td>
+                                        <a href="<?php echo admin_url('edit.php?post_type=' . $post_type . '&page=vt-suggested-edits&suggestion_id=' . $suggestion->id); ?>" class="button button-small">
+                                            <?php _e('View', 'voxel-toolkit'); ?>
+                                        </a>
+                                        <?php if ($suggestion->status === 'pending'): ?>
+                                            <button type="button" class="button button-small vt-quick-accept" data-suggestion-id="<?php echo esc_attr($suggestion->id); ?>">
+                                                <?php _e('Accept', 'voxel-toolkit'); ?>
+                                            </button>
+                                            <button type="button" class="button button-small vt-quick-reject" data-suggestion-id="<?php echo esc_attr($suggestion->id); ?>">
+                                                <?php _e('Reject', 'voxel-toolkit'); ?>
+                                            </button>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                    <?php if ($total_pages > 1): ?>
+                        <div class="tablenav bottom">
+                            <div class="tablenav-pages">
+                                <?php
+                                echo paginate_links(array(
+                                    'base' => add_query_arg('paged', '%#%'),
+                                    'format' => '',
+                                    'prev_text' => __('&laquo;'),
+                                    'next_text' => __('&raquo;'),
+                                    'total' => $total_pages,
+                                    'current' => $paged,
+                                ));
+                                ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </form>
+            <?php endif; ?>
+
+            <style>
+                .vt-status-badge {
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    font-weight: 500;
+                    display: inline-block;
+                }
+                .vt-status-pending { background: #fff3cd; color: #856404; }
+                .vt-status-queued { background: #cce5ff; color: #004085; }
+                .vt-status-accepted { background: #d4edda; color: #155724; }
+                .vt-status-rejected { background: #f8d7da; color: #721c24; }
+                #wpfooter { display: none !important; }
+            </style>
+
+            <script>
+                jQuery(document).ready(function($) {
+                    $('#cb-select-all').on('change', function() {
+                        $('input[name="suggestion_ids[]"]').prop('checked', $(this).prop('checked'));
+                    });
+
+                    $('.vt-quick-accept, .vt-quick-reject').on('click', function() {
+                        var $btn = $(this);
+                        var action = $btn.hasClass('vt-quick-accept') ? 'accept' : 'reject';
+                        var suggestionId = $btn.data('suggestion-id');
+                        var $row = $btn.closest('tr');
+
+                        if (!confirm('Are you sure?')) return;
+
+                        // Disable button to prevent double-click
+                        $btn.prop('disabled', true);
+
+                        $.ajax({
+                            url: ajaxurl,
+                            type: 'POST',
+                            data: {
+                                action: 'vt_' + action + '_suggestion',
+                                nonce: '<?php echo wp_create_nonce('vt_suggest_edits'); ?>',
+                                suggestion_id: suggestionId
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    if (action === 'accept') {
+                                        // Update status badge and remove buttons
+                                        $row.find('.vt-status-badge')
+                                            .removeClass('vt-status-pending')
+                                            .addClass('vt-status-queued')
+                                            .text('Queued');
+                                        $row.find('.vt-quick-accept, .vt-quick-reject').remove();
+                                    } else {
+                                        // Reject - remove row
+                                        $row.fadeOut(function() {
+                                            $(this).remove();
+                                        });
+                                    }
+                                } else {
+                                    alert(response.data);
+                                    $btn.prop('disabled', false);
+                                }
+                            },
+                            error: function() {
+                                alert('An error occurred');
+                                $btn.prop('disabled', false);
+                            }
+                        });
+                    });
+                });
+            </script>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render single suggestion view
+     */
+    private function render_single_suggestion($suggestion_id) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'voxel_edit_suggestions';
+
+        $suggestion = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$table_name} WHERE id = %d",
+            $suggestion_id
+        ));
+
+        if (!$suggestion) {
+            wp_die(__('Suggestion not found.', 'voxel-toolkit'));
+        }
+
+        $post = get_post($suggestion->post_id);
+        $post_type = get_post_type($suggestion->post_id);
+        $field_label = $this->get_field_label_for_suggestion($suggestion->post_id, $suggestion->field_key);
+        ?>
+        <div class="wrap">
+            <h1><?php _e('Suggestion Details', 'voxel-toolkit'); ?></h1>
+
+            <div class="card" style="max-width: 800px; margin-top: 20px;">
+                <h2><?php _e('Post Information', 'voxel-toolkit'); ?></h2>
+                <p>
+                    <strong><?php _e('Post:', 'voxel-toolkit'); ?></strong>
+                    <a href="<?php echo get_edit_post_link($suggestion->post_id); ?>">
+                        <?php echo esc_html($post->post_title); ?>
+                    </a>
+                </p>
+
+                <h2><?php _e('Field Information', 'voxel-toolkit'); ?></h2>
+                <p><strong><?php _e('Field:', 'voxel-toolkit'); ?></strong> <?php echo esc_html($field_label); ?></p>
+
+                <h3><?php _e('Current Value:', 'voxel-toolkit'); ?></h3>
+                <div style="padding: 10px; background: #f5f5f5; border-radius: 4px;">
+                    <?php echo esc_html($suggestion->current_value ?: __('(empty)', 'voxel-toolkit')); ?>
+                </div>
+
+                <?php if (!$suggestion->is_incorrect): ?>
+                    <h3><?php _e('Suggested Value:', 'voxel-toolkit'); ?></h3>
+                    <div style="padding: 10px; background: #e7f3ff; border-radius: 4px;">
+                        <?php echo esc_html($suggestion->suggested_value); ?>
+                    </div>
+                <?php else: ?>
+                    <div style="padding: 10px; background: #fff3cd; border-radius: 4px; margin-top: 10px;">
+                        <strong><?php _e('Marked as incorrect', 'voxel-toolkit'); ?></strong>
+                        <p><?php _e('No suggested value provided', 'voxel-toolkit'); ?></p>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($suggestion->proof_images)): ?>
+                    <h3><?php _e('Proof Images:', 'voxel-toolkit'); ?></h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <?php
+                        $image_ids = json_decode($suggestion->proof_images, true);
+                        if (is_array($image_ids)) {
+                            foreach ($image_ids as $image_id) {
+                                $image_url = wp_get_attachment_image_url($image_id, 'medium');
+                                if ($image_url) {
+                                    echo '<img src="' . esc_url($image_url) . '" style="max-width: 200px; height: auto; border-radius: 4px;">';
+                                }
+                            }
+                        }
+                        ?>
+                    </div>
+                <?php endif; ?>
+
+                <h2><?php _e('Suggester Information', 'voxel-toolkit'); ?></h2>
+                <p><strong><?php _e('Name:', 'voxel-toolkit'); ?></strong> <?php echo esc_html($suggestion->suggester_name); ?></p>
+                <?php if ($suggestion->suggester_email): ?>
+                    <p><strong><?php _e('Email:', 'voxel-toolkit'); ?></strong> <?php echo esc_html($suggestion->suggester_email); ?></p>
+                <?php endif; ?>
+                <p><strong><?php _e('Date:', 'voxel-toolkit'); ?></strong> <?php echo date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($suggestion->created_at)); ?></p>
+
+                <h2><?php _e('Status:', 'voxel-toolkit'); ?></h2>
+                <p><strong><?php echo esc_html(ucfirst($suggestion->status)); ?></strong></p>
+
+                <?php if ($suggestion->status === 'pending'): ?>
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="button button-primary vt-accept-suggestion" data-suggestion-id="<?php echo esc_attr($suggestion->id); ?>">
+                            <?php _e('Accept Suggestion', 'voxel-toolkit'); ?>
+                        </button>
+                        <button type="button" class="button vt-reject-suggestion" data-suggestion-id="<?php echo esc_attr($suggestion->id); ?>">
+                            <?php _e('Reject Suggestion', 'voxel-toolkit'); ?>
+                        </button>
+                        <button type="button" class="button button-link-delete vt-delete-suggestion" data-suggestion-id="<?php echo esc_attr($suggestion->id); ?>">
+                            <?php _e('Delete', 'voxel-toolkit'); ?>
+                        </button>
+                    </div>
+                <?php endif; ?>
+
+                <div style="margin-top: 20px;">
+                    <a href="<?php echo admin_url('edit.php?post_type=' . $post_type . '&page=vt-suggested-edits'); ?>" class="button">
+                        <?php _e('Back to List', 'voxel-toolkit'); ?>
+                    </a>
+                </div>
+            </div>
+
+            <style>
+                #wpfooter { display: none !important; }
+            </style>
+
+            <script>
+                jQuery(document).ready(function($) {
+                    $('.vt-accept-suggestion, .vt-reject-suggestion, .vt-delete-suggestion').on('click', function() {
+                        var $btn = $(this);
+                        var action = 'vt_accept_suggestion';
+
+                        if ($btn.hasClass('vt-reject-suggestion')) {
+                            action = 'vt_reject_suggestion';
+                        } else if ($btn.hasClass('vt-delete-suggestion')) {
+                            if (!confirm('<?php _e('Are you sure you want to delete this suggestion?', 'voxel-toolkit'); ?>')) {
+                                return;
+                            }
+                            action = 'vt_delete_suggestion';
+                        }
+
+                        $.ajax({
+                            url: ajaxurl,
+                            type: 'POST',
+                            data: {
+                                action: action,
+                                nonce: '<?php echo wp_create_nonce('vt_suggest_edits'); ?>',
+                                suggestion_id: $btn.data('suggestion-id')
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    window.location.href = '<?php echo admin_url('edit.php?post_type=' . $post_type . '&page=vt-suggested-edits'); ?>';
+                                } else {
+                                    alert(response.data);
+                                }
+                            }
+                        });
+                    });
+                });
+            </script>
+        </div>
+        <?php
+    }
+
+    /**
+     * Get field label for suggestion
+     */
+    private function get_field_label_for_suggestion($post_id, $field_key) {
+        if (class_exists('\Voxel\Post')) {
+            $voxel_post = \Voxel\Post::get($post_id);
+            if ($voxel_post) {
+                $post_type = $voxel_post->post_type;
+                $fields = $post_type->get_fields();
+                if (isset($fields[$field_key])) {
+                    return $fields[$field_key]->get_label();
+                }
+            }
+        }
+        return $field_key;
+    }
+
+    /**
+     * Handle bulk actions for suggestions
+     */
+    private function handle_bulk_actions($action, $suggestion_ids) {
+        if (!in_array($action, array('accept', 'reject', 'delete'))) {
+            return;
+        }
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'voxel_edit_suggestions';
+
+        foreach ($suggestion_ids as $id) {
+            $id = absint($id);
+
+            if ($action === 'delete') {
+                $wpdb->delete($table_name, array('id' => $id), array('%d'));
+            } else {
+                $new_status = $action === 'accept' ? 'queued' : 'rejected';
+                $wpdb->update(
+                    $table_name,
+                    array('status' => $new_status),
+                    array('id' => $id),
+                    array('%s'),
+                    array('%d')
+                );
+            }
+        }
+
+        wp_safe_redirect(add_query_arg('bulk_updated', count($suggestion_ids)));
         exit;
     }
 
