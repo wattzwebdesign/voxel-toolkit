@@ -273,6 +273,13 @@ class Voxel_Toolkit_Functions {
                 'settings_callback' => array('Voxel_Toolkit_Widget_CSS_Injector', 'render_settings'),
                 'always_enabled' => true,
             ),
+            'membership_checkout_links' => array(
+                'name' => __('Membership Checkout Links', 'voxel-toolkit'),
+                'description' => __('Generate dynamic checkout URLs for membership plans via @site(plans) tags. Automatically creates proper AJAX-compatible URLs for use with Voxel\'s pricing system.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Membership_Checkout_Links',
+                'file' => 'functions/class-membership-checkout-links.php',
+                'settings_callback' => array('Voxel_Toolkit_Membership_Checkout_Links', 'render_settings'),
+            ),
         );
 
         // Allow other plugins/themes to register functions
