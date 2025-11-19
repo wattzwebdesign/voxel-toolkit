@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Widget CSS Class & ID**: Inject custom CSS classes and IDs to individual items in Voxel widgets
+  - **Supported Widgets**: Navbar (VX), User Bar (VX), Advanced List (VX)
+  - **Repeater Item Controls**: Each item in these widgets gets CSS Class and ID fields
+  - **JavaScript Injection**: Automatically applies classes/IDs to rendered items via DOM manipulation
+  - **Multiple Classes Support**: Add multiple space-separated classes to any item
+  - **Unique IDs**: Set unique identifiers for advanced CSS targeting or JavaScript hooks
+  - **Always Enabled**: Feature is always active, no need to enable from settings
+  - **Use Cases**:
+    - Custom styling for specific nav items
+    - Individual user bar component targeting
+    - Action-specific styling in advanced lists
+    - Third-party integrations via ID hooks
 - **Suggest Edits**: Crowdsourced post editing system similar to Google Business suggestions
   - **Frontend Submission Widget**: Elementor widget with modal popup interface
     - "Suggest an Edit" button opens modal with selected fields
