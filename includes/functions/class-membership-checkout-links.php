@@ -45,8 +45,14 @@ class Voxel_Toolkit_Membership_Checkout_Links {
             return;
         }
 
-        // Enqueue Voxel's pricing plans JavaScript which handles vx-pick-plan clicks
-        wp_enqueue_script('vx:pricing-plans.js');
+        // Enqueue our custom JavaScript which handles vx-pick-plan clicks
+        wp_enqueue_script(
+            'voxel-toolkit-membership-checkout',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/membership-checkout.js',
+            array('jquery'),
+            VOXEL_TOOLKIT_VERSION,
+            true
+        );
     }
 
     /**
