@@ -105,7 +105,12 @@ class Voxel_Toolkit_Membership_Checkout_Links {
                                     continue;
                                 }
 
-                                $prices_properties[$price_key] = \Voxel\Dynamic_Data\Tag::Object($price_config['label'] ?? $price_key)->properties(function() use ($price_config, $plan_key, $price_key) {
+                                // Use label as property name for better UX in dynamic tag picker
+                                // Convert label to valid property key (lowercase, replace spaces with underscores)
+                                $price_label = $price_config['label'] ?? $price_key;
+                                $property_name = sanitize_key($price_label);
+
+                                $prices_properties[$property_name] = \Voxel\Dynamic_Data\Tag::Object($price_label)->properties(function() use ($price_config, $plan_key, $price_key) {
                                     $price_props = array();
 
                                     $price_props['key'] = \Voxel\Dynamic_Data\Tag::String('Price Key')->render(function() use ($price_key) {
