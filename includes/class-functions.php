@@ -257,9 +257,24 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-options-page.php',
                 'settings_callback' => array('Voxel_Toolkit_Options_Page', 'render_settings'),
                 'configure_url' => admin_url('admin.php?page=voxel-toolkit-configure-fields'),
-            )
+            ),
+            'suggest_edits' => array(
+                'name' => __('Suggest Edits', 'voxel-toolkit'),
+                'description' => __('Allow users to suggest edits to post fields with frontend submission form, email notifications, and admin review system. Similar to Google Business edit suggestions.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Suggest_Edits',
+                'file' => 'functions/class-suggest-edits.php',
+                'settings_callback' => array('Voxel_Toolkit_Suggest_Edits', 'render_settings'),
+            ),
+            'widget_css_injector' => array(
+                'name' => __('Widget CSS Class & ID', 'voxel-toolkit'),
+                'description' => __('Add CSS Class and ID fields to Voxel widgets (Navbar, User Bar, Advanced List) for custom styling of individual items.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Widget_CSS_Injector',
+                'file' => 'functions/class-widget-css-injector.php',
+                'settings_callback' => array('Voxel_Toolkit_Widget_CSS_Injector', 'render_settings'),
+                'always_enabled' => true,
+            ),
         );
-        
+
         // Allow other plugins/themes to register functions
         $this->available_functions = apply_filters('voxel_toolkit/available_functions', $this->available_functions);
     }

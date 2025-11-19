@@ -1,0 +1,771 @@
+/**
+ * Suggest Edits CSS
+ */
+
+/* ===================================
+   Suggest Edit Button
+   =================================== */
+.vt-suggest-edits-wrapper {
+    margin: 20px 0;
+}
+
+.vt-suggest-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #1e3a5f;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.vt-suggest-edit-btn:hover {
+    background: #2c4a6f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 58, 95, 0.3);
+}
+
+.vt-suggest-edit-btn i {
+    font-size: 16px;
+}
+
+/* ===================================
+   Modal Overlay & Structure
+   =================================== */
+.vt-suggest-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vt-suggest-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+.vt-suggest-modal-content {
+    position: relative;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+body.vt-modal-open {
+    overflow: hidden;
+}
+
+/* Modal Header */
+.vt-suggest-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #e1e5e9;
+    background: #f8f9fa;
+    border-radius: 12px 12px 0 0;
+}
+
+.vt-suggest-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.vt-modal-close {
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 1;
+    color: #64748b;
+    transition: all 0.2s ease;
+}
+
+.vt-modal-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #1e293b;
+    transform: rotate(90deg);
+}
+
+/* Modal Body */
+.vt-suggest-modal-body {
+    padding: 25px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Guest Info Section */
+.vt-guest-info {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.vt-form-field {
+    margin-bottom: 15px;
+}
+
+.vt-form-field:last-child {
+    margin-bottom: 0;
+}
+
+.vt-form-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #1e293b;
+    font-size: 14px;
+}
+
+.vt-form-field .required {
+    color: #dc2626;
+}
+
+.vt-form-field input[type="text"],
+.vt-form-field input[type="email"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.vt-form-field input:focus {
+    outline: none;
+    border-color: #1e3a5f;
+}
+
+/* Fields List */
+.vt-fields-list {
+    margin: 0;
+}
+
+.vt-field-item {
+    padding: 20px;
+    background: #f8f9fa;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.vt-field-item:last-child {
+    margin-bottom: 0;
+}
+
+.vt-field-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.vt-field-header i {
+    color: #1e3a5f;
+    font-size: 16px;
+}
+
+.vt-field-header strong {
+    color: #1e293b;
+    font-size: 15px;
+}
+
+.vt-field-current {
+    margin-bottom: 12px;
+}
+
+.vt-field-current label,
+.vt-field-suggested label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.vt-current-value {
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    color: #1e293b;
+    font-size: 14px;
+}
+
+.vt-field-suggested {
+    margin-bottom: 12px;
+}
+
+.vt-suggestion-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.vt-suggestion-input:focus {
+    outline: none;
+    border-color: #1e3a5f;
+}
+
+.vt-suggestion-input:disabled {
+    background: #f1f5f9;
+    cursor: not-allowed;
+}
+
+.vt-field-incorrect {
+    margin-top: 8px;
+}
+
+.vt-field-incorrect label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.vt-field-incorrect input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Proof Photos Section */
+.vt-proof-photos {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid #e1e5e9;
+}
+
+.vt-proof-photos > label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 500;
+    color: #1e293b;
+    font-size: 14px;
+}
+
+.vt-photo-upload-area {
+    margin-bottom: 15px;
+}
+
+.vt-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #f8f9fa;
+    border: 2px dashed #e1e5e9;
+    border-radius: 8px;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vt-upload-btn:hover {
+    background: #f1f5f9;
+    border-color: #1e3a5f;
+    color: #1e3a5f;
+}
+
+.vt-uploaded-photos {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.vt-uploaded-photo {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px solid #e1e5e9;
+}
+
+.vt-uploaded-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.vt-remove-photo {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(220, 38, 38, 0.9);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    transition: background 0.2s ease;
+}
+
+.vt-remove-photo:hover {
+    background: #dc2626;
+}
+
+/* Form Messages */
+.vt-form-messages {
+    margin-top: 15px;
+}
+
+.vt-message {
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.vt-message-success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #6ee7b7;
+}
+
+.vt-message-error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+/* Modal Footer */
+.vt-suggest-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 20px 25px;
+    border-top: 1px solid #e1e5e9;
+    background: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+}
+
+.vt-modal-cancel,
+.vt-modal-submit {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.vt-modal-cancel {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.vt-modal-cancel:hover {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+.vt-modal-submit {
+    background: #1e3a5f;
+    color: #fff;
+}
+
+.vt-modal-submit:hover {
+    background: #2c4a6f;
+}
+
+.vt-modal-submit:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+}
+
+/* ===================================
+   Pending Suggestions Widget
+   =================================== */
+.vt-pending-suggestions-wrapper {
+    margin: 30px 0;
+}
+
+.vt-pending-suggestions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.vt-pending-suggestions-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.vt-status-filter select {
+    padding: 8px 12px;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.vt-no-suggestions {
+    text-align: center;
+    padding: 40px 20px;
+    color: #64748b;
+}
+
+.vt-suggestions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.vt-suggestion-item {
+    background: #fff;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    padding: 20px;
+    transition: box-shadow 0.2s ease;
+}
+
+.vt-suggestion-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.vt-suggestion-item.vt-status-queued {
+    border-color: #60a5fa;
+    background: #eff6ff;
+}
+
+.vt-suggestion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.vt-field-info {
+    flex: 1;
+}
+
+.vt-field-name {
+    display: block;
+    font-size: 16px;
+    color: #1e293b;
+    margin-bottom: 6px;
+}
+
+.vt-suggester,
+.vt-suggestion-date {
+    display: inline-block;
+    font-size: 13px;
+    color: #64748b;
+    margin-right: 12px;
+}
+
+.vt-suggestion-status {
+    flex-shrink: 0;
+}
+
+.vt-status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.vt-status-badge.vt-status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.vt-status-badge.vt-status-queued {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.vt-status-badge.vt-status-accepted {
+    background: #d4edda;
+    color: #155724;
+}
+
+.vt-status-badge.vt-status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.vt-suggestion-body {
+    margin-bottom: 15px;
+}
+
+.vt-value-comparison {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.vt-current-value-box,
+.vt-suggested-value-box {
+    flex: 1;
+}
+
+.vt-current-value-box label,
+.vt-suggested-value-box label {
+    display: block;
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.vt-value {
+    padding: 10px;
+    background: #f8f9fa;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #1e293b;
+}
+
+.vt-value.vt-suggested {
+    background: #e7f3ff;
+    border-color: #60a5fa;
+    font-weight: 500;
+}
+
+.vt-arrow {
+    font-size: 20px;
+    color: #64748b;
+}
+
+.vt-incorrect-notice {
+    flex: 1;
+    padding: 12px;
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 6px;
+    color: #856404;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vt-proof-images-display {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e1e5e9;
+}
+
+.vt-proof-images-display label {
+    display: block;
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.vt-images-grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.vt-images-grid img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #e1e5e9;
+}
+
+.vt-suggestion-actions {
+    display: flex;
+    gap: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #e1e5e9;
+}
+
+.vt-accept-btn,
+.vt-reject-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.vt-accept-btn {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.vt-accept-btn:hover {
+    background: #6ee7b7;
+}
+
+.vt-reject-btn {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.vt-reject-btn:hover {
+    background: #fca5a5;
+}
+
+.vt-accept-btn:disabled,
+.vt-reject-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.vt-save-actions {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.vt-save-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #1e3a5f;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vt-save-all-btn:hover {
+    background: #2c4a6f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 58, 95, 0.3);
+}
+
+.vt-save-all-btn:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.vt-save-all-btn.loading {
+    opacity: 0.7;
+}
+
+.vt-queued-count {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .vt-suggest-modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .vt-suggest-modal-header,
+    .vt-suggest-modal-body,
+    .vt-suggest-modal-footer {
+        padding: 15px;
+    }
+
+    .vt-field-item {
+        padding: 15px;
+    }
+
+    .vt-value-comparison {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .vt-arrow {
+        transform: rotate(90deg);
+    }
+
+    .vt-pending-suggestions-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
