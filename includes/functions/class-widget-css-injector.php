@@ -284,20 +284,29 @@ class Voxel_Toolkit_Widget_CSS_Injector {
                     // Find the appropriate items based on widget type
                     var items = null;
 
-                    // Navbar widget
+                    // Navbar widget - select all direct li children of .ts-nav
                     if (widget.classList.contains('elementor-widget-ts-navbar')) {
-                        items = widget.querySelectorAll('.ts-nav-item, .ts-item-link');
+                        var navContainer = widget.querySelector('.ts-nav');
+                        if (navContainer) {
+                            items = navContainer.querySelectorAll(':scope > li');
+                        }
                     }
-                    // User Bar widget
+                    // User Bar widget - select all direct li children of .user-area-menu
                     else if (widget.classList.contains('elementor-widget-ts-user-bar')) {
-                        items = widget.querySelectorAll('.ts-user-area > div');
+                        var userMenu = widget.querySelector('.user-area-menu');
+                        if (userMenu) {
+                            items = userMenu.querySelectorAll(':scope > li');
+                        }
                     }
-                    // Advanced List widget
+                    // Advanced List widget - select all direct li children of .ts-advanced-list
                     else if (widget.classList.contains('elementor-widget-ts-advanced-list')) {
-                        items = widget.querySelectorAll('.ts-action-con .ts-action');
+                        var actionList = widget.querySelector('.ts-advanced-list');
+                        if (actionList) {
+                            items = actionList.querySelectorAll(':scope > li');
+                        }
                     }
 
-                    if (!items) return;
+                    if (!items || items.length === 0) return;
 
                     // Apply CSS classes and IDs to matching items
                     cssData.forEach(function(data) {
