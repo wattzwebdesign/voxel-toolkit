@@ -82,6 +82,15 @@ class Voxel_Toolkit_Admin {
 
         add_submenu_page(
             'voxel-toolkit',
+            __('Post Fields', 'voxel-toolkit'),
+            __('Post Fields', 'voxel-toolkit'),
+            'manage_options',
+            'voxel-toolkit-post-fields',
+            array($this, 'render_post_fields_page')
+        );
+
+        add_submenu_page(
+            'voxel-toolkit',
             __('Dynamic Tags', 'voxel-toolkit'),
             __('Dynamic Tags', 'voxel-toolkit'),
             'manage_options',
@@ -1217,7 +1226,101 @@ class Voxel_Toolkit_Admin {
         </div>
         <?php
     }
-    
+
+    /**
+     * Render post fields page
+     */
+    public function render_post_fields_page() {
+        $available_functions = $this->functions_manager->get_available_functions();
+
+        // Filter to only show post field functions
+        $post_field_functions = array_filter($available_functions, function($function_data) {
+            // Check if the function key contains 'field' or if it's a known field type
+            return isset($function_data['type']) && $function_data['type'] === 'post_field';
+        });
+
+        // For now, manually identify field functions by key
+        $field_function_keys = ['poll_field']; // Add more field keys here as they're created
+        $post_field_functions = array();
+        foreach ($field_function_keys as $key) {
+            if (isset($available_functions[$key])) {
+                $post_field_functions[$key] = $available_functions[$key];
+            }
+        }
+
+        // Sort fields alphabetically by name
+        uasort($post_field_functions, function($a, $b) {
+            return strcasecmp($a['name'], $b['name']);
+        });
+        ?>
+        <div class="wrap voxel-toolkit-widgets-page">
+            <h1><?php _e('Voxel Toolkit - Custom Post Fields', 'voxel-toolkit'); ?></h1>
+
+            <div class="voxel-toolkit-intro">
+                <p><?php _e('Extend Voxel post types with custom field types. Once enabled, these fields will be available when creating or editing post type field configurations in Voxel.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <div class="voxel-toolkit-widgets-grid">
+                <?php foreach ($post_field_functions as $field_key => $field_data): ?>
+                    <?php $this->render_post_field_card($field_key, $field_data); ?>
+                <?php endforeach; ?>
+
+                <?php if (empty($post_field_functions)): ?>
+                    <div class="voxel-toolkit-no-widgets">
+                        <p><?php _e('No custom post fields are currently available. More fields will be added in future updates!', 'voxel-toolkit'); ?></p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render post field card
+     *
+     * @param string $field_key Field key
+     * @param array $field_data Field data
+     */
+    private function render_post_field_card($field_key, $field_data) {
+        $is_enabled = $this->settings->is_function_enabled($field_key);
+        ?>
+        <div class="voxel-toolkit-widget-card"
+             data-widget-key="<?php echo esc_attr($field_key); ?>"
+             data-widget-name="<?php echo esc_attr(strtolower($field_data['name'])); ?>"
+             data-widget-description="<?php echo esc_attr(strtolower($field_data['description'])); ?>">
+
+            <div class="voxel-toolkit-widget-header">
+                <div class="voxel-toolkit-widget-icon">
+                    <span class="dashicons dashicons-forms"></span>
+                </div>
+                <div class="voxel-toolkit-widget-meta">
+                    <div class="voxel-toolkit-widget-title-row">
+                        <h3 class="voxel-toolkit-widget-title"><?php echo esc_html($field_data['name']); ?></h3>
+                        <?php if ($is_enabled): ?>
+                            <span class="voxel-toolkit-widget-badge voxel-toolkit-badge-enabled"><?php _e('Enabled', 'voxel-toolkit'); ?></span>
+                        <?php else: ?>
+                            <span class="voxel-toolkit-widget-badge voxel-toolkit-badge-disabled"><?php _e('Disabled', 'voxel-toolkit'); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <p class="voxel-toolkit-widget-description"><?php echo esc_html($field_data['description']); ?></p>
+                </div>
+            </div>
+
+            <div class="voxel-toolkit-widget-footer">
+                <div class="voxel-toolkit-widget-toggle">
+                    <label class="toggle-switch">
+                        <input type="checkbox"
+                               class="widget-toggle-checkbox"
+                               data-widget="<?php echo esc_attr($field_key); ?>"
+                               <?php checked($is_enabled); ?>>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
     /**
      * Render widget card
      *
