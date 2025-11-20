@@ -412,22 +412,25 @@ class Voxel_Toolkit_Admin {
             <div class="function-header">
                 <div class="function-title-row">
                     <h3><?php echo esc_html($function_data['name']); ?></h3>
-                    <?php if ($is_enabled): ?>
+                    <?php if ($is_always_enabled): ?>
+                        <span class="voxel-toolkit-function-badge voxel-toolkit-badge-always-enabled"><?php _e('Always Enabled', 'voxel-toolkit'); ?></span>
+                    <?php elseif ($is_enabled): ?>
                         <span class="voxel-toolkit-function-badge voxel-toolkit-badge-enabled"><?php _e('Enabled', 'voxel-toolkit'); ?></span>
                     <?php else: ?>
                         <span class="voxel-toolkit-function-badge voxel-toolkit-badge-disabled"><?php _e('Disabled', 'voxel-toolkit'); ?></span>
                     <?php endif; ?>
                 </div>
+                <?php if (!$is_always_enabled): ?>
                 <div class="function-toggle">
                     <label class="toggle-switch">
                         <input type="checkbox"
                                class="function-toggle-checkbox"
                                data-function="<?php echo esc_attr($function_key); ?>"
-                               <?php checked($is_enabled); ?>
-                               <?php disabled($is_always_enabled); ?>>
+                               <?php checked($is_enabled); ?>>
                         <span class="slider"></span>
                     </label>
                 </div>
+                <?php endif; ?>
             </div>
             
             <div class="function-description">
