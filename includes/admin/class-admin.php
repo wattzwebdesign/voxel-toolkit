@@ -15,6 +15,7 @@ class Voxel_Toolkit_Admin {
     private static $instance = null;
     private $settings;
     private $functions_manager;
+    private $post_fields_manager;
     
     /**
      * Get singleton instance
@@ -32,6 +33,7 @@ class Voxel_Toolkit_Admin {
     private function __construct() {
         $this->settings = Voxel_Toolkit_Settings::instance();
         $this->functions_manager = Voxel_Toolkit_Functions::instance();
+        $this->post_fields_manager = Voxel_Toolkit_Post_Fields::instance();
         
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_init', array($this, 'admin_init'));
@@ -887,22 +889,36 @@ class Voxel_Toolkit_Admin {
         if (!wp_verify_nonce($_POST['nonce'], 'voxel_toolkit_nonce')) {
             wp_die(__('Security check failed.', 'voxel-toolkit'));
         }
-        
+
         // Check permissions
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions.', 'voxel-toolkit'));
         }
-        
+
         $function_key = sanitize_text_field($_POST['function']);
         $enabled = !empty($_POST['enabled']);
-        
-        // Validate function exists
-        $available_functions = $this->functions_manager->get_available_functions();
-        if (!isset($available_functions[$function_key])) {
-            wp_send_json_error(__('Invalid function.', 'voxel-toolkit'));
+
+        // Check if it's a post field (with post_field_ prefix)
+        $is_post_field = strpos($function_key, 'post_field_') === 0;
+
+        if ($is_post_field) {
+            // Extract the actual field key (remove post_field_ prefix)
+            $field_key = str_replace('post_field_', '', $function_key);
+            $available_post_fields = $this->post_fields_manager->get_available_post_fields();
+
+            // Validate post field exists
+            if (!isset($available_post_fields[$field_key])) {
+                wp_send_json_error(__('Invalid post field.', 'voxel-toolkit'));
+            }
+        } else {
+            // Validate function exists
+            $available_functions = $this->functions_manager->get_available_functions();
+            if (!isset($available_functions[$function_key])) {
+                wp_send_json_error(__('Invalid function.', 'voxel-toolkit'));
+            }
         }
-        
-        // Toggle function
+
+        // Toggle function or post field
         if ($enabled) {
             $result = $this->settings->enable_function($function_key);
             // Force settings refresh
@@ -912,10 +928,10 @@ class Voxel_Toolkit_Admin {
             // Force settings refresh
             $this->settings->refresh_options();
         }
-        
+
         // Double-check the status after toggle
         $actual_status = $this->settings->is_function_enabled($function_key);
-        
+
         if ($result) {
             wp_send_json_success(array(
                 'message' => $enabled ? __('Function enabled.', 'voxel-toolkit') : __('Function disabled.', 'voxel-toolkit'),
@@ -1173,6 +1189,11 @@ class Voxel_Toolkit_Admin {
     public function render_widgets_page() {
         $available_widgets = $this->functions_manager->get_available_widgets();
 
+        // Filter out hidden widgets
+        $available_widgets = array_filter($available_widgets, function($widget) {
+            return empty($widget['hidden']);
+        });
+
         // Sort widgets alphabetically by name
         uasort($available_widgets, function($a, $b) {
             return strcasecmp($a['name'], $b['name']);
@@ -1231,23 +1252,14 @@ class Voxel_Toolkit_Admin {
      * Render post fields page
      */
     public function render_post_fields_page() {
-        $available_functions = $this->functions_manager->get_available_functions();
-
-        // Manually identify field functions by key
-        $field_function_keys = ['poll_field']; // Add more field keys here as they're created
-        $post_field_functions = array();
-        foreach ($field_function_keys as $key) {
-            if (isset($available_functions[$key])) {
-                $post_field_functions[$key] = $available_functions[$key];
-            }
-        }
+        $available_post_fields = $this->post_fields_manager->get_available_post_fields();
 
         // Sort fields alphabetically by name
-        uasort($post_field_functions, function($a, $b) {
+        uasort($available_post_fields, function($a, $b) {
             return strcasecmp($a['name'], $b['name']);
         });
         ?>
-        <div class="wrap voxel-toolkit-widgets-page">
+        <div class="wrap voxel-toolkit-post-fields-page">
             <h1><?php _e('Voxel Toolkit - Custom Post Fields', 'voxel-toolkit'); ?></h1>
 
             <div class="voxel-toolkit-intro">
@@ -1255,11 +1267,11 @@ class Voxel_Toolkit_Admin {
             </div>
 
             <div class="voxel-toolkit-widgets-grid">
-                <?php foreach ($post_field_functions as $field_key => $field_data): ?>
+                <?php foreach ($available_post_fields as $field_key => $field_data): ?>
                     <?php $this->render_post_field_card($field_key, $field_data); ?>
                 <?php endforeach; ?>
 
-                <?php if (empty($post_field_functions)): ?>
+                <?php if (empty($available_post_fields)): ?>
                     <div class="voxel-toolkit-no-widgets">
                         <p><?php _e('No custom post fields are currently available. More fields will be added in future updates!', 'voxel-toolkit'); ?></p>
                     </div>
@@ -1276,7 +1288,8 @@ class Voxel_Toolkit_Admin {
      * @param array $field_data Field data
      */
     private function render_post_field_card($field_key, $field_data) {
-        $is_enabled = $this->settings->is_function_enabled($field_key);
+        $field_key_full = 'post_field_' . $field_key;
+        $is_enabled = $this->settings->is_function_enabled($field_key_full);
         ?>
         <div class="voxel-toolkit-widget-card"
              data-widget-key="<?php echo esc_attr($field_key); ?>"
@@ -1285,7 +1298,7 @@ class Voxel_Toolkit_Admin {
 
             <div class="voxel-toolkit-widget-header">
                 <div class="voxel-toolkit-widget-icon">
-                    <span class="dashicons dashicons-forms"></span>
+                    <span class="dashicons <?php echo esc_attr($field_data['icon'] ?? 'dashicons-forms'); ?>"></span>
                 </div>
                 <div class="voxel-toolkit-widget-meta">
                     <div class="voxel-toolkit-widget-title-row">
@@ -1305,7 +1318,7 @@ class Voxel_Toolkit_Admin {
                     <label class="toggle-switch">
                         <input type="checkbox"
                                class="function-toggle-checkbox"
-                               data-function="<?php echo esc_attr($field_key); ?>"
+                               data-function="<?php echo esc_attr($field_key_full); ?>"
                                <?php checked($is_enabled); ?>>
                         <span class="slider"></span>
                     </label>

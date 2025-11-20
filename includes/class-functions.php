@@ -266,13 +266,6 @@ class Voxel_Toolkit_Functions {
                 'settings_callback' => array('Voxel_Toolkit_Widget_CSS_Injector', 'render_settings'),
                 'always_enabled' => true,
             ),
-            'poll_field' => array(
-                'name' => __('Poll Field (VT)', 'voxel-toolkit'),
-                'description' => __('Add custom Poll field type to Voxel post types with voting, user-submitted options, and multi-select support.', 'voxel-toolkit'),
-                'class' => 'Voxel_Toolkit_Poll_Field',
-                'file' => 'functions/class-poll-field.php',
-                'settings_callback' => array('Voxel_Toolkit_Poll_Field', 'render_settings'),
-            ),
         );
 
         // Allow other plugins/themes to register functions
@@ -324,6 +317,15 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-prev-next-widget-manager.php',
                 'icon' => 'eicon-navigation-horizontal',
                 'widget_name' => 'voxel_prev_next_navigation',
+            ),
+            'poll_display' => array(
+                'name' => __('Poll Display (VT)', 'voxel-toolkit'),
+                'description' => __('Display an interactive poll from a Poll (VT) field with voting, progress bars, and user-submitted options.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Poll_Display_Widget_Manager',
+                'file' => 'widgets/class-poll-display-widget-manager.php',
+                'icon' => 'eicon-poll',
+                'widget_name' => 'vt-poll-display',
+                'hidden' => true, // Hidden from widgets page, auto-enabled by poll field
             ),
             'timeline_photos' => array(
                 'name' => __('Timeline Photos', 'voxel-toolkit'),

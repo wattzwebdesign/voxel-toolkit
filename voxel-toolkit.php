@@ -3,7 +3,7 @@
  * Plugin Name: Voxel Toolkit
  * Plugin URI: https://codewattz.com/voxel-toolkit-plugin/
  * Description: A comprehensive toolkit for extending Voxel theme functionality with toggleable features and customizable settings.
- * Version: 1.5.2.1
+ * Version: 1.5.2.7
  * Author: Code Wattz
  * Author URI: https://codewattz.com
  * License: GPL v2 or later
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 
 // Define plugin constants
 if (!defined('VOXEL_TOOLKIT_VERSION')) {
-    define('VOXEL_TOOLKIT_VERSION', '1.5.2.1');
+    define('VOXEL_TOOLKIT_VERSION', '1.5.2.7');
 }
 if (!defined('VOXEL_TOOLKIT_PLUGIN_DIR')) {
     define('VOXEL_TOOLKIT_PLUGIN_DIR', plugin_dir_path(__FILE__));
@@ -77,12 +77,55 @@ class Voxel_Toolkit {
     private function __construct() {
         add_action('init', array($this, 'init'));
         add_action('plugins_loaded', array($this, 'load_textdomain'));
-        
+        add_action('plugins_loaded', array($this, 'early_init'), 5);
+
         // Plugin activation/deactivation hooks
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
     
+    /**
+     * Early initialization for post fields (must run before Voxel config loads)
+     */
+    public function early_init() {
+        // Register the filter immediately at plugins_loaded
+        // This happens before Voxel loads its config
+        add_filter('voxel/field-types', array($this, 'register_poll_field_type'), 10);
+
+        // Load the actual field class later when Voxel classes are available
+        add_action('after_setup_theme', array($this, 'init_post_fields'), 10);
+    }
+
+    /**
+     * Register poll field type in the filter
+     */
+    public function register_poll_field_type($fields) {
+        error_log('Voxel Toolkit: register_poll_field_type called at plugins_loaded');
+
+        // Just register the class name, don't load the file yet
+        $fields['poll-vt'] = '\Voxel_Toolkit_Poll_Field_Type';
+
+        error_log('Voxel Toolkit: poll-vt registered. Fields: ' . implode(', ', array_keys($fields)));
+        return $fields;
+    }
+
+    /**
+     * Initialize post fields early (load the actual classes)
+     */
+    public function init_post_fields() {
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-settings.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-settings.php';
+        }
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-post-fields.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-post-fields.php';
+
+            // Initialize post fields manager
+            if (class_exists('Voxel_Toolkit_Post_Fields')) {
+                Voxel_Toolkit_Post_Fields::instance();
+            }
+        }
+    }
+
     /**
      * Initialize plugin
      */
@@ -170,6 +213,7 @@ class Voxel_Toolkit {
         $files = array(
             'includes/class-settings.php',
             'includes/class-functions.php',
+            'includes/class-post-fields.php',
             'includes/functions/class-auto-verify-posts.php',
             'includes/functions/class-admin-menu-hide.php',
             'includes/functions/class-admin-notifications.php',
@@ -197,7 +241,7 @@ class Voxel_Toolkit {
      */
     private function init_hooks() {
         try {
-            // Initialize settings
+            // Initialize settings (already loaded in early_init)
             if (class_exists('Voxel_Toolkit_Settings')) {
                 Voxel_Toolkit_Settings::instance();
             }
@@ -206,6 +250,8 @@ class Voxel_Toolkit {
             if (class_exists('Voxel_Toolkit_Functions')) {
                 Voxel_Toolkit_Functions::instance();
             }
+
+            // Post fields manager already initialized in early_init
 
             // Initialize dynamic tags
             if (class_exists('Voxel_Toolkit_Dynamic_Tags')) {
