@@ -1521,6 +1521,48 @@ class Voxel_Toolkit_Admin {
                 </table>
             </div>
 
+            <!-- Campaign Progress -->
+            <?php if ($this->settings->is_function_enabled('widget_campaign_progress')): ?>
+                <div class="settings-section" style="margin-top: 30px;">
+                    <h2><?php _e('Campaign Progress', 'voxel-toolkit'); ?></h2>
+                    <p class="description"><?php _e('Dynamic properties for campaign/crowdfunding data. Use with @post() syntax on campaign posts.', 'voxel-toolkit'); ?></p>
+
+                    <table class="widefat striped">
+                        <thead>
+                            <tr>
+                                <th><?php _e('Property', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Output Example', 'voxel-toolkit'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>campaign_amount_donated</code></td>
+                                <td><?php _e('Total amount raised for the campaign', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(campaign_amount_donated)</code></td>
+                                <td><em>1250.50</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>campaign_number_of_donors</code></td>
+                                <td><?php _e('Total number of unique donors/donations', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(campaign_number_of_donors)</code></td>
+                                <td><em>25</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>campaign_percentage_donated</code></td>
+                                <td><?php _e('Percentage of goal reached (whole number, 0-100). Requires goal to be set via Campaign Progress widget.', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(campaign_percentage_donated)</code></td>
+                                <td><em>65</em></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-top: 15px;">
+                        <em><?php _e('Note: These tags require the Campaign Progress widget to be placed on a page and rendered at least once to store the goal amount.', 'voxel-toolkit'); ?></em>
+                    </p>
+                </div>
+            <?php endif; ?>
+
             <!-- Site Options -->
             <?php if ($this->settings->is_function_enabled('options_page')): ?>
                 <?php
