@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Improved
+- **Show Field Description**: Enhanced support for all field types
+  - Fixed description display for switcher fields (now appears below toggle and label)
+  - Fixed description display for location fields
+  - Fixed description display for taxonomy fields
+  - Added MutationObserver to handle repeater field descriptions dynamically
+  - Descriptions now work for subfields inside repeater rows
+  - Automatically processes descriptions when new repeater rows are added
+  - Removed developer credit from settings page
+
 ### Added
 - **Widget CSS Class & ID**: Inject custom CSS classes and IDs to individual items in Voxel widgets
   - **Supported Widgets**: Navbar (VX), User Bar (VX), Advanced List (VX)
