@@ -158,6 +158,77 @@ class Voxel_Toolkit_Dynamic_Tags {
                 return $word_count;
             } );
 
+        // Add campaign total raised property
+        $properties['campaign_amount_donated'] = \Voxel\Dynamic_Data\Tag::Number('Campaign Amount Donated')
+            ->render( function() use ( $group ) {
+                if (!$group->post || !$group->post->get_id()) {
+                    return 0;
+                }
+
+                if (!class_exists('Voxel_Toolkit_Campaign_Progress_Widget_Manager')) {
+                    return 0;
+                }
+
+                $progress = \Voxel_Toolkit_Campaign_Progress_Widget_Manager::get_campaign_progress($group->post->get_id());
+                return round($progress['total_raised'], 2);
+            } );
+
+        // Add campaign donation count property
+        $properties['campaign_number_of_donors'] = \Voxel\Dynamic_Data\Tag::Number('Campaign Number of Donors')
+            ->render( function() use ( $group ) {
+                if (!$group->post || !$group->post->get_id()) {
+                    return 0;
+                }
+
+                if (!class_exists('Voxel_Toolkit_Campaign_Progress_Widget_Manager')) {
+                    return 0;
+                }
+
+                $progress = \Voxel_Toolkit_Campaign_Progress_Widget_Manager::get_campaign_progress($group->post->get_id());
+                return intval($progress['donation_count']);
+            } );
+
+        // Add campaign percentage donated property
+        $properties['campaign_percentage_donated'] = \Voxel\Dynamic_Data\Tag::Number('Campaign Percentage Donated')
+            ->render( function() use ( $group ) {
+                if (!$group->post || !$group->post->get_id()) {
+                    return 0;
+                }
+
+                if (!class_exists('Voxel_Toolkit_Campaign_Progress_Widget_Manager')) {
+                    return 0;
+                }
+
+                // Get campaign data
+                $progress = \Voxel_Toolkit_Campaign_Progress_Widget_Manager::get_campaign_progress($group->post->get_id());
+
+                // Try to get goal from post meta or field
+                $post = $group->post;
+                $goal = 0;
+
+                // Try to get from campaign_goal field if it exists
+                if (method_exists($post, 'get_field')) {
+                    $goal_field = $post->get_field('campaign_goal');
+                    if ($goal_field) {
+                        $goal = floatval($goal_field->get_value());
+                    }
+                }
+
+                // Fallback to post meta
+                if (!$goal) {
+                    $goal = floatval(get_post_meta($post->get_id(), 'campaign_goal', true));
+                }
+
+                // If still no goal, return 0
+                if ($goal <= 0) {
+                    return 0;
+                }
+
+                // Calculate percentage
+                $percentage = min(100, ($progress['total_raised'] / $goal) * 100);
+                return round($percentage, 2);
+            } );
+
         return $properties;
     }
 

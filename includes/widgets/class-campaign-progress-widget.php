@@ -102,6 +102,9 @@ class Voxel_Toolkit_Campaign_Progress_Widget extends \Elementor\Widget_Base {
                 'label_off' => __('No', 'voxel-toolkit'),
                 'return_value' => 'yes',
                 'default' => 'yes',
+                'condition' => [
+                    'display_all_data!' => 'yes',
+                ],
             ]
         );
 
@@ -114,6 +117,9 @@ class Voxel_Toolkit_Campaign_Progress_Widget extends \Elementor\Widget_Base {
                 'label_off' => __('No', 'voxel-toolkit'),
                 'return_value' => 'yes',
                 'default' => 'yes',
+                'condition' => [
+                    'display_all_data!' => 'yes',
+                ],
             ]
         );
 
@@ -126,6 +132,9 @@ class Voxel_Toolkit_Campaign_Progress_Widget extends \Elementor\Widget_Base {
                 'label_off' => __('No', 'voxel-toolkit'),
                 'return_value' => 'yes',
                 'default' => 'yes',
+                'condition' => [
+                    'display_all_data!' => 'yes',
+                ],
             ]
         );
 
@@ -138,6 +147,9 @@ class Voxel_Toolkit_Campaign_Progress_Widget extends \Elementor\Widget_Base {
                 'label_off' => __('No', 'voxel-toolkit'),
                 'return_value' => 'yes',
                 'default' => 'yes',
+                'condition' => [
+                    'display_all_data!' => 'yes',
+                ],
             ]
         );
 
