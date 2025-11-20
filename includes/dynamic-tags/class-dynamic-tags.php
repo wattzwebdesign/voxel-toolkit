@@ -158,8 +158,11 @@ class Voxel_Toolkit_Dynamic_Tags {
                 return $word_count;
             } );
 
-        // Add campaign total raised property
-        $properties['campaign_amount_donated'] = \Voxel\Dynamic_Data\Tag::Number('Campaign Amount Donated')
+        // Add campaign progress properties only if widget is enabled
+        $settings = Voxel_Toolkit_Settings::instance();
+        if ($settings->is_function_enabled('widget_campaign_progress')) {
+            // Add campaign total raised property
+            $properties['campaign_amount_donated'] = \Voxel\Dynamic_Data\Tag::Number('Campaign Amount Donated')
             ->render( function() use ( $group ) {
                 if (!$group->post || !$group->post->get_id()) {
                     return 0;
@@ -214,6 +217,7 @@ class Voxel_Toolkit_Dynamic_Tags {
                 $percentage = min(100, ($progress['total_raised'] / $goal) * 100);
                 return round($percentage);
             } );
+        }
 
         return $properties;
     }
