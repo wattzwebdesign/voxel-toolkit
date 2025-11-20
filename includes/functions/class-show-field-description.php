@@ -72,6 +72,13 @@ class Voxel_Toolkit_Show_Field_Description {
                 line-height: 1.5;
                 color: #666666;
             }
+
+            /* For switcher fields, the subtitle appears inside the label */
+            .create-post-form .switcher-label label .vx-subtitle {
+                display: block;
+                margin-top: 5px;
+                margin-bottom: 0;
+            }
         </style>
         <script>
             (function() {
@@ -93,8 +100,21 @@ class Voxel_Toolkit_Show_Field_Description {
                             subtitle.classList.add("vx-subtitle");
                             subtitle.innerHTML = dialogContent.innerHTML;
 
-                            // Insert after label
-                            label.insertAdjacentElement("afterend", subtitle);
+                            // For switcher fields, insert after the label text (after switch-slider)
+                            // Check if this is a switcher field by looking for switch-slider class
+                            if (field.classList.contains("switcher-label") && label.querySelector(".switch-slider")) {
+                                // Find the dialog element and insert subtitle before it
+                                const dialog = label.querySelector(".vx-dialog");
+                                if (dialog) {
+                                    dialog.parentElement.insertBefore(subtitle, dialog);
+                                } else {
+                                    // Fallback: insert at end of label
+                                    label.appendChild(subtitle);
+                                }
+                            } else {
+                                // For regular fields, insert after label
+                                label.insertAdjacentElement("afterend", subtitle);
+                            }
 
                             // Hide the original tooltip icon
                             if (dialogContent.parentElement) {
