@@ -202,31 +202,17 @@ class Voxel_Toolkit_Dynamic_Tags {
                 // Get campaign data
                 $progress = \Voxel_Toolkit_Campaign_Progress_Widget_Manager::get_campaign_progress($group->post->get_id());
 
-                // Try to get goal from post meta or field
-                $post = $group->post;
-                $goal = 0;
+                // Get goal from post meta 'vt_campaign_goal'
+                $goal = floatval(get_post_meta($group->post->get_id(), 'vt_campaign_goal', true));
 
-                // Try to get from campaign_goal field if it exists
-                if (method_exists($post, 'get_field')) {
-                    $goal_field = $post->get_field('campaign_goal');
-                    if ($goal_field) {
-                        $goal = floatval($goal_field->get_value());
-                    }
-                }
-
-                // Fallback to post meta
-                if (!$goal) {
-                    $goal = floatval(get_post_meta($post->get_id(), 'campaign_goal', true));
-                }
-
-                // If still no goal, return 0
+                // If no goal set, return 0
                 if ($goal <= 0) {
                     return 0;
                 }
 
                 // Calculate percentage
                 $percentage = min(100, ($progress['total_raised'] / $goal) * 100);
-                return round($percentage, 2);
+                return round($percentage);
             } );
 
         return $properties;

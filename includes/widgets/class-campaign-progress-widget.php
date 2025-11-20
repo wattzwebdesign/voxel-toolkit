@@ -520,6 +520,11 @@ class Voxel_Toolkit_Campaign_Progress_Widget extends \Elementor\Widget_Base {
         $percentage = $goal > 0 ? min(100, ($raised / $goal) * 100) : 0;
         $currency = $settings['currency_symbol'];
 
+        // Save goal to post meta for dynamic tag access
+        if ($goal > 0) {
+            update_post_meta($post_id, 'vt_campaign_goal', $goal);
+        }
+
         $donation_label = $progress['donation_count'] === 1 ?
             $settings['label_donation'] :
             $settings['label_donations'];
