@@ -73,11 +73,12 @@ class Voxel_Toolkit_Show_Field_Description {
                 color: #666666;
             }
 
-            /* For switcher fields, the subtitle appears inside the label */
-            .create-post-form .switcher-label label .vx-subtitle {
+            /* For switcher fields, the subtitle appears after the label */
+            .create-post-form .switcher-label .vx-subtitle {
                 display: block;
                 margin-top: 5px;
-                margin-bottom: 0;
+                margin-bottom: 10px;
+                margin-left: 0;
             }
         </style>
         <script>
@@ -100,17 +101,10 @@ class Voxel_Toolkit_Show_Field_Description {
                             subtitle.classList.add("vx-subtitle");
                             subtitle.innerHTML = dialogContent.innerHTML;
 
-                            // For switcher fields, insert after the label text (after switch-slider)
-                            // Check if this is a switcher field by looking for switch-slider class
-                            if (field.classList.contains("switcher-label") && label.querySelector(".switch-slider")) {
-                                // Find the dialog element and insert subtitle before it
-                                const dialog = label.querySelector(".vx-dialog");
-                                if (dialog) {
-                                    dialog.parentElement.insertBefore(subtitle, dialog);
-                                } else {
-                                    // Fallback: insert at end of label
-                                    label.appendChild(subtitle);
-                                }
+                            // For switcher fields, insert after the entire label element
+                            if (field.classList.contains("switcher-label")) {
+                                // Insert subtitle after the label, outside of it
+                                label.insertAdjacentElement("afterend", subtitle);
                             } else {
                                 // For regular fields, insert after label
                                 label.insertAdjacentElement("afterend", subtitle);
