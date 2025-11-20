@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Campaign Progress Widget Enhancements**: Granular display controls and dynamic tags
+  - **Display Toggle Controls**: 5 new switcher controls for fine-grained visibility control
+    - Display All Data: Master toggle that shows all elements
+    - Display Donated vs Goal: Controls progress summary section
+    - Display Progress Bar: Controls visual progress bar
+    - Display Number of Donations: Controls donation count display
+    - Display Donor List: Controls recent donor list (renamed from "Show Donor List")
+  - **Conditional UI**: Individual toggles automatically hide when "Display All Data" is enabled
+  - **Dynamic Tags**: 3 new campaign data tags for use anywhere in Elementor
+    - `@post(campaign_amount_donated)` - Total amount raised for the campaign
+    - `@post(campaign_number_of_donors)` - Count of unique donors/donations
+    - `@post(campaign_percentage_donated)` - Percentage of goal reached (whole number, 0-100)
+  - **Auto Goal Tracking**: Widget saves goal amount to post meta for dynamic tag access
+  - **Backward Compatible**: All toggles default to 'yes' to maintain existing behavior
 - **Poll Field (VT)**: Custom post field type for creating interactive polls with voting functionality
   - **Field Creation**: Add polls to any Voxel post type via custom field type
   - **Admin-Defined Options**: Create predefined poll options in field configuration
