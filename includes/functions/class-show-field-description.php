@@ -151,6 +151,29 @@ class Voxel_Toolkit_Show_Field_Description {
                         }
                     }, 500);
                 }
+
+                // Watch for dynamically added fields (like repeater rows)
+                const observer = new MutationObserver(function(mutations) {
+                    let shouldProcess = false;
+                    mutations.forEach(function(mutation) {
+                        if (mutation.addedNodes.length > 0) {
+                            mutation.addedNodes.forEach(function(node) {
+                                if (node.nodeType === 1 && (node.classList.contains('ts-form-group') || node.querySelector('.ts-form-group'))) {
+                                    shouldProcess = true;
+                                }
+                            });
+                        }
+                    });
+                    if (shouldProcess) {
+                        setTimeout(processFieldDescriptions, 100);
+                    }
+                });
+
+                // Start observing the document for changes
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
             })();
         </script>
         <?php
