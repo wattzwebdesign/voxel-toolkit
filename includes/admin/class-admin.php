@@ -1233,13 +1233,7 @@ class Voxel_Toolkit_Admin {
     public function render_post_fields_page() {
         $available_functions = $this->functions_manager->get_available_functions();
 
-        // Filter to only show post field functions
-        $post_field_functions = array_filter($available_functions, function($function_data) {
-            // Check if the function key contains 'field' or if it's a known field type
-            return isset($function_data['type']) && $function_data['type'] === 'post_field';
-        });
-
-        // For now, manually identify field functions by key
+        // Manually identify field functions by key
         $field_function_keys = ['poll_field']; // Add more field keys here as they're created
         $post_field_functions = array();
         foreach ($field_function_keys as $key) {
@@ -1310,8 +1304,8 @@ class Voxel_Toolkit_Admin {
                 <div class="voxel-toolkit-widget-toggle">
                     <label class="toggle-switch">
                         <input type="checkbox"
-                               class="widget-toggle-checkbox"
-                               data-widget="<?php echo esc_attr($field_key); ?>"
+                               class="function-toggle-checkbox"
+                               data-function="<?php echo esc_attr($field_key); ?>"
                                <?php checked($is_enabled); ?>>
                         <span class="slider"></span>
                     </label>
