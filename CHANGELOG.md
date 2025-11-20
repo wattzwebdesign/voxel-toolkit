@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Poll Field (VT)**: Custom post field type for creating interactive polls with voting functionality
+  - **Field Creation**: Add polls to any Voxel post type via custom field type
+  - **Admin-Defined Options**: Create predefined poll options in field configuration
+  - **User-Submitted Options**: Optionally allow users to add their own poll choices
+  - **Voting System**: Single or multiple choice voting with user tracking
+  - **Auto-Enable Widget**: Poll Display widget automatically enables when field is enabled
+  - **Hidden Widget**: Poll widget is functional but hidden from admin widgets page
+  - **Poll Display Widget**: Elementor widget for displaying polls with comprehensive styling
+    - Facebook-inspired clean design with progress bars as backgrounds
+    - Login-required voting and option submission
+    - Username badges for user-submitted options
+    - Real-time vote percentages and counts
+    - **Styling Controls**:
+      - Text customization (vote singular/plural, button text, placeholders)
+      - Radio/Checkbox appearance (size, colors, borders, checkmark color)
+      - Option name typography (separate controls for voted/not voted states)
+      - Option box styling (borders, padding, backgrounds for voted/not voted)
+      - Progress bar colors and border radius
+      - Vote count and percentage typography
+      - Add option input and button styling
+      - All border radius controls use 4-input dimensions
+    - **Hide if Empty**: Optional setting to hide widget when no poll options exist
+    - SVG checkmark icon integration
+  - **JSON Data Storage**: Voxel-compatible JSON encoding for poll data
+  - **AJAX Handlers**: Real-time voting and option addition without page refresh
+  - **Vue.js Integration**: Create-post form component for poll configuration
+
 ### Improved
 - **Show Field Description**: Enhanced support for all field types
   - Fixed description display for switcher fields (now appears below toggle and label)
