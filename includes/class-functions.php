@@ -266,6 +266,13 @@ class Voxel_Toolkit_Functions {
                 'settings_callback' => array('Voxel_Toolkit_Widget_CSS_Injector', 'render_settings'),
                 'always_enabled' => true,
             ),
+            'poll_field' => array(
+                'name' => __('Poll Field (VT)', 'voxel-toolkit'),
+                'description' => __('Add custom Poll field type to Voxel post types with voting, user-submitted options, and multi-select support.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Poll_Field',
+                'file' => 'functions/class-poll-field.php',
+                'settings_callback' => array('Voxel_Toolkit_Poll_Field', 'render_settings'),
+            ),
         );
 
         // Allow other plugins/themes to register functions
