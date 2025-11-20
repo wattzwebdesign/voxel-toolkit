@@ -113,6 +113,7 @@ class Voxel_Toolkit_Post_Fields {
     private function init_post_field($field_key, $field_data) {
         // Initialize the field class (file should already be loaded)
         if (isset($field_data['class']) && class_exists($field_data['class'])) {
+            error_log('Voxel Toolkit Post Fields: Initializing field class: ' . $field_data['class']);
             new $field_data['class']();
         }
     }

@@ -27,10 +27,8 @@ class Voxel_Toolkit_Poll_Field {
      * Initialize hooks
      */
     private function init_hooks() {
-        error_log('Voxel Toolkit: Attempting to add voxel/field-types filter');
-        // Register the custom field type - use priority 100 to ensure it runs after Voxel loads
-        add_filter('voxel/field-types', array($this, 'register_field_type'), 100);
-        error_log('Voxel Toolkit: voxel/field-types filter added');
+        // Field type registration now handled in main plugin file for proper timing
+        // No need to register here since it happens earlier via voxel-toolkit.php
 
         // Add frontend template
         add_action('wp_head', array($this, 'add_frontend_template'));
@@ -51,23 +49,24 @@ class Voxel_Toolkit_Poll_Field {
      * Register the poll field type
      */
     public function register_field_type($fields) {
-        error_log('Voxel Toolkit: register_field_type called! Fields array keys: ' . implode(', ', array_keys($fields)));
-
-        if (!class_exists('\Voxel\Post_Types\Fields\Base_Post_Field')) {
-            error_log('Voxel Toolkit: Base_Post_Field class not found - CANNOT REGISTER');
-            return $fields;
-        }
-
         // Check if the poll field is enabled before registering
         $settings = Voxel_Toolkit_Settings::instance();
-        if (!$settings->is_function_enabled('post_field_poll_field')) {
-            error_log('Voxel Toolkit: Poll field is disabled - not registering in field types list');
+        $is_enabled = $settings->is_function_enabled('post_field_poll_field');
+
+        error_log('Voxel Toolkit Poll: register_field_type called. Feature enabled: ' . ($is_enabled ? 'YES' : 'NO'));
+
+        if (!$is_enabled) {
+            error_log('Voxel Toolkit Poll: DISABLED - Returning without registering');
             return $fields;
         }
 
-        error_log('Voxel Toolkit: Base_Post_Field class exists! Registering poll-vt field type');
+        if (!class_exists('\Voxel\Post_Types\Fields\Base_Post_Field')) {
+            error_log('Voxel Toolkit Poll: Base_Post_Field class not found - CANNOT REGISTER');
+            return $fields;
+        }
+
+        error_log('Voxel Toolkit Poll: ENABLED - Registering poll-vt field type');
         $fields['poll-vt'] = '\Voxel_Toolkit_Poll_Field_Type';
-        error_log('Voxel Toolkit: poll-vt added to fields array. New keys: ' . implode(', ', array_keys($fields)));
         return $fields;
     }
 
