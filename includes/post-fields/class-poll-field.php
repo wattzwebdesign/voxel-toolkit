@@ -58,6 +58,13 @@ class Voxel_Toolkit_Poll_Field {
             return $fields;
         }
 
+        // Check if the poll field is enabled before registering
+        $settings = Voxel_Toolkit_Settings::instance();
+        if (!$settings->is_function_enabled('post_field_poll_field')) {
+            error_log('Voxel Toolkit: Poll field is disabled - not registering in field types list');
+            return $fields;
+        }
+
         error_log('Voxel Toolkit: Base_Post_Field class exists! Registering poll-vt field type');
         $fields['poll-vt'] = '\Voxel_Toolkit_Poll_Field_Type';
         error_log('Voxel Toolkit: poll-vt added to fields array. New keys: ' . implode(', ', array_keys($fields)));
@@ -732,6 +739,14 @@ class Voxel_Toolkit_Poll_Field_Type extends \Voxel\Post_Types\Fields\Base_Post_F
         'type' => 'poll-vt',
         'label' => 'Poll (VT)',
     ];
+
+    /**
+     * Check if this field type is supported (enabled)
+     */
+    public function is_supported(): bool {
+        $settings = Voxel_Toolkit_Settings::instance();
+        return $settings->is_function_enabled('post_field_poll_field');
+    }
 
     public function get_models(): array {
         return [
