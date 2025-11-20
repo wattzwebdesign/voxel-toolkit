@@ -62,6 +62,10 @@ class Voxel_Toolkit_Post_Fields {
      */
     private function init_active_post_fields() {
         foreach ($this->available_post_fields as $field_key => $field_data) {
+            // Always load the field file so the class is available
+            // This prevents errors when post types still reference disabled fields
+            $this->load_post_field_file($field_key, $field_data);
+
             $field_key_full = 'post_field_' . $field_key;
             if ($this->settings->is_function_enabled($field_key_full)) {
                 $this->init_post_field($field_key, $field_data);
@@ -79,29 +83,37 @@ class Voxel_Toolkit_Post_Fields {
     }
 
     /**
-     * Initialize a specific post field
+     * Load post field file
      *
      * @param string $field_key Field key
      * @param array $field_data Field data
      */
-    private function init_post_field($field_key, $field_data) {
+    private function load_post_field_file($field_key, $field_data) {
         // Include field file if specified
         if (isset($field_data['file'])) {
             $file_path = VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/' . $field_data['file'];
             if (file_exists($file_path)) {
                 // Check if Voxel's Base_Post_Field class is loaded
                 if (!class_exists('\Voxel\Post_Types\Fields\Base_Post_Field')) {
-                    error_log('Voxel Toolkit: Cannot initialize post field - Voxel Base_Post_Field class not loaded yet');
+                    error_log('Voxel Toolkit: Cannot load post field - Voxel Base_Post_Field class not loaded yet');
                     return;
                 }
 
                 require_once $file_path;
-
-                // Initialize the field class
-                if (isset($field_data['class']) && class_exists($field_data['class'])) {
-                    new $field_data['class']();
-                }
             }
+        }
+    }
+
+    /**
+     * Initialize a specific post field
+     *
+     * @param string $field_key Field key
+     * @param array $field_data Field data
+     */
+    private function init_post_field($field_key, $field_data) {
+        // Initialize the field class (file should already be loaded)
+        if (isset($field_data['class']) && class_exists($field_data['class'])) {
+            new $field_data['class']();
         }
     }
 
