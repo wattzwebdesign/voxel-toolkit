@@ -771,6 +771,11 @@ body.vx-dark-mode #wpwrap #wpbody i {
     color: #6b7280;
 }
 
+.voxel-toolkit-badge-always-enabled {
+    background: #d1fae5;
+    color: #065f46;
+}
+
 /* Widget Footer */
 .voxel-toolkit-widget-footer {
     display: flex;

@@ -82,14 +82,74 @@ class Voxel_Toolkit_Campaign_Progress_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
-            'show_donor_list',
+            'display_all_data',
             [
-                'label' => __('Show Donor List', 'voxel-toolkit'),
+                'label' => __('Display All Data', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::SWITCHER,
-                'label_on' => __('Show', 'voxel-toolkit'),
-                'label_off' => __('Hide', 'voxel-toolkit'),
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
                 'return_value' => 'yes',
                 'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'display_donated_vs_goal',
+            [
+                'label' => __('Display Donated vs Goal', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+                'condition' => [
+                    'display_all_data!' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'display_progress_bar',
+            [
+                'label' => __('Display Progress Bar', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+                'condition' => [
+                    'display_all_data!' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'display_donation_count',
+            [
+                'label' => __('Display Number of Donations', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+                'condition' => [
+                    'display_all_data!' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'display_donor_list',
+            [
+                'label' => __('Display Donor List', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+                'condition' => [
+                    'display_all_data!' => 'yes',
+                ],
             ]
         );
 
@@ -102,7 +162,7 @@ class Voxel_Toolkit_Campaign_Progress_Widget extends \Elementor\Widget_Base {
                 'min' => 1,
                 'max' => 20,
                 'condition' => [
-                    'show_donor_list' => 'yes',
+                    'display_donor_list' => 'yes',
                 ],
             ]
         );
@@ -273,7 +333,7 @@ class Voxel_Toolkit_Campaign_Progress_Widget extends \Elementor\Widget_Base {
                 'label' => __('Donor List', 'voxel-toolkit'),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
                 'condition' => [
-                    'show_donor_list' => 'yes',
+                    'display_donor_list' => 'yes',
                 ],
             ]
         );
@@ -460,6 +520,11 @@ class Voxel_Toolkit_Campaign_Progress_Widget extends \Elementor\Widget_Base {
         $percentage = $goal > 0 ? min(100, ($raised / $goal) * 100) : 0;
         $currency = $settings['currency_symbol'];
 
+        // Save goal to post meta for dynamic tag access
+        if ($goal > 0) {
+            update_post_meta($post_id, 'vt_campaign_goal', $goal);
+        }
+
         $donation_label = $progress['donation_count'] === 1 ?
             $settings['label_donation'] :
             $settings['label_donations'];
@@ -468,36 +533,42 @@ class Voxel_Toolkit_Campaign_Progress_Widget extends \Elementor\Widget_Base {
         <div class="vt-campaign-progress-widget">
 
             <!-- Progress Summary -->
-            <div class="vt-campaign-progress-summary">
-                <p class="vt-campaign-progress-text">
-                    <?php echo esc_html($currency . number_format($remaining, 0)); ?>
-                    <?php echo esc_html($settings['label_left_of']); ?>
-                    <?php echo esc_html($settings['label_goal']); ?>
-                    <?php echo esc_html($currency . number_format($goal, 0)); ?>
-                </p>
-            </div>
+            <?php if ($settings['display_all_data'] === 'yes' || $settings['display_donated_vs_goal'] === 'yes') : ?>
+                <div class="vt-campaign-progress-summary">
+                    <p class="vt-campaign-progress-text">
+                        <?php echo esc_html($currency . number_format($remaining, 0)); ?>
+                        <?php echo esc_html($settings['label_left_of']); ?>
+                        <?php echo esc_html($settings['label_goal']); ?>
+                        <?php echo esc_html($currency . number_format($goal, 0)); ?>
+                    </p>
+                </div>
+            <?php endif; ?>
 
             <!-- Progress Bar -->
-            <div class="vt-campaign-progress-bar">
-                <div class="vt-campaign-progress-fill" style="width: <?php echo esc_attr($percentage); ?>%;">
-                    <span class="vt-campaign-progress-amount">
-                        <?php echo esc_html($currency . number_format($raised, 0)); ?>
-                        <?php echo esc_html($settings['label_donated']); ?>
-                    </span>
-                    <span class="vt-campaign-progress-percentage">
-                        <?php echo esc_html(round($percentage)); ?>%
-                    </span>
+            <?php if ($settings['display_all_data'] === 'yes' || $settings['display_progress_bar'] === 'yes') : ?>
+                <div class="vt-campaign-progress-bar">
+                    <div class="vt-campaign-progress-fill" style="width: <?php echo esc_attr($percentage); ?>%;">
+                        <span class="vt-campaign-progress-amount">
+                            <?php echo esc_html($currency . number_format($raised, 0)); ?>
+                            <?php echo esc_html($settings['label_donated']); ?>
+                        </span>
+                        <span class="vt-campaign-progress-percentage">
+                            <?php echo esc_html(round($percentage)); ?>%
+                        </span>
+                    </div>
                 </div>
-            </div>
+            <?php endif; ?>
 
             <!-- Donation Count -->
-            <div class="vt-campaign-donation-count">
-                <strong><?php echo esc_html($progress['donation_count']); ?></strong>
-                <?php echo esc_html($donation_label); ?>
-            </div>
+            <?php if ($settings['display_all_data'] === 'yes' || $settings['display_donation_count'] === 'yes') : ?>
+                <div class="vt-campaign-donation-count">
+                    <strong><?php echo esc_html($progress['donation_count']); ?></strong>
+                    <?php echo esc_html($donation_label); ?>
+                </div>
+            <?php endif; ?>
 
             <!-- Donor List -->
-            <?php if ($settings['show_donor_list'] === 'yes' && !empty($progress['recent_donors'])) : ?>
+            <?php if (($settings['display_all_data'] === 'yes' || $settings['display_donor_list'] === 'yes') && !empty($progress['recent_donors'])) : ?>
                 <div class="vt-donor-list">
                     <?php
                     $donors_to_show = intval($settings['donors_to_show']);

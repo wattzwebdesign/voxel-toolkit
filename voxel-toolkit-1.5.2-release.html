@@ -1,0 +1,196 @@
+<!-- wp:heading {"level":1} -->
+<h1>Voxel Toolkit 1.5.2 - Enhanced Customization & Dynamic Content</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>We're excited to announce Voxel Toolkit version 1.5.2, packed with powerful new features that give you unprecedented control over your Voxel-powered website. This release focuses on enhanced widget customization, global site options, and dynamic content capabilities.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Whether you're building a directory, marketplace, or community platform, these new tools will help you create a more polished and personalized user experience.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2>✨ New Features</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Widget CSS Class & ID Injection</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Take complete control over your Voxel widget styling with the ability to inject custom CSS classes and unique IDs to individual widget items. This game-changing feature is <strong>always enabled</strong> and works seamlessly with three essential Voxel widgets.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul>
+<li><strong>Supported Widgets:</strong> Navbar (VX), User Bar (VX), Advanced List (VX)</li>
+<li><strong>Repeater Item Controls:</strong> Each item in these widgets gets dedicated CSS Class and ID fields</li>
+<li><strong>Multiple Classes Support:</strong> Add multiple space-separated classes to any item for maximum flexibility</li>
+<li><strong>Unique IDs:</strong> Set unique identifiers for advanced CSS targeting or JavaScript hooks</li>
+<li><strong>Automatic Injection:</strong> Classes and IDs are automatically applied via DOM manipulation</li>
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":4} -->
+<h4>Perfect Use Cases:</h4>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul>
+<li>Custom styling for specific navigation items (highlight premium features, special promotions)</li>
+<li>Individual user bar component targeting for personalized layouts</li>
+<li>Action-specific styling in advanced lists (different colors for edit, delete, share actions)</li>
+<li>Third-party integrations via ID hooks (analytics, tour guides, automation tools)</li>
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Site Options - Global Dynamic Tags</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Create powerful, reusable site-wide settings that can be accessed anywhere using Voxel's dynamic tag system. Perfect for managing contact information, social links, branding elements, and any global content that needs to be updated from a single location.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul>
+<li><strong>Field Types:</strong> Text, Textarea, Number, URL, and Image fields</li>
+<li><strong>Efficient Storage:</strong> Values stored as individual autoloaded WordPress options for optimal performance</li>
+<li><strong>Dynamic Tag Access:</strong> Use <code>@site(options.field_name)</code> anywhere in your site</li>
+<li><strong>Image Support:</strong> Image fields return attachment ID (use .url modifier for image source)</li>
+<li><strong>Dedicated Admin Interface:</strong> New "Site Options" submenu appears when enabled</li>
+<li><strong>Flexible Configuration:</strong> Easy add/delete field management UI</li>
+<li><strong>Media Library Integration:</strong> Full WordPress media picker for image fields</li>
+<li><strong>Frontend Forms:</strong> Allow authorized users to update options from the frontend using Elementor forms</li>
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":4} -->
+<h4>Example Usage:</h4>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Contact Email: @site(options.contact_email)
+Phone Number: @site(options.phone)
+Logo: &lt;img src="@site(options.logo).url" /&gt;
+Social Link: &lt;a href="@site(options.facebook_url)"&gt;Facebook&lt;/a&gt;</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Post Count Tally Modifier</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display real-time counts of published posts with the new <code>.tally()</code> modifier. Perfect for creating dynamic labels, statistics, and user-facing metrics.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul>
+<li><strong>Simple Syntax:</strong> <code>@site(post_types.member.singular).tally()</code></li>
+<li><strong>Works With Any Property:</strong> Attach to singular, plural, icon, or any post type property</li>
+<li><strong>Efficient Counting:</strong> Uses WordPress native <code>wp_count_posts()</code> function</li>
+<li><strong>Published Only:</strong> Automatically filters to count only published posts</li>
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":4} -->
+<h4>Dynamic Labels:</h4>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>"Join our community of @site(post_types.member.singular).tally() Members"
+"Browse @site(post_types.event.singular).tally() Upcoming Events"
+"Explore @site(post_types.listing.singular).tally() Business Listings"</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2>🔧 Improvements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Duplicate Title Checker</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The duplicate title validation system has been completely revamped for better efficiency and consistency with Voxel's native UI patterns.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul>
+<li><strong>Native Integration:</strong> Now uses Voxel's built-in error slot mechanism for validation messages</li>
+<li><strong>Cleaner UI:</strong> Removed validation icons for a more streamlined appearance</li>
+<li><strong>Color-Coded Feedback:</strong> Error messages in red, success messages in green</li>
+<li><strong>Consistent Styling:</strong> Matches Voxel's native field validation styling perfectly</li>
+<li><strong>Better Performance:</strong> More efficient DOM manipulation and reduced visual clutter</li>
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2>🐛 Bug Fixes</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3>Light Mode Background Fix</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Resolved an issue where white backgrounds appeared on Voxel admin pages even when Light Mode was disabled.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul>
+<li><strong>Fixed:</strong> Field headers now display correct dark background (#40464a) when Light Mode is disabled</li>
+<li><strong>Fixed:</strong> White backgrounds (#e9e9e9) only appear when Light Mode is explicitly enabled</li>
+<li><strong>Removed:</strong> Inline styles that unconditionally applied light backgrounds</li>
+<li><strong>Improved:</strong> Better conditional rendering based on Light Mode function status</li>
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2>What's Next?</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Version 1.5.2 represents our commitment to providing you with the most flexible and powerful toolkit for Voxel theme development. We're constantly working on new features and improvements based on your feedback.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Stay tuned for upcoming features in future releases, including enhanced dynamic tag capabilities, new widget types, and additional customization options.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center"><strong>Ready to upgrade? Download Voxel Toolkit 1.5.2 today!</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">Developed by <a href="https://codewattz.com">Code Wattz</a> • For <a href="https://getvoxel.io">Voxel Theme</a></p>
+<!-- /wp:paragraph -->

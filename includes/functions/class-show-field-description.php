@@ -72,6 +72,14 @@ class Voxel_Toolkit_Show_Field_Description {
                 line-height: 1.5;
                 color: #666666;
             }
+
+            /* For switcher fields, the subtitle appears after the label */
+            .create-post-form .switcher-label .vx-subtitle {
+                display: block;
+                margin-top: 5px;
+                margin-bottom: 10px;
+                margin-left: 0;
+            }
         </style>
         <script>
             (function() {
@@ -93,8 +101,14 @@ class Voxel_Toolkit_Show_Field_Description {
                             subtitle.classList.add("vx-subtitle");
                             subtitle.innerHTML = dialogContent.innerHTML;
 
-                            // Insert after label
-                            label.insertAdjacentElement("afterend", subtitle);
+                            // For switcher fields, insert after the entire label element
+                            if (field.classList.contains("switcher-label")) {
+                                // Insert subtitle after the label, outside of it
+                                label.insertAdjacentElement("afterend", subtitle);
+                            } else {
+                                // For regular fields, insert after label
+                                label.insertAdjacentElement("afterend", subtitle);
+                            }
 
                             // Hide the original tooltip icon
                             if (dialogContent.parentElement) {
@@ -137,6 +151,29 @@ class Voxel_Toolkit_Show_Field_Description {
                         }
                     }, 500);
                 }
+
+                // Watch for dynamically added fields (like repeater rows)
+                const observer = new MutationObserver(function(mutations) {
+                    let shouldProcess = false;
+                    mutations.forEach(function(mutation) {
+                        if (mutation.addedNodes.length > 0) {
+                            mutation.addedNodes.forEach(function(node) {
+                                if (node.nodeType === 1 && (node.classList.contains('ts-form-group') || node.querySelector('.ts-form-group'))) {
+                                    shouldProcess = true;
+                                }
+                            });
+                        }
+                    });
+                    if (shouldProcess) {
+                        setTimeout(processFieldDescriptions, 100);
+                    }
+                });
+
+                // Start observing the document for changes
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
             })();
         </script>
         <?php

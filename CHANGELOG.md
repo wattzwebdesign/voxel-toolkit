@@ -8,46 +8,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **Suggest Edits**: Crowdsourced post editing system similar to Google Business suggestions
-  - **Frontend Submission Widget**: Elementor widget with modal popup interface
-    - "Suggest an Edit" button opens modal with selected fields
-    - Dynamic field selection per post type in widget settings
-    - "Don't know, but this is incorrect" checkbox option for each field
-    - Photo upload area for proof of changes (not required)
-    - Guest user support with name/email fields
-    - WordPress Media Library integration for image uploads
-  - **Email Notifications**: Automatic alerts to post authors
-    - Uses Voxel Templates for customizable email design
-    - Dynamic tags: `{post_title}`, `{suggester_name}`, `{suggestion_count}`, `{view_link}`
-    - Configurable per post type from settings page
-  - **Frontend Management Widget**: Post authors can review and manage suggestions
-    - Displays current vs. suggested values with visual comparison
-    - Accept button queues suggestion for save (not immediate)
-    - Reject button removes suggestion
-    - Save Changes button applies all queued suggestions at once
-    - Status filter (all/pending/queued)
-    - Proof images gallery display
-    - Only visible to post author or users with `edit_others_posts` capability
-  - **Backend Admin Pages**: Dedicated admin interface under each post type menu
-    - "Suggested Edits" submenu with pending count badge
-    - List view with filtering, pagination, and bulk actions
-    - Single suggestion view with full details
-    - Quick accept/reject buttons with AJAX
-    - Delete individual suggestions
-  - **Custom Database Table**: Efficient storage with proper indexing
-    - Tracks suggester info (user ID, name, email)
-    - Stores current and suggested values
-    - Proof images as JSON array
-    - Status tracking (pending/queued/accepted/rejected)
-    - Timestamps for sorting and filtering
-  - **Queue-for-Save Workflow**: Two-step process prevents accidental changes
-    - Accept marks suggestion as "queued"
-    - Save button applies all queued changes at once
-    - Triggers Voxel reindexing after field updates
-  - **Per Post Type Configuration**: Enable/disable for specific post types
-    - Select which post types have Suggest Edits enabled
-    - Configure email templates per post type
-    - Separate admin pages under each enabled post type
+- **Campaign Progress Widget Enhancements**: Granular display controls and dynamic tags
+  - **Display Toggle Controls**: 5 new switcher controls for fine-grained visibility control
+    - Display All Data: Master toggle that shows all elements
+    - Display Donated vs Goal: Controls progress summary section
+    - Display Progress Bar: Controls visual progress bar
+    - Display Number of Donations: Controls donation count display
+    - Display Donor List: Controls recent donor list (renamed from "Show Donor List")
+  - **Conditional UI**: Individual toggles automatically hide when "Display All Data" is enabled
+  - **Dynamic Tags**: 3 new campaign data tags for use anywhere in Elementor
+    - `@post(campaign_amount_donated)` - Total amount raised for the campaign
+    - `@post(campaign_number_of_donors)` - Count of unique donors/donations
+    - `@post(campaign_percentage_donated)` - Percentage of goal reached (whole number, 0-100)
+  - **Auto Goal Tracking**: Widget saves goal amount to post meta for dynamic tag access
+  - **Backward Compatible**: All toggles default to 'yes' to maintain existing behavior
+- **Poll Field (VT)**: Custom post field type for creating interactive polls with voting functionality
+  - **Field Creation**: Add polls to any Voxel post type via custom field type
+  - **Admin-Defined Options**: Create predefined poll options in field configuration
+  - **User-Submitted Options**: Optionally allow users to add their own poll choices
+  - **Voting System**: Single or multiple choice voting with user tracking
+  - **Auto-Enable Widget**: Poll Display widget automatically enables when field is enabled
+  - **Hidden Widget**: Poll widget is functional but hidden from admin widgets page
+  - **Poll Display Widget**: Elementor widget for displaying polls with comprehensive styling
+    - Facebook-inspired clean design with progress bars as backgrounds
+    - Login-required voting and option submission
+    - Username badges for user-submitted options
+    - Real-time vote percentages and counts
+    - **Styling Controls**:
+      - Text customization (vote singular/plural, button text, placeholders)
+      - Radio/Checkbox appearance (size, colors, borders, checkmark color)
+      - Option name typography (separate controls for voted/not voted states)
+      - Option box styling (borders, padding, backgrounds for voted/not voted)
+      - Progress bar colors and border radius
+      - Vote count and percentage typography
+      - Add option input and button styling
+      - All border radius controls use 4-input dimensions
+    - **Hide if Empty**: Optional setting to hide widget when no poll options exist
+    - SVG checkmark icon integration
+  - **JSON Data Storage**: Voxel-compatible JSON encoding for poll data
+  - **AJAX Handlers**: Real-time voting and option addition without page refresh
+  - **Vue.js Integration**: Create-post form component for poll configuration
+
+### Improved
+- **Show Field Description**: Enhanced support for all field types
+  - Fixed description display for switcher fields (now appears below toggle and label)
+  - Fixed description display for location fields
+  - Fixed description display for taxonomy fields
+  - Added MutationObserver to handle repeater field descriptions dynamically
+  - Descriptions now work for subfields inside repeater rows
+  - Automatically processes descriptions when new repeater rows are added
+  - Removed developer credit from settings page
+
+### Added
+- **Widget CSS Class & ID**: Inject custom CSS classes and IDs to individual items in Voxel widgets
+  - **Supported Widgets**: Navbar (VX), User Bar (VX), Advanced List (VX)
+  - **Repeater Item Controls**: Each item in these widgets gets CSS Class and ID fields
+  - **JavaScript Injection**: Automatically applies classes/IDs to rendered items via DOM manipulation
+  - **Multiple Classes Support**: Add multiple space-separated classes to any item
+  - **Unique IDs**: Set unique identifiers for advanced CSS targeting or JavaScript hooks
+  - **Always Enabled**: Feature is always active, no need to enable from settings
+  - **Use Cases**:
+    - Custom styling for specific nav items
+    - Individual user bar component targeting
+    - Action-specific styling in advanced lists
+    - Third-party integrations via ID hooks
 - **Site Options**: Create global site options accessible via dynamic tags
   - Configure custom fields from Settings page (text, textarea, number, url, image)
   - Maximum 30 fields for optimal performance

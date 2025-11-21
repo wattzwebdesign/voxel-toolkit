@@ -15,136 +15,26 @@ if (!defined('ABSPATH')) {
 
 class User_Role_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
 
+    protected $supported_conditions = ['text'];
+
     protected $props = [
         'type' => 'user-role',
         'label' => 'User Role',
-        'placeholder' => 'Select user role(s)',
-        'selected_roles' => [],
+        'placeholder' => '',
     ];
 
-    /**
-     * Get filter label
-     */
-    public function get_label(): string {
-        return $this->props['label'] ?? 'User Role';
-    }
-
-    /**
-     * Get admin configuration models
-     */
     public function get_models(): array {
         return [
-            'label' => $this->get_label_model(),
+            'label' => $this->get_model('label', ['classes' => 'x-col-12']),
             'placeholder' => $this->get_placeholder_model(),
             'key' => $this->get_model('key', ['classes' => 'x-col-6']),
-            'selected_roles' => [
-                'type' => \Voxel\Utils\Form_Models\Checkboxes_Model::class,
-                'label' => 'Select roles to display',
-                'description' => 'Choose which user roles can be filtered. Leave empty to show all roles.',
-                'classes' => 'x-col-12',
-                'columns' => 'two',
-                'choices' => $this->_get_all_roles_for_config(),
-            ],
             'icon' => $this->get_icon_model(),
         ];
     }
 
-    /**
-     * Get all roles for backend configuration
-     */
-    protected function _get_all_roles_for_config() {
-        $choices = [];
-
-        if (function_exists('wp_roles')) {
-            $wp_roles = wp_roles();
-            foreach ($wp_roles->roles as $role_key => $role_info) {
-                $choices[$role_key] = $role_info['name'];
-            }
-        }
-
-        return $choices;
-    }
-
-    /**
-     * Get user role choices (filtered by backend selection)
-     */
-    protected function _get_choices() {
-        $all_roles = [];
-
-        // Get all WordPress roles
-        if (function_exists('wp_roles')) {
-            $wp_roles = wp_roles();
-            foreach ($wp_roles->roles as $role_key => $role_info) {
-                $all_roles[$role_key] = [
-                    'key' => $role_key,
-                    'label' => $role_info['name'],
-                ];
-            }
-        }
-
-        // Filter by selected roles in backend settings
-        $selected_roles = (array) ($this->props['selected_roles'] ?? []);
-
-        // If no roles selected in backend, show all roles
-        if (empty($selected_roles)) {
-            return $all_roles;
-        }
-
-        // Return only selected roles
-        $filtered_roles = [];
-        foreach ($selected_roles as $role_key) {
-            if (isset($all_roles[$role_key])) {
-                $filtered_roles[$role_key] = $all_roles[$role_key];
-            }
-        }
-
-        return $filtered_roles;
-    }
-
-    /**
-     * Get frontend properties for the filter
-     */
-    public function frontend_props() {
-        return [
-            'choices' => $this->_get_choices(),
-            'selected' => $this->_get_selected_roles() ?: ((object) []),
-            'placeholder' => $this->props['placeholder'] ?: $this->props['label'],
-            'display_as' => $this->elementor_config['display_as'] ?? 'popup',
-        ];
-    }
-
-    /**
-     * Get selected roles based on current filter value
-     */
-    protected function _get_selected_roles() {
-        if (array_key_exists('selected_roles', $this->cache)) {
-            return $this->cache['selected_roles'];
-        }
-
-        $value = $this->parse_value($this->get_value()) ?: [];
-        if (empty($value)) {
-            return null;
-        }
-
-        $all_roles = $this->_get_choices();
-        $selected = [];
-        foreach ($value as $role_key) {
-            if (isset($all_roles[$role_key])) {
-                $selected[$role_key] = $all_roles[$role_key];
-            }
-        }
-
-        $this->cache['selected_roles'] = !empty($selected) ? $selected : null;
-        return $this->cache['selected_roles'];
-    }
-
-    /**
-     * Modify the search query to filter by user role
-     */
     public function query(\Voxel\Post_Types\Index_Query $query, array $args): void {
         $value = $this->parse_value($args[$this->get_key()] ?? null);
-
-        if (empty($value)) {
+        if ($value === null) {
             return;
         }
 
@@ -159,63 +49,99 @@ class User_Role_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
         // Sanitize role keys
         $role_keys = array_map('esc_sql', $value);
 
-        // Join with posts table to get author
-        $query->join(sprintf(
-            "LEFT JOIN {$wpdb->posts} AS `%s_posts` ON `%s`.post_id = `%s_posts`.ID",
-            $join_key,
-            $query->table->get_escaped_name(),
-            $join_key
-        ));
+        // Get escaped table name
+        $table_name = $query->table->get_escaped_name();
+
+        // Join with posts table to get author - no sprintf to avoid format specifier conflicts
+        $query->join(
+            "LEFT JOIN {$wpdb->posts} AS `{$join_key}_posts` ON `{$table_name}`.post_id = `{$join_key}_posts`.ID"
+        );
 
         // Join with usermeta to get user capabilities (roles are stored here)
-        $query->join(sprintf(
-            "LEFT JOIN {$wpdb->usermeta} AS `%s_caps` ON (
-                `%s_posts`.post_author = `%s_caps`.user_id
-                AND `%s_caps`.meta_key = '{$wpdb->prefix}capabilities'
-            )",
-            $join_key,
-            $join_key,
-            $join_key,
-            $join_key
-        ));
+        $capabilities_meta_key = $wpdb->prefix . 'capabilities';
+        $query->join(
+            "LEFT JOIN {$wpdb->usermeta} AS `{$join_key}_caps` ON (
+                `{$join_key}_posts`.post_author = `{$join_key}_caps`.user_id
+                AND `{$join_key}_caps`.meta_key = '{$capabilities_meta_key}'
+            )"
+        );
 
         // Build WHERE clause - check if any of the selected roles exist in the serialized capabilities
+        // Use CONCAT to avoid any quote-related sprintf issues in Voxel's adaptive filter code
         $role_conditions = [];
         foreach ($role_keys as $role_key) {
-            $role_conditions[] = sprintf(
-                "`%s_caps`.meta_value LIKE '%%\"%s\";%%'",
-                $join_key,
-                $role_key
-            );
+            $role_conditions[] = "`{$join_key}_caps`.meta_value LIKE CONCAT(" . $wpdb->prepare("'%%', CHAR(34), %s, CHAR(34), ';%%'", $role_key) . ")";
         }
 
         $where_sql = '(' . implode(' OR ', $role_conditions) . ')';
         $query->where($where_sql);
     }
 
-    /**
-     * Parse and validate filter value
-     */
     public function parse_value($value) {
-        if (!is_string($value) || empty($value)) {
+        if (empty($value)) {
             return null;
         }
 
-        $roles = explode(',', trim($value));
-        $roles = array_filter(array_map('trim', $roles));
+        // Handle both single value and comma-separated values
+        if (is_string($value)) {
+            $roles = explode(',', trim($value));
+            $roles = array_filter(array_map('trim', $roles));
+            return !empty($roles) ? $roles : null;
+        }
 
-        return !empty($roles) ? $roles : null;
+        return null;
     }
 
-    /**
-     * Get Elementor controls
-     */
+    public function frontend_props() {
+        return [
+            'choices' => $this->_get_selected_choices(),
+            'display_as' => ($this->elementor_config['display_as'] ?? null) === 'buttons' ? 'buttons' : 'popup',
+            'placeholder' => $this->props['placeholder'] ?: $this->props['label'],
+        ];
+    }
+
+    protected function _get_selected_choices() {
+        $all_choices = $this->_get_choices();
+        $choices = [];
+        $selected = ($this->elementor_config['choices'] ?? null);
+        if (is_array($selected) && !empty($selected)) {
+            foreach ($selected as $choice_key) {
+                if (isset($all_choices[$choice_key])) {
+                    $choices[$choice_key] = $all_choices[$choice_key];
+                }
+            }
+        }
+
+        return !empty($choices) ? $choices : $all_choices;
+    }
+
+    protected function _get_choices() {
+        $choices = [];
+
+        if (function_exists('wp_roles')) {
+            $wp_roles = wp_roles();
+            foreach ($wp_roles->roles as $role_key => $role_info) {
+                $choices[$role_key] = [
+                    'key' => $role_key,
+                    'label' => $role_info['name'],
+                ];
+            }
+        }
+
+        return $choices;
+    }
+
     public function get_elementor_controls(): array {
+        $choices = [];
+        foreach ($this->_get_choices() as $choice) {
+            $choices[$choice['key']] = $choice['label'];
+        }
+
         return [
             'value' => [
                 'label' => 'Default value',
                 'type' => \Elementor\Controls_Manager::TEXT,
-                'description' => 'Enter a comma-delimited list of role keys to be selected by default (e.g., subscriber,customer)',
+                'description' => 'Enter a comma-delimited list of role keys (e.g., subscriber,customer)',
             ],
             'display_as' => [
                 'label' => 'Display as',
@@ -226,17 +152,14 @@ class User_Role_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
                 ],
                 'conditional' => false,
             ],
-        ];
-    }
-
-    /**
-     * Exports for frontend (used by Voxel's search form system)
-     */
-    public function exports() {
-        return [
-            'type' => $this->props['type'],
-            'label' => $this->get_label(),
-            'placeholder' => $this->props['placeholder'] ?? 'Select user role(s)',
+            'choices' => [
+                'label' => 'Choices',
+                'description' => 'Leave blank to list all roles available',
+                'type' => \Elementor\Controls_Manager::SELECT2,
+                'multiple' => true,
+                'options' => $choices,
+                'conditional' => false,
+            ],
         ];
     }
 }

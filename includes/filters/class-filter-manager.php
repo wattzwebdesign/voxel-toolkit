@@ -158,13 +158,28 @@ class Voxel_Toolkit_Filter_Manager {
                 props: { filter: Object, repeaterId: String },
                 data() {
                     return {
-                        value: this.filter.props.selected || {},
+                        value: {},
                         search: '',
                         firstLabel: '',
                         remainingCount: 0
                     };
                 },
                 created() {
+                    // Initialize value from filter.value (comma-separated string)
+                    console.log('User Role Filter - created()');
+                    console.log('  filter.value:', this.filter.value);
+                    console.log('  filter.props.choices:', this.filter.props.choices);
+
+                    if (this.filter.value) {
+                        const roleKeys = this.filter.value.split(',').map(k => k.trim());
+                        console.log('  roleKeys:', roleKeys);
+                        roleKeys.forEach(key => {
+                            if (this.filter.props.choices[key]) {
+                                this.value[key] = this.filter.props.choices[key];
+                            }
+                        });
+                    }
+                    console.log('  final this.value:', this.value);
                     this.firstLabel = this._getFirstLabel();
                     this.remainingCount = this._getRemainingCount();
                 },

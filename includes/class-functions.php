@@ -258,13 +258,14 @@ class Voxel_Toolkit_Functions {
                 'settings_callback' => array('Voxel_Toolkit_Options_Page', 'render_settings'),
                 'configure_url' => admin_url('admin.php?page=voxel-toolkit-configure-fields'),
             ),
-            'suggest_edits' => array(
-                'name' => __('Suggest Edits', 'voxel-toolkit'),
-                'description' => __('Allow users to suggest edits to post fields with frontend submission form, email notifications, and admin review system. Similar to Google Business edit suggestions.', 'voxel-toolkit'),
-                'class' => 'Voxel_Toolkit_Suggest_Edits',
-                'file' => 'functions/class-suggest-edits.php',
-                'settings_callback' => array('Voxel_Toolkit_Suggest_Edits', 'render_settings'),
-            )
+            'widget_css_injector' => array(
+                'name' => __('Widget CSS Class & ID', 'voxel-toolkit'),
+                'description' => __('Add CSS Class and ID fields to Voxel widgets (Navbar, User Bar, Advanced List) for custom styling of individual items.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Widget_CSS_Injector',
+                'file' => 'functions/class-widget-css-injector.php',
+                'settings_callback' => array('Voxel_Toolkit_Widget_CSS_Injector', 'render_settings'),
+                'always_enabled' => true,
+            ),
         );
 
         // Allow other plugins/themes to register functions
@@ -316,6 +317,15 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-prev-next-widget-manager.php',
                 'icon' => 'eicon-navigation-horizontal',
                 'widget_name' => 'voxel_prev_next_navigation',
+            ),
+            'poll_display' => array(
+                'name' => __('Poll Display (VT)', 'voxel-toolkit'),
+                'description' => __('Display an interactive poll from a Poll (VT) field with voting, progress bars, and user-submitted options.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Poll_Display_Widget_Manager',
+                'file' => 'widgets/class-poll-display-widget-manager.php',
+                'icon' => 'eicon-poll',
+                'widget_name' => 'vt-poll-display',
+                'hidden' => true, // Hidden from widgets page, auto-enabled by poll field
             ),
             'timeline_photos' => array(
                 'name' => __('Timeline Photos', 'voxel-toolkit'),
@@ -1633,13 +1643,6 @@ class Voxel_Toolkit_Functions {
                             <li><?php _e('Works on frontend and in Elementor editor preview', 'voxel-toolkit'); ?></li>
                             <li><?php _e('Improves form accessibility and user experience', 'voxel-toolkit'); ?></li>
                         </ul>
-                    </div>
-
-                    <div style="margin-top: 20px; padding: 12px; background: #f8f9fa; border-radius: 4px; text-align: center; border-top: 1px solid #dee2e6;">
-                        <p style="margin: 0; font-size: 13px; color: #6c757d;">
-                            <?php _e('Show Field Description developed by', 'voxel-toolkit'); ?>
-                            <strong style="color: #495057;">Michał Maciak</strong>
-                        </p>
                     </div>
                 </div>
             </td>
