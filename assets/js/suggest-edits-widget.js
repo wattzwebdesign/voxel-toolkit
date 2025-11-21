@@ -32,6 +32,22 @@
                 e.stopPropagation();
             });
 
+            // Handle "Permanently Closed" checkbox
+            $(document).on('change', '.vt-permanently-closed-checkbox', function() {
+                var $modal = $(this).closest('.vt-suggest-modal');
+                var isChecked = $(this).is(':checked');
+
+                // Disable/enable all form inputs except the permanently closed checkbox itself
+                $modal.find('input:not(.vt-permanently-closed-checkbox), textarea, select').prop('disabled', isChecked);
+
+                // Clear values when disabling
+                if (isChecked) {
+                    $modal.find('input[type="text"]:not(.vt-permanently-closed-checkbox), input[type="email"], textarea').val('');
+                    $modal.find('select').prop('selectedIndex', 0);
+                    $modal.find('input[type="checkbox"]:not(.vt-permanently-closed-checkbox)').prop('checked', false);
+                }
+            });
+
             // Handle "Don't know" checkbox
             $(document).on('change', '.vt-incorrect-checkbox', function() {
                 var fieldKey = $(this).data('field-key');
@@ -50,23 +66,24 @@
                 var $btn = $(this);
                 var $modal = $btn.closest('.vt-suggest-modal');
 
-                self.openMediaUploader($modal);
+                self.openFileUploader($modal);
             });
 
             // Remove uploaded photo
             $(document).on('click', '.vt-remove-photo', function(e) {
                 e.preventDefault();
                 var $photo = $(this).closest('.vt-uploaded-photo');
-                var imageId = $photo.data('image-id');
+                var tempId = $photo.data('temp-id');
                 var $modal = $(this).closest('.vt-suggest-modal');
-                var $hiddenInput = $modal.find('.vt-photo-ids');
 
-                // Remove from array
-                var photoIds = $hiddenInput.val() ? $hiddenInput.val().split(',') : [];
-                photoIds = photoIds.filter(function(id) {
-                    return id != imageId;
-                });
-                $hiddenInput.val(photoIds.join(','));
+                // Remove from pending uploads if it's a temp file
+                if (tempId) {
+                    var pendingUploads = $modal.data('pending-uploads') || [];
+                    pendingUploads = pendingUploads.filter(function(upload) {
+                        return upload.id !== tempId;
+                    });
+                    $modal.data('pending-uploads', pendingUploads);
+                }
 
                 $photo.remove();
             });
@@ -86,11 +103,11 @@
             });
         },
 
-        openMediaUploader: function($modal) {
+        openFileUploader: function($modal) {
             var self = this;
             var $uploadedPhotos = $modal.find('.vt-uploaded-photos');
-            var $hiddenInput = $modal.find('.vt-photo-ids');
-            var maxPhotos = 10; // Can be made dynamic from widget settings
+            var $uploadArea = $modal.find('.vt-photo-upload-area');
+            var maxPhotos = 10;
 
             // Get current photo count
             var currentCount = $uploadedPhotos.find('.vt-uploaded-photo').length;
@@ -100,45 +117,70 @@
                 return;
             }
 
-            // Create media uploader
-            var frame = wp.media({
-                title: 'Select Proof Images',
-                multiple: true,
-                library: {
-                    type: 'image'
-                },
-                button: {
-                    text: 'Add Photos'
-                }
-            });
+            // Create hidden file input if it doesn't exist
+            var $fileInput = $uploadArea.find('.vt-file-input');
+            if (!$fileInput.length) {
+                $fileInput = $('<input type="file" class="vt-file-input" accept="image/*" multiple style="display:none;">');
+                $uploadArea.append($fileInput);
 
-            frame.on('select', function() {
-                var selection = frame.state().get('selection');
-                var photoIds = $hiddenInput.val() ? $hiddenInput.val().split(',') : [];
+                // Handle file selection
+                $fileInput.on('change', function(e) {
+                    var files = e.target.files;
+                    if (!files.length) return;
 
-                selection.each(function(attachment) {
-                    attachment = attachment.toJSON();
+                    var photosData = [];
 
-                    if (currentCount >= maxPhotos) {
-                        return false;
-                    }
+                    // Process each file
+                    Array.from(files).forEach(function(file, index) {
+                        if (currentCount >= maxPhotos) {
+                            return;
+                        }
 
-                    // Add to hidden input
-                    photoIds.push(attachment.id);
+                        // Check if it's an image
+                        if (!file.type.match('image.*')) {
+                            return;
+                        }
 
-                    // Add preview
-                    var $photo = $('<div class="vt-uploaded-photo" data-image-id="' + attachment.id + '">')
-                        .append('<img src="' + attachment.sizes.thumbnail.url + '" alt="">')
-                        .append('<button type="button" class="vt-remove-photo">&times;</button>');
+                        // Create a unique ID for this photo
+                        var photoId = 'temp_' + Date.now() + '_' + index;
 
-                    $uploadedPhotos.append($photo);
-                    currentCount++;
+                        // Read the file and create preview
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            // Create preview element
+                            var $photo = $('<div class="vt-uploaded-photo" data-temp-id="' + photoId + '">')
+                                .append('<img src="' + e.target.result + '" alt="">')
+                                .append('<button type="button" class="vt-remove-photo">&times;</button>');
+
+                            $uploadedPhotos.append($photo);
+                            currentCount++;
+
+                            // Store the file data
+                            photosData.push({
+                                id: photoId,
+                                file: file,
+                                dataUrl: e.target.result
+                            });
+
+                            // Store in modal data for later upload
+                            var existingData = $modal.data('pending-uploads') || [];
+                            existingData.push({
+                                id: photoId,
+                                file: file,
+                                dataUrl: e.target.result
+                            });
+                            $modal.data('pending-uploads', existingData);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+
+                    // Reset file input
+                    $fileInput.val('');
                 });
+            }
 
-                $hiddenInput.val(photoIds.join(','));
-            });
-
-            frame.open();
+            // Trigger file input click
+            $fileInput.click();
         },
 
         submitSuggestion: function($btn) {
@@ -147,50 +189,50 @@
             var postId = $modal.closest('[data-post-id]').data('post-id') ||
                         $modal.attr('id').replace('vt-suggest-modal-', '');
 
+            // Check if permanently closed is marked
+            var isPermanentlyClosed = $modal.find('.vt-permanently-closed-checkbox').is(':checked');
+
             // Collect suggestions
             var suggestions = [];
             var hasChanges = false;
 
-            $modal.find('.vt-field-item').each(function() {
-                var $item = $(this);
-                var fieldKey = $item.data('field-key');
-                var $input = $item.find('.vt-suggestion-input');
-                var $checkbox = $item.find('.vt-incorrect-checkbox');
-                var suggestedValue = '';
-                var isIncorrect = $checkbox.is(':checked');
+            // If permanently closed, we still have a change to report
+            if (isPermanentlyClosed) {
+                hasChanges = true;
+            } else {
+                // Only collect field suggestions if not permanently closed
+                $modal.find('.vt-field-item').each(function() {
+                    var $item = $(this);
+                    var fieldKey = $item.data('field-key');
+                    var $input = $item.find('.vt-suggestion-input');
+                    var $checkbox = $item.find('.vt-incorrect-checkbox');
+                    var suggestedValue = '';
+                    var isIncorrect = $checkbox.is(':checked');
 
-                // Handle multiple select (returns array)
-                if ($input.is('select[multiple]')) {
-                    var selectedValues = $input.val();
-                    if (selectedValues && selectedValues.length > 0) {
-                        suggestedValue = selectedValues.join(',');
+                    // Handle multiple select (returns array)
+                    if ($input.is('select[multiple]')) {
+                        var selectedValues = $input.val();
+                        if (selectedValues && selectedValues.length > 0) {
+                            suggestedValue = selectedValues.join(',');
+                        }
+                    } else {
+                        suggestedValue = $input.val() ? $input.val().trim() : '';
                     }
-                } else {
-                    suggestedValue = $input.val() ? $input.val().trim() : '';
-                }
 
-                if (suggestedValue || isIncorrect) {
-                    hasChanges = true;
-                    suggestions.push({
-                        field_key: fieldKey,
-                        suggested_value: suggestedValue,
-                        is_incorrect: isIncorrect ? 1 : 0
-                    });
-                }
-            });
+                    if (suggestedValue || isIncorrect) {
+                        hasChanges = true;
+                        suggestions.push({
+                            field_key: fieldKey,
+                            suggested_value: suggestedValue,
+                            is_incorrect: isIncorrect ? 1 : 0
+                        });
+                    }
+                });
+            }
 
             if (!hasChanges) {
                 this.showMessage($messages, vtSuggestEdits.i18n.noChanges, 'error');
                 return;
-            }
-
-            // Get proof images
-            var proofImages = $modal.find('.vt-photo-ids').val();
-            if (proofImages) {
-                var imageIds = proofImages.split(',');
-                suggestions.forEach(function(suggestion) {
-                    suggestion.proof_images = imageIds;
-                });
             }
 
             // Get guest info if not logged in
@@ -205,18 +247,29 @@
             // Disable submit button
             $btn.prop('disabled', true).text('Submitting...');
 
+            // Prepare form data for file upload
+            var formData = new FormData();
+            formData.append('action', 'vt_submit_suggestion');
+            formData.append('nonce', vtSuggestEdits.nonce);
+            formData.append('post_id', postId);
+            formData.append('suggestions', JSON.stringify(suggestions));
+            formData.append('suggester_name', suggesterName);
+            formData.append('suggester_email', suggesterEmail);
+            formData.append('permanently_closed', isPermanentlyClosed ? 1 : 0);
+
+            // Add uploaded files
+            var pendingUploads = $modal.data('pending-uploads') || [];
+            pendingUploads.forEach(function(upload, index) {
+                formData.append('proof_images[]', upload.file);
+            });
+
             // Submit via AJAX
             $.ajax({
                 url: vtSuggestEdits.ajaxUrl,
                 type: 'POST',
-                data: {
-                    action: 'vt_submit_suggestion',
-                    nonce: vtSuggestEdits.nonce,
-                    post_id: postId,
-                    suggestions: suggestions,
-                    suggester_name: suggesterName,
-                    suggester_email: suggesterEmail
-                },
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function(response) {
                     if (response.success) {
                         // Show success message
@@ -228,7 +281,7 @@
                             $modal.find('select').prop('selectedIndex', 0);
                             $modal.find('input[type="checkbox"]').prop('checked', false);
                             $modal.find('.vt-uploaded-photos').empty();
-                            $modal.find('.vt-photo-ids').val('');
+                            $modal.data('pending-uploads', []);
                             $modal.fadeOut(200);
                             $('body').removeClass('vt-modal-open');
                         }, 2000);

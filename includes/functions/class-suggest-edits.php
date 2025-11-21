@@ -127,9 +127,56 @@ class Voxel_Toolkit_Suggest_Edits {
         check_ajax_referer('vt_suggest_edits', 'nonce');
 
         $post_id = absint($_POST['post_id']);
-        $suggestions = isset($_POST['suggestions']) ? $_POST['suggestions'] : array();
 
-        if (!$post_id || empty($suggestions)) {
+        // Handle JSON-encoded suggestions from FormData
+        $suggestions = isset($_POST['suggestions']) ? json_decode(stripslashes($_POST['suggestions']), true) : array();
+        if (!is_array($suggestions)) {
+            $suggestions = array();
+        }
+
+        $permanently_closed = isset($_POST['permanently_closed']) && $_POST['permanently_closed'] == 1;
+
+        // Handle file uploads
+        $uploaded_image_ids = array();
+        if (!empty($_FILES['proof_images'])) {
+            require_once(ABSPATH . 'wp-admin/includes/image.php');
+            require_once(ABSPATH . 'wp-admin/includes/file.php');
+            require_once(ABSPATH . 'wp-admin/includes/media.php');
+
+            $files = $_FILES['proof_images'];
+            $file_count = count($files['name']);
+
+            for ($i = 0; $i < $file_count; $i++) {
+                if ($files['error'][$i] === UPLOAD_ERR_OK) {
+                    $file = array(
+                        'name'     => $files['name'][$i],
+                        'type'     => $files['type'][$i],
+                        'tmp_name' => $files['tmp_name'][$i],
+                        'error'    => $files['error'][$i],
+                        'size'     => $files['size'][$i]
+                    );
+
+                    $upload = wp_handle_upload($file, array('test_form' => false));
+
+                    if (!isset($upload['error'])) {
+                        $attachment_id = wp_insert_attachment(array(
+                            'post_mime_type' => $upload['type'],
+                            'post_title'     => sanitize_file_name($file['name']),
+                            'post_content'   => '',
+                            'post_status'    => 'inherit'
+                        ), $upload['file']);
+
+                        if (!is_wp_error($attachment_id)) {
+                            wp_update_attachment_metadata($attachment_id, wp_generate_attachment_metadata($attachment_id, $upload['file']));
+                            $uploaded_image_ids[] = $attachment_id;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Allow submission if either we have suggestions OR permanently closed is marked
+        if (!$post_id || (empty($suggestions) && !$permanently_closed)) {
             wp_send_json_error(__('Invalid data provided', 'voxel-toolkit'));
         }
 
@@ -150,11 +197,49 @@ class Voxel_Toolkit_Suggest_Edits {
         global $wpdb;
         $inserted_count = 0;
 
+        // If permanently closed is marked, create a special suggestion entry
+        if ($permanently_closed) {
+            $result = $wpdb->insert(
+                $this->table_name,
+                array(
+                    'post_id' => $post_id,
+                    'field_key' => '_permanently_closed',
+                    'current_value' => 'No',
+                    'suggested_value' => 'Yes',
+                    'suggester_user_id' => $user_id,
+                    'suggester_email' => $suggester_email,
+                    'suggester_name' => $suggester_name,
+                    'proof_images' => '',
+                    'is_incorrect' => 0,
+                    'status' => 'pending',
+                ),
+                array('%d', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%d', '%s')
+            );
+
+            if ($result) {
+                $inserted_count++;
+            }
+
+            // If permanently closed, we don't process other suggestions
+            if ($inserted_count > 0) {
+                $this->send_notification_email($post_id, $inserted_count);
+                wp_send_json_success(array(
+                    'message' => __('Thank you! Your permanently closed suggestion has been submitted.', 'voxel-toolkit'),
+                    'count' => $inserted_count,
+                ));
+            } else {
+                wp_send_json_error(__('Failed to submit suggestion', 'voxel-toolkit'));
+            }
+            return;
+        }
+
+        // Encode uploaded images for storage
+        $proof_images_json = !empty($uploaded_image_ids) ? json_encode($uploaded_image_ids) : '';
+
         foreach ($suggestions as $suggestion) {
             $field_key = sanitize_key($suggestion['field_key']);
             $suggested_value = wp_kses_post($suggestion['suggested_value'] ?? '');
             $is_incorrect = isset($suggestion['is_incorrect']) ? 1 : 0;
-            $proof_images = isset($suggestion['proof_images']) ? json_encode(array_map('absint', $suggestion['proof_images'])) : '';
 
             // Get current value from Voxel
             $current_value = '';
@@ -200,7 +285,7 @@ class Voxel_Toolkit_Suggest_Edits {
                     'suggester_user_id' => $user_id,
                     'suggester_email' => $suggester_email,
                     'suggester_name' => $suggester_name,
-                    'proof_images' => $proof_images,
+                    'proof_images' => $proof_images_json,
                     'is_incorrect' => $is_incorrect,
                     'status' => 'pending',
                 ),

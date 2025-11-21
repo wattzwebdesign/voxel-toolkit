@@ -16,6 +16,9 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
     public function __construct($data = [], $args = null) {
         parent::__construct($data, $args);
 
+        // Enqueue WordPress media uploader
+        wp_enqueue_media();
+
         // Enqueue scripts and styles
         wp_enqueue_script('voxel-toolkit-suggest-edits', VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/suggest-edits-widget.js', array('jquery'), VOXEL_TOOLKIT_VERSION, true);
         wp_enqueue_style('voxel-toolkit-suggest-edits', VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/suggest-edits.css', array(), VOXEL_TOOLKIT_VERSION);
@@ -72,10 +75,8 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
             [
                 'label' => __('Button Icon', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::ICONS,
-                'default' => [
-                    'value' => 'fas fa-edit',
-                    'library' => 'solid',
-                ],
+                'skin' => 'inline',
+                'label_block' => false,
             ]
         );
 
@@ -146,13 +147,77 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        // Translation Section
+        $this->add_control(
+            'translations_heading',
+            [
+                'label' => __('Translations', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'label_current_value',
+            [
+                'label' => __('Current Value Label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Current value:', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'label_suggested_value',
+            [
+                'label' => __('Suggested Value Label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Suggested value:', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'label_incorrect_checkbox',
+            [
+                'label' => __('Incorrect Checkbox Label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __("Don't know, but this is incorrect", 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'label_add_photos',
+            [
+                'label' => __('Add Photos Label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Add Photos (proof of changes)', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'label_upload_photos',
+            [
+                'label' => __('Upload Photos Button', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Upload Photos', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'label_permanently_closed',
+            [
+                'label' => __('Permanently Closed Label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Mark as Permanently Closed', 'voxel-toolkit'),
+            ]
+        );
+
         $this->end_controls_section();
 
         // Style Tab
         $this->start_controls_section(
             'button_style_section',
             [
-                'label' => __('Button', 'voxel-toolkit'),
+                'label' => __('Suggest an Edit Button', 'voxel-toolkit'),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
             ]
         );
@@ -203,17 +268,185 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
             'button_border_radius',
             [
                 'label' => __('Border Radius', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::SLIDER,
-                'size_units' => ['px'],
-                'range' => [
-                    'px' => [
-                        'min' => 0,
-                        'max' => 50,
-                    ],
-                ],
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
                 'selectors' => [
-                    '{{WRAPPER}} .vt-suggest-edit-btn' => 'border-radius: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vt-suggest-edit-btn' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
                 ],
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // Field Title Style
+        $this->start_controls_section(
+            'field_title_style_section',
+            [
+                'label' => __('Field Title', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'field_title_color',
+            [
+                'label' => __('Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-field-header strong' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'field_title_typography',
+                'selector' => '{{WRAPPER}} .vt-field-header strong',
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // Input Fields Style
+        $this->start_controls_section(
+            'input_style_section',
+            [
+                'label' => __('Input Fields', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'input_border_color',
+            [
+                'label' => __('Border Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-suggestion-input' => 'border-color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-form-field input[type="text"]' => 'border-color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-form-field input[type="email"]' => 'border-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'input_border_radius',
+            [
+                'label' => __('Border Radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-suggestion-input' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                    '{{WRAPPER}} .vt-form-field input[type="text"]' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                    '{{WRAPPER}} .vt-form-field input[type="email"]' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // Values Labels Style
+        $this->start_controls_section(
+            'values_labels_section',
+            [
+                'label' => __('Values Labels', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'value_label_color',
+            [
+                'label' => __('Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-field-current label' => 'color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-field-suggested label' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'value_label_typography',
+                'selector' => '{{WRAPPER}} .vt-field-current label, {{WRAPPER}} .vt-field-suggested label',
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // Upload Button Style
+        $this->start_controls_section(
+            'upload_button_style_section',
+            [
+                'label' => __('Upload Photos Button', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'upload_button_icon_color',
+            [
+                'label' => __('Icon Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-upload-btn i' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'upload_button_text_color',
+            [
+                'label' => __('Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-upload-btn' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'upload_button_background',
+            [
+                'label' => __('Background Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-upload-btn' => 'background-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'upload_button_border_color',
+            [
+                'label' => __('Border Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-upload-btn' => 'border-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'upload_button_border_radius',
+            [
+                'label' => __('Border Radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-upload-btn' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'upload_button_typography',
+                'selector' => '{{WRAPPER}} .vt-upload-btn',
             ]
         );
 
@@ -392,6 +625,22 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
 
                         error_log('Voxel Toolkit: Field ' . $field_key . ' (type: ' . $field_type . ') value: ' . print_r($value, true));
 
+                        // Skip fields with empty values
+                        $is_empty = false;
+                        if (empty($value)) {
+                            $is_empty = true;
+                        } elseif (is_array($value)) {
+                            // Check if array is empty or all values are empty
+                            $is_empty = empty(array_filter($value, function($v) {
+                                return !empty($v) || $v === 0 || $v === '0';
+                            }));
+                        }
+
+                        if ($is_empty) {
+                            error_log('Voxel Toolkit: Skipping empty field: ' . $field_key);
+                            continue;
+                        }
+
                         $field_data = array(
                             'label' => $field->get_label(),
                             'value' => $value,
@@ -441,9 +690,18 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
         ?>
         <div class="vt-suggest-edits-wrapper">
             <button type="button" class="vt-suggest-edit-btn" data-post-id="<?php echo esc_attr($post_id); ?>">
-                <?php if (!empty($settings['button_icon']['value'])): ?>
-                    <i class="<?php echo esc_attr($settings['button_icon']['value']); ?>"></i>
-                <?php endif; ?>
+                <?php
+                // Handle Elementor icon
+                if (!empty($settings['button_icon']['value'])) {
+                    if (is_string($settings['button_icon']['value'])) {
+                        // Old format - just icon class
+                        echo '<i class="' . esc_attr($settings['button_icon']['value']) . '"></i>';
+                    } else {
+                        // New format - render using Elementor
+                        \Elementor\Icons_Manager::render_icon($settings['button_icon'], ['aria-hidden' => 'true']);
+                    }
+                }
+                ?>
                 <?php echo esc_html($button_text); ?>
             </button>
         </div>
@@ -458,6 +716,14 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                 </div>
 
                 <div class="vt-suggest-modal-body">
+                    <!-- Permanently Closed Checkbox -->
+                    <div class="vt-permanently-closed-wrapper">
+                        <label class="vt-checkbox-label">
+                            <input type="checkbox" class="vt-permanently-closed-checkbox" name="permanently_closed">
+                            <span><?php echo esc_html(!empty($settings['label_permanently_closed']) ? $settings['label_permanently_closed'] : __('Mark as Permanently Closed', 'voxel-toolkit')); ?></span>
+                        </label>
+                    </div>
+
                     <?php if (!is_user_logged_in() && !empty($se_config['allow_guests'])): ?>
                         <div class="vt-guest-info">
                             <div class="vt-form-field">
@@ -476,19 +742,46 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                             <?php foreach ($field_values as $field_key => $field_data): ?>
                                 <div class="vt-field-item" data-field-key="<?php echo esc_attr($field_key); ?>">
                                     <div class="vt-field-header">
-                                        <i class="eicon-edit"></i>
                                         <strong><?php echo esc_html($field_data['label']); ?></strong>
                                     </div>
 
                                     <div class="vt-field-current">
-                                        <label><?php _e('Current value:', 'voxel-toolkit'); ?></label>
+                                        <label><?php echo esc_html(!empty($settings['label_current_value']) ? $settings['label_current_value'] : __('Current value:', 'voxel-toolkit')); ?></label>
                                         <div class="vt-current-value">
-                                            <?php echo esc_html($this->format_value($field_data['value'], $field_data['type'])); ?>
+                                            <?php
+                                            // Check if this is an image field (including featured image and Voxel image fields)
+                                            $is_image_field = ($field_data['type'] === 'image');
+
+                                            if ($is_image_field && !empty($field_data['value'])) {
+                                                // Handle both single image ID and array of image IDs
+                                                $image_id = 0;
+                                                if (is_array($field_data['value']) && !empty($field_data['value'])) {
+                                                    // Get first image from array
+                                                    $first_item = reset($field_data['value']);
+                                                    $image_id = is_numeric($first_item) ? intval($first_item) : 0;
+                                                } elseif (is_numeric($field_data['value'])) {
+                                                    $image_id = intval($field_data['value']);
+                                                }
+
+                                                if ($image_id > 0) {
+                                                    $image_url = wp_get_attachment_image_url($image_id, 'thumbnail');
+                                                    if ($image_url) {
+                                                        echo '<img src="' . esc_url($image_url) . '" alt="" style="max-width: 100px; max-height: 100px; border-radius: 4px; display: block;">';
+                                                    } else {
+                                                        echo esc_html($this->format_value($field_data['value'], $field_data['type']));
+                                                    }
+                                                } else {
+                                                    echo esc_html($this->format_value($field_data['value'], $field_data['type']));
+                                                }
+                                            } else {
+                                                echo esc_html($this->format_value($field_data['value'], $field_data['type']));
+                                            }
+                                            ?>
                                         </div>
                                     </div>
 
                                     <div class="vt-field-suggested">
-                                        <label><?php _e('Suggested value:', 'voxel-toolkit'); ?></label>
+                                        <label><?php echo esc_html(!empty($settings['label_suggested_value']) ? $settings['label_suggested_value'] : __('Suggested value:', 'voxel-toolkit')); ?></label>
                                         <?php if (!empty($field_data['options'])): ?>
                                             <?php
                                             $is_multiple = !empty($field_data['multiple']);
@@ -524,7 +817,7 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                                         <div class="vt-field-incorrect">
                                             <label>
                                                 <input type="checkbox" class="vt-incorrect-checkbox" data-field-key="<?php echo esc_attr($field_key); ?>">
-                                                <?php _e("Don't know, but this is incorrect", 'voxel-toolkit'); ?>
+                                                <?php echo esc_html(!empty($settings['label_incorrect_checkbox']) ? $settings['label_incorrect_checkbox'] : __("Don't know, but this is incorrect", 'voxel-toolkit')); ?>
                                             </label>
                                         </div>
                                     <?php endif; ?>
@@ -537,11 +830,11 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
 
                     <?php if ($settings['enable_photo_upload'] === 'yes'): ?>
                         <div class="vt-proof-photos">
-                            <label><?php _e('Add Photos (proof of changes)', 'voxel-toolkit'); ?></label>
+                            <label><?php echo esc_html(!empty($settings['label_add_photos']) ? $settings['label_add_photos'] : __('Add Photos (proof of changes)', 'voxel-toolkit')); ?></label>
                             <div class="vt-photo-upload-area">
                                 <button type="button" class="vt-upload-btn">
                                     <i class="eicon-upload"></i>
-                                    <?php _e('Upload Photos', 'voxel-toolkit'); ?>
+                                    <?php echo esc_html(!empty($settings['label_upload_photos']) ? $settings['label_upload_photos'] : __('Upload Photos', 'voxel-toolkit')); ?>
                                 </button>
                                 <div class="vt-uploaded-photos"></div>
                             </div>
@@ -569,6 +862,11 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
      * Format field value for display
      */
     private function format_value($value, $type) {
+        // Handle location fields - extract address
+        if ($type === 'location' && is_array($value) && isset($value['address'])) {
+            return !empty($value['address']) ? $value['address'] : __('(empty)', 'voxel-toolkit');
+        }
+
         // Handle arrays (taxonomy terms, etc.) - check this BEFORE empty check
         if (is_array($value)) {
             if (empty($value)) {

@@ -118,13 +118,11 @@ body.vt-modal-open {
     font-size: 24px;
     line-height: 1;
     color: #64748b;
-    transition: all 0.2s ease;
 }
 
 .vt-modal-close:hover {
     background: rgba(0, 0, 0, 0.1);
     color: #1e293b;
-    transform: rotate(90deg);
 }
 
 /* Modal Body */
@@ -132,6 +130,28 @@ body.vt-modal-open {
     padding: 25px;
     overflow-y: auto;
     flex: 1;
+}
+
+/* Permanently Closed Section */
+.vt-permanently-closed-wrapper {
+    padding: 15px;
+    background: #fee2e2;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.vt-permanently-closed-wrapper .vt-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    cursor: pointer;
+    font-weight: 500;
+    color: #991b1b;
+}
+
+.vt-permanently-closed-wrapper input[type="checkbox"] {
+    cursor: pointer;
 }
 
 /* Guest Info Section */
@@ -183,11 +203,15 @@ body.vt-modal-open {
 }
 
 .vt-field-item {
-    padding: 20px;
-    background: #f8f9fa;
-    border: 1px solid #e1e5e9;
-    border-radius: 8px;
-    margin-bottom: 15px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e1e5e9;
+}
+
+.vt-field-item:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
 }
 
 .vt-field-item:last-child {
