@@ -3,7 +3,7 @@
  * Plugin Name: Voxel Toolkit
  * Plugin URI: https://codewattz.com/voxel-toolkit-plugin/
  * Description: A comprehensive toolkit for extending Voxel theme functionality with toggleable features and customizable settings.
- * Version: 1.5.3.1
+ * Version: 1.5.3.2
  * Author: Code Wattz
  * Author URI: https://codewattz.com
  * License: GPL v2 or later
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 
 // Define plugin constants
 if (!defined('VOXEL_TOOLKIT_VERSION')) {
-    define('VOXEL_TOOLKIT_VERSION', '1.5.3.1');
+    define('VOXEL_TOOLKIT_VERSION', '1.5.3.2');
 }
 if (!defined('VOXEL_TOOLKIT_PLUGIN_DIR')) {
     define('VOXEL_TOOLKIT_PLUGIN_DIR', plugin_dir_path(__FILE__));
