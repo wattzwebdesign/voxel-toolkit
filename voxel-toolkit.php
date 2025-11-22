@@ -228,6 +228,7 @@ class Voxel_Toolkit {
             'includes/class-settings.php',
             'includes/class-functions.php',
             'includes/class-post-fields.php',
+            'includes/functions/class-field-formatters.php',
             'includes/functions/class-auto-verify-posts.php',
             'includes/functions/class-admin-menu-hide.php',
             'includes/functions/class-admin-notifications.php',

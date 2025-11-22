@@ -241,6 +241,10 @@ class Voxel_Toolkit_Suggest_Edits {
             $suggested_value = wp_kses_post($suggestion['suggested_value'] ?? '');
             $is_incorrect = isset($suggestion['is_incorrect']) ? 1 : 0;
 
+            // Special handling for work_hours and location fields - preserve JSON structure
+            $is_work_hours = ($field_key === 'work_hours' || strpos($field_key, 'work-hours') !== false);
+            $is_location = ($field_key === 'location');
+
             // Get current value from Voxel
             $current_value = '';
             if (class_exists('\\Voxel\\Post')) {
@@ -253,8 +257,17 @@ class Voxel_Toolkit_Suggest_Edits {
                         $current_value = $field_obj;
                     }
 
+                    // For work_hours and location, keep as JSON string
+                    if ($is_work_hours || $is_location) {
+                        if (is_string($current_value)) {
+                            // Already JSON string
+                            $current_value = $current_value;
+                        } elseif (is_array($current_value)) {
+                            $current_value = json_encode($current_value);
+                        }
+                    }
                     // Convert arrays/objects to string for storage
-                    if (is_array($current_value)) {
+                    elseif (is_array($current_value)) {
                         $formatted = array();
                         foreach ($current_value as $item) {
                             if (is_object($item) && method_exists($item, 'get_label')) {
@@ -498,6 +511,62 @@ class Voxel_Toolkit_Suggest_Edits {
                             update_post_meta($post_id, $meta_key, $data['value']);
                             error_log('Voxel Toolkit: Updated ' . $meta_key);
                         }
+                    } elseif ($field_type === 'work-hours') {
+                        // Work hours field - use field's native update method
+                        // This ensures proper postmeta storage AND work_hours table regeneration
+
+                        $field = $post_type->get_field($field_key);
+                        if (!$field) {
+                            error_log('Voxel Toolkit: Work-hours field not found: ' . $field_key);
+                            continue;
+                        }
+
+                        // Set post context for the field
+                        $field->set_post($voxel_post);
+
+                        // Decode JSON string to array (field expects array)
+                        $schedule = json_decode($data['value'], true);
+
+                        if (!is_array($schedule)) {
+                            error_log('Voxel Toolkit: Invalid JSON for work_hours field');
+                            continue;
+                        }
+
+                        // Call field's native update method
+                        // This handles: postmeta + work_hours table regeneration
+                        $field->update($schedule);
+                        error_log('Voxel Toolkit: Updated work hours via field->update()');
+                    } elseif ($field_type === 'location') {
+                        // Location field - use field's native update method
+                        // This ensures proper JSON structure with address, latitude, longitude
+
+                        $field = $post_type->get_field($field_key);
+                        if (!$field) {
+                            error_log('Voxel Toolkit: Location field not found: ' . $field_key);
+                            continue;
+                        }
+
+                        // Set post context for the field
+                        $field->set_post($voxel_post);
+
+                        // Decode JSON string to array (field expects array)
+                        $location = json_decode($data['value'], true);
+
+                        if (!is_array($location)) {
+                            // If plain text received, structure it as location object
+                            $location = array(
+                                'address' => $data['value'],
+                                'map_picker' => false,
+                                'latitude' => null,
+                                'longitude' => null
+                            );
+                            error_log('Voxel Toolkit: Location received as plain text, using as address: ' . $data['value']);
+                        }
+
+                        // Call field's native update method
+                        // This handles proper postmeta storage with correct structure
+                        $field->update($location);
+                        error_log('Voxel Toolkit: Updated location via field->update()');
                     } else {
                         // All other Voxel fields use the 'voxel:' prefix
                         $meta_key = 'voxel:' . $field_key;

@@ -16,8 +16,12 @@
             $(document).on('click', '.vt-suggest-edit-btn', function(e) {
                 e.preventDefault();
                 var postId = $(this).data('post-id');
-                $('#vt-suggest-modal-' + postId).fadeIn(200);
+                var $modal = $('#vt-suggest-modal-' + postId);
+                $modal.fadeIn(200);
                 $('body').addClass('vt-modal-open');
+
+                // Initialize location autocomplete for any location fields
+                self.initLocationAutocomplete($modal);
             });
 
             // Close modal
@@ -29,6 +33,11 @@
 
             // Prevent modal close when clicking inside modal content
             $(document).on('click', '.vt-suggest-modal-content', function(e) {
+                e.stopPropagation();
+            });
+
+            // Prevent clicks on autocomplete dropdown from closing modal
+            $(document).on('click', '.ts-autocomplete-dropdown', function(e) {
                 e.stopPropagation();
             });
 
@@ -101,6 +110,245 @@
                     $('body').removeClass('vt-modal-open');
                 }
             });
+
+            // Work Hours: Open popup
+            $(document).on('click', '.vt-wh-suggest-btn', function(e) {
+                e.preventDefault();
+                self.openWorkHoursPopup($(this));
+            });
+
+            // Work Hours: Close popup
+            $(document).on('click', '.vt-wh-popup-close, .vt-wh-popup-cancel, .vt-wh-popup-overlay', function(e) {
+                e.preventDefault();
+                $('.vt-wh-popup').fadeOut(200);
+            });
+
+            // Work Hours: Prevent popup close when clicking inside
+            $(document).on('click', '.vt-wh-popup-content', function(e) {
+                e.stopPropagation();
+            });
+
+            // Work Hours: Save and close popup
+            $(document).on('click', '.vt-wh-popup-save', function(e) {
+                e.preventDefault();
+                var $popup = $(this).closest('.vt-wh-popup');
+                var fieldKey = $popup.data('field-key');
+
+                // Mark this field as having changes
+                var $modal = $popup.closest('.vt-suggest-modal');
+                var $fieldItem = $modal.find('.vt-field-item[data-field-key="' + fieldKey + '"]');
+                $fieldItem.data('wh-changed', true);
+
+                $popup.fadeOut(200);
+            });
+
+            // Work Hours: Add schedule group
+            $(document).on('click', '.vt-wh-add-group', function(e) {
+                e.preventDefault();
+                self.addWorkHoursGroup($(this));
+            });
+
+            // Work Hours: Remove schedule group
+            $(document).on('click', '.vt-wh-remove-group', function(e) {
+                e.preventDefault();
+                $(this).closest('.vt-wh-group').remove();
+            });
+
+            // Work Hours: Toggle day selection
+            $(document).on('click', '.vt-wh-day-btn', function(e) {
+                e.preventDefault();
+                $(this).toggleClass('active');
+            });
+
+            // Work Hours: Add time slot
+            $(document).on('click', '.vt-wh-add-time', function(e) {
+                e.preventDefault();
+                self.addWorkHoursTimeSlot($(this));
+            });
+
+            // Work Hours: Remove time slot
+            $(document).on('click', '.vt-wh-remove-time', function(e) {
+                e.preventDefault();
+                $(this).closest('.vt-wh-time-slot').remove();
+            });
+
+            // Work Hours: Status change
+            $(document).on('change', '.vt-wh-status', function() {
+                var $group = $(this).closest('.vt-wh-group');
+                var status = $(this).val();
+                var $hoursContainer = $group.find('.vt-wh-hours-container');
+
+                if (status === 'hours') {
+                    $hoursContainer.show();
+                } else {
+                    $hoursContainer.hide();
+                }
+            });
+        },
+
+        openWorkHoursPopup: function($btn) {
+            var $modal = $btn.closest('.vt-suggest-modal');
+            var $popup = $modal.find('.vt-wh-popup');
+            var $fieldItem = $btn.closest('.vt-field-item');
+            var fieldKey = $fieldItem.data('field-key');
+
+            // Get current schedule data
+            var $dataContainer = $fieldItem.find('.vt-wh-data-container');
+            var scheduleData = $dataContainer.data('schedule');
+
+            // Clear existing groups
+            var $groups = $popup.find('.vt-wh-groups');
+            $groups.empty();
+
+            // Store field key for later
+            $popup.data('field-key', fieldKey);
+
+            // Load schedule data into popup
+            if (scheduleData && scheduleData.length > 0) {
+                var self = this;
+                scheduleData.forEach(function(group) {
+                    self.addWorkHoursGroup($popup.find('.vt-wh-add-group'), group);
+                });
+            } else {
+                // Add one empty group to start
+                this.addWorkHoursGroup($popup.find('.vt-wh-add-group'));
+            }
+
+            // Show popup
+            $popup.fadeIn(200);
+        },
+
+        addWorkHoursGroup: function($btn, groupData) {
+            var $container = $btn.closest('.vt-wh-editor').find('.vt-wh-groups');
+
+            // Default group data if not provided
+            groupData = groupData || {
+                days: [],
+                status: 'hours',
+                hours: [{from: '09:00', to: '17:00'}]
+            };
+
+            // Build days buttons HTML with active states
+            var days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+            var dayLabels = {mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun'};
+            var daysHtml = '';
+            days.forEach(function(day) {
+                var isActive = groupData.days && groupData.days.indexOf(day) !== -1 ? ' active' : '';
+                daysHtml += '<button type="button" class="vt-wh-day-btn' + isActive + '" data-day="' + day + '">' + dayLabels[day] + '</button>';
+            });
+
+            var groupHtml = '<div class="vt-wh-group">' +
+                '<div class="vt-wh-group-header">' +
+                    '<div class="vt-wh-days">' + daysHtml + '</div>' +
+                    '<select class="vt-wh-status">' +
+                        '<option value="hours"' + (groupData.status === 'hours' ? ' selected' : '') + '>Specific hours</option>' +
+                        '<option value="open"' + (groupData.status === 'open' ? ' selected' : '') + '>Open 24 hours</option>' +
+                        '<option value="closed"' + (groupData.status === 'closed' ? ' selected' : '') + '>Closed</option>' +
+                        '<option value="appointments_only"' + (groupData.status === 'appointments_only' ? ' selected' : '') + '>Appointments only</option>' +
+                    '</select>' +
+                    '<button type="button" class="vt-wh-remove-group">×</button>' +
+                '</div>' +
+                '<div class="vt-wh-hours-container" style="' + (groupData.status !== 'hours' ? 'display: none;' : '') + '">' +
+                    '<div class="vt-wh-time-slots"></div>' +
+                    '<button type="button" class="vt-wh-add-time">+ Add hours</button>' +
+                '</div>' +
+            '</div>';
+
+            $container.append(groupHtml);
+
+            // Add time slots if status is 'hours'
+            if (groupData.status === 'hours' && groupData.hours && groupData.hours.length > 0) {
+                var self = this;
+                var $group = $container.find('.vt-wh-group:last');
+                groupData.hours.forEach(function(timeSlot) {
+                    self.addWorkHoursTimeSlot($group.find('.vt-wh-add-time'), timeSlot);
+                });
+            }
+        },
+
+        addWorkHoursTimeSlot: function($btn, timeSlotData) {
+            var $container = $btn.closest('.vt-wh-hours-container').find('.vt-wh-time-slots');
+
+            // Default time slot if not provided
+            timeSlotData = timeSlotData || {from: '09:00', to: '17:00'};
+
+            var timeSlotHtml = '<div class="vt-wh-time-slot">' +
+                '<input type="time" class="vt-wh-time-from" value="' + timeSlotData.from + '">' +
+                '<span>to</span>' +
+                '<input type="time" class="vt-wh-time-to" value="' + timeSlotData.to + '">' +
+                '<button type="button" class="vt-wh-remove-time">×</button>' +
+            '</div>';
+
+            $container.append(timeSlotHtml);
+        },
+
+        serializeWorkHours: function($container) {
+            // $container can be either .vt-field-item or .vt-wh-popup
+            var schedule = [];
+            var $modal = $container.closest('.vt-suggest-modal');
+            var $popup = $modal.find('.vt-wh-popup');
+            var $groups = $popup.find('.vt-wh-group');
+
+            $groups.each(function() {
+                var $group = $(this);
+                var days = [];
+
+                // Get selected days
+                $group.find('.vt-wh-day-btn.active').each(function() {
+                    days.push($(this).data('day'));
+                });
+
+                if (days.length === 0) return; // Skip groups with no days selected
+
+                var status = $group.find('.vt-wh-status').val();
+                var hours = [];
+
+                // Get time slots if status is 'hours'
+                if (status === 'hours') {
+                    $group.find('.vt-wh-time-slot').each(function() {
+                        var from = $(this).find('.vt-wh-time-from').val();
+                        var to = $(this).find('.vt-wh-time-to').val();
+
+                        if (from && to) {
+                            hours.push({
+                                from: from,
+                                to: to
+                            });
+                        }
+                    });
+                }
+
+                schedule.push({
+                    days: days,
+                    status: status,
+                    hours: hours
+                });
+            });
+
+            return JSON.stringify(schedule);
+        },
+
+        serializeLocation: function($item) {
+            var $input = $item.find('.vt-suggestion-input');
+
+            // Get location data from data attributes (set by autocomplete)
+            var address = $input.data('location-address') || $input.val().trim();
+            var latitude = $input.data('location-latitude') || null;
+            var longitude = $input.data('location-longitude') || null;
+
+            // Only return JSON if we have an address
+            if (!address) {
+                return '';
+            }
+
+            var location = {
+                address: address,
+                map_picker: false,
+                latitude: latitude,
+                longitude: longitude
+            };
+
+            return JSON.stringify(location);
         },
 
         openFileUploader: function($modal) {
@@ -184,6 +432,7 @@
         },
 
         submitSuggestion: function($btn) {
+            var self = this;
             var $modal = $btn.closest('.vt-suggest-modal');
             var $messages = $modal.find('.vt-form-messages');
             var postId = $modal.closest('[data-post-id]').data('post-id') ||
@@ -209,8 +458,19 @@
                     var suggestedValue = '';
                     var isIncorrect = $checkbox.is(':checked');
 
+                    // Handle work hours field
+                    if ($item.hasClass('vt-work-hours-field')) {
+                        // Only serialize if user clicked "Save Hours"
+                        if ($item.data('wh-changed')) {
+                            suggestedValue = self.serializeWorkHours($item);
+                        }
+                    }
+                    // Handle location field
+                    else if ($item.data('field-type') === 'location') {
+                        suggestedValue = self.serializeLocation($item);
+                    }
                     // Handle multiple select (returns array)
-                    if ($input.is('select[multiple]')) {
+                    else if ($input.is('select[multiple]')) {
                         var selectedValues = $input.val();
                         if (selectedValues && selectedValues.length > 0) {
                             suggestedValue = selectedValues.join(',');
@@ -295,6 +555,102 @@
                 complete: function() {
                     $btn.prop('disabled', false).text($btn.data('original-text') || 'Submit');
                 }
+            });
+        },
+
+        initLocationAutocomplete: function($modal) {
+            console.log('VT: initLocationAutocomplete called');
+
+            // Check if Voxel Maps is available
+            if (typeof Voxel === 'undefined' || typeof Voxel.Maps === 'undefined') {
+                console.log('VT: Voxel Maps not available', typeof Voxel, typeof Voxel?.Maps);
+                return;
+            }
+
+            console.log('VT: Voxel.Maps is available');
+
+            // Find all location field suggested value inputs in the modal
+            var $locationInputs = $modal.find('.vt-field-item[data-field-type="location"] .vt-suggestion-input');
+            console.log('VT: Found location inputs:', $locationInputs.length);
+
+            $locationInputs.each(function() {
+                var $input = $(this);
+                var fieldKey = $input.closest('.vt-field-item').data('field-key');
+
+                console.log('VT: Processing location input for field:', fieldKey);
+
+                // Skip if already initialized
+                if ($input.hasClass('vt-autocomplete-initialized')) {
+                    console.log('VT: Input already initialized, skipping');
+                    return;
+                }
+
+                console.log('VT: Waiting for Voxel.Maps library...');
+
+                // Wait for maps library to load
+                Voxel.Maps.await(function() {
+                    console.log('VT: Maps library loaded, initializing autocomplete');
+
+                    try {
+                        // Get autocomplete config from Voxel
+                        var autocompleteOptions = {};
+                        if (typeof Voxel_Config !== 'undefined' && Voxel_Config.maps && Voxel_Config.maps.autocomplete) {
+                            autocompleteOptions = Voxel_Config.maps.autocomplete;
+                        }
+
+                        console.log('VT: Autocomplete options:', autocompleteOptions);
+
+                        // Initialize autocomplete
+                        new Voxel.Maps.Autocomplete(
+                            $input[0],  // Native DOM element
+                            function(place) {
+                                console.log('VT: Autocomplete callback', place);
+                                if (place) {
+                                    // Store location data in data attributes
+                                    $input.data('location-address', place.address);
+                                    $input.data('location-latitude', place.latlng.getLatitude());
+                                    $input.data('location-longitude', place.latlng.getLongitude());
+                                    $input.val(place.address);
+                                    console.log('VT: Stored location data:', {
+                                        address: place.address,
+                                        lat: place.latlng.getLatitude(),
+                                        lng: place.latlng.getLongitude()
+                                    });
+                                } else {
+                                    // User typed manually without selecting from dropdown
+                                    $input.data('location-address', $input.val());
+                                    $input.data('location-latitude', null);
+                                    $input.data('location-longitude', null);
+                                    console.log('VT: Manual entry (no place selected)');
+                                }
+                            },
+                            autocompleteOptions
+                        );
+
+                        $input.addClass('vt-autocomplete-initialized');
+                        console.log('VT: Autocomplete initialized successfully');
+
+                        // Debug: Check if dropdown was created
+                        setTimeout(function() {
+                            var $dropdown = jQuery('.ts-autocomplete-dropdown');
+                            console.log('VT: Dropdown elements found:', $dropdown.length);
+                            if ($dropdown.length > 0) {
+                                console.log('VT: Dropdown exists. CSS:', {
+                                    display: $dropdown.css('display'),
+                                    visibility: $dropdown.css('visibility'),
+                                    zIndex: $dropdown.css('z-index'),
+                                    position: $dropdown.css('position')
+                                });
+                            }
+
+                            // Test input trigger
+                            console.log('VT: Testing input trigger...');
+                            $input.trigger('input');
+                        }, 500);
+                    } catch (error) {
+                        console.error('VT: Error initializing autocomplete:', error);
+                    }
+                });
             });
         },
 

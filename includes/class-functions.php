@@ -146,6 +146,13 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-show-field-description.php',
                 'settings_callback' => array($this, 'render_show_field_description_settings'),
             ),
+            'suggest_edits' => array(
+                'name' => __('Suggest Edits', 'voxel-toolkit'),
+                'description' => __('Allow users to suggest edits to posts with moderation workflow and notifications.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Suggest_Edits',
+                'file' => 'functions/class-suggest-edits.php',
+                'settings_callback' => array($this, 'render_suggest_edits_settings'),
+            ),
             'duplicate_post' => array(
                 'name' => __('Duplicate Post/Page', 'voxel-toolkit'),
                 'description' => __('Enable post/page duplication with quick actions and edit screen button for selected post types.', 'voxel-toolkit'),
@@ -1649,10 +1656,44 @@ class Voxel_Toolkit_Functions {
         </tr>
         <?php
     }
-    
+
+    /**
+     * Render settings for Suggest Edits function
+     *
+     * @param array $settings Current settings
+     */
+    public function render_suggest_edits_settings($settings) {
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('Suggest Edits', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 700px;">
+                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px;">
+                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
+                        <?php _e('This feature allows users to suggest edits to posts with a complete moderation workflow and notification system.', 'voxel-toolkit'); ?>
+                    </div>
+
+                    <div style="margin-top: 20px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; font-size: 14px;">
+                        <strong style="color: #856404;"><?php _e('Features:', 'voxel-toolkit'); ?></strong>
+                        <ul style="margin: 10px 0 0 20px; color: #856404;">
+                            <li><?php _e('Users can suggest edits to posts via Suggest Edits widget', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Post authors receive notifications when edits are suggested', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Authors can approve, reject, or delete suggestions', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Pending Suggestions widget shows all suggestions for review', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Complete audit trail of all suggestion activity', 'voxel-toolkit'); ?></li>
+                        </ul>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <?php
+    }
+
     /**
      * Render settings for Duplicate Post function
-     * 
+     *
      * @param array $settings Current settings
      */
     public function render_duplicate_post_settings($settings) {

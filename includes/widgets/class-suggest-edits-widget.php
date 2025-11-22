@@ -536,7 +536,6 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                 // Field types to exclude from suggestions
                 $excluded_types = array(
                     'timezone',
-                    'work-hours',
                     'switcher',
                     'file',
                     'repeater',
@@ -579,6 +578,11 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
     }
 
     protected function render() {
+        // Enqueue maps library for location field autocomplete
+        if (function_exists('\Voxel\enqueue_maps')) {
+            \Voxel\enqueue_maps();
+        }
+
         $settings = $this->get_settings_for_display();
         $post_id = get_the_ID();
 
@@ -679,6 +683,38 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                             }
                         }
 
+                        // For work-hours field, format the schedule data
+                        if ($field_type === 'work-hours') {
+                            error_log('Voxel Toolkit: Found work-hours field: ' . $field_key);
+
+                            // Value is JSON array of schedule groups
+                            if (is_string($value)) {
+                                $schedule = json_decode($value, true);
+                            } else {
+                                $schedule = $value;
+                            }
+
+                            // Format for display
+                            $formatted_schedule = array();
+                            if (is_array($schedule)) {
+                                foreach ($schedule as $group) {
+                                    $days = isset($group['days']) ? $group['days'] : array();
+                                    $status = isset($group['status']) ? $group['status'] : 'closed';
+                                    $hours = isset($group['hours']) ? $group['hours'] : array();
+
+                                    $formatted_schedule[] = array(
+                                        'days' => $days,
+                                        'status' => $status,
+                                        'hours' => $hours,
+                                    );
+                                }
+                            }
+
+                            $field_data['schedule'] = $formatted_schedule;
+                            $field_data['formatted_display'] = Voxel_Toolkit_Field_Formatters::format_work_hours_display($formatted_schedule);
+                            error_log('Voxel Toolkit: Work hours schedule: ' . print_r($formatted_schedule, true));
+                        }
+
                         $field_values[$field_key] = $field_data;
                     }
                 }
@@ -740,7 +776,7 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                     <?php if (!empty($field_values)): ?>
                         <div class="vt-fields-list">
                             <?php foreach ($field_values as $field_key => $field_data): ?>
-                                <div class="vt-field-item" data-field-key="<?php echo esc_attr($field_key); ?>">
+                                <div class="vt-field-item <?php echo ($field_data['type'] === 'work-hours') ? 'vt-work-hours-field' : ''; ?>" data-field-key="<?php echo esc_attr($field_key); ?>" data-field-type="<?php echo esc_attr($field_data['type']); ?>">
                                     <div class="vt-field-header">
                                         <strong><?php echo esc_html($field_data['label']); ?></strong>
                                     </div>
@@ -749,10 +785,14 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                                         <label><?php echo esc_html(!empty($settings['label_current_value']) ? $settings['label_current_value'] : __('Current value:', 'voxel-toolkit')); ?></label>
                                         <div class="vt-current-value">
                                             <?php
-                                            // Check if this is an image field (including featured image and Voxel image fields)
+                                            // Check field type for special rendering
                                             $is_image_field = ($field_data['type'] === 'image');
+                                            $is_work_hours = ($field_data['type'] === 'work-hours');
 
-                                            if ($is_image_field && !empty($field_data['value'])) {
+                                            if ($is_work_hours && !empty($field_data['formatted_display'])) {
+                                                // Display formatted work hours
+                                                echo '<div class="vt-wh-current-value">' . $field_data['formatted_display'] . '</div>';
+                                            } elseif ($is_image_field && !empty($field_data['value'])) {
                                                 // Handle both single image ID and array of image IDs
                                                 $image_id = 0;
                                                 if (is_array($field_data['value']) && !empty($field_data['value'])) {
@@ -781,35 +821,48 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                                     </div>
 
                                     <div class="vt-field-suggested">
-                                        <label><?php echo esc_html(!empty($settings['label_suggested_value']) ? $settings['label_suggested_value'] : __('Suggested value:', 'voxel-toolkit')); ?></label>
-                                        <?php if (!empty($field_data['options'])): ?>
-                                            <?php
-                                            $is_multiple = !empty($field_data['multiple']);
-                                            $is_taxonomy = ($field_data['type'] === 'taxonomy');
-                                            ?>
-                                            <select class="vt-suggestion-input"
-                                                data-field-key="<?php echo esc_attr($field_key); ?>"
-                                                <?php echo $is_multiple ? 'multiple' : ''; ?>>
-                                                <?php if (!$is_multiple): ?>
-                                                    <option value=""><?php _e('Select...', 'voxel-toolkit'); ?></option>
-                                                <?php endif; ?>
-                                                <?php foreach ($field_data['options'] as $option): ?>
-                                                    <?php if ($is_taxonomy): ?>
-                                                        <option value="<?php echo esc_attr($option->term_id); ?>">
-                                                            <?php echo esc_html($option->name); ?>
-                                                        </option>
-                                                    <?php else: ?>
-                                                        <option value="<?php echo esc_attr($option['value']); ?>">
-                                                            <?php echo esc_html($option['label']); ?>
-                                                        </option>
-                                                    <?php endif; ?>
-                                                <?php endforeach; ?>
-                                            </select>
+                                        <?php if ($field_data['type'] === 'work-hours'): ?>
+                                            <!-- Work Hours - Show Button to Open Popup -->
+                                            <button type="button" class="vt-wh-suggest-btn" data-field-key="<?php echo esc_attr($field_key); ?>">
+                                                <i class="eicon-clock-o"></i>
+                                                <?php _e('Suggest New Hours', 'voxel-toolkit'); ?>
+                                            </button>
+
+                                            <!-- Hidden data container for schedule -->
+                                            <div class="vt-wh-data-container" style="display: none;" data-schedule='<?php echo esc_attr(json_encode($field_data['schedule'])); ?>'></div>
+
                                         <?php else: ?>
-                                            <input type="text"
-                                                class="vt-suggestion-input"
-                                                data-field-key="<?php echo esc_attr($field_key); ?>"
-                                                placeholder="<?php _e('Enter new value...', 'voxel-toolkit'); ?>">
+                                            <label><?php echo esc_html(!empty($settings['label_suggested_value']) ? $settings['label_suggested_value'] : __('Suggested value:', 'voxel-toolkit')); ?></label>
+
+                                            <?php if (!empty($field_data['options'])): ?>
+                                                <?php
+                                                $is_multiple = !empty($field_data['multiple']);
+                                                $is_taxonomy = ($field_data['type'] === 'taxonomy');
+                                                ?>
+                                                <select class="vt-suggestion-input"
+                                                    data-field-key="<?php echo esc_attr($field_key); ?>"
+                                                    <?php echo $is_multiple ? 'multiple' : ''; ?>>
+                                                    <?php if (!$is_multiple): ?>
+                                                        <option value=""><?php _e('Select...', 'voxel-toolkit'); ?></option>
+                                                    <?php endif; ?>
+                                                    <?php foreach ($field_data['options'] as $option): ?>
+                                                        <?php if ($is_taxonomy): ?>
+                                                            <option value="<?php echo esc_attr($option->term_id); ?>">
+                                                                <?php echo esc_html($option->name); ?>
+                                                            </option>
+                                                        <?php else: ?>
+                                                            <option value="<?php echo esc_attr($option['value']); ?>">
+                                                                <?php echo esc_html($option['label']); ?>
+                                                            </option>
+                                                        <?php endif; ?>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            <?php else: ?>
+                                                <input type="text"
+                                                    class="vt-suggestion-input"
+                                                    data-field-key="<?php echo esc_attr($field_key); ?>"
+                                                    placeholder="<?php _e('Enter new value...', 'voxel-toolkit'); ?>">
+                                            <?php endif; ?>
                                         <?php endif; ?>
                                     </div>
 
@@ -852,6 +905,28 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                     <button type="button" class="vt-modal-submit">
                         <?php echo esc_html($settings['submit_button_text'] ?? __('Submit', 'voxel-toolkit')); ?>
                     </button>
+                </div>
+            </div>
+
+            <!-- Work Hours Popup Modal -->
+            <div class="vt-wh-popup" style="display: none;">
+                <div class="vt-wh-popup-overlay"></div>
+                <div class="vt-wh-popup-content">
+                    <div class="vt-wh-popup-header">
+                        <h3><?php _e('Suggest New Hours', 'voxel-toolkit'); ?></h3>
+                        <button type="button" class="vt-wh-popup-close">&times;</button>
+                    </div>
+                    <div class="vt-wh-popup-body">
+                        <!-- Work Hours Editor -->
+                        <div class="vt-wh-editor">
+                            <div class="vt-wh-groups"></div>
+                            <button type="button" class="vt-wh-add-group">+ <?php _e('Add schedule', 'voxel-toolkit'); ?></button>
+                        </div>
+                    </div>
+                    <div class="vt-wh-popup-footer">
+                        <button type="button" class="vt-wh-popup-cancel"><?php _e('Cancel', 'voxel-toolkit'); ?></button>
+                        <button type="button" class="vt-wh-popup-save"><?php _e('Save Hours', 'voxel-toolkit'); ?></button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -905,5 +980,13 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
         }
 
         return $value;
+    }
+
+    /**
+     * Format work hours schedule for display
+     * @deprecated Use Voxel_Toolkit_Field_Formatters::format_work_hours_display() instead
+     */
+    private function format_work_hours_display($schedule) {
+        return Voxel_Toolkit_Field_Formatters::format_work_hours_display($schedule);
     }
 }
