@@ -401,6 +401,32 @@ class Voxel_Toolkit_Review_Collection_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_responsive_control(
+            'title_align',
+            [
+                'label' => __('Alignment', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => [
+                    'left' => [
+                        'title' => __('Left', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => __('Center', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-center',
+                    ],
+                    'right' => [
+                        'title' => __('Right', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-right',
+                    ],
+                ],
+                'default' => 'left',
+                'selectors' => [
+                    '{{WRAPPER}} .review-post-title' => 'text-align: {{VALUE}};',
+                ],
+            ]
+        );
+
         $this->add_group_control(
             \Elementor\Group_Control_Typography::get_type(),
             [
@@ -456,6 +482,32 @@ class Voxel_Toolkit_Review_Collection_Widget extends \Elementor\Widget_Base {
             [
                 'label' => __('Rating', 'voxel-toolkit'),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_responsive_control(
+            'rating_align',
+            [
+                'label' => __('Alignment', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => [
+                    'flex-start' => [
+                        'title' => __('Left', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => __('Center', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-center',
+                    ],
+                    'flex-end' => [
+                        'title' => __('Right', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-right',
+                    ],
+                ],
+                'default' => 'flex-start',
+                'selectors' => [
+                    '{{WRAPPER}} .review-rating' => 'justify-content: {{VALUE}};',
+                ],
             ]
         );
 
@@ -560,12 +612,47 @@ class Voxel_Toolkit_Review_Collection_Widget extends \Elementor\Widget_Base {
 
         $this->end_controls_section();
 
-        // TAB - AVATAR
+        // TAB - AVATAR & USERNAME
         $this->start_controls_section(
             'avatar_style_section',
             [
-                'label' => __('User Avatar', 'voxel-toolkit'),
+                'label' => __('Author Section', 'voxel-toolkit'),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_responsive_control(
+            'author_section_align',
+            [
+                'label' => __('Alignment', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => [
+                    'flex-start' => [
+                        'title' => __('Left', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => __('Center', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-center',
+                    ],
+                    'flex-end' => [
+                        'title' => __('Right', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-right',
+                    ],
+                ],
+                'default' => 'flex-start',
+                'selectors' => [
+                    '{{WRAPPER}} .review-author' => 'justify-content: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'avatar_heading',
+            [
+                'label' => __('Avatar', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
             ]
         );
 
@@ -626,14 +713,12 @@ class Voxel_Toolkit_Review_Collection_Widget extends \Elementor\Widget_Base {
             ]
         );
 
-        $this->end_controls_section();
-
-        // TAB - USERNAME
-        $this->start_controls_section(
-            'username_style_section',
+        $this->add_control(
+            'username_heading',
             [
                 'label' => __('Username', 'voxel-toolkit'),
-                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
             ]
         );
 
@@ -657,9 +742,9 @@ class Voxel_Toolkit_Review_Collection_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_responsive_control(
-            'username_margin_bottom',
+            'author_section_margin_bottom',
             [
-                'label' => __('Bottom Margin', 'voxel-toolkit'),
+                'label' => __('Section Bottom Margin', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::SLIDER,
                 'size_units' => ['px', 'em'],
                 'default' => [
@@ -680,6 +765,36 @@ class Voxel_Toolkit_Review_Collection_Widget extends \Elementor\Widget_Base {
             [
                 'label' => __('Review Content', 'voxel-toolkit'),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_responsive_control(
+            'content_align',
+            [
+                'label' => __('Alignment', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => [
+                    'left' => [
+                        'title' => __('Left', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => __('Center', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-center',
+                    ],
+                    'right' => [
+                        'title' => __('Right', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-right',
+                    ],
+                    'justify' => [
+                        'title' => __('Justified', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-justify',
+                    ],
+                ],
+                'default' => 'left',
+                'selectors' => [
+                    '{{WRAPPER}} .review-content' => 'text-align: {{VALUE}};',
+                ],
             ]
         );
 
@@ -730,6 +845,32 @@ class Voxel_Toolkit_Review_Collection_Widget extends \Elementor\Widget_Base {
             [
                 'label' => __('Date', 'voxel-toolkit'),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_responsive_control(
+            'date_align',
+            [
+                'label' => __('Alignment', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => [
+                    'left' => [
+                        'title' => __('Left', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => __('Center', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-center',
+                    ],
+                    'right' => [
+                        'title' => __('Right', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-right',
+                    ],
+                ],
+                'default' => 'left',
+                'selectors' => [
+                    '{{WRAPPER}} .review-created-at' => 'text-align: {{VALUE}};',
+                ],
             ]
         );
 
