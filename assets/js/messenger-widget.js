@@ -1193,21 +1193,18 @@
                                 var previousCount = self.state.unreadChats[chat.key] || 0;
 
                                 if (isBrandNewChat) {
-                                    // Brand new chat - auto-open it
+                                    // Brand new chat - auto-open it and get accurate count
                                     self.state.unreadChats[chat.key] = 1;
                                     hasNewUnread = true;
                                     newIncomingChats.push(chat);
-                                    // Get accurate count for brand new chats
                                     self.getUnreadCountForChat(chat);
                                 } else if (previousCount === 0) {
                                     // First time marking as unread - get accurate count
                                     self.state.unreadChats[chat.key] = 1;
                                     hasNewUnread = true;
                                     self.getUnreadCountForChat(chat);
-                                } else {
-                                    // Chat already tracked - only check if we suspect new messages
-                                    self.getUnreadCountForChat(chat);
                                 }
+                                // Don't constantly recheck already-tracked chats - save resources
                             }
                         });
 

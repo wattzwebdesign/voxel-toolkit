@@ -74,7 +74,7 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
             'autoOpen' => true, // Auto-open new incoming chats
             'polling' => array(
                 'enabled' => true,
-                'frequency' => 5000, // milliseconds - 5 seconds
+                'frequency' => 15000, // milliseconds - 15 seconds
             ),
             'maxOpenChats' => 3,
             'i18n' => array(
