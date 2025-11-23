@@ -239,6 +239,7 @@ class Voxel_Toolkit {
 
         if (is_admin()) {
             $files[] = 'includes/admin/class-admin.php';
+            $files[] = 'includes/admin/messenger-settings.php';
         }
 
         foreach ($files as $file) {
