@@ -80,7 +80,6 @@
             var self = this;
             // Create Audio element for notification sound
             var soundUrl = (this.config.pluginUrl || '') + 'assets/sounds/new-message-sound.mp3';
-            console.log('VT Messenger: Initializing notification sound with URL:', soundUrl);
             this.notificationSound = new Audio(soundUrl);
             this.notificationSound.volume = 0.5; // Set volume to 50%
             this.notificationSound.muted = true; // Start muted to allow preload
@@ -90,15 +89,13 @@
 
             // Test if audio can be loaded
             this.notificationSound.addEventListener('canplaythrough', function() {
-                console.log('VT Messenger: Notification sound loaded successfully');
                 // Try to play muted to prime the audio
                 self.notificationSound.play().then(function() {
                     self.notificationSound.pause();
                     self.notificationSound.currentTime = 0;
                     self.notificationSound.muted = false; // Unmute for actual playback
-                    console.log('VT Messenger: Audio primed and ready');
                 }).catch(function(e) {
-                    console.log('VT Messenger: Could not prime audio, will need user interaction');
+                    // Could not prime audio, will need user interaction
                 });
             });
             this.notificationSound.addEventListener('error', function(e) {
@@ -118,9 +115,8 @@
                         self.notificationSound.pause();
                         self.notificationSound.currentTime = 0;
                         self.soundEnabled = true;
-                        console.log('VT Messenger: Sound notifications enabled via user interaction');
                     }).catch(function(err) {
-                        console.log('VT Messenger: Could not enable sound', err);
+                        // Could not enable sound
                     });
                 }
             }
@@ -128,10 +124,8 @@
 
         playNotificationSound: function() {
             var self = this;
-            console.log('VT Messenger: playNotificationSound called, soundEnabled:', self.soundEnabled);
 
             if (!self.soundEnabled) {
-                console.log('VT Messenger: Sound not enabled yet - waiting for user interaction');
                 return;
             }
 
@@ -139,15 +133,13 @@
                 try {
                     // Reset to beginning if already playing
                     self.notificationSound.currentTime = 0;
-                    console.log('VT Messenger: Attempting to play notification sound');
 
                     var playPromise = self.notificationSound.play();
 
                     if (playPromise !== undefined) {
                         playPromise.then(function() {
-                            console.log('VT Messenger: Notification sound played successfully');
+                            // Sound played successfully
                         }).catch(function(error) {
-                            console.log('VT Messenger: Could not play notification sound:', error);
                             // Try to re-enable on next interaction
                             self.soundEnabled = false;
                         });
@@ -296,9 +288,7 @@
                 });
 
                 var chatKey = $(this).data('chat-key');
-                console.log('VT Messenger: Chat clicked', chatKey);
                 var chat = self.findChatByKey(chatKey);
-                console.log('VT Messenger: Found chat', chat);
                 if (chat) {
                     self.openChat(chat);
                 } else {
@@ -494,11 +484,8 @@
                 success: function(response) {
                     if (response.success) {
                         self.state.chats = response.list || [];
-                        console.log('VT Messenger: Loaded chats', self.state.chats);
                         // Debug: Check what fields are available in chat objects
                         if (self.state.chats.length > 0) {
-                            console.log('VT Messenger: First chat object keys:', Object.keys(self.state.chats[0]));
-                            console.log('VT Messenger: First chat full object:', self.state.chats[0]);
                         }
 
                         // Track all loaded chat keys and initialize unread tracking
@@ -764,8 +751,6 @@
                 ? Voxel_Config.ajax_url + '&action=inbox.load_chat'
                 : self.config.ajaxUrl + '?action=inbox.load_chat';
 
-            console.log('VT Messenger: Getting unread count for chat', chat.key);
-
             $.ajax({
                 url: ajaxUrl,
                 type: 'GET',
@@ -787,11 +772,8 @@
                             }
                         });
 
-                        console.log('VT Messenger: Chat', chat.key, 'has', unreadCount, 'unread messages');
-
                         // Track previous count
                         var previousCount = self.state.unreadChats[chat.key] || 0;
-                        console.log('VT Messenger: Previous count was', previousCount);
 
                         // Only update if count actually changed
                         if (unreadCount !== previousCount) {
@@ -799,11 +781,8 @@
                                 self.state.unreadChats[chat.key] = unreadCount;
                                 self.saveUnreadState();
 
-                                console.log('VT Messenger: Updated unread count to', unreadCount);
-
                                 // Play sound and flash title if count increased
                                 if (unreadCount > previousCount) {
-                                    console.log('VT Messenger: Count increased! Playing sound. soundEnabled:', self.soundEnabled);
                                     self.playNotificationSound();
 
                                     // Flash title with message count
@@ -812,7 +791,6 @@
                                 }
                             } else {
                                 // No more unread messages - remove from tracking
-                                console.log('VT Messenger: No unread messages, clearing count');
                                 delete self.state.unreadChats[chat.key];
                                 self.saveUnreadState();
                             }
@@ -821,9 +799,6 @@
                             self.renderChatList();
                             self.state.unreadCount = self.calculateUnreadCount();
                             self.updateBadge();
-                            console.log('VT Messenger: Total unread count:', self.state.unreadCount);
-                        } else {
-                            console.log('VT Messenger: Count unchanged, skipping update');
                         }
                     }
                 },
@@ -1206,8 +1181,6 @@
                         var previousUnreadCounts = JSON.parse(JSON.stringify(self.state.unreadChats)); // Clone
 
                         newChats.forEach(function(chat) {
-                            console.log('VT Messenger: Polling - Chat', chat.key, 'seen:', chat.seen, 'is_new:', chat.is_new);
-
                             // Mark this chat as seen (we now know about it)
                             var wasNeverSeenBefore = !self.state.seenChatKeys[chat.key];
                             self.state.seenChatKeys[chat.key] = true;
@@ -1218,11 +1191,9 @@
 
                             if (!chat.seen && chat.is_new) {
                                 var previousCount = self.state.unreadChats[chat.key] || 0;
-                                console.log('VT Messenger: Chat has unread messages. Previous tracked count:', previousCount);
 
                                 if (isBrandNewChat) {
                                     // Brand new chat - auto-open it
-                                    console.log('VT Messenger: Brand new chat detected, will auto-open');
                                     self.state.unreadChats[chat.key] = 1;
                                     hasNewUnread = true;
                                     newIncomingChats.push(chat);
@@ -1230,13 +1201,11 @@
                                     self.getUnreadCountForChat(chat);
                                 } else if (previousCount === 0) {
                                     // First time marking as unread - get accurate count
-                                    console.log('VT Messenger: First time seeing unread for this chat');
                                     self.state.unreadChats[chat.key] = 1;
                                     hasNewUnread = true;
                                     self.getUnreadCountForChat(chat);
                                 } else {
                                     // Chat already tracked - only check if we suspect new messages
-                                    console.log('VT Messenger: Chat already tracked with unread, checking for updates');
                                     self.getUnreadCountForChat(chat);
                                 }
                             }
