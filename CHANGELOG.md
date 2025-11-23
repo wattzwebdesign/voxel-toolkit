@@ -5,6 +5,18 @@ All notable changes to Voxel Toolkit will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.4] - 2025-11-23
+
+### Added
+- **Dynamic Tag Modifier - .sold()**: Track total quantity sold for products
+  - **Usage**: `@post(id).sold()` returns total quantity sold from orders
+  - Queries `vx_order_items` table for product field data
+  - Parses order details JSON to extract quantity from each order
+  - Matches products by post title against product label
+  - Returns total quantity as a number (e.g., "42", "156")
+  - Always enabled, no configuration required
+  - Documented in Voxel Toolkit > Dynamic Tags admin page
+
 ## [1.5.3] - 2025-11-23
 
 ### Added
@@ -15,14 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Review Content Alignment**: Responsive left/center/right/justify alignment options
   - **Date Alignment**: Responsive left/center/right alignment control
   - All alignment controls support desktop, tablet, and mobile breakpoints
-- **Dynamic Tag Modifier - .sold()**: Track total quantity sold for products
-  - **Usage**: `@post(id).sold()` returns total quantity sold from orders
-  - Queries `vx_order_items` table for product field data
-  - Parses order details JSON to extract quantity from each order
-  - Matches products by post title against product label
-  - Returns total quantity as a number (e.g., "42", "156")
-  - Always enabled, no configuration required
-  - Documented in Voxel Toolkit > Dynamic Tags admin page
 
 ## [Unreleased]
 
