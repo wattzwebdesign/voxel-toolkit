@@ -57,6 +57,9 @@ class Voxel_Toolkit_Dynamic_Tags {
         if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-tally-modifier.php')) {
             require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-tally-modifier.php';
         }
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-sold-modifier.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-sold-modifier.php';
+        }
     }
 
     /**
@@ -78,6 +81,7 @@ class Voxel_Toolkit_Dynamic_Tags {
         $modifiers['file_extension'] = \Voxel_Toolkit_File_Extension_Modifier::class;
         $modifiers['address_part'] = \Voxel_Toolkit_Address_Part_Modifier::class;
         $modifiers['tally'] = \Voxel_Toolkit_Tally_Modifier::class;
+        $modifiers['sold'] = \Voxel_Toolkit_Sold_Modifier::class;
         return $modifiers;
     }
 

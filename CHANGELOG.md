@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Dynamic Tag Modifier - .sold()**: Track total quantity sold for products
+  - **Usage**: `@post(id).sold()` returns total quantity sold from orders
+  - Queries `vx_order_items` table for product field data
+  - Parses order details JSON to extract quantity from each order
+  - Matches products by post title against product label
+  - Returns total quantity as a number (e.g., "42", "156")
+  - Always enabled, no configuration required
+  - Documented in Voxel Toolkit > Dynamic Tags admin page
 - **Campaign Progress Widget Enhancements**: Granular display controls and dynamic tags
   - **Display Toggle Controls**: 5 new switcher controls for fine-grained visibility control
     - Display All Data: Master toggle that shows all elements

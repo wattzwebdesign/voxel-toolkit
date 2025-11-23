@@ -1669,6 +1669,17 @@ class Voxel_Toolkit_Admin {
                                 <em>1234</em>
                             </td>
                         </tr>
+                        <tr>
+                            <td><code>sold</code></td>
+                            <td><?php _e('Count total quantity sold for a product from orders', 'voxel-toolkit'); ?></td>
+                            <td><?php _e('None (uses post ID from chain)', 'voxel-toolkit'); ?></td>
+                            <td>
+                                <code>@post(id).sold()</code>
+                            </td>
+                            <td>
+                                <em>42</em>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
