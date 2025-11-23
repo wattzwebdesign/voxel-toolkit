@@ -5,6 +5,17 @@ All notable changes to Voxel Toolkit will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.3] - 2025-11-23
+
+### Added
+- **Review Collection Widget**: Text alignment controls for enhanced design flexibility
+  - **Post Title Alignment**: Responsive left/center/right alignment control
+  - **Rating Alignment**: Responsive left/center/right alignment for star ratings
+  - **Author Section Alignment**: Combined avatar and username section with responsive left/center/right alignment
+  - **Review Content Alignment**: Responsive left/center/right/justify alignment options
+  - **Date Alignment**: Responsive left/center/right alignment control
+  - All alignment controls support desktop, tablet, and mobile breakpoints
+
 ## [Unreleased]
 
 ### Added
