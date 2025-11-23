@@ -15,10 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Review Content Alignment**: Responsive left/center/right/justify alignment options
   - **Date Alignment**: Responsive left/center/right alignment control
   - All alignment controls support desktop, tablet, and mobile breakpoints
-
-## [Unreleased]
-
-### Added
 - **Dynamic Tag Modifier - .sold()**: Track total quantity sold for products
   - **Usage**: `@post(id).sold()` returns total quantity sold from orders
   - Queries `vx_order_items` table for product field data
@@ -27,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Returns total quantity as a number (e.g., "42", "156")
   - Always enabled, no configuration required
   - Documented in Voxel Toolkit > Dynamic Tags admin page
+
+## [Unreleased]
+
+### Added
 - **Campaign Progress Widget Enhancements**: Granular display controls and dynamic tags
   - **Display Toggle Controls**: 5 new switcher controls for fine-grained visibility control
     - Display All Data: Master toggle that shows all elements
