@@ -1613,6 +1613,61 @@ class Voxel_Toolkit_Admin {
                 </div>
             <?php endif; ?>
 
+            <!-- Visitor Location -->
+            <?php if ($this->settings->is_function_enabled('visitor_location')): ?>
+                <div class="settings-section" style="margin-top: 30px;">
+                    <h2><?php _e('Visitor Location', 'voxel-toolkit'); ?></h2>
+                    <p class="description"><?php _e('Visitor location properties detected via IP geolocation or browser GPS. Use with @site(visitor.property) syntax.', 'voxel-toolkit'); ?></p>
+
+                    <table class="widefat striped">
+                        <thead>
+                            <tr>
+                                <th><?php _e('Property', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Output Example', 'voxel-toolkit'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>visitor.location</code></td>
+                                <td><?php _e('Full location with smart formatting (City, State for US / City, Country for international)', 'voxel-toolkit'); ?></td>
+                                <td><code>@site(visitor.location)</code></td>
+                                <td><em>Baltimore, MD</em> or <em>Paris, France</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>visitor.city</code></td>
+                                <td><?php _e('City name only', 'voxel-toolkit'); ?></td>
+                                <td><code>@site(visitor.city)</code></td>
+                                <td><em>Baltimore</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>visitor.state</code></td>
+                                <td><?php _e('State or region name', 'voxel-toolkit'); ?></td>
+                                <td><code>@site(visitor.state)</code></td>
+                                <td><em>Maryland</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>visitor.country</code></td>
+                                <td><?php _e('Country name', 'voxel-toolkit'); ?></td>
+                                <td><code>@site(visitor.country)</code></td>
+                                <td><em>United States</em></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-top: 15px;">
+                        <strong><?php _e('Detection Modes:', 'voxel-toolkit'); ?></strong><br>
+                        <em><?php _e('IP Geolocation:', 'voxel-toolkit'); ?></em> <?php _e('Automatic detection using visitor IP address. Queries multiple services for best accuracy (~50-100 mile radius).', 'voxel-toolkit'); ?><br>
+                        <em><?php _e('Browser Geolocation:', 'voxel-toolkit'); ?></em> <?php _e('GPS-level accuracy using device location (requires user permission). Falls back to IP if denied.', 'voxel-toolkit'); ?>
+                    </p>
+                    <p style="margin-top: 10px;">
+                        <a href="<?php echo admin_url('admin.php?page=voxel-toolkit-settings#section-visitor_location'); ?>" class="button">
+                            <?php _e('Configure Settings', 'voxel-toolkit'); ?>
+                        </a>
+                    </p>
+                </div>
+            <?php endif; ?>
+
             <!-- Modifiers -->
             <div class="settings-section" style="margin-top: 30px;">
                 <h2><?php _e('Modifiers', 'voxel-toolkit'); ?></h2>
