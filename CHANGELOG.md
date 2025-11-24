@@ -64,6 +64,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Configurable Caching**: Cache duration setting (default: 1 hour) to reduce API calls
   - **Settings**: Detection mode selector and cache duration control in function settings
   - **Privacy-Focused**: Uses ephemeral cookies only, no permanent storage
+- **Article Helpful Dynamic Tags**: Display article voting statistics using dynamic tags
+  - **Dynamic Tags**: 4 new tags for use anywhere in Elementor
+    - `@post(article_helpful_yes_count)` - Number of "Yes" votes
+    - `@post(article_helpful_no_count)` - Number of "No" votes
+    - `@post(article_helpful_total_votes)` - Total votes (yes + no)
+    - `@post(article_helpful_percentage)` - Percentage of yes votes (0-100)
+  - **Data Source**: Reads from post meta `_article_helpful_yes` and `_article_helpful_no`
+  - **Default Behavior**: Returns 0 if no votes recorded
+  - **Conditional Display**: Documentation appears in admin Dynamic Tags page when Article Helpful widget is enabled
 
 ### Fixed
 - **Poll Display Widget**: Updated widget icon from non-existent `eicon-poll` to standard Elementor `eicon-checkbox` icon for proper display in widget panel
