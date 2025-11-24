@@ -876,10 +876,10 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
      * Prepare event data
      */
     public function prepare($post_id, $suggester_user_id = 0, $suggester_email = '', $suggester_name = '', $suggestion_count = 0) {
-        // Get post
-        $post = \Voxel\Post::get($post_id);
-        if (!$post) {
-            throw new \Exception('Post not found.');
+        // Get post using force_get (like Voxel does)
+        $post = \Voxel\Post::force_get($post_id);
+        if (!($post && $post->get_author())) {
+            throw new \Exception('Missing information.');
         }
 
         $this->post = $post;
@@ -1012,20 +1012,22 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
     }
 
     public function set_mock_props() {
-        $this->post = \Voxel\Post::dummy();
-        $this->suggester = \Voxel\User::dummy();
+        $this->post = \Voxel\Post::mock();
+        $this->suggester = \Voxel\User::mock();
         $this->suggestion_count = 3;
         $this->is_guest = false;
     }
 
     public function dynamic_tags(): array {
         $tags = [
-            'post' => \Voxel\Dynamic_Data\Group::Post($this->post),
-            'author' => \Voxel\Dynamic_Data\Group::User($this->post->get_author()),
+            'post' => \Voxel\Dynamic_Data\Group::Post($this->post ?: \Voxel\Post::mock()),
+            'author' => \Voxel\Dynamic_Data\Group::User(
+                $this->post ? $this->post->get_author() : \Voxel\User::mock()
+            ),
         ];
 
         // Only add suggester tag if it's not a guest (since guests use author as placeholder)
-        if (!$this->is_guest) {
+        if (!$this->is_guest && $this->suggester) {
             $tags['suggester'] = \Voxel\Dynamic_Data\Group::User($this->suggester);
         }
 
