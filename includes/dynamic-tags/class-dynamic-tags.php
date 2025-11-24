@@ -223,6 +223,64 @@ class Voxel_Toolkit_Dynamic_Tags {
             } );
         }
 
+        // Add article helpful properties only if widget is enabled
+        if ($settings->is_function_enabled('widget_article_helpful')) {
+            // Add article helpful yes count property
+            $properties['article_helpful_yes_count'] = \Voxel\Dynamic_Data\Tag::Number('Article Helpful Yes Count')
+            ->render( function() use ( $group ) {
+                if (!$group->post || !$group->post->get_id()) {
+                    return 0;
+                }
+
+                $yes_count = get_post_meta($group->post->get_id(), '_article_helpful_yes', true);
+                return intval($yes_count ? $yes_count : 0);
+            } );
+
+            // Add article helpful no count property
+            $properties['article_helpful_no_count'] = \Voxel\Dynamic_Data\Tag::Number('Article Helpful No Count')
+            ->render( function() use ( $group ) {
+                if (!$group->post || !$group->post->get_id()) {
+                    return 0;
+                }
+
+                $no_count = get_post_meta($group->post->get_id(), '_article_helpful_no', true);
+                return intval($no_count ? $no_count : 0);
+            } );
+
+            // Add article helpful total votes property
+            $properties['article_helpful_total_votes'] = \Voxel\Dynamic_Data\Tag::Number('Article Helpful Total Votes')
+            ->render( function() use ( $group ) {
+                if (!$group->post || !$group->post->get_id()) {
+                    return 0;
+                }
+
+                $yes_count = intval(get_post_meta($group->post->get_id(), '_article_helpful_yes', true));
+                $no_count = intval(get_post_meta($group->post->get_id(), '_article_helpful_no', true));
+                return $yes_count + $no_count;
+            } );
+
+            // Add article helpful percentage property
+            $properties['article_helpful_percentage'] = \Voxel\Dynamic_Data\Tag::Number('Article Helpful Percentage')
+            ->render( function() use ( $group ) {
+                if (!$group->post || !$group->post->get_id()) {
+                    return 0;
+                }
+
+                $yes_count = intval(get_post_meta($group->post->get_id(), '_article_helpful_yes', true));
+                $no_count = intval(get_post_meta($group->post->get_id(), '_article_helpful_no', true));
+                $total = $yes_count + $no_count;
+
+                // If no votes, return 0
+                if ($total <= 0) {
+                    return 0;
+                }
+
+                // Calculate percentage of yes votes
+                $percentage = ($yes_count / $total) * 100;
+                return round($percentage);
+            } );
+        }
+
         return $properties;
     }
 
