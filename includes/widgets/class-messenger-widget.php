@@ -91,11 +91,8 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 'skin' => 'inline',
                 'label_block' => false,
                 'default' => [
-                    'value' => [
-                        'url' => VOXEL_TOOLKIT_PLUGIN_URL . 'assets/icons/messages.svg',
-                        'id' => '',
-                    ],
-                    'library' => 'svg',
+                    'value' => 'fas fa-comments',
+                    'library' => 'fa-solid',
                 ],
                 'recommended' => [
                     'fa-solid' => [
@@ -117,11 +114,8 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 'skin' => 'inline',
                 'label_block' => false,
                 'default' => [
-                    'value' => [
-                        'url' => VOXEL_TOOLKIT_PLUGIN_URL . 'assets/icons/send.svg',
-                        'id' => '',
-                    ],
-                    'library' => 'svg',
+                    'value' => 'fas fa-paper-plane',
+                    'library' => 'fa-solid',
                 ],
                 'recommended' => [
                     'fa-solid' => [
@@ -142,11 +136,8 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 'skin' => 'inline',
                 'label_block' => false,
                 'default' => [
-                    'value' => [
-                        'url' => VOXEL_TOOLKIT_PLUGIN_URL . 'assets/icons/upload.svg',
-                        'id' => '',
-                    ],
-                    'library' => 'svg',
+                    'value' => 'fas fa-paperclip',
+                    'library' => 'fa-solid',
                 ],
                 'recommended' => [
                     'fa-solid' => [
@@ -239,6 +230,8 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 'default' => '#ffffff',
                 'selectors' => [
                     '{{WRAPPER}} .vt-messenger-button i' => 'color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-messenger-button svg' => 'fill: {{VALUE}}',
+                    '{{WRAPPER}} .vt-messenger-button svg path' => 'fill: {{VALUE}}',
                 ],
             ]
         );
@@ -258,10 +251,12 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 ],
                 'default' => [
                     'unit' => 'px',
-                    'size' => 28,
+                    'size' => 24,
                 ],
                 'selectors' => [
                     '{{WRAPPER}} .vt-messenger-button i' => 'font-size: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vt-messenger-button svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vt-messenger-button img' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -423,12 +418,11 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 ],
                 'default' => [
                     'unit' => 'px',
-                    'size' => 56,
+                    'size' => 50,
                 ],
                 'selectors' => [
                     '{{WRAPPER}} .vt-messenger-chat-item' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
                     '{{WRAPPER}} .vt-chat-avatar' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
-                    '{{WRAPPER}} .vt-chat-avatar img' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -686,6 +680,15 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 'selectors' => [
                     '{{WRAPPER}} .vt-chat-header-name' => 'color: {{VALUE}}',
                 ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'chat_header_typography',
+                'label' => __('Header Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt-chat-header-name',
             ]
         );
 
@@ -1008,6 +1011,8 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 'default' => '#ffffff',
                 'selectors' => [
                     '{{WRAPPER}} .vt-messenger-send-btn' => 'color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-messenger-send-btn svg' => 'fill: {{VALUE}}',
+                    '{{WRAPPER}} .vt-messenger-send-btn svg path' => 'fill: {{VALUE}}',
                 ],
             ]
         );
@@ -1031,6 +1036,30 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 ],
                 'selectors' => [
                     '{{WRAPPER}} .vt-messenger-send-btn' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'send_button_icon_size',
+            [
+                'label' => __('Icon Size', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 12,
+                        'max' => 32,
+                        'step' => 2,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 18,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-messenger-send-btn i' => 'font-size: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vt-messenger-send-btn svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -1076,11 +1105,71 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 'default' => '#0084ff',
                 'selectors' => [
                     '{{WRAPPER}} .vt-messenger-upload-btn' => 'color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-messenger-upload-btn svg' => 'fill: {{VALUE}}',
+                    '{{WRAPPER}} .vt-messenger-upload-btn svg path' => 'fill: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'upload_button_icon_size',
+            [
+                'label' => __('Icon Size', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 12,
+                        'max' => 32,
+                        'step' => 2,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 18,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-messenger-upload-btn i' => 'font-size: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vt-messenger-upload-btn svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
 
         $this->end_controls_section();
+    }
+
+    /**
+     * Render icon with custom SVG fallback
+     * Uses custom SVG if icon is still default, otherwise renders user's chosen icon
+     */
+    private function render_icon_with_fallback($icon_setting, $default_fa_icon, $custom_svg_name) {
+        // Check if user has customized the icon (changed from default FontAwesome)
+        $is_default = (
+            !empty($icon_setting['library']) &&
+            $icon_setting['library'] === 'fa-solid' &&
+            !empty($icon_setting['value']) &&
+            $icon_setting['value'] === $default_fa_icon
+        );
+
+        if ($is_default) {
+            // Inline custom SVG content from assets/icons
+            $svg_file = VOXEL_TOOLKIT_PLUGIN_DIR . 'assets/icons/' . $custom_svg_name . '.svg';
+            if (file_exists($svg_file)) {
+                $svg_content = file_get_contents($svg_file);
+                // Remove XML declaration and clean up
+                $svg_content = preg_replace('/<\?xml[^?]+\?>/', '', $svg_content);
+                $svg_content = trim($svg_content);
+                // Add classes for styling
+                $svg_content = str_replace('<svg', '<svg class="vt-custom-svg-icon"', $svg_content);
+                echo $svg_content;
+            } else {
+                // Fallback to FontAwesome if SVG file not found
+                \Elementor\Icons_Manager::render_icon($icon_setting, ['aria-hidden' => 'true']);
+            }
+        } else {
+            // User customized it, render their chosen icon
+            \Elementor\Icons_Manager::render_icon($icon_setting, ['aria-hidden' => 'true']);
+        }
     }
 
     protected function render() {
@@ -1113,7 +1202,7 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
 
             <!-- Main Messenger Button -->
             <button class="vt-messenger-button" aria-label="<?php _e('Open messenger', 'voxel-toolkit'); ?>">
-                <?php \Elementor\Icons_Manager::render_icon($settings['main_button_icon'], ['aria-hidden' => 'true']); ?>
+                <?php $this->render_icon_with_fallback($settings['main_button_icon'], 'fas fa-comments', 'messages'); ?>
                 <?php if ($settings['show_unread_badge'] === 'yes'): ?>
                     <span class="vt-messenger-badge" <?php echo ($is_editor && $preview_mode) ? '' : 'style="display: none;"'; ?>>
                         <?php echo ($is_editor && $preview_mode) ? '3' : '0'; ?>
@@ -1223,11 +1312,11 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                                       rows="1"></textarea>
                             <div class="vt-messenger-upload-buttons">
                                 <button class="vt-messenger-upload-btn vt-upload-device" aria-label="<?php _e('Upload from device', 'voxel-toolkit'); ?>">
-                                    <?php \Elementor\Icons_Manager::render_icon($settings['upload_button_icon'], ['aria-hidden' => 'true']); ?>
+                                    <?php $this->render_icon_with_fallback($settings['upload_button_icon'], 'fas fa-paperclip', 'upload'); ?>
                                 </button>
                             </div>
                             <button class="vt-messenger-send-btn" aria-label="<?php _e('Send', 'voxel-toolkit'); ?>">
-                                <?php \Elementor\Icons_Manager::render_icon($settings['send_button_icon'], ['aria-hidden' => 'true']); ?>
+                                <?php $this->render_icon_with_fallback($settings['send_button_icon'], 'fas fa-paper-plane', 'send'); ?>
                             </button>
                             <input type="file" class="vt-messenger-file-input" style="display: none;" accept="image/*">
                         </div>

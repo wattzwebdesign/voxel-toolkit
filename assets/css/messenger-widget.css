@@ -172,8 +172,8 @@
 }
 
 .vt-messenger-chat-item {
-    width: 56px;
-    height: 56px;
+    width: 50px;
+    height: 50px;
     cursor: pointer;
     position: relative;
     transition: opacity 0.2s;
@@ -185,8 +185,8 @@
 }
 
 .vt-chat-avatar {
-    width: 56px;
-    height: 56px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     overflow: visible;
     border: 3px solid #ffffff;
@@ -195,17 +195,13 @@
     position: relative;
 }
 
-.vt-chat-avatar > :not(.vt-chat-avatar-badge) {
-    overflow: hidden;
-    border-radius: 50%;
-    width: 100%;
-    height: 100%;
-}
-
 .vt-chat-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
+    border-radius: 50%;
+    clip-path: circle(50% at center);
 }
 
 /* Hide text content in circle view */
@@ -622,18 +618,14 @@
     cursor: not-allowed;
 }
 
-/* Scrollbar for chat list circles */
+/* Scrollbar for chat list circles - hidden */
+.vt-messenger-popup {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
 .vt-messenger-popup::-webkit-scrollbar {
-    width: 4px;
-}
-
-.vt-messenger-popup::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.vt-messenger-popup::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 2px;
+    display: none; /* Chrome, Safari, Opera */
 }
 
 /* Image lightbox */
