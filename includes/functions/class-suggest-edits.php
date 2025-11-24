@@ -843,7 +843,7 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
                 },
                 'inapp' => [
                     'enabled' => true,
-                    'subject' => 'New edit suggestion for @post(title)',
+                    'subject' => 'New edit suggestion for @post(:title)',
                     'details' => function($event) {
                         return [
                             'post_id' => $event->post->get_id(),
@@ -871,13 +871,13 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
                 ],
                 'email' => [
                     'enabled' => false,
-                    'subject' => 'New edit suggestion for @post(title)',
+                    'subject' => 'New edit suggestion for @post(:title)',
                     'message' => <<<HTML
                     Hello @author(:display_name),
 
-                    You have received new edit suggestion(s) for your post <strong>@post(title)</strong>.
+                    You have received new edit suggestion(s) for your post <strong>@post(:title)</strong>.
 
-                    <a href="@post(url)">View Post</a>
+                    <a href="@post(:url)">View Post</a>
 
                     Thank you!
                     HTML,
@@ -890,7 +890,7 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
                 },
                 'inapp' => [
                     'enabled' => false,
-                    'subject' => 'New edit suggestion submitted for @post(title)',
+                    'subject' => 'New edit suggestion submitted for @post(:title)',
                     'details' => function($event) {
                         return [
                             'post_id' => $event->post->get_id(),
@@ -918,11 +918,11 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
                 ],
                 'email' => [
                     'enabled' => false,
-                    'subject' => 'New edit suggestion submitted for @post(title)',
+                    'subject' => 'New edit suggestion submitted for @post(:title)',
                     'message' => <<<HTML
-                    A new edit suggestion has been submitted for the post <strong>@post(title)</strong>.
+                    A new edit suggestion has been submitted for the post <strong>@post(:title)</strong>.
 
-                    <a href="@post(url)">View Post</a>
+                    <a href="@post(:url)">View Post</a>
                     HTML,
                 ],
             ],
