@@ -6,6 +6,50 @@
     margin-top: 20px;
 }
 
+/* Filters */
+.vt-filters {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    padding: 15px;
+    margin: 20px 0;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.vt-filters form {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.vt-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.vt-filter-group label {
+    font-weight: 600;
+    font-size: 12px;
+    color: #1d2327;
+}
+
+.vt-filter-group select {
+    height: 32px;
+    min-width: 150px;
+}
+
+.vt-search-group input[type="text"] {
+    height: 32px;
+    min-width: 300px;
+}
+
+.vt-filters button,
+.vt-filters .button {
+    height: 32px;
+    margin-bottom: 0;
+}
+
 .vt-suggest-edits-admin .wp-list-table {
     margin-top: 20px;
 }

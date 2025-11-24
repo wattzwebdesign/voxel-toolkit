@@ -178,15 +178,49 @@ class Voxel_Toolkit_Suggest_Edits {
             return;
         }
 
-        // Get all suggestions for this post type
-        $suggestions = $wpdb->get_results($wpdb->prepare(
-            "SELECT es.*, p.post_title, p.post_type
+        // Get filter parameters
+        $status_filter = isset($_GET['status_filter']) ? sanitize_text_field($_GET['status_filter']) : 'all';
+        $orderby = isset($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : 'date';
+        $order = isset($_GET['order']) && $_GET['order'] === 'asc' ? 'ASC' : 'DESC';
+        $search = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
+
+        // Build query
+        $where = array("p.post_type = %s");
+        $params = array($post_type);
+
+        if ($status_filter !== 'all') {
+            $where[] = "es.status = %s";
+            $params[] = $status_filter;
+        }
+
+        if (!empty($search)) {
+            $where[] = "(p.post_title LIKE %s OR es.field_key LIKE %s OR es.suggester_name LIKE %s OR es.suggester_email LIKE %s)";
+            $search_like = '%' . $wpdb->esc_like($search) . '%';
+            $params[] = $search_like;
+            $params[] = $search_like;
+            $params[] = $search_like;
+            $params[] = $search_like;
+        }
+
+        $where_clause = implode(' AND ', $where);
+
+        // Order by
+        if ($orderby === 'status') {
+            $order_clause = "es.status $order, es.created_at DESC";
+        } elseif ($orderby === 'date') {
+            $order_clause = "es.created_at $order";
+        } else {
+            $order_clause = "es.created_at DESC";
+        }
+
+        // Get suggestions
+        $query = "SELECT es.*, p.post_title, p.post_type
             FROM {$this->table_name} es
             INNER JOIN {$wpdb->posts} p ON es.post_id = p.ID
-            WHERE p.post_type = %s
-            ORDER BY es.status ASC, es.created_at DESC",
-            $post_type
-        ));
+            WHERE $where_clause
+            ORDER BY $order_clause";
+
+        $suggestions = $wpdb->get_results($wpdb->prepare($query, $params));
 
         // Enqueue admin styles and scripts
         wp_enqueue_style('vt-suggest-edits-admin', VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/suggest-edits-admin.css', array(), VOXEL_TOOLKIT_VERSION);
@@ -199,6 +233,50 @@ class Voxel_Toolkit_Suggest_Edits {
         ?>
         <div class="wrap vt-suggest-edits-admin">
             <h1><?php echo esc_html(get_post_type_object($post_type)->labels->name); ?> - <?php _e('Suggested Edits', 'voxel-toolkit'); ?></h1>
+
+            <!-- Filter and Search Controls -->
+            <div class="vt-filters">
+                <form method="get" action="">
+                    <input type="hidden" name="post_type" value="<?php echo esc_attr($post_type); ?>">
+                    <input type="hidden" name="page" value="<?php echo esc_attr($_GET['page']); ?>">
+
+                    <div class="vt-filter-group">
+                        <label for="status-filter"><?php _e('Status:', 'voxel-toolkit'); ?></label>
+                        <select name="status_filter" id="status-filter">
+                            <option value="all" <?php selected($status_filter, 'all'); ?>><?php _e('All', 'voxel-toolkit'); ?></option>
+                            <option value="pending" <?php selected($status_filter, 'pending'); ?>><?php _e('Pending', 'voxel-toolkit'); ?></option>
+                            <option value="accepted" <?php selected($status_filter, 'accepted'); ?>><?php _e('Accepted', 'voxel-toolkit'); ?></option>
+                            <option value="rejected" <?php selected($status_filter, 'rejected'); ?>><?php _e('Rejected', 'voxel-toolkit'); ?></option>
+                        </select>
+                    </div>
+
+                    <div class="vt-filter-group">
+                        <label for="orderby"><?php _e('Sort by:', 'voxel-toolkit'); ?></label>
+                        <select name="orderby" id="orderby">
+                            <option value="date" <?php selected($orderby, 'date'); ?>><?php _e('Date', 'voxel-toolkit'); ?></option>
+                            <option value="status" <?php selected($orderby, 'status'); ?>><?php _e('Status', 'voxel-toolkit'); ?></option>
+                        </select>
+                    </div>
+
+                    <div class="vt-filter-group">
+                        <label for="order"><?php _e('Order:', 'voxel-toolkit'); ?></label>
+                        <select name="order" id="order">
+                            <option value="desc" <?php selected($order, 'DESC'); ?>><?php _e('Descending', 'voxel-toolkit'); ?></option>
+                            <option value="asc" <?php selected($order, 'ASC'); ?>><?php _e('Ascending', 'voxel-toolkit'); ?></option>
+                        </select>
+                    </div>
+
+                    <div class="vt-filter-group vt-search-group">
+                        <label for="search-input"><?php _e('Search:', 'voxel-toolkit'); ?></label>
+                        <input type="text" name="s" id="search-input" value="<?php echo esc_attr($search); ?>" placeholder="<?php _e('Search by post, field, or suggester...', 'voxel-toolkit'); ?>">
+                    </div>
+
+                    <button type="submit" class="button"><?php _e('Filter', 'voxel-toolkit'); ?></button>
+                    <?php if ($status_filter !== 'all' || !empty($search) || $orderby !== 'date' || $order !== 'DESC'): ?>
+                        <a href="<?php echo admin_url('edit.php?post_type=' . $post_type . '&page=' . $_GET['page']); ?>" class="button"><?php _e('Reset', 'voxel-toolkit'); ?></a>
+                    <?php endif; ?>
+                </form>
+            </div>
 
             <?php if (empty($suggestions)): ?>
                 <p><?php _e('No suggestions found.', 'voxel-toolkit'); ?></p>
