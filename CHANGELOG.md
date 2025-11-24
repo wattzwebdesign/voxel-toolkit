@@ -43,6 +43,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Item gap spacing
     - Container: background, padding, margin, border, shadow
   - **Responsive Design**: All major controls support desktop, tablet, and mobile breakpoints
+- **Visitor Location**: Display visitor's location using IP geolocation or browser GPS with dynamic tags
+  - **Detection Modes**:
+    - IP Geolocation: Automatic detection using IP address (no user interaction)
+    - Browser Geolocation: GPS-level accuracy using browser API (requires permission)
+  - **Multi-Service IP Detection**: Queries 3 free services (geojs.io, ipapi.co, ip-api.com) in parallel
+  - **Consensus Algorithm**: Picks best result based on agreement and data completeness
+  - **Browser Mode Features**:
+    - Uses device GPS, WiFi, and cell towers for meter-level accuracy
+    - Reverse geocodes coordinates using Nominatim (OpenStreetMap) API
+    - Cookie-based storage (1 day expiration)
+    - Real-time tag updates without page reload
+    - Automatic fallback to IP geolocation if permission denied
+  - **Dynamic Tags**:
+    - `@site(visitor.location)` - Full location (City, State for US / City, Country for international)
+    - `@site(visitor.city)` - City name only
+    - `@site(visitor.state)` - State/region name only
+    - `@site(visitor.country)` - Country name only
+  - **Smart Formatting**: Automatically formats as "City, State" for US, "City, Country" for international
+  - **Configurable Caching**: Cache duration setting (default: 1 hour) to reduce API calls
+  - **Settings**: Detection mode selector and cache duration control in function settings
+  - **Privacy-Focused**: Uses ephemeral cookies only, no permanent storage
 
 ## [Unreleased]
 
