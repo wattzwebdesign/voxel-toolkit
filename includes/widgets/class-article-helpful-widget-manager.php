@@ -116,7 +116,8 @@ class Voxel_Toolkit_Article_Helpful_Widget_Manager {
 
             if ($previous_vote && $previous_vote === $vote_type) {
                 // User clicked the same vote again - no change
-                wp_send_json_error(array('message' => __('You have already voted this way', 'voxel-toolkit')));
+                // Note: Error message is now handled by widget settings via data attributes in JavaScript
+                wp_send_json_error(array());
                 return;
             }
 
@@ -131,7 +132,8 @@ class Voxel_Toolkit_Article_Helpful_Widget_Manager {
 
                 if ($previous_vote === $vote_type) {
                     // User clicked the same vote again - no change
-                    wp_send_json_error(array('message' => __('You have already voted this way', 'voxel-toolkit')));
+                    // Note: Error message is now handled by widget settings via data attributes in JavaScript
+                    wp_send_json_error(array());
                     return;
                 }
 
@@ -175,14 +177,9 @@ class Voxel_Toolkit_Article_Helpful_Widget_Manager {
             setcookie($cookie_name, $vote_type, time() + (30 * DAY_IN_SECONDS), COOKIEPATH, COOKIE_DOMAIN);
         }
 
-        // Prepare response message
-        $message = $is_changing_vote
-            ? __('Your vote has been updated!', 'voxel-toolkit')
-            : __('Thank you for your feedback!', 'voxel-toolkit');
-
         // Send success response
+        // Note: Messages are now handled by widget settings via data attributes in JavaScript
         wp_send_json_success(array(
-            'message' => $message,
             'yes_count' => $yes_count,
             'no_count' => $no_count,
             'vote_type' => $vote_type,
