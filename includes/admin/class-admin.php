@@ -102,8 +102,8 @@ class Voxel_Toolkit_Admin {
 
         add_submenu_page(
             'voxel-toolkit',
-            __('Dynamic Tag Usage', 'voxel-toolkit'),
-            __('Dynamic Tag Usage', 'voxel-toolkit'),
+            __('Tag Usage', 'voxel-toolkit'),
+            __('Tag Usage', 'voxel-toolkit'),
             'manage_options',
             'voxel-toolkit-tag-usage',
             array($this, 'render_tag_usage_page')
@@ -1911,7 +1911,7 @@ class Voxel_Toolkit_Admin {
 
         ?>
         <div class="wrap voxel-toolkit-tag-usage-page">
-            <h1><?php _e('Dynamic Tag Usage', 'voxel-toolkit'); ?></h1>
+            <h1><?php _e('Tag Usage', 'voxel-toolkit'); ?></h1>
 
             <div class="voxel-toolkit-intro">
                 <p><?php _e('This page shows all dynamic tags (both Voxel native and Voxel Toolkit custom) used across your site, and where they appear.', 'voxel-toolkit'); ?></p>
