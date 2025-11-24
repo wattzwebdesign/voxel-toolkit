@@ -782,14 +782,8 @@
                                 self.state.unreadChats[chat.key] = unreadCount;
                                 self.saveUnreadState();
 
-                                // Play sound and flash title if count increased
-                                if (unreadCount > previousCount) {
-                                    self.playNotificationSound();
-
-                                    // Flash title with message count
-                                    var messageText = unreadCount === 1 ? 'New message!' : '(' + unreadCount + ') New messages!';
-                                    self.flashTitle(messageText);
-                                }
+                                // Sound and title flash moved to checkForUpdates()
+                                // to play once per polling cycle instead of per chat
                             } else {
                                 // No more unread messages - remove from tracking
                                 delete self.state.unreadChats[chat.key];
@@ -1171,6 +1165,8 @@
                 },
                 success: function(response) {
                     if (response.success) {
+                        // Track total unread count BEFORE processing updates
+                        var oldTotalUnreadCount = self.calculateUnreadCount();
                         var oldUnreadCount = self.state.unreadCount;
                         var newChats = response.list || [];
 
@@ -1242,6 +1238,18 @@
                         self.state.openChats.forEach(function(openChat) {
                             self.loadMessages(openChat.key);
                         });
+
+                        // Play notification sound ONCE if total unread count increased
+                        var newTotalUnreadCount = self.calculateUnreadCount();
+                        if (newTotalUnreadCount > oldTotalUnreadCount) {
+                            self.playNotificationSound();
+
+                            // Flash title with total message count
+                            var messageText = newTotalUnreadCount === 1
+                                ? 'New message!'
+                                : '(' + newTotalUnreadCount + ') New messages!';
+                            self.flashTitle(messageText);
+                        }
                     }
 
                     // Release polling lock when complete
