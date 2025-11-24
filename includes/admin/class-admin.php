@@ -1908,22 +1908,10 @@ class Voxel_Toolkit_Admin {
 
         // Scan for dynamic tags in post meta
         $tag_usage = $this->scan_dynamic_tag_usage();
-        $total_tags = count($tag_usage);
 
         ?>
         <div class="wrap voxel-toolkit-tag-usage-page">
             <h1><?php _e('Dynamic Tag Usage', 'voxel-toolkit'); ?></h1>
-
-            <div class="vt-tag-stats">
-                <div class="vt-stat-card">
-                    <div class="vt-stat-number"><?php echo esc_html($total_tags); ?></div>
-                    <div class="vt-stat-label"><?php _e('Unique Tags', 'voxel-toolkit'); ?></div>
-                </div>
-                <div class="vt-stat-card">
-                    <div class="vt-stat-number"><?php echo esc_html(array_sum(array_column($tag_usage, 'count'))); ?></div>
-                    <div class="vt-stat-label"><?php _e('Total Usage', 'voxel-toolkit'); ?></div>
-                </div>
-            </div>
 
             <div class="voxel-toolkit-intro">
                 <p><?php _e('This page shows all dynamic tags (both Voxel native and Voxel Toolkit custom) used across your site, and where they appear.', 'voxel-toolkit'); ?></p>
@@ -2039,47 +2027,6 @@ class Voxel_Toolkit_Admin {
                 max-width: 1400px;
             }
 
-            .vt-tag-stats {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 20px;
-                margin: 20px 0;
-            }
-
-            .vt-stat-card {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                border-radius: 12px;
-                padding: 25px;
-                color: white;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            }
-
-            .vt-stat-number {
-                font-size: 36px;
-                font-weight: 700;
-                margin-bottom: 5px;
-            }
-
-            .vt-stat-label {
-                font-size: 14px;
-                opacity: 0.9;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-
-            .voxel-toolkit-intro {
-                background: #fff;
-                border-left: 4px solid #2271b1;
-                padding: 20px;
-                margin: 20px 0;
-                border-radius: 4px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            }
-
-            .voxel-toolkit-intro p {
-                margin: 0.5em 0;
-            }
-
             .vt-search-box {
                 position: relative;
                 margin: 20px 0;
@@ -2090,15 +2037,15 @@ class Voxel_Toolkit_Admin {
                 max-width: 500px;
                 padding: 12px 45px 12px 20px;
                 font-size: 15px;
-                border: 2px solid #e0e0e0;
+                border: 2px solid #e1e5e9;
                 border-radius: 8px;
                 transition: all 0.3s;
             }
 
             .vt-search-box input:focus {
-                border-color: #2271b1;
+                border-color: #1e3a5f;
                 outline: none;
-                box-shadow: 0 0 0 3px rgba(34, 113, 177, 0.1);
+                box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
             }
 
             .vt-search-icon {
@@ -2119,16 +2066,34 @@ class Voxel_Toolkit_Admin {
 
             .vt-tag-card {
                 background: #fff;
-                border: 1px solid #e0e0e0;
-                border-radius: 8px;
-                padding: 20px;
-                transition: all 0.3s;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                border: 1px solid #e1e5e9;
+                border-radius: 12px;
+                padding: 30px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .vt-tag-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: #1e3a5f;
+                opacity: 0;
+                transition: opacity 0.3s ease;
             }
 
             .vt-tag-card:hover {
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
                 transform: translateY(-2px);
+            }
+
+            .vt-tag-card:hover::before {
+                opacity: 1;
             }
 
             .vt-tag-header {
@@ -2153,7 +2118,7 @@ class Voxel_Toolkit_Admin {
                 border-radius: 6px;
                 font-family: 'Courier New', monospace;
                 font-size: 13px;
-                color: #d63384;
+                color: #1e3a5f;
                 border: 1px solid #e9ecef;
                 word-break: break-all;
                 flex: 1;
@@ -2173,7 +2138,7 @@ class Voxel_Toolkit_Admin {
             }
 
             .vt-copy-btn:hover {
-                background: #2271b1;
+                background: #1e3a5f;
                 color: white;
             }
 
@@ -2184,7 +2149,7 @@ class Voxel_Toolkit_Admin {
             }
 
             .vt-usage-badge {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: #1e3a5f;
                 color: white;
                 padding: 6px 12px;
                 border-radius: 20px;
@@ -2195,7 +2160,7 @@ class Voxel_Toolkit_Admin {
             }
 
             .vt-locations {
-                border-top: 1px solid #f0f0f1;
+                border-top: 1px solid #e1e5e9;
                 padding-top: 15px;
             }
 
@@ -2214,7 +2179,7 @@ class Voxel_Toolkit_Admin {
 
             .vt-location-icon {
                 flex-shrink: 0;
-                color: #666;
+                color: #1e3a5f;
             }
 
             .vt-location-icon .dashicons {
@@ -2230,14 +2195,14 @@ class Voxel_Toolkit_Admin {
 
             .vt-location-title {
                 font-weight: 500;
-                color: #2271b1;
+                color: #1e3a5f;
                 text-decoration: none;
                 display: block;
                 margin-bottom: 4px;
             }
 
             .vt-location-title:hover {
-                color: #135e96;
+                color: #0f1f3a;
                 text-decoration: underline;
             }
 
@@ -2257,13 +2222,13 @@ class Voxel_Toolkit_Admin {
             .vt-show-more-btn {
                 width: 100%;
                 background: #f8f9fa;
-                border: 1px solid #e0e0e0;
+                border: 1px solid #e1e5e9;
                 padding: 10px;
                 border-radius: 6px;
                 cursor: pointer;
                 font-size: 13px;
                 font-weight: 500;
-                color: #2271b1;
+                color: #1e3a5f;
                 transition: all 0.2s;
                 margin-top: 10px;
                 display: flex;
@@ -2273,9 +2238,9 @@ class Voxel_Toolkit_Admin {
             }
 
             .vt-show-more-btn:hover {
-                background: #2271b1;
+                background: #1e3a5f;
                 color: white;
-                border-color: #2271b1;
+                border-color: #1e3a5f;
             }
 
             .vt-show-more-btn .dashicons {
