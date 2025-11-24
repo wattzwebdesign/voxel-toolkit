@@ -24,8 +24,10 @@ class Voxel_Toolkit_Messenger_Events {
      * Initialize hooks
      */
     private function init_hooks() {
-        // Hook into Voxel's message received event
-        add_action('voxel/app-events/messages/user:received_message_unthrottled', array($this, 'handle_message_received'), 10, 1);
+        // Disabled: Unthrottled event fires for every message causing performance issues
+        // Real-time updates are handled by JavaScript polling (30-second intervals)
+        // Uncomment below to re-enable for future WebSocket/real-time enhancements
+        // add_action('voxel/app-events/messages/user:received_message_unthrottled', array($this, 'handle_message_received'), 10, 1);
     }
 
     /**
