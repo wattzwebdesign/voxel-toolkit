@@ -100,6 +100,15 @@ class Voxel_Toolkit_Admin {
             array($this, 'render_dynamic_tags_page')
         );
 
+        add_submenu_page(
+            'voxel-toolkit',
+            __('Tag Usage', 'voxel-toolkit'),
+            __('Tag Usage', 'voxel-toolkit'),
+            'manage_options',
+            'voxel-toolkit-tag-usage',
+            array($this, 'render_tag_usage_page')
+        );
+
         // Add Site Options as separate top-level menu if enabled
         if ($this->settings->is_function_enabled('options_page')) {
             add_menu_page(
@@ -1889,6 +1898,509 @@ class Voxel_Toolkit_Admin {
         }
 
         wp_send_json($results);
+    }
+
+    /**
+     * Render Dynamic Tag Usage page
+     */
+    public function render_tag_usage_page() {
+        global $wpdb;
+
+        // Scan for dynamic tags in post meta
+        $tag_usage = $this->scan_dynamic_tag_usage();
+
+        ?>
+        <div class="wrap voxel-toolkit-tag-usage-page">
+            <h1><?php _e('Tag Usage', 'voxel-toolkit'); ?></h1>
+
+            <div class="voxel-toolkit-intro">
+                <p><?php _e('This page shows all dynamic tags (both Voxel native and Voxel Toolkit custom) used across your site, and where they appear.', 'voxel-toolkit'); ?></p>
+                <p><strong><?php _e('Note:', 'voxel-toolkit'); ?></strong> <?php _e('Scans Elementor data in pages, posts, and templates. Detects patterns like @post(), @user(), @site(), @author(), etc.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <?php if (empty($tag_usage)): ?>
+                <div class="notice notice-info">
+                    <p><?php _e('No dynamic tags found in use on your site.', 'voxel-toolkit'); ?></p>
+                </div>
+            <?php else: ?>
+                <div class="vt-search-box">
+                    <input type="text" id="vt-tag-search" placeholder="<?php esc_attr_e('Search tags...', 'voxel-toolkit'); ?>" />
+                    <span class="vt-search-icon dashicons dashicons-search"></span>
+                </div>
+
+                <div class="vt-tags-grid">
+                    <?php foreach ($tag_usage as $tag => $data): ?>
+                        <div class="vt-tag-card" data-tag="<?php echo esc_attr($tag); ?>">
+                            <div class="vt-tag-header">
+                                <div class="vt-tag-title">
+                                    <code class="vt-tag-code"><?php echo esc_html($tag); ?></code>
+                                    <button class="vt-copy-btn" data-tag="<?php echo esc_attr($tag); ?>" title="<?php esc_attr_e('Copy tag', 'voxel-toolkit'); ?>">
+                                        <span class="dashicons dashicons-clipboard"></span>
+                                    </button>
+                                </div>
+                                <span class="vt-usage-badge"><?php echo intval($data['count']); ?> <?php echo _n('location', 'locations', intval($data['count']), 'voxel-toolkit'); ?></span>
+                            </div>
+
+                            <?php if (!empty($data['locations'])): ?>
+                                <div class="vt-locations">
+                                    <?php
+                                    $visible_count = 3;
+                                    $has_more = count($data['locations']) > $visible_count;
+                                    ?>
+
+                                    <?php foreach (array_slice($data['locations'], 0, $visible_count) as $index => $location): ?>
+                                        <div class="vt-location-item">
+                                            <span class="vt-location-icon">
+                                                <?php
+                                                $icon_class = 'dashicons-admin-post';
+                                                if (strpos($location['post_type'], 'elementor_library') !== false) {
+                                                    $icon_class = 'dashicons-editor-code';
+                                                } elseif ($location['post_type'] === 'page') {
+                                                    $icon_class = 'dashicons-admin-page';
+                                                }
+                                                ?>
+                                                <span class="dashicons <?php echo esc_attr($icon_class); ?>"></span>
+                                            </span>
+                                            <div class="vt-location-content">
+                                                <a href="<?php echo esc_url(get_edit_post_link($location['post_id'])); ?>" target="_blank" class="vt-location-title">
+                                                    <?php echo esc_html($location['post_title']); ?>
+                                                </a>
+                                                <div class="vt-location-meta">
+                                                    <span class="vt-post-type"><?php echo esc_html($location['post_type']); ?></span>
+                                                    <span class="vt-separator">•</span>
+                                                    <span class="vt-post-id">ID: <?php echo intval($location['post_id']); ?></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+
+                                    <?php if ($has_more): ?>
+                                        <?php $hidden_count = count($data['locations']) - $visible_count; ?>
+                                        <div class="vt-hidden-locations" style="display: none;">
+                                            <?php foreach (array_slice($data['locations'], $visible_count) as $location): ?>
+                                                <div class="vt-location-item">
+                                                    <span class="vt-location-icon">
+                                                        <?php
+                                                        $icon_class = 'dashicons-admin-post';
+                                                        if (strpos($location['post_type'], 'elementor_library') !== false) {
+                                                            $icon_class = 'dashicons-editor-code';
+                                                        } elseif ($location['post_type'] === 'page') {
+                                                            $icon_class = 'dashicons-admin-page';
+                                                        }
+                                                        ?>
+                                                        <span class="dashicons <?php echo esc_attr($icon_class); ?>"></span>
+                                                    </span>
+                                                    <div class="vt-location-content">
+                                                        <a href="<?php echo esc_url(get_edit_post_link($location['post_id'])); ?>" target="_blank" class="vt-location-title">
+                                                            <?php echo esc_html($location['post_title']); ?>
+                                                        </a>
+                                                        <div class="vt-location-meta">
+                                                            <span class="vt-post-type"><?php echo esc_html($location['post_type']); ?></span>
+                                                            <span class="vt-separator">•</span>
+                                                            <span class="vt-post-id">ID: <?php echo intval($location['post_id']); ?></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                        <button class="vt-show-more-btn">
+                                            <span class="dashicons dashicons-arrow-down-alt2"></span>
+                                            <?php printf(esc_html__('Show %d more', 'voxel-toolkit'), $hidden_count); ?>
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <div id="vt-no-results" style="display: none;">
+                    <div class="notice notice-warning">
+                        <p><?php _e('No tags found matching your search.', 'voxel-toolkit'); ?></p>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <style>
+            .voxel-toolkit-tag-usage-page {
+                max-width: 1400px;
+            }
+
+            .vt-search-box {
+                position: relative;
+                margin: 20px 0;
+            }
+
+            .vt-search-box input {
+                width: 100%;
+                max-width: 500px;
+                padding: 12px 45px 12px 20px;
+                font-size: 15px;
+                border: 2px solid #e1e5e9;
+                border-radius: 8px;
+                transition: all 0.3s;
+            }
+
+            .vt-search-box input:focus {
+                border-color: #1e3a5f;
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+            }
+
+            .vt-search-icon {
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #999;
+                pointer-events: none;
+            }
+
+            .vt-tags-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+                gap: 20px;
+                margin-top: 20px;
+            }
+
+            .vt-tag-card {
+                background: #fff;
+                border: 1px solid #e1e5e9;
+                border-radius: 12px;
+                padding: 30px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .vt-tag-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: #1e3a5f;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .vt-tag-card:hover::before {
+                opacity: 1;
+            }
+
+            .vt-tag-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 15px;
+                gap: 10px;
+            }
+
+            .vt-tag-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex: 1;
+                min-width: 0;
+            }
+
+            .vt-tag-code {
+                background: #f8f9fa;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-family: 'Courier New', monospace;
+                font-size: 13px;
+                color: #1e3a5f;
+                border: 1px solid #e9ecef;
+                word-break: break-all;
+                flex: 1;
+            }
+
+            .vt-copy-btn {
+                background: #f0f0f1;
+                border: none;
+                padding: 6px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+
+            .vt-copy-btn:hover {
+                background: #1e3a5f;
+                color: white;
+            }
+
+            .vt-copy-btn .dashicons {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+            }
+
+            .vt-usage-badge {
+                background: #1e3a5f;
+                color: white;
+                padding: 6px 12px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 600;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            .vt-locations {
+                border-top: 1px solid #e1e5e9;
+                padding-top: 15px;
+            }
+
+            .vt-location-item {
+                display: flex;
+                gap: 12px;
+                padding: 10px;
+                border-radius: 6px;
+                transition: background 0.2s;
+                margin-bottom: 8px;
+            }
+
+            .vt-location-item:hover {
+                background: #f8f9fa;
+            }
+
+            .vt-location-icon {
+                flex-shrink: 0;
+                color: #1e3a5f;
+            }
+
+            .vt-location-icon .dashicons {
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+            }
+
+            .vt-location-content {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .vt-location-title {
+                font-weight: 500;
+                color: #1e3a5f;
+                text-decoration: none;
+                display: block;
+                margin-bottom: 4px;
+            }
+
+            .vt-location-title:hover {
+                color: #0f1f3a;
+                text-decoration: underline;
+            }
+
+            .vt-location-meta {
+                font-size: 12px;
+                color: #666;
+            }
+
+            .vt-post-type {
+                text-transform: capitalize;
+            }
+
+            .vt-separator {
+                margin: 0 6px;
+            }
+
+            .vt-show-more-btn {
+                width: 100%;
+                background: #f8f9fa;
+                border: 1px solid #e1e5e9;
+                padding: 10px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 13px;
+                font-weight: 500;
+                color: #1e3a5f;
+                transition: all 0.2s;
+                margin-top: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+            }
+
+            .vt-show-more-btn:hover {
+                background: #1e3a5f;
+                color: white;
+                border-color: #1e3a5f;
+            }
+
+            .vt-show-more-btn .dashicons {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+                transition: transform 0.3s;
+            }
+
+            .vt-show-more-btn.expanded .dashicons {
+                transform: rotate(180deg);
+            }
+
+            #vt-no-results {
+                margin-top: 20px;
+            }
+
+            @media (max-width: 768px) {
+                .vt-tags-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .vt-tag-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+            }
+        </style>
+
+        <script>
+        jQuery(document).ready(function($) {
+            // Search functionality
+            $('#vt-tag-search').on('keyup', function() {
+                var searchTerm = $(this).val().toLowerCase();
+                var visibleCards = 0;
+
+                $('.vt-tag-card').each(function() {
+                    var tagText = $(this).data('tag').toLowerCase();
+                    if (tagText.indexOf(searchTerm) > -1) {
+                        $(this).show();
+                        visibleCards++;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                if (visibleCards === 0) {
+                    $('#vt-no-results').show();
+                    $('.vt-tags-grid').hide();
+                } else {
+                    $('#vt-no-results').hide();
+                    $('.vt-tags-grid').show();
+                }
+            });
+
+            // Show more/less functionality
+            $('.vt-show-more-btn').on('click', function() {
+                var $btn = $(this);
+                var $hiddenLocations = $btn.siblings('.vt-hidden-locations');
+                var isExpanded = $btn.hasClass('expanded');
+
+                if (isExpanded) {
+                    $hiddenLocations.slideUp(300);
+                    $btn.removeClass('expanded');
+                    var count = $hiddenLocations.find('.vt-location-item').length;
+                    $btn.html('<span class="dashicons dashicons-arrow-down-alt2"></span> <?php echo esc_js(__('Show', 'voxel-toolkit')); ?> ' + count + ' <?php echo esc_js(__('more', 'voxel-toolkit')); ?>');
+                } else {
+                    $hiddenLocations.slideDown(300);
+                    $btn.addClass('expanded');
+                    $btn.html('<span class="dashicons dashicons-arrow-up-alt2"></span> <?php echo esc_js(__('Show less', 'voxel-toolkit')); ?>');
+                }
+            });
+
+            // Copy to clipboard functionality
+            $('.vt-copy-btn').on('click', function() {
+                var tag = $(this).data('tag');
+                var $btn = $(this);
+
+                // Create temporary input
+                var $temp = $('<input>');
+                $('body').append($temp);
+                $temp.val(tag).select();
+                document.execCommand('copy');
+                $temp.remove();
+
+                // Visual feedback
+                var originalHTML = $btn.html();
+                $btn.html('<span class="dashicons dashicons-yes"></span>');
+                $btn.css('background', '#46b450');
+                $btn.css('color', 'white');
+
+                setTimeout(function() {
+                    $btn.html(originalHTML);
+                    $btn.css('background', '');
+                    $btn.css('color', '');
+                }, 1000);
+            });
+        });
+        </script>
+        <?php
+    }
+
+    /**
+     * Scan for dynamic tag usage across the site
+     */
+    private function scan_dynamic_tag_usage() {
+        global $wpdb;
+
+        // Get all posts with Elementor data
+        $results = $wpdb->get_results("
+            SELECT post_id, meta_value
+            FROM {$wpdb->postmeta}
+            WHERE meta_key = '_elementor_data'
+        ");
+
+        $tag_usage = array();
+
+        foreach ($results as $result) {
+            $post_id = $result->post_id;
+            $elementor_data = $result->meta_value;
+
+            // Get post details
+            $post = get_post($post_id);
+            if (!$post) {
+                continue;
+            }
+
+            // Find all dynamic tags using regex
+            // Pattern matches: @post(...), @user(...), @site(...), @author(...), etc.
+            preg_match_all('/@(post|user|site|author|current_user)\([^)]*\)(?:\.[a-zA-Z_]+\([^)]*\))*/', $elementor_data, $matches);
+
+            if (!empty($matches[0])) {
+                foreach ($matches[0] as $tag) {
+                    if (!isset($tag_usage[$tag])) {
+                        $tag_usage[$tag] = array(
+                            'count' => 0,
+                            'locations' => array()
+                        );
+                    }
+
+                    // Check if this post is already in locations for this tag
+                    $post_exists = false;
+                    foreach ($tag_usage[$tag]['locations'] as $location) {
+                        if ($location['post_id'] === $post_id) {
+                            $post_exists = true;
+                            break;
+                        }
+                    }
+
+                    if (!$post_exists) {
+                        $tag_usage[$tag]['count']++;
+                        $tag_usage[$tag]['locations'][] = array(
+                            'post_id' => $post_id,
+                            'post_title' => $post->post_title,
+                            'post_type' => $post->post_type
+                        );
+                    }
+                }
+            }
+        }
+
+        // Sort by usage count (descending)
+        uasort($tag_usage, function($a, $b) {
+            return $b['count'] - $a['count'];
+        });
+
+        return $tag_usage;
     }
 
     /**
