@@ -13,8 +13,6 @@
         chatWindows: null,
         badge: null,
         config: {},
-        notificationSound: null,
-        soundEnabled: false,
         originalTitle: document.title,
         titleFlashInterval: null,
         state: {
@@ -49,9 +47,6 @@
                 // Get configuration
                 self.config = window.vtMessenger || {};
 
-                // Initialize notification sound
-                self.initNotificationSound();
-
                 // Load unread state from localStorage
                 self.loadUnreadState();
 
@@ -75,82 +70,6 @@
                     self.startPolling();
                 }
             });
-        },
-
-        initNotificationSound: function() {
-            var self = this;
-            // Create Audio element for notification sound
-            var soundUrl = (this.config.pluginUrl || '') + 'assets/sounds/new-message-sound.mp3';
-            this.notificationSound = new Audio(soundUrl);
-            this.notificationSound.volume = 0.5; // Set volume to 50%
-            this.notificationSound.muted = true; // Start muted to allow preload
-
-            // Preload the audio
-            this.notificationSound.load();
-
-            // Test if audio can be loaded
-            this.notificationSound.addEventListener('canplaythrough', function() {
-                // Try to play muted to prime the audio
-                self.notificationSound.play().then(function() {
-                    self.notificationSound.pause();
-                    self.notificationSound.currentTime = 0;
-                    self.notificationSound.muted = false; // Unmute for actual playback
-                }).catch(function(e) {
-                    // Could not prime audio, will need user interaction
-                });
-            });
-            this.notificationSound.addEventListener('error', function(e) {
-                console.error('VT Messenger: Error loading notification sound', e);
-            });
-        },
-
-        enableSound: function() {
-            var self = this;
-            if (!self.soundEnabled && self.notificationSound) {
-                // Ensure unmuted
-                self.notificationSound.muted = false;
-                // Try to play and immediately pause to unlock audio context
-                var playPromise = self.notificationSound.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(function() {
-                        self.notificationSound.pause();
-                        self.notificationSound.currentTime = 0;
-                        self.soundEnabled = true;
-                    }).catch(function(err) {
-                        // Could not enable sound
-                    });
-                }
-            }
-        },
-
-        playNotificationSound: function() {
-            var self = this;
-
-            if (!self.soundEnabled) {
-                return;
-            }
-
-            if (self.notificationSound) {
-                try {
-                    // Reset to beginning if already playing
-                    self.notificationSound.currentTime = 0;
-
-                    var playPromise = self.notificationSound.play();
-
-                    if (playPromise !== undefined) {
-                        playPromise.then(function() {
-                            // Sound played successfully
-                        }).catch(function(error) {
-                            // Try to re-enable on next interaction
-                            self.soundEnabled = false;
-                        });
-                    }
-                } catch (e) {
-                    console.error('VT Messenger: Error playing notification sound', e);
-                }
-            } else {
-                console.error('VT Messenger: notificationSound not initialized');
-            }
         },
 
         flashTitle: function(message) {
@@ -237,16 +156,6 @@
         bindEvents: function() {
             var self = this;
 
-            // Enable sound on ANY user interaction with the page
-            var enableSoundOnInteraction = function() {
-                self.enableSound();
-            };
-
-            // Listen for various user interactions
-            $(document).one('click mousedown keydown touchstart', function() {
-                enableSoundOnInteraction();
-            });
-
             // Stop title flash when user focuses on window
             $(window).on('focus', function() {
                 self.stopTitleFlash();
@@ -260,7 +169,6 @@
             // Toggle popup
             self.button.on('click', function(e) {
                 e.preventDefault();
-                self.enableSound(); // Also try to enable on button click
                 self.stopTitleFlash(); // Stop flashing when opening messenger
                 self.togglePopup();
             });
@@ -1239,11 +1147,9 @@
                             self.loadMessages(openChat.key);
                         });
 
-                        // Play notification sound ONCE if total unread count increased
+                        // Flash title if total unread count increased
                         var newTotalUnreadCount = self.calculateUnreadCount();
                         if (newTotalUnreadCount > oldTotalUnreadCount) {
-                            self.playNotificationSound();
-
                             // Flash title with total message count
                             var messageText = newTotalUnreadCount === 1
                                 ? 'New message!'
