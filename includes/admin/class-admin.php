@@ -100,6 +100,15 @@ class Voxel_Toolkit_Admin {
             array($this, 'render_dynamic_tags_page')
         );
 
+        add_submenu_page(
+            'voxel-toolkit',
+            __('Dynamic Tag Usage', 'voxel-toolkit'),
+            __('Dynamic Tag Usage', 'voxel-toolkit'),
+            'manage_options',
+            'voxel-toolkit-tag-usage',
+            array($this, 'render_tag_usage_page')
+        );
+
         // Add Site Options as separate top-level menu if enabled
         if ($this->settings->is_function_enabled('options_page')) {
             add_menu_page(
@@ -1889,6 +1898,150 @@ class Voxel_Toolkit_Admin {
         }
 
         wp_send_json($results);
+    }
+
+    /**
+     * Render Dynamic Tag Usage page
+     */
+    public function render_tag_usage_page() {
+        global $wpdb;
+
+        // Scan for dynamic tags in post meta
+        $tag_usage = $this->scan_dynamic_tag_usage();
+
+        ?>
+        <div class="wrap voxel-toolkit-tag-usage-page">
+            <h1><?php _e('Dynamic Tag Usage', 'voxel-toolkit'); ?></h1>
+
+            <div class="voxel-toolkit-intro">
+                <p><?php _e('This page shows all dynamic tags (both Voxel native and Voxel Toolkit custom) used across your site, and where they appear.', 'voxel-toolkit'); ?></p>
+                <p><strong><?php _e('Note:', 'voxel-toolkit'); ?></strong> <?php _e('This scans Elementor data in pages, posts, and templates. It detects patterns like @post(), @user(), @site(), @author(), etc.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <?php if (empty($tag_usage)): ?>
+                <div class="notice notice-info">
+                    <p><?php _e('No dynamic tags found in use on your site.', 'voxel-toolkit'); ?></p>
+                </div>
+            <?php else: ?>
+                <table class="widefat striped">
+                    <thead>
+                        <tr>
+                            <th><?php _e('Dynamic Tag', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Usage Count', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Used In', 'voxel-toolkit'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($tag_usage as $tag => $data): ?>
+                            <tr>
+                                <td><code><?php echo esc_html($tag); ?></code></td>
+                                <td><?php echo intval($data['count']); ?></td>
+                                <td>
+                                    <?php if (!empty($data['locations'])): ?>
+                                        <ul style="margin: 0; padding-left: 20px;">
+                                            <?php foreach ($data['locations'] as $location): ?>
+                                                <li>
+                                                    <a href="<?php echo esc_url(get_edit_post_link($location['post_id'])); ?>" target="_blank">
+                                                        <?php echo esc_html($location['post_title']); ?>
+                                                    </a>
+                                                    <span style="color: #666; font-size: 0.9em;">
+                                                        (<?php echo esc_html($location['post_type']); ?>, ID: <?php echo intval($location['post_id']); ?>)
+                                                    </span>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
+        </div>
+        <style>
+            .voxel-toolkit-tag-usage-page .widefat th {
+                background-color: #f0f0f1;
+                font-weight: 600;
+            }
+            .voxel-toolkit-tag-usage-page .widefat td:first-child {
+                font-family: monospace;
+                font-size: 13px;
+            }
+            .voxel-toolkit-intro {
+                background: #fff;
+                border-left: 4px solid #2271b1;
+                padding: 15px 20px;
+                margin: 20px 0;
+            }
+        </style>
+        <?php
+    }
+
+    /**
+     * Scan for dynamic tag usage across the site
+     */
+    private function scan_dynamic_tag_usage() {
+        global $wpdb;
+
+        // Get all posts with Elementor data
+        $results = $wpdb->get_results("
+            SELECT post_id, meta_value
+            FROM {$wpdb->postmeta}
+            WHERE meta_key = '_elementor_data'
+        ");
+
+        $tag_usage = array();
+
+        foreach ($results as $result) {
+            $post_id = $result->post_id;
+            $elementor_data = $result->meta_value;
+
+            // Get post details
+            $post = get_post($post_id);
+            if (!$post) {
+                continue;
+            }
+
+            // Find all dynamic tags using regex
+            // Pattern matches: @post(...), @user(...), @site(...), @author(...), etc.
+            preg_match_all('/@(post|user|site|author|current_user)\([^)]*\)(?:\.[a-zA-Z_]+\([^)]*\))*/', $elementor_data, $matches);
+
+            if (!empty($matches[0])) {
+                foreach ($matches[0] as $tag) {
+                    if (!isset($tag_usage[$tag])) {
+                        $tag_usage[$tag] = array(
+                            'count' => 0,
+                            'locations' => array()
+                        );
+                    }
+
+                    // Check if this post is already in locations for this tag
+                    $post_exists = false;
+                    foreach ($tag_usage[$tag]['locations'] as $location) {
+                        if ($location['post_id'] === $post_id) {
+                            $post_exists = true;
+                            break;
+                        }
+                    }
+
+                    if (!$post_exists) {
+                        $tag_usage[$tag]['count']++;
+                        $tag_usage[$tag]['locations'][] = array(
+                            'post_id' => $post_id,
+                            'post_title' => $post->post_title,
+                            'post_type' => $post->post_type
+                        );
+                    }
+                }
+            }
+        }
+
+        // Sort by usage count (descending)
+        uasort($tag_usage, function($a, $b) {
+            return $b['count'] - $a['count'];
+        });
+
+        return $tag_usage;
     }
 
     /**
