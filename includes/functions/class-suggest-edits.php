@@ -55,6 +55,10 @@ class Voxel_Toolkit_Suggest_Edits {
 
         // Register widgets
         add_action('elementor/widgets/register', array($this, 'register_widgets'));
+
+        // Register app event
+        add_filter('voxel/app-events/register', array($this, 'register_app_event'));
+        add_filter('voxel/app-events/categories', array($this, 'register_event_category'));
     }
 
     /**
@@ -223,6 +227,20 @@ class Voxel_Toolkit_Suggest_Edits {
             // If permanently closed, we don't process other suggestions
             if ($inserted_count > 0) {
                 $this->send_notification_email($post_id, $inserted_count);
+
+                // Dispatch app event
+                try {
+                    (new Voxel_Toolkit_Suggestion_Submitted_Event())->dispatch(
+                        $post_id,
+                        $user_id,
+                        $suggester_email,
+                        $suggester_name,
+                        $inserted_count
+                    );
+                } catch (\Exception $e) {
+                    error_log('Voxel Toolkit: Failed to dispatch suggestion event: ' . $e->getMessage());
+                }
+
                 wp_send_json_success(array(
                     'message' => __('Thank you! Your permanently closed suggestion has been submitted.', 'voxel-toolkit'),
                     'count' => $inserted_count,
@@ -313,6 +331,19 @@ class Voxel_Toolkit_Suggest_Edits {
         if ($inserted_count > 0) {
             // Send notification email to post author
             $this->send_notification_email($post_id, $inserted_count);
+
+            // Dispatch app event
+            try {
+                (new Voxel_Toolkit_Suggestion_Submitted_Event())->dispatch(
+                    $post_id,
+                    $user_id,
+                    $suggester_email,
+                    $suggester_name,
+                    $inserted_count
+                );
+            } catch (\Exception $e) {
+                error_log('Voxel Toolkit: Failed to dispatch suggestion event: ' . $e->getMessage());
+            }
 
             wp_send_json_success(array(
                 'message' => __('Thank you! Your suggestions have been submitted.', 'voxel-toolkit'),
@@ -800,5 +831,234 @@ class Voxel_Toolkit_Suggest_Edits {
             </td>
         </tr>
         <?php
+    }
+
+    /**
+     * Register custom app event category
+     */
+    public function register_event_category($categories) {
+        $categories['voxel_toolkit'] = [
+            'key' => 'voxel_toolkit',
+            'label' => 'Voxel Toolkit',
+        ];
+
+        return $categories;
+    }
+
+    /**
+     * Register suggestion submitted app event
+     */
+    public function register_app_event($events) {
+        // Check if Voxel Base_Event exists
+        if (!class_exists('\\Voxel\\Events\\Base_Event')) {
+            return $events;
+        }
+
+        // Create the event class
+        $event = new Voxel_Toolkit_Suggestion_Submitted_Event();
+        $events[$event->get_key()] = $event;
+
+        return $events;
+    }
+}
+
+/**
+ * Suggestion Submitted Event
+ */
+class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event {
+
+    public $post;
+    public $suggester;
+    public $suggestion_count;
+    public $is_guest;
+
+    /**
+     * Prepare event data
+     */
+    public function prepare($post_id, $suggester_user_id = 0, $suggester_email = '', $suggester_name = '', $suggestion_count = 0) {
+        // Get post
+        $post = \Voxel\Post::get($post_id);
+        if (!$post) {
+            throw new \Exception('Post not found.');
+        }
+
+        $this->post = $post;
+        $this->suggestion_count = $suggestion_count;
+
+        // Get suggester (user or guest)
+        if ($suggester_user_id) {
+            $this->suggester = \Voxel\User::get($suggester_user_id);
+            $this->is_guest = false;
+        } else {
+            // Create a mock user object for guest
+            $guest_user = new \WP_User();
+            $guest_user->ID = 0;
+            $guest_user->user_email = $suggester_email;
+            $guest_user->display_name = $suggester_name ?: 'Guest';
+            $this->suggester = \Voxel\User::get($guest_user);
+            $this->is_guest = true;
+        }
+    }
+
+    public function get_key(): string {
+        return 'voxel_toolkit/suggestion:submitted';
+    }
+
+    public function get_label(): string {
+        return 'Voxel Toolkit: Suggestion submitted';
+    }
+
+    public function get_category() {
+        return 'voxel_toolkit';
+    }
+
+    /**
+     * Configure notifications
+     */
+    public static function notifications(): array {
+        return [
+            'author' => [
+                'label' => 'Notify post author',
+                'recipient' => function($event) {
+                    return $event->post->get_author();
+                },
+                'inapp' => [
+                    'enabled' => true,
+                    'subject' => 'New edit suggestion for @post(title)',
+                    'details' => function($event) {
+                        return [
+                            'post_id' => $event->post->get_id(),
+                            'suggester_user_id' => $event->suggester->get_id(),
+                            'suggester_email' => $event->suggester->get_email(),
+                            'suggester_name' => $event->suggester->get_display_name(),
+                            'suggestion_count' => $event->suggestion_count,
+                        ];
+                    },
+                    'apply_details' => function($event, $details) {
+                        $event->prepare(
+                            $details['post_id'] ?? null,
+                            $details['suggester_user_id'] ?? 0,
+                            $details['suggester_email'] ?? '',
+                            $details['suggester_name'] ?? '',
+                            $details['suggestion_count'] ?? 0
+                        );
+                    },
+                    'links_to' => function($event) {
+                        return $event->post->get_link();
+                    },
+                    'image_id' => function($event) {
+                        return $event->post->get_logo_id() ?: $event->post->get_thumbnail_id();
+                    },
+                ],
+                'email' => [
+                    'enabled' => false,
+                    'subject' => 'New edit suggestion for @post(title)',
+                    'message' => <<<HTML
+                    Hello @author(:display_name),
+
+                    You have received @custom(suggestion_count) new edit suggestion(s) for your post <strong>@post(title)</strong>.
+
+                    <a href="@post(url)">View Post</a>
+
+                    Thank you!
+                    HTML,
+                ],
+            ],
+            'admin' => [
+                'label' => 'Notify admin',
+                'recipient' => function($event) {
+                    return \Voxel\User::get(\Voxel\get('settings.notifications.admin_user'));
+                },
+                'inapp' => [
+                    'enabled' => false,
+                    'subject' => 'New edit suggestion submitted for @post(title)',
+                    'details' => function($event) {
+                        return [
+                            'post_id' => $event->post->get_id(),
+                            'suggester_user_id' => $event->suggester->get_id(),
+                            'suggester_email' => $event->suggester->get_email(),
+                            'suggester_name' => $event->suggester->get_display_name(),
+                            'suggestion_count' => $event->suggestion_count,
+                        ];
+                    },
+                    'apply_details' => function($event, $details) {
+                        $event->prepare(
+                            $details['post_id'] ?? null,
+                            $details['suggester_user_id'] ?? 0,
+                            $details['suggester_email'] ?? '',
+                            $details['suggester_name'] ?? '',
+                            $details['suggestion_count'] ?? 0
+                        );
+                    },
+                    'links_to' => function($event) {
+                        return $event->post->get_link();
+                    },
+                    'image_id' => function($event) {
+                        return $event->post->get_logo_id() ?: $event->post->get_thumbnail_id();
+                    },
+                ],
+                'email' => [
+                    'enabled' => false,
+                    'subject' => 'New edit suggestion submitted for @post(title)',
+                    'message' => <<<HTML
+                    A new edit suggestion has been submitted for the post <strong>@post(title)</strong>.
+
+                    Suggester: @custom(suggester_name)
+                    Suggestions: @custom(suggestion_count)
+
+                    <a href="@post(url)">View Post</a>
+                    HTML,
+                ],
+            ],
+        ];
+    }
+
+    public function set_mock_props() {
+        $this->post = \Voxel\Post::dummy();
+        $this->suggester = \Voxel\User::dummy();
+        $this->suggestion_count = 3;
+        $this->is_guest = false;
+    }
+
+    public function dynamic_tags(): array {
+        return [
+            'post' => \Voxel\Dynamic_Data\Group::Post($this->post),
+            'author' => \Voxel\Dynamic_Data\Group::User($this->post->get_author()),
+            'suggester' => \Voxel\Dynamic_Data\Group::User($this->suggester),
+            'custom' => [
+                'type' => \Voxel\Dynamic_Tags\Dynamic_Tags::POST_GROUP,
+                'label' => 'Custom fields',
+                'properties' => [
+                    'suggestion_count' => [
+                        'label' => 'Suggestion count',
+                        'type' => 'string',
+                        'callback' => function() {
+                            return $this->suggestion_count;
+                        },
+                    ],
+                    'suggester_name' => [
+                        'label' => 'Suggester name',
+                        'type' => 'string',
+                        'callback' => function() {
+                            return $this->suggester->get_display_name();
+                        },
+                    ],
+                    'suggester_email' => [
+                        'label' => 'Suggester email',
+                        'type' => 'string',
+                        'callback' => function() {
+                            return $this->suggester->get_email();
+                        },
+                    ],
+                    'is_guest' => [
+                        'label' => 'Is guest suggester',
+                        'type' => 'string',
+                        'callback' => function() {
+                            return $this->is_guest ? 'Yes' : 'No';
+                        },
+                    ],
+                ],
+            ],
+        ];
     }
 }
