@@ -89,8 +89,10 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 'label' => __('Main Button Icon', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::ICONS,
                 'default' => [
-                    'value' => 'eicon-comments',
-                    'library' => 'eicons',
+                    'value' => [
+                        'url' => VOXEL_TOOLKIT_PLUGIN_URL . 'assets/icons/messages.svg',
+                    ],
+                    'library' => 'svg',
                 ],
             ]
         );
@@ -101,8 +103,10 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 'label' => __('Send Button Icon', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::ICONS,
                 'default' => [
-                    'value' => 'las la-paper-plane',
-                    'library' => 'fa-solid',
+                    'value' => [
+                        'url' => VOXEL_TOOLKIT_PLUGIN_URL . 'assets/icons/send.svg',
+                    ],
+                    'library' => 'svg',
                 ],
             ]
         );
@@ -113,8 +117,10 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 'label' => __('Upload Button Icon', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::ICONS,
                 'default' => [
-                    'value' => 'las la-paperclip',
-                    'library' => 'fa-solid',
+                    'value' => [
+                        'url' => VOXEL_TOOLKIT_PLUGIN_URL . 'assets/icons/upload.svg',
+                    ],
+                    'library' => 'svg',
                 ],
             ]
         );
