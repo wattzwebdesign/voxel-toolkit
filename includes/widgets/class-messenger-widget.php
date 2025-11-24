@@ -88,11 +88,20 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
             [
                 'label' => __('Main Button Icon', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::ICONS,
+                'skin' => 'inline',
+                'label_block' => false,
                 'default' => [
-                    'value' => [
-                        'url' => VOXEL_TOOLKIT_PLUGIN_URL . 'assets/icons/messages.svg',
+                    'value' => 'fas fa-comment',
+                    'library' => 'fa-solid',
+                ],
+                'recommended' => [
+                    'fa-solid' => [
+                        'comment',
+                        'comment-dots',
+                        'comments',
+                        'envelope',
+                        'message',
                     ],
-                    'library' => 'svg',
                 ],
             ]
         );
@@ -102,11 +111,19 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
             [
                 'label' => __('Send Button Icon', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::ICONS,
+                'skin' => 'inline',
+                'label_block' => false,
                 'default' => [
-                    'value' => [
-                        'url' => VOXEL_TOOLKIT_PLUGIN_URL . 'assets/icons/send.svg',
+                    'value' => 'fas fa-paper-plane',
+                    'library' => 'fa-solid',
+                ],
+                'recommended' => [
+                    'fa-solid' => [
+                        'paper-plane',
+                        'arrow-right',
+                        'chevron-right',
+                        'location-arrow',
                     ],
-                    'library' => 'svg',
                 ],
             ]
         );
@@ -116,11 +133,20 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
             [
                 'label' => __('Upload Button Icon', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::ICONS,
+                'skin' => 'inline',
+                'label_block' => false,
                 'default' => [
-                    'value' => [
-                        'url' => VOXEL_TOOLKIT_PLUGIN_URL . 'assets/icons/upload.svg',
+                    'value' => 'fas fa-paperclip',
+                    'library' => 'fa-solid',
+                ],
+                'recommended' => [
+                    'fa-solid' => [
+                        'paperclip',
+                        'image',
+                        'camera',
+                        'file',
+                        'upload',
                     ],
-                    'library' => 'svg',
                 ],
             ]
         );
