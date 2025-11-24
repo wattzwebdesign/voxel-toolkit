@@ -1,0 +1,62 @@
+/**
+ * Voxel Toolkit - Breadcrumbs Widget Styles
+ * Minimal base styles - most styling controlled via Elementor
+ */
+
+/* Container */
+.vt-breadcrumbs {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Breadcrumb list */
+.breadcrumb-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Individual breadcrumb items */
+.breadcrumb-item {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+/* Breadcrumb links */
+.breadcrumb-link {
+    text-decoration: none;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+/* Current/active breadcrumb */
+.breadcrumb-current {
+    font-weight: 500;
+}
+
+/* Separator */
+.breadcrumb-separator {
+    display: inline-flex;
+    align-items: center;
+    user-select: none;
+}
+
+/* Prefix and suffix text */
+.breadcrumb-prefix,
+.breadcrumb-suffix {
+    display: inline-flex;
+    align-items: center;
+}
+
+.breadcrumb-prefix {
+    margin-right: 0.5em;
+}
+
+.breadcrumb-suffix {
+    margin-left: 0.5em;
+}

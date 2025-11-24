@@ -366,6 +366,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-onboarding-widget-manager.php',
                 'icon' => 'eicon-navigator',
                 'widget_name' => 'voxel-onboarding',
+            ),
+            'breadcrumbs' => array(
+                'name' => __('Breadcrumbs', 'voxel-toolkit'),
+                'description' => __('Display hierarchical navigation breadcrumbs with schema markup and customizable styling.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Breadcrumbs_Widget_Manager',
+                'file' => 'widgets/class-breadcrumbs-widget-manager.php',
+                'icon' => 'eicon-navigation-horizontal',
+                'widget_name' => 'voxel-toolkit-breadcrumbs',
             )
         );
 
