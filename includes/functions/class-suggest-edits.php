@@ -226,8 +226,6 @@ class Voxel_Toolkit_Suggest_Edits {
 
             // If permanently closed, we don't process other suggestions
             if ($inserted_count > 0) {
-                $this->send_notification_email($post_id, $inserted_count);
-
                 // Dispatch app event
                 try {
                     (new Voxel_Toolkit_Suggestion_Submitted_Event())->dispatch(
@@ -329,9 +327,6 @@ class Voxel_Toolkit_Suggest_Edits {
         }
 
         if ($inserted_count > 0) {
-            // Send notification email to post author
-            $this->send_notification_email($post_id, $inserted_count);
-
             // Dispatch app event
             try {
                 (new Voxel_Toolkit_Suggestion_Submitted_Event())->dispatch(
@@ -676,52 +671,6 @@ class Voxel_Toolkit_Suggest_Edits {
     }
 
     /**
-     * Send notification email to post author
-     */
-    private function send_notification_email($post_id, $suggestion_count) {
-        $post = get_post($post_id);
-        if (!$post) {
-            return false;
-        }
-
-        // Get post author email
-        $author_id = $post->post_author;
-        $author = get_userdata($author_id);
-        if (!$author) {
-            return false;
-        }
-
-        // Get email template from settings
-        $settings = Voxel_Toolkit_Settings::instance();
-        $config = $settings->get_function_settings('suggest_edits');
-
-        $subject = isset($config['email_subject']) && !empty($config['email_subject'])
-            ? $config['email_subject']
-            : __('New edit suggestions for your post', 'voxel-toolkit');
-
-        $message = isset($config['email_message']) && !empty($config['email_message'])
-            ? $config['email_message']
-            : __('You have {suggestion_count} new edit suggestion(s) for your post "{post_title}". Please review them in your admin panel.', 'voxel-toolkit');
-
-        // Replace dynamic tags
-        $replacements = array(
-            '{post_title}' => $post->post_title,
-            '{post_url}' => get_permalink($post_id),
-            '{suggestion_count}' => $suggestion_count,
-            '{author_name}' => $author->display_name,
-            '{edit_link}' => admin_url('edit.php?post_type=' . $post->post_type . '&page=vt-suggested-edits'),
-        );
-
-        $subject = str_replace(array_keys($replacements), array_values($replacements), $subject);
-        $message = str_replace(array_keys($replacements), array_values($replacements), $message);
-        $message = wpautop($message);
-
-        // Send email
-        $headers = array('Content-Type: text/html; charset=UTF-8');
-        return wp_mail($author->user_email, $subject, $message, $headers);
-    }
-
-    /**
      * Render settings page
      */
     public static function render_settings() {
@@ -751,37 +700,6 @@ class Voxel_Toolkit_Suggest_Edits {
                     </label>
                 <?php endforeach; ?>
                 <p class="description"><?php _e('Select which post types should have the Suggest Edits feature enabled.', 'voxel-toolkit'); ?></p>
-            </td>
-        </tr>
-
-        <tr>
-            <th scope="row">
-                <label for="email_subject"><?php _e('Email Subject', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <input type="text"
-                    id="email_subject"
-                    name="voxel_toolkit_options[suggest_edits][email_subject]"
-                    value="<?php echo esc_attr($current_settings['email_subject'] ?? ''); ?>"
-                    class="regular-text">
-                <p class="description">
-                    <?php _e('Available tags: {post_title}, {suggestion_count}, {author_name}', 'voxel-toolkit'); ?>
-                </p>
-            </td>
-        </tr>
-
-        <tr>
-            <th scope="row">
-                <label for="email_message"><?php _e('Email Message', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <textarea id="email_message"
-                    name="voxel_toolkit_options[suggest_edits][email_message]"
-                    rows="10"
-                    class="large-text"><?php echo esc_textarea($current_settings['email_message'] ?? ''); ?></textarea>
-                <p class="description">
-                    <?php _e('Available tags: {post_title}, {post_url}, {suggestion_count}, {author_name}, {edit_link}', 'voxel-toolkit'); ?>
-                </p>
             </td>
         </tr>
 
