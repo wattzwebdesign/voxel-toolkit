@@ -887,15 +887,16 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
 
         // Get suggester (user or guest)
         if ($suggester_user_id) {
-            $this->suggester = \Voxel\User::get($suggester_user_id);
+            $suggester = \Voxel\User::get($suggester_user_id);
+            if (!$suggester) {
+                throw new \Exception('User not found.');
+            }
+            $this->suggester = $suggester;
             $this->is_guest = false;
         } else {
-            // Create a mock user object for guest
-            $guest_user = new \WP_User();
-            $guest_user->ID = 0;
-            $guest_user->user_email = $suggester_email;
-            $guest_user->display_name = $suggester_name ?: 'Guest';
-            $this->suggester = \Voxel\User::get($guest_user);
+            // For guests, use the post author as suggester placeholder
+            // (Voxel doesn't support non-user entities in dynamic tags)
+            $this->suggester = $this->post->get_author();
             $this->is_guest = true;
         }
     }
@@ -956,7 +957,7 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
                     'message' => <<<HTML
                     Hello @author(:display_name),
 
-                    You have received new edit suggestion(s) for your post <strong>@post(title)</strong> from @suggester(:display_name).
+                    You have received new edit suggestion(s) for your post <strong>@post(title)</strong>.
 
                     <a href="@post(url)">View Post</a>
 
@@ -1003,8 +1004,6 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
                     'message' => <<<HTML
                     A new edit suggestion has been submitted for the post <strong>@post(title)</strong>.
 
-                    Submitted by: @suggester(:display_name) (@suggester(:email))
-
                     <a href="@post(url)">View Post</a>
                     HTML,
                 ],
@@ -1020,10 +1019,16 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
     }
 
     public function dynamic_tags(): array {
-        return [
+        $tags = [
             'post' => \Voxel\Dynamic_Data\Group::Post($this->post),
             'author' => \Voxel\Dynamic_Data\Group::User($this->post->get_author()),
-            'suggester' => \Voxel\Dynamic_Data\Group::User($this->suggester),
         ];
+
+        // Only add suggester tag if it's not a guest (since guests use author as placeholder)
+        if (!$this->is_guest) {
+            $tags['suggester'] = \Voxel\Dynamic_Data\Group::User($this->suggester);
+        }
+
+        return $tags;
     }
 }
