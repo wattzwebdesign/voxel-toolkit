@@ -90,10 +90,7 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 'type' => \Elementor\Controls_Manager::ICONS,
                 'skin' => 'inline',
                 'label_block' => false,
-                'default' => [
-                    'value' => 'fas fa-comment',
-                    'library' => 'fa-solid',
-                ],
+                'description' => __('Leave empty to use default messages.svg icon', 'voxel-toolkit'),
                 'recommended' => [
                     'fa-solid' => [
                         'comment',
@@ -113,10 +110,7 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 'type' => \Elementor\Controls_Manager::ICONS,
                 'skin' => 'inline',
                 'label_block' => false,
-                'default' => [
-                    'value' => 'fas fa-paper-plane',
-                    'library' => 'fa-solid',
-                ],
+                'description' => __('Leave empty to use default send.svg icon', 'voxel-toolkit'),
                 'recommended' => [
                     'fa-solid' => [
                         'paper-plane',
@@ -135,10 +129,7 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 'type' => \Elementor\Controls_Manager::ICONS,
                 'skin' => 'inline',
                 'label_block' => false,
-                'default' => [
-                    'value' => 'fas fa-paperclip',
-                    'library' => 'fa-solid',
-                ],
+                'description' => __('Leave empty to use default upload.svg icon', 'voxel-toolkit'),
                 'recommended' => [
                     'fa-solid' => [
                         'paperclip',
@@ -1074,6 +1065,20 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
         $this->end_controls_section();
     }
 
+    /**
+     * Render icon with fallback to custom SVG
+     */
+    private function render_icon_with_fallback($icon_setting, $fallback_svg_name) {
+        if (!empty($icon_setting['value'])) {
+            // User has customized the icon
+            \Elementor\Icons_Manager::render_icon($icon_setting, ['aria-hidden' => 'true']);
+        } else {
+            // Use custom SVG fallback
+            $svg_path = VOXEL_TOOLKIT_PLUGIN_URL . 'assets/icons/' . $fallback_svg_name . '.svg';
+            echo '<img src="' . esc_url($svg_path) . '" alt="" aria-hidden="true" />';
+        }
+    }
+
     protected function render() {
         $settings = $this->get_settings_for_display();
         $is_editor = \Elementor\Plugin::$instance->editor->is_edit_mode();
@@ -1104,7 +1109,7 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
 
             <!-- Main Messenger Button -->
             <button class="vt-messenger-button" aria-label="<?php _e('Open messenger', 'voxel-toolkit'); ?>">
-                <?php \Elementor\Icons_Manager::render_icon($settings['main_button_icon'], ['aria-hidden' => 'true']); ?>
+                <?php $this->render_icon_with_fallback($settings['main_button_icon'], 'messages'); ?>
                 <?php if ($settings['show_unread_badge'] === 'yes'): ?>
                     <span class="vt-messenger-badge" <?php echo ($is_editor && $preview_mode) ? '' : 'style="display: none;"'; ?>>
                         <?php echo ($is_editor && $preview_mode) ? '3' : '0'; ?>
@@ -1214,11 +1219,11 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                                       rows="1"></textarea>
                             <div class="vt-messenger-upload-buttons">
                                 <button class="vt-messenger-upload-btn vt-upload-device" aria-label="<?php _e('Upload from device', 'voxel-toolkit'); ?>">
-                                    <?php \Elementor\Icons_Manager::render_icon($settings['upload_button_icon'], ['aria-hidden' => 'true']); ?>
+                                    <?php $this->render_icon_with_fallback($settings['upload_button_icon'], 'upload'); ?>
                                 </button>
                             </div>
                             <button class="vt-messenger-send-btn" aria-label="<?php _e('Send', 'voxel-toolkit'); ?>">
-                                <?php \Elementor\Icons_Manager::render_icon($settings['send_button_icon'], ['aria-hidden' => 'true']); ?>
+                                <?php $this->render_icon_with_fallback($settings['send_button_icon'], 'send'); ?>
                             </button>
                             <input type="file" class="vt-messenger-file-input" style="display: none;" accept="image/*">
                         </div>
