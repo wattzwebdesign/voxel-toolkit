@@ -65,6 +65,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Settings**: Detection mode selector and cache duration control in function settings
   - **Privacy-Focused**: Uses ephemeral cookies only, no permanent storage
 
+### Fixed
+- **Poll Display Widget**: Updated widget icon from non-existent `eicon-poll` to standard Elementor `eicon-checkbox` icon for proper display in widget panel
+
 ## [Unreleased]
 
 ### Added
