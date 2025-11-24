@@ -73,6 +73,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Data Source**: Reads from post meta `_article_helpful_yes` and `_article_helpful_no`
   - **Default Behavior**: Returns 0 if no votes recorded
   - **Conditional Display**: Documentation appears in admin Dynamic Tags page when Article Helpful widget is enabled
+- **Tag Usage Page**: New admin page to detect and display all dynamic tag usage across the site
+  - **Location**: Voxel Toolkit > Tag Usage in admin menu
+  - **Detection**: Scans Elementor data in all pages, posts, and templates
+  - **Pattern Matching**: Detects @post(), @user(), @site(), @author(), @current_user() tags
+  - **Modifier Support**: Captures tags with modifiers (e.g., @post(field).modifier())
+  - **Card Layout**: Modern card-based grid display matching Functions/Widgets page styling
+  - **Live Search**: Real-time filtering of tags as you type
+  - **Location Display**: Shows first 3 pages/posts per tag with "Show more" button
+  - **Copy to Clipboard**: One-click copy of any tag with visual confirmation
+  - **Usage Count**: Badge showing how many locations each tag appears in
+  - **Direct Links**: Click any location to edit that page/post in new tab
+  - **Post Type Icons**: Visual indicators for posts, pages, and templates
+  - **Sorted Results**: Tags displayed by usage count (most used first)
+  - **No Shadow/Animation**: Clean, flat card design with subtle blue top bar on hover
 
 ### Fixed
 - **Poll Display Widget**: Updated widget icon from non-existent `eicon-poll` to standard Elementor `eicon-checkbox` icon for proper display in widget panel
