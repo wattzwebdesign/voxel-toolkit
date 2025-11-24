@@ -49,8 +49,13 @@
                     $wrapper.attr('data-user-vote', response.data.vote_type);
 
                     // Show success message temporarily
+                    // Use widget's custom messages from data attributes
+                    var successMessage = $success.data('success-message');
+                    var updateMessage = $success.data('update-message');
+                    var messageToShow = response.data.is_change ? updateMessage : successMessage;
+
                     var originalText = $success.text();
-                    $success.text(response.data.message).fadeIn(300);
+                    $success.text(messageToShow).fadeIn(300);
 
                     setTimeout(function() {
                         $success.fadeOut(300, function() {
@@ -64,8 +69,9 @@
                     // Re-enable buttons
                     $allButtons.prop('disabled', false).css('opacity', '1');
                 } else {
-                    // Show error message
-                    alert(response.data.message || 'An error occurred. Please try again.');
+                    // Show error message using custom message from widget settings
+                    var alreadyVotedMessage = $wrapper.data('already-voted-message');
+                    alert(alreadyVotedMessage || response.data.message || 'An error occurred. Please try again.');
 
                     // Re-enable buttons
                     $allButtons.prop('disabled', false).css('opacity', '1');

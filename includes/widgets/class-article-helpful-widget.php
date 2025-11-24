@@ -121,6 +121,30 @@ class Voxel_Toolkit_Article_Helpful_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'update_message',
+            array(
+                'label' => __('Vote Updated Message', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Your vote has been updated.', 'voxel-toolkit'),
+                'placeholder' => __('Enter vote updated message', 'voxel-toolkit'),
+                'label_block' => true,
+                'description' => __('Message shown when user changes their vote', 'voxel-toolkit'),
+            )
+        );
+
+        $this->add_control(
+            'already_voted_message',
+            array(
+                'label' => __('Already Voted Message', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('You have already voted this way.', 'voxel-toolkit'),
+                'placeholder' => __('Enter already voted message', 'voxel-toolkit'),
+                'label_block' => true,
+                'description' => __('Message shown when user clicks the same vote again', 'voxel-toolkit'),
+            )
+        );
+
+        $this->add_control(
             'show_icon',
             array(
                 'label' => __('Show Icons', 'voxel-toolkit'),
@@ -761,7 +785,10 @@ class Voxel_Toolkit_Article_Helpful_Widget extends \Elementor\Widget_Base {
         }
 
         ?>
-        <div class="voxel-article-helpful-wrapper" data-post-id="<?php echo esc_attr($post_id); ?>" data-user-vote="<?php echo esc_attr($previous_vote ? $previous_vote : ''); ?>">
+        <div class="voxel-article-helpful-wrapper"
+             data-post-id="<?php echo esc_attr($post_id); ?>"
+             data-user-vote="<?php echo esc_attr($previous_vote ? $previous_vote : ''); ?>"
+             data-already-voted-message="<?php echo esc_attr($settings['already_voted_message']); ?>">
 
             <div class="voxel-article-helpful-content">
                 <div class="voxel-article-helpful-heading">
@@ -793,7 +820,9 @@ class Voxel_Toolkit_Article_Helpful_Widget extends \Elementor\Widget_Base {
                     </div>
                 </div>
 
-            <div class="voxel-helpful-success" style="display: none;">
+            <div class="voxel-helpful-success" style="display: none;"
+                 data-success-message="<?php echo esc_attr($settings['success_message']); ?>"
+                 data-update-message="<?php echo esc_attr($settings['update_message']); ?>">
                 <?php echo esc_html($settings['success_message']); ?>
             </div>
         </div>
