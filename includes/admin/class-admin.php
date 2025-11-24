@@ -2069,8 +2069,6 @@ class Voxel_Toolkit_Admin {
                 border: 1px solid #e1e5e9;
                 border-radius: 12px;
                 padding: 30px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 position: relative;
                 overflow: hidden;
             }
@@ -2085,11 +2083,6 @@ class Voxel_Toolkit_Admin {
                 background: #1e3a5f;
                 opacity: 0;
                 transition: opacity 0.3s ease;
-            }
-
-            .vt-tag-card:hover {
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-                transform: translateY(-2px);
             }
 
             .vt-tag-card:hover::before {
