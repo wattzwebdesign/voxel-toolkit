@@ -73,8 +73,8 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
             'pluginUrl' => VOXEL_TOOLKIT_PLUGIN_URL,
             'autoOpen' => true, // Auto-open new incoming chats
             'polling' => array(
-                'enabled' => false, // DISABLED - causing browser freeze
-                'frequency' => 15000, // milliseconds - 15 seconds
+                'enabled' => true, // Now safe with concurrent request protection
+                'frequency' => 30000, // milliseconds - 30 seconds (conservative)
             ),
             'maxOpenChats' => 3,
             'i18n' => array(

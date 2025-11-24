@@ -24,6 +24,7 @@
             activeChat: null,
             unreadCount: 0,
             polling: null,
+            isPolling: false, // Lock to prevent concurrent polling requests
             searchTerm: '',
             unreadChats: {}, // Track unread status and count by chat key: { 'chat-key': 3 }
             seenChatKeys: {}, // Track all chat keys we've ever seen to prevent auto-opening existing chats
@@ -1148,6 +1149,13 @@
         checkForUpdates: function() {
             var self = this;
 
+            // Prevent concurrent polling requests - critical for performance
+            if (self.state.isPolling) {
+                return; // Skip this poll if previous one is still running
+            }
+
+            self.state.isPolling = true;
+
             var ajaxUrl = (typeof Voxel_Config !== 'undefined' && Voxel_Config.ajax_url)
                 ? Voxel_Config.ajax_url + '&action=inbox.list_chats'
                 : self.config.ajaxUrl + '?action=inbox.list_chats';
@@ -1235,6 +1243,13 @@
                             self.loadMessages(openChat.key);
                         });
                     }
+
+                    // Release polling lock when complete
+                    self.state.isPolling = false;
+                },
+                error: function() {
+                    // Release polling lock on error
+                    self.state.isPolling = false;
                 }
             });
         },
