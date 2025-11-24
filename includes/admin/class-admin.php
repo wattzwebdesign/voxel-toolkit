@@ -1563,6 +1563,54 @@ class Voxel_Toolkit_Admin {
                 </div>
             <?php endif; ?>
 
+            <!-- Article Helpful -->
+            <?php if ($this->settings->is_function_enabled('widget_article_helpful')): ?>
+                <div class="settings-section" style="margin-top: 30px;">
+                    <h2><?php _e('Article Helpful', 'voxel-toolkit'); ?></h2>
+                    <p class="description"><?php _e('Dynamic properties for article helpful voting data. Use with @post() syntax on posts with Article Helpful widget.', 'voxel-toolkit'); ?></p>
+
+                    <table class="widefat striped">
+                        <thead>
+                            <tr>
+                                <th><?php _e('Property', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Output Example', 'voxel-toolkit'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>article_helpful_yes_count</code></td>
+                                <td><?php _e('Number of "Yes" votes for this article', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(article_helpful_yes_count)</code></td>
+                                <td><em>42</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>article_helpful_no_count</code></td>
+                                <td><?php _e('Number of "No" votes for this article', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(article_helpful_no_count)</code></td>
+                                <td><em>8</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>article_helpful_total_votes</code></td>
+                                <td><?php _e('Total number of votes (Yes + No)', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(article_helpful_total_votes)</code></td>
+                                <td><em>50</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>article_helpful_percentage</code></td>
+                                <td><?php _e('Percentage of "Yes" votes (whole number, 0-100)', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(article_helpful_percentage)</code></td>
+                                <td><em>84</em></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-top: 15px;">
+                        <em><?php _e('Note: These tags return 0 if no votes have been recorded for the post.', 'voxel-toolkit'); ?></em>
+                    </p>
+                </div>
+            <?php endif; ?>
+
             <!-- Site Options -->
             <?php if ($this->settings->is_function_enabled('options_page')): ?>
                 <?php
