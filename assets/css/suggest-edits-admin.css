@@ -1,0 +1,58 @@
+/**
+ * Suggest Edits Admin Styles
+ */
+
+.vt-suggest-edits-admin {
+    margin-top: 20px;
+}
+
+.vt-suggest-edits-admin .wp-list-table {
+    margin-top: 20px;
+}
+
+.vt-suggest-edits-admin .status-badge {
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.vt-suggest-edits-admin .status-badge.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.vt-suggest-edits-admin .status-badge.status-accepted {
+    background: #d4edda;
+    color: #155724;
+}
+
+.vt-suggest-edits-admin .status-badge.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.vt-suggest-edits-admin .suggestion-row.status-accepted,
+.vt-suggest-edits-admin .suggestion-row.status-rejected {
+    opacity: 0.6;
+}
+
+.vt-suggest-edits-admin .actions {
+    white-space: nowrap;
+}
+
+.vt-suggest-edits-admin .actions button {
+    margin-right: 5px;
+}
+
+.vt-suggest-edits-admin .incorrect-marker {
+    color: #d63638;
+    font-style: italic;
+}
+
+.vt-suggest-edits-admin .current-value,
+.vt-suggest-edits-admin .suggested-value {
+    max-width: 250px;
+    word-wrap: break-word;
+}
