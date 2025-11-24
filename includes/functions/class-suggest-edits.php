@@ -869,8 +869,8 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
 
     public $post;
     public $suggester;
-    public $suggestion_count;
-    public $is_guest;
+    public $suggestion_count = 0;
+    public $is_guest = false;
 
     /**
      * Prepare event data
@@ -1021,13 +1021,17 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
     public function dynamic_tags(): array {
         $tags = [
             'post' => \Voxel\Dynamic_Data\Group::Post($this->post ?: \Voxel\Post::mock()),
-            'author' => \Voxel\Dynamic_Data\Group::User(
-                $this->post ? $this->post->get_author() : \Voxel\User::mock()
-            ),
         ];
 
-        // Only add suggester tag if it's not a guest (since guests use author as placeholder)
-        if (!$this->is_guest && $this->suggester) {
+        // Add author tag
+        if ($this->post && $this->post->get_author()) {
+            $tags['author'] = \Voxel\Dynamic_Data\Group::User($this->post->get_author());
+        } else {
+            $tags['author'] = \Voxel\Dynamic_Data\Group::User(\Voxel\User::mock());
+        }
+
+        // Only add suggester tag if we have a valid suggester
+        if ($this->suggester && !$this->is_guest) {
             $tags['suggester'] = \Voxel\Dynamic_Data\Group::User($this->suggester);
         }
 
