@@ -163,10 +163,16 @@ class Voxel_Toolkit_Suggest_Edits {
 
         // Get current post type from URL
         $current_screen = get_current_screen();
-        preg_match('/edit-(.+)_page_vt-suggested-edits/', $current_screen->id, $matches);
-        $post_type = $matches[1] ?? '';
 
-        if (!$post_type) {
+        // Screen ID format is: {post_type}_page_vt-suggested-edits-{post_type}
+        // Extract post type from the menu slug in URL
+        if (isset($_GET['page']) && strpos($_GET['page'], 'vt-suggested-edits-') === 0) {
+            $post_type = str_replace('vt-suggested-edits-', '', $_GET['page']);
+        } else {
+            $post_type = '';
+        }
+
+        if (!$post_type || !post_type_exists($post_type)) {
             echo '<div class="wrap"><h1>' . __('Suggested Edits', 'voxel-toolkit') . '</h1>';
             echo '<p>' . __('Invalid post type.', 'voxel-toolkit') . '</p></div>';
             return;
