@@ -956,7 +956,7 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
                     'message' => <<<HTML
                     Hello @author(:display_name),
 
-                    You have received @custom(suggestion_count) new edit suggestion(s) for your post <strong>@post(title)</strong>.
+                    You have received new edit suggestion(s) for your post <strong>@post(title)</strong> from @suggester(:display_name).
 
                     <a href="@post(url)">View Post</a>
 
@@ -1003,8 +1003,7 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
                     'message' => <<<HTML
                     A new edit suggestion has been submitted for the post <strong>@post(title)</strong>.
 
-                    Suggester: @custom(suggester_name)
-                    Suggestions: @custom(suggestion_count)
+                    Submitted by: @suggester(:display_name) (@suggester(:email))
 
                     <a href="@post(url)">View Post</a>
                     HTML,
@@ -1025,40 +1024,6 @@ class Voxel_Toolkit_Suggestion_Submitted_Event extends \Voxel\Events\Base_Event 
             'post' => \Voxel\Dynamic_Data\Group::Post($this->post),
             'author' => \Voxel\Dynamic_Data\Group::User($this->post->get_author()),
             'suggester' => \Voxel\Dynamic_Data\Group::User($this->suggester),
-            'custom' => [
-                'type' => \Voxel\Dynamic_Tags\Dynamic_Tags::POST_GROUP,
-                'label' => 'Custom fields',
-                'properties' => [
-                    'suggestion_count' => [
-                        'label' => 'Suggestion count',
-                        'type' => 'string',
-                        'callback' => function() {
-                            return $this->suggestion_count;
-                        },
-                    ],
-                    'suggester_name' => [
-                        'label' => 'Suggester name',
-                        'type' => 'string',
-                        'callback' => function() {
-                            return $this->suggester->get_display_name();
-                        },
-                    ],
-                    'suggester_email' => [
-                        'label' => 'Suggester email',
-                        'type' => 'string',
-                        'callback' => function() {
-                            return $this->suggester->get_email();
-                        },
-                    ],
-                    'is_guest' => [
-                        'label' => 'Is guest suggester',
-                        'type' => 'string',
-                        'callback' => function() {
-                            return $this->is_guest ? 'Yes' : 'No';
-                        },
-                    ],
-                ],
-            ],
         ];
     }
 }
