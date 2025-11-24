@@ -322,8 +322,50 @@ class Voxel_Toolkit_Dynamic_Tags {
      * Register properties for site group (Options Page)
      */
     public function register_site_properties($properties, $group) {
-        // Check if options page is enabled
         $settings = Voxel_Toolkit_Settings::instance();
+
+        // Register visitor location tags if enabled
+        if ($settings->is_function_enabled('visitor_location')) {
+            $properties['visitor'] = \Voxel\Dynamic_Data\Tag::Object('Visitor Information')->properties(function() {
+                return [
+                    'location' => \Voxel\Dynamic_Data\Tag::String('Full Location')
+                        ->render(function() {
+                            $location = Voxel_Toolkit_Visitor_Location::instance()->get_location();
+                            // Wrap in span for JavaScript updates if in browser mode
+                            if (empty($location)) {
+                                return '<span data-vt-location="full"></span>';
+                            }
+                            return '<span data-vt-location="full">' . esc_html($location) . '</span>';
+                        }),
+                    'city' => \Voxel\Dynamic_Data\Tag::String('City')
+                        ->render(function() {
+                            $city = Voxel_Toolkit_Visitor_Location::instance()->get_city();
+                            if (empty($city)) {
+                                return '<span data-vt-location="city"></span>';
+                            }
+                            return '<span data-vt-location="city">' . esc_html($city) . '</span>';
+                        }),
+                    'state' => \Voxel\Dynamic_Data\Tag::String('State/Region')
+                        ->render(function() {
+                            $state = Voxel_Toolkit_Visitor_Location::instance()->get_state();
+                            if (empty($state)) {
+                                return '<span data-vt-location="state"></span>';
+                            }
+                            return '<span data-vt-location="state">' . esc_html($state) . '</span>';
+                        }),
+                    'country' => \Voxel\Dynamic_Data\Tag::String('Country')
+                        ->render(function() {
+                            $country = Voxel_Toolkit_Visitor_Location::instance()->get_country();
+                            if (empty($country)) {
+                                return '<span data-vt-location="country"></span>';
+                            }
+                            return '<span data-vt-location="country">' . esc_html($country) . '</span>';
+                        }),
+                ];
+            });
+        }
+
+        // Check if options page is enabled
         if (!$settings->is_function_enabled('options_page')) {
             return $properties;
         }

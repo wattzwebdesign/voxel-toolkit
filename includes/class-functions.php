@@ -258,6 +258,13 @@ class Voxel_Toolkit_Functions {
                 'settings_callback' => array('Voxel_Toolkit_Options_Page', 'render_settings'),
                 'configure_url' => admin_url('admin.php?page=voxel-toolkit-configure-fields'),
             ),
+            'visitor_location' => array(
+                'name' => __('Visitor Location', 'voxel-toolkit'),
+                'description' => __('Display visitor\'s location (city, state, country) using IP geolocation with dynamic tags like @site(visitor.location). Queries multiple free services (geojs.io, ipapi.co, ip-api.com) and picks best result for accuracy.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Visitor_Location',
+                'file' => 'functions/class-visitor-location.php',
+                'settings_callback' => array($this, 'render_visitor_location_settings'),
+            ),
             'widget_css_injector' => array(
                 'name' => __('Widget CSS Class & ID', 'voxel-toolkit'),
                 'description' => __('Add CSS Class and ID fields to Voxel widgets (Navbar, User Bar, Advanced List) for custom styling of individual items.', 'voxel-toolkit'),
@@ -4041,5 +4048,76 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             $instance = $this->active_functions['duplicate_title_checker'];
             $instance->render_settings($settings);
         }
+    }
+
+    /**
+     * Render settings for visitor location function
+     *
+     * @param array $settings Current settings
+     */
+    public function render_visitor_location_settings($settings) {
+        $cache_duration = isset($settings['visitor_location_cache_duration']) ? absint($settings['visitor_location_cache_duration']) : 3600;
+        $detection_mode = isset($settings['visitor_location_mode']) ? sanitize_text_field($settings['visitor_location_mode']) : 'ip';
+
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('Detection Mode', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <fieldset>
+                    <label>
+                        <input type="radio"
+                               name="voxel_toolkit_options[visitor_location][visitor_location_mode]"
+                               value="ip"
+                               <?php checked($detection_mode, 'ip'); ?> />
+                        <strong><?php _e('IP Geolocation', 'voxel-toolkit'); ?></strong>
+                        <p class="description" style="margin-left: 25px;">
+                            <?php _e('Automatic detection using IP address. Queries multiple services (geojs.io, ipapi.co, ip-api.com) for best accuracy. No user interaction required. Accuracy: City-level (~50-100 mile radius).', 'voxel-toolkit'); ?>
+                        </p>
+                    </label>
+                    <br><br>
+                    <label>
+                        <input type="radio"
+                               name="voxel_toolkit_options[visitor_location][visitor_location_mode]"
+                               value="browser"
+                               <?php checked($detection_mode, 'browser'); ?> />
+                        <strong><?php _e('Browser Geolocation (More Accurate)', 'voxel-toolkit'); ?></strong>
+                        <p class="description" style="margin-left: 25px;">
+                            <?php _e('Uses browser geolocation API with GPS/WiFi/cell towers. Requires user permission. Falls back to IP geolocation if denied. Accuracy: GPS-level (meters to feet).', 'voxel-toolkit'); ?>
+                        </p>
+                    </label>
+                </fieldset>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">
+                <label for="visitor_location_cache_duration"><?php _e('Cache Duration (seconds)', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <input type="number"
+                       id="visitor_location_cache_duration"
+                       name="voxel_toolkit_options[visitor_location][visitor_location_cache_duration]"
+                       value="<?php echo esc_attr($cache_duration); ?>"
+                       min="0"
+                       step="1"
+                       class="regular-text" />
+                <p class="description">
+                    <?php _e('How long to cache visitor location data in seconds. Default: 3600 (1 hour). Set to 0 to disable caching.', 'voxel-toolkit'); ?>
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row"><?php _e('Available Dynamic Tags', 'voxel-toolkit'); ?></th>
+            <td>
+                <p class="description">
+                    <strong>@site(visitor.location)</strong> - <?php _e('Full location (City, State for US or City, Country for international)', 'voxel-toolkit'); ?><br>
+                    <strong>@site(visitor.city)</strong> - <?php _e('City name only', 'voxel-toolkit'); ?><br>
+                    <strong>@site(visitor.state)</strong> - <?php _e('State/region name only', 'voxel-toolkit'); ?><br>
+                    <strong>@site(visitor.country)</strong> - <?php _e('Country name only', 'voxel-toolkit'); ?>
+                </p>
+            </td>
+        </tr>
+        <?php
     }
 }
