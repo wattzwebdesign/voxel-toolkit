@@ -76,6 +76,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Poll Display Widget**: Updated widget icon from non-existent `eicon-poll` to standard Elementor `eicon-checkbox` icon for proper display in widget panel
+- **Admin Notifications**: Fixed fatal error during WP-CLI operations (cPanel staging/live pushes, database operations)
+  - Added class existence check for `\Voxel\Controllers\Base_Controller` before class definition
+  - Prevents "Class 'VoxelControllersBase_Controller' not found" error during cPanel operations
+  - File now returns early if Voxel classes aren't loaded yet (WP-CLI context)
+  - Maintains full functionality when Voxel is properly loaded
 
 ## [Unreleased]
 
