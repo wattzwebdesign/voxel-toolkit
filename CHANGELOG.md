@@ -23,6 +23,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Review Content Alignment**: Responsive left/center/right/justify alignment options
   - **Date Alignment**: Responsive left/center/right alignment control
   - All alignment controls support desktop, tablet, and mobile breakpoints
+- **Breadcrumbs Widget**: Hierarchical navigation breadcrumbs with full customization and SEO optimization
+  - **Content Type Support**: Posts, pages, custom post types, taxonomies, archives, search, and 404 pages
+  - **Automatic Hierarchy**: Detects and displays parent post/page chains
+  - **Post Type Archives**: Optional archive link before single posts
+  - **Separator Customization**: Choose from >, /, →, |, ·, or custom text
+  - **Visibility Controls**: Toggle home link, current page, max depth (1-10 levels)
+  - **Prefix/Suffix Text**: Optional text before/after breadcrumb trail
+  - **SEO Features**:
+    - JSON-LD schema markup (BreadcrumbList structured data)
+    - Optional nofollow attribute for all links
+    - Semantic HTML with `<nav>` and `<ol>` elements
+    - ARIA attributes for accessibility
+  - **Styling Controls**:
+    - Link styling: color, hover color, typography, text decoration
+    - Current page: independent color and typography
+    - Separator: color, size, spacing, opacity
+    - Alignment: horizontal and vertical responsive controls
+    - Item gap spacing
+    - Container: background, padding, margin, border, shadow
+  - **Responsive Design**: All major controls support desktop, tablet, and mobile breakpoints
 
 ## [Unreleased]
 
