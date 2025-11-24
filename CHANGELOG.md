@@ -95,6 +95,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Prevents "Class 'VoxelControllersBase_Controller' not found" error during cPanel operations
   - File now returns early if Voxel classes aren't loaded yet (WP-CLI context)
   - Maintains full functionality when Voxel is properly loaded
+- **Article Helpful Widget**: Fixed message customization bugs
+  - Added customizable "Vote Updated Message" control for when users change their vote
+  - Added customizable "Already Voted Message" control for duplicate votes
+  - Fixed custom success message not displaying (was showing hardcoded "Thank you for your feedback!")
+  - All messages now use widget settings instead of hardcoded AJAX responses
+  - All messages are fully translatable and customizable per widget instance
 
 ## [Unreleased]
 
