@@ -11,6 +11,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Check if Voxel Base_Controller exists before defining class
+// This prevents fatal errors during WP-CLI operations (cPanel, staging/live pushes, etc.)
+if (!class_exists('\Voxel\Controllers\Base_Controller')) {
+    return;
+}
+
 class Voxel_Toolkit_Admin_Notifications extends \Voxel\Controllers\Base_Controller {
     
     private $settings;
