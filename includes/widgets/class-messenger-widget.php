@@ -73,18 +73,6 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
-            'enable_sound',
-            [
-                'label' => __('Enable Sound Notifications', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::SWITCHER,
-                'label_on' => __('Yes', 'voxel-toolkit'),
-                'label_off' => __('No', 'voxel-toolkit'),
-                'return_value' => 'yes',
-                'default' => 'no',
-            ]
-        );
-
-        $this->add_control(
             'max_open_chats',
             [
                 'label' => __('Max Open Chats', 'voxel-toolkit'),
@@ -92,6 +80,42 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                 'default' => 3,
                 'min' => 1,
                 'max' => 5,
+            ]
+        );
+
+        $this->add_control(
+            'main_button_icon',
+            [
+                'label' => __('Main Button Icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => [
+                    'value' => 'eicon-comments',
+                    'library' => 'eicons',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'send_button_icon',
+            [
+                'label' => __('Send Button Icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => [
+                    'value' => 'las la-paper-plane',
+                    'library' => 'fa-solid',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'upload_button_icon',
+            [
+                'label' => __('Upload Button Icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => [
+                    'value' => 'las la-paperclip',
+                    'library' => 'fa-solid',
+                ],
             ]
         );
 
@@ -1044,12 +1068,11 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
         ?>
         <div class="vt-messenger-container <?php echo esc_attr($position_class); ?> <?php echo ($is_editor && $preview_mode) ? 'vt-preview-mode' : ''; ?>"
              data-max-chats="<?php echo esc_attr($max_chats); ?>"
-             data-show-badge="<?php echo esc_attr($settings['show_unread_badge']); ?>"
-             data-enable-sound="<?php echo esc_attr($settings['enable_sound']); ?>">
+             data-show-badge="<?php echo esc_attr($settings['show_unread_badge']); ?>">
 
             <!-- Main Messenger Button -->
             <button class="vt-messenger-button" aria-label="<?php _e('Open messenger', 'voxel-toolkit'); ?>">
-                <i class="eicon-comments"></i>
+                <?php \Elementor\Icons_Manager::render_icon($settings['main_button_icon'], ['aria-hidden' => 'true']); ?>
                 <?php if ($settings['show_unread_badge'] === 'yes'): ?>
                     <span class="vt-messenger-badge" <?php echo ($is_editor && $preview_mode) ? '' : 'style="display: none;"'; ?>>
                         <?php echo ($is_editor && $preview_mode) ? '3' : '0'; ?>
@@ -1154,16 +1177,16 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                             </div>
                         </div>
                         <div class="vt-messenger-chat-footer">
-                            <div class="vt-messenger-upload-buttons">
-                                <button class="vt-messenger-upload-btn vt-upload-device" aria-label="<?php _e('Upload from device', 'voxel-toolkit'); ?>">
-                                    <i class="las la-paperclip"></i>
-                                </button>
-                            </div>
                             <textarea class="vt-messenger-input"
                                       placeholder="<?php echo esc_attr__('Type a message...', 'voxel-toolkit'); ?>"
                                       rows="1"></textarea>
+                            <div class="vt-messenger-upload-buttons">
+                                <button class="vt-messenger-upload-btn vt-upload-device" aria-label="<?php _e('Upload from device', 'voxel-toolkit'); ?>">
+                                    <?php \Elementor\Icons_Manager::render_icon($settings['upload_button_icon'], ['aria-hidden' => 'true']); ?>
+                                </button>
+                            </div>
                             <button class="vt-messenger-send-btn" aria-label="<?php _e('Send', 'voxel-toolkit'); ?>">
-                                <i class="las la-paper-plane"></i>
+                                <?php \Elementor\Icons_Manager::render_icon($settings['send_button_icon'], ['aria-hidden' => 'true']); ?>
                             </button>
                             <input type="file" class="vt-messenger-file-input" style="display: none;" accept="image/*">
                         </div>
