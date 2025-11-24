@@ -22,7 +22,7 @@ class Voxel_Toolkit_Poll_Display_Widget extends \Elementor\Widget_Base {
     }
 
     public function get_icon() {
-        return 'eicon-poll';
+        return 'eicon-checkbox';
     }
 
     public function get_categories() {
