@@ -16,21 +16,8 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
     public function __construct($data = [], $args = null) {
         parent::__construct($data, $args);
 
-        // Enqueue scripts and styles
-        wp_enqueue_script('voxel-toolkit-pending-suggestions', VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/pending-suggestions.js', array('jquery'), VOXEL_TOOLKIT_VERSION, true);
+        // Enqueue styles only (no JS needed - backend handles Accept/Reject)
         wp_enqueue_style('voxel-toolkit-suggest-edits', VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/suggest-edits.css', array(), VOXEL_TOOLKIT_VERSION);
-
-        wp_localize_script('voxel-toolkit-pending-suggestions', 'vtPendingSuggestions', array(
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('vt_suggest_edits'),
-            'i18n' => array(
-                'acceptSuccess' => __('Suggestion queued for save', 'voxel-toolkit'),
-                'rejectSuccess' => __('Suggestion rejected', 'voxel-toolkit'),
-                'saveSuccess' => __('Changes saved successfully', 'voxel-toolkit'),
-                'error' => __('An error occurred. Please try again.', 'voxel-toolkit'),
-                'confirmSave' => __('Apply all accepted suggestions?', 'voxel-toolkit'),
-            ),
-        ));
     }
 
     public function get_name() {
@@ -100,11 +87,120 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
 
         $this->end_controls_section();
 
-        // Style Tab
+        // Labels Section
         $this->start_controls_section(
-            'style_section',
+            'labels_section',
             [
-                'label' => __('Style', 'voxel-toolkit'),
+                'label' => __('Labels', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+            ]
+        );
+
+        $this->add_control(
+            'label_current',
+            [
+                'label' => __('Current Label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Current:', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'label_suggested',
+            [
+                'label' => __('Suggested Label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Suggested:', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'label_proof_images',
+            [
+                'label' => __('Proof Images Label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Proof Images:', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'button_accept_text',
+            [
+                'label' => __('Accept Button Text', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Accept', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'button_reject_text',
+            [
+                'label' => __('Reject Button Text', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Reject', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // Confirmation Messages Section
+        $this->start_controls_section(
+            'confirmation_messages_section',
+            [
+                'label' => __('Confirmation Messages', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+            ]
+        );
+
+        $this->add_control(
+            'confirm_accept_message',
+            [
+                'label' => __('Accept Confirmation (Regular)', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXTAREA,
+                'default' => __('Are you sure you want to accept this suggestion?', 'voxel-toolkit'),
+                'description' => __('Message shown when accepting regular suggestions', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'confirm_delete_first',
+            [
+                'label' => __('Delete Confirmation (First Warning)', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXTAREA,
+                'rows' => 5,
+                'default' => __("WARNING: Accepting this will PERMANENTLY DELETE the post. This action CANNOT be undone!\n\nThe post will be moved to trash and cannot be recovered.\n\nAre you absolutely sure you want to proceed?", 'voxel-toolkit'),
+                'description' => __('First warning for permanently closed suggestions', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'confirm_delete_second',
+            [
+                'label' => __('Delete Confirmation (Final Warning)', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXTAREA,
+                'rows' => 3,
+                'default' => __("FINAL WARNING: You are about to delete this post permanently.\n\nClick OK to confirm deletion, or Cancel to stop.", 'voxel-toolkit'),
+                'description' => __('Final warning for permanently closed suggestions', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'confirm_reject_message',
+            [
+                'label' => __('Reject Confirmation', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXTAREA,
+                'default' => __('Are you sure you want to reject this suggestion?', 'voxel-toolkit'),
+                'description' => __('Message shown when rejecting suggestions', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // Style Tab - General
+        $this->start_controls_section(
+            'style_general_section',
+            [
+                'label' => __('General', 'voxel-toolkit'),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
             ]
         );
@@ -120,10 +216,29 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'title_typography',
+                'selector' => '{{WRAPPER}} .vt-pending-suggestions-title',
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // Style Tab - Suggestion Cards
+        $this->start_controls_section(
+            'style_cards_section',
+            [
+                'label' => __('Suggestion Cards', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
         $this->add_control(
             'suggestion_background',
             [
-                'label' => __('Suggestion Background', 'voxel-toolkit'),
+                'label' => __('Background Color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
                     '{{WRAPPER}} .vt-suggestion-item' => 'background-color: {{VALUE}}',
@@ -139,6 +254,210 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
                 'selectors' => [
                     '{{WRAPPER}} .vt-suggestion-item' => 'border-color: {{VALUE}}',
                 ],
+            ]
+        );
+
+        $this->add_control(
+            'border_width',
+            [
+                'label' => __('Border Width', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 10,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-suggestion-item' => 'border-width: {{SIZE}}{{UNIT}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'border_radius',
+            [
+                'label' => __('Border Radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 50,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-suggestion-item' => 'border-radius: {{SIZE}}{{UNIT}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'card_spacing',
+            [
+                'label' => __('Space Between Cards', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 50,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-suggestion-item' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // Style Tab - Labels
+        $this->start_controls_section(
+            'style_labels_section',
+            [
+                'label' => __('Labels', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'label_color',
+            [
+                'label' => __('Label Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-current-value-box label' => 'color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-suggested-value-box label' => 'color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-proof-images-display label' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'label_typography',
+                'selector' => '{{WRAPPER}} .vt-current-value-box label, {{WRAPPER}} .vt-suggested-value-box label, {{WRAPPER}} .vt-proof-images-display label',
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // Style Tab - Values
+        $this->start_controls_section(
+            'style_values_section',
+            [
+                'label' => __('Values', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'current_value_color',
+            [
+                'label' => __('Current Value Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-current-value-box .vt-value' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'current_value_bg',
+            [
+                'label' => __('Current Value Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-current-value-box' => 'background-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'suggested_value_color',
+            [
+                'label' => __('Suggested Value Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-suggested-value-box .vt-value' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'suggested_value_bg',
+            [
+                'label' => __('Suggested Value Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-suggested-value-box' => 'background-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // Style Tab - Buttons
+        $this->start_controls_section(
+            'style_buttons_section',
+            [
+                'label' => __('Buttons', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'accept_button_color',
+            [
+                'label' => __('Accept Button Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-accept-btn' => 'background-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'accept_button_text_color',
+            [
+                'label' => __('Accept Button Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-accept-btn' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'reject_button_color',
+            [
+                'label' => __('Reject Button Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-reject-btn' => 'background-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'reject_button_text_color',
+            [
+                'label' => __('Reject Button Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-reject-btn' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'button_typography',
+                'selector' => '{{WRAPPER}} .vt-accept-btn, {{WRAPPER}} .vt-reject-btn',
             ]
         );
 
@@ -197,7 +516,11 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
                     <p><?php echo esc_html($settings['no_suggestions_text'] ?? __('No pending suggestions', 'voxel-toolkit')); ?></p>
                 </div>
             <?php else: ?>
-                <div class="vt-suggestions-list">
+                <div class="vt-suggestions-list"
+                     data-confirm-accept="<?php echo esc_attr($settings['confirm_accept_message'] ?: __('Are you sure you want to accept this suggestion?', 'voxel-toolkit')); ?>"
+                     data-confirm-delete-first="<?php echo esc_attr($settings['confirm_delete_first'] ?: __("WARNING: Accepting this will PERMANENTLY DELETE the post. This action CANNOT be undone!\n\nThe post will be moved to trash and cannot be recovered.\n\nAre you absolutely sure you want to proceed?", 'voxel-toolkit')); ?>"
+                     data-confirm-delete-second="<?php echo esc_attr($settings['confirm_delete_second'] ?: __("FINAL WARNING: You are about to delete this post permanently.\n\nClick OK to confirm deletion, or Cancel to stop.", 'voxel-toolkit')); ?>"
+                     data-confirm-reject="<?php echo esc_attr($settings['confirm_reject_message'] ?: __('Are you sure you want to reject this suggestion?', 'voxel-toolkit')); ?>">
                     <?php foreach ($all_suggestions as $suggestion): ?>
                         <?php
                         $field_label = $this->get_field_label($post_id, $suggestion->field_key);
@@ -227,7 +550,7 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
                             <div class="vt-suggestion-body">
                                 <div class="vt-value-comparison">
                                     <div class="vt-current-value-box">
-                                        <label><?php _e('Current:', 'voxel-toolkit'); ?></label>
+                                        <label><?php echo esc_html($settings['label_current'] ?: __('Current:', 'voxel-toolkit')); ?></label>
                                         <div class="vt-value">
                                             <?php
                                             if (!empty($suggestion->current_value)) {
@@ -242,7 +565,7 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
                                     <?php if (!empty($suggestion->suggested_value)): ?>
                                         <div class="vt-arrow">→</div>
                                         <div class="vt-suggested-value-box">
-                                            <label><?php _e('Suggested:', 'voxel-toolkit'); ?></label>
+                                            <label><?php echo esc_html($settings['label_suggested'] ?: __('Suggested:', 'voxel-toolkit')); ?></label>
                                             <div class="vt-value vt-suggested">
                                                 <?php echo $this->format_suggestion_value($suggestion->suggested_value, $suggestion->field_key, $suggestion->post_id); ?>
                                                 <?php if ($suggestion->is_incorrect): ?>
@@ -261,7 +584,7 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
                                     <?php else: ?>
                                         <div class="vt-arrow">→</div>
                                         <div class="vt-suggested-value-box">
-                                            <label><?php _e('Suggested:', 'voxel-toolkit'); ?></label>
+                                            <label><?php echo esc_html($settings['label_suggested'] ?: __('Suggested:', 'voxel-toolkit')); ?></label>
                                             <div class="vt-value">
                                                 <em style="color: #999;"><?php _e('(empty)', 'voxel-toolkit'); ?></em>
                                             </div>
@@ -271,17 +594,31 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
 
                                 <?php if (!empty($suggestion->proof_images)): ?>
                                     <div class="vt-proof-images-display">
-                                        <label><?php _e('Proof Images:', 'voxel-toolkit'); ?></label>
+                                        <label><?php echo esc_html($settings['label_proof_images'] ?: __('Proof Images:', 'voxel-toolkit')); ?></label>
                                         <div class="vt-images-grid">
                                             <?php
+                                            // Debug: show what's in proof_images
+                                            error_log('VT: Proof images raw: ' . $suggestion->proof_images);
                                             $image_ids = json_decode($suggestion->proof_images, true);
-                                            if (is_array($image_ids)) {
+                                            error_log('VT: Decoded image IDs: ' . print_r($image_ids, true));
+
+                                            if (is_array($image_ids) && !empty($image_ids)) {
                                                 foreach ($image_ids as $image_id) {
-                                                    $image_url = wp_get_attachment_image_url($image_id, 'thumbnail');
+                                                    error_log('VT: Processing image ID: ' . $image_id);
+                                                    $image_url = wp_get_attachment_url($image_id);
+                                                    $thumbnail_url = wp_get_attachment_image_url($image_id, 'thumbnail');
+                                                    error_log('VT: Image URL: ' . $image_url . ', Thumbnail URL: ' . $thumbnail_url);
+
                                                     if ($image_url) {
-                                                        echo '<img src="' . esc_url($image_url) . '" alt="">';
+                                                        echo '<a href="' . esc_url($image_url) . '" target="_blank" class="vt-proof-image-link">';
+                                                        echo '<img src="' . esc_url($thumbnail_url ?: $image_url) . '" alt="' . esc_attr__('Proof image', 'voxel-toolkit') . '">';
+                                                        echo '</a>';
+                                                    } else {
+                                                        error_log('VT: No URL found for image ID: ' . $image_id);
                                                     }
                                                 }
+                                            } else {
+                                                error_log('VT: Image IDs not an array or empty');
                                             }
                                             ?>
                                         </div>
@@ -295,13 +632,13 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
                                         class="vt-accept-btn"
                                         data-suggestion-id="<?php echo esc_attr($suggestion->id); ?>">
                                         <i class="eicon-check"></i>
-                                        <?php _e('Accept', 'voxel-toolkit'); ?>
+                                        <?php echo esc_html($settings['button_accept_text'] ?: __('Accept', 'voxel-toolkit')); ?>
                                     </button>
                                     <button type="button"
                                         class="vt-reject-btn"
                                         data-suggestion-id="<?php echo esc_attr($suggestion->id); ?>">
                                         <i class="eicon-close"></i>
-                                        <?php _e('Reject', 'voxel-toolkit'); ?>
+                                        <?php echo esc_html($settings['button_reject_text'] ?: __('Reject', 'voxel-toolkit')); ?>
                                     </button>
                                 </div>
                             <?php endif; ?>
@@ -327,6 +664,11 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
      * Get field label from post type
      */
     private function get_field_label($post_id, $field_key) {
+        // Special handling for permanently closed
+        if ($field_key === '_permanently_closed') {
+            return __('Permanently Closed?', 'voxel-toolkit');
+        }
+
         if (class_exists('\Voxel\Post')) {
             $voxel_post = \Voxel\Post::get($post_id);
             if ($voxel_post) {
