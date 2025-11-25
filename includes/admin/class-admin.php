@@ -1880,6 +1880,24 @@ class Voxel_Toolkit_Admin {
                                 <em>42</em>
                             </td>
                         </tr>
+                        <tr>
+                            <td><code>generate_qr_code</code></td>
+                            <td><?php _e('Generate a QR code image from any URL with optional logo overlay and download button', 'voxel-toolkit'); ?></td>
+                            <td>
+                                <?php _e('1. Logo URL (optional)', 'voxel-toolkit'); ?><br>
+                                <?php _e('2. QR Color hex (optional)', 'voxel-toolkit'); ?><br>
+                                <?php _e('3. Button text (optional)', 'voxel-toolkit'); ?><br>
+                                <?php _e('4. Quality: 1500/2000/3000 (optional)', 'voxel-toolkit'); ?><br>
+                                <?php _e('5. Button color hex (optional)', 'voxel-toolkit'); ?><br>
+                                <?php _e('6. Filename (optional)', 'voxel-toolkit'); ?>
+                            </td>
+                            <td>
+                                <code>@post(permalink).generate_qr_code(@post(logo.url),#ff0000,Download the QR Code,2000,#ff0000,@post(title)-qr-code)</code>
+                            </td>
+                            <td>
+                                <em><?php _e('QR code image with centered logo and download button', 'voxel-toolkit'); ?></em>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
