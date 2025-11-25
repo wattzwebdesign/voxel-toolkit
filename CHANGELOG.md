@@ -29,6 +29,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Use in order confirmation emails, receipts, and notifications
   - Always enabled, no configuration required
   - Documented in Voxel Toolkit > Dynamic Tags admin page under "Order Modifiers"
+- **Dynamic Tag Modifier - .generate_qr_code()**: Generate QR codes from URLs with optional logo overlay
+  - **Usage**: `@post(permalink).generate_qr_code(logo_url,color,button_text,quality,button_color,filename)`
+  - **Example**: `@post(permalink).generate_qr_code(@post(logo.url),#ff0000,Download the QR Code,2000,#ff0000,@post(title)-qr-code)`
+  - **Parameters** (all optional):
+    - Logo URL: Centered circular logo overlay on QR code
+    - QR Color: Hex color for QR code (default: #000000)
+    - Button Text: Download button label (default: "Download high quality PNG")
+    - Quality: 1500, 2000, or 3000 pixels (default: 2000)
+    - Button Color: Hex color for download button (default: #222222)
+    - Filename: Downloaded file name (default: "qr-code")
+  - **Features**:
+    - Uses qrserver.com API for QR generation
+    - Logo appears centered with white background circle
+    - Download button generates high-res PNG with transparent background
+    - Canvas-based client-side image processing for logo overlay
+    - Sanitized filename with special character removal
+  - Always enabled, no configuration required
+  - Documented in Voxel Toolkit > Dynamic Tags admin page under "Modifiers"
 - **Review Collection Widget**: Text alignment controls for enhanced design flexibility
   - **Post Title Alignment**: Responsive left/center/right alignment control
   - **Rating Alignment**: Responsive left/center/right alignment for star ratings
