@@ -1,0 +1,114 @@
+/**
+ * Active Filters Widget Styles
+ *
+ * @package Voxel_Toolkit
+ */
+
+/* Container */
+.vt-active-filters-widget {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: fit-content;
+}
+
+/* Heading */
+.vt-active-filters-heading {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
+    width: 100%;
+}
+
+/* Filters wrapper (list + clear all) */
+.vt-active-filters-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Filters list */
+.vt-active-filters-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Individual filter tag */
+.vt-active-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #f0f0f0;
+    border-radius: 20px;
+    font-size: 13px;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+.vt-active-filter:hover {
+    background: #e0e0e0;
+    text-decoration: none;
+}
+
+/* Filter label */
+.vt-filter-label {
+    white-space: nowrap;
+}
+
+/* Remove icon */
+.vt-filter-remove {
+    font-size: 16px;
+    line-height: 1;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.vt-active-filter:hover .vt-filter-remove {
+    opacity: 1;
+}
+
+/* Clear all button */
+.vt-clear-all-filters {
+    font-size: 13px;
+    color: #666;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    cursor: pointer;
+}
+
+.vt-clear-all-filters:hover {
+    color: #333;
+    text-decoration: underline;
+}
+
+/* Empty state */
+.vt-active-filters-empty {
+    color: #999;
+    font-size: 13px;
+}
+
+.vt-filters-empty-message {
+    font-style: italic;
+}
+
+/* Vertical layout */
+.vt-active-filters-widget.vt-layout-vertical .vt-active-filters-inner {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.vt-active-filters-widget.vt-layout-vertical .vt-active-filters-list {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.vt-active-filters-widget.vt-layout-vertical .vt-active-filter {
+    width: auto;
+}
