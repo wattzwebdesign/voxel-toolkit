@@ -135,6 +135,19 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'layout_direction',
+            [
+                'label' => __('Layout', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'default' => 'horizontal',
+                'options' => [
+                    'horizontal' => __('Horizontal', 'voxel-toolkit'),
+                    'vertical' => __('Vertical', 'voxel-toolkit'),
+                ],
+            ]
+        );
+
+        $this->add_control(
             'hide_when_empty',
             [
                 'label' => __('Hide When No Filters', 'voxel-toolkit'),
@@ -1097,9 +1110,11 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
         $clear_all_text = !empty($settings['clear_all_text']) ? $settings['clear_all_text'] : __('Clear All', 'voxel-toolkit');
         $clear_all_url = $this->get_clear_all_url();
         $heading_text = !empty($settings['heading_text']) ? $settings['heading_text'] : '';
+        $layout_direction = !empty($settings['layout_direction']) ? $settings['layout_direction'] : 'horizontal';
+        $layout_class = $layout_direction === 'vertical' ? ' vt-layout-vertical' : '';
 
         ?>
-        <div class="vt-active-filters-widget">
+        <div class="vt-active-filters-widget<?php echo esc_attr($layout_class); ?>">
             <?php if ($heading_text): ?>
                 <div class="vt-active-filters-heading"><?php echo esc_html($heading_text); ?></div>
             <?php endif; ?>

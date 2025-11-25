@@ -96,3 +96,18 @@
 .vt-filters-empty-message {
     font-style: italic;
 }
+
+/* Vertical layout */
+.vt-active-filters-widget.vt-layout-vertical .vt-active-filters-inner {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.vt-active-filters-widget.vt-layout-vertical .vt-active-filters-list {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.vt-active-filters-widget.vt-layout-vertical .vt-active-filter {
+    width: auto;
+}
