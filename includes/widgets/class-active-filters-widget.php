@@ -490,24 +490,10 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
             'tag_border_radius',
             [
                 'label' => __('Border Radius', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::SLIDER,
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
                 'size_units' => ['px', '%'],
-                'range' => [
-                    'px' => [
-                        'min' => 0,
-                        'max' => 50,
-                    ],
-                    '%' => [
-                        'min' => 0,
-                        'max' => 50,
-                    ],
-                ],
-                'default' => [
-                    'unit' => 'px',
-                    'size' => 20,
-                ],
                 'selectors' => [
-                    '{{WRAPPER}} .vt-active-filter' => 'border-radius: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vt-active-filter' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
                 ],
             ]
         );
@@ -697,16 +683,10 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
             'clear_all_border_radius',
             [
                 'label' => __('Border Radius', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::SLIDER,
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
                 'size_units' => ['px', '%'],
-                'range' => [
-                    'px' => [
-                        'min' => 0,
-                        'max' => 50,
-                    ],
-                ],
                 'selectors' => [
-                    '{{WRAPPER}} .vt-clear-all-filters' => 'border-radius: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vt-clear-all-filters' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
                 ],
             ]
         );
