@@ -301,18 +301,13 @@
             return;
         }
 
-        // Handle clear all filters
+        // Handle clear all filters - full page refresh
         var clearAll = e.target.closest('.vt-clear-all-filters');
         if (clearAll) {
             e.preventDefault();
             var clearUrl = clearAll.getAttribute('href');
             if (clearUrl) {
-                // Update URL without page reload
-                history.pushState({}, '', clearUrl);
-                onUrlChange();
-
-                // Trigger Voxel to refresh results
-                triggerVoxelRefresh();
+                window.location.href = clearUrl;
             }
             return;
         }
