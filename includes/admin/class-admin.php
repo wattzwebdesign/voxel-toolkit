@@ -1823,6 +1823,36 @@ class Voxel_Toolkit_Admin {
                 </table>
             </div>
 
+            <!-- Order Modifiers -->
+            <div class="settings-section" style="margin-top: 30px;">
+                <h2><?php _e('Order Modifiers', 'voxel-toolkit'); ?></h2>
+                <p class="description"><?php _e('Modifiers that can be applied to order data. Use with @order(id).modifier() syntax in order notifications and emails.', 'voxel-toolkit'); ?></p>
+
+                <table class="widefat striped">
+                    <thead>
+                        <tr>
+                            <th><?php _e('Modifier', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Parameters', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Output Example', 'voxel-toolkit'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>summary</code></td>
+                            <td><?php _e('Generate email-friendly HTML table of order items with product names, quantities, addons, date ranges (for bookings), and pricing totals', 'voxel-toolkit'); ?></td>
+                            <td><?php _e('None', 'voxel-toolkit'); ?></td>
+                            <td><code>@order(id).summary()</code></td>
+                            <td><em>HTML table showing all order items</em></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 15px;">
+                    <em><?php _e('Note: The summary modifier queries order items from the database and formats them with inline styles for email compatibility. It supports both regular products and booking products with addons.', 'voxel-toolkit'); ?></em>
+                </p>
+            </div>
+
             <!-- Usage Tips -->
             <div class="settings-section" style="margin-top: 30px;">
                 <h2><?php _e('Usage Tips', 'voxel-toolkit'); ?></h2>

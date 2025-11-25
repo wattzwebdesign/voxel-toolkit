@@ -30,6 +30,7 @@ class Voxel_Toolkit_Dynamic_Tags {
         // Register methods with Voxel - always active
         add_filter('voxel/dynamic-data/groups/user/methods', array($this, 'register_user_methods'), 10, 1);
         add_filter('voxel/dynamic-data/groups/author/methods', array($this, 'register_author_methods'), 10, 1);
+        add_filter('voxel/dynamic-data/groups/order/methods', array($this, 'register_order_methods'), 10, 1);
 
         // Register modifiers with Voxel
         add_filter('voxel/dynamic-data/modifiers', array($this, 'register_modifiers'), 10, 1);
@@ -47,6 +48,9 @@ class Voxel_Toolkit_Dynamic_Tags {
     public function load_methods() {
         if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-profile-completion-method.php')) {
             require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-profile-completion-method.php';
+        }
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-order-summary-method.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-order-summary-method.php';
         }
         if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-file-modifiers.php')) {
             require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-file-modifiers.php';
@@ -98,6 +102,14 @@ class Voxel_Toolkit_Dynamic_Tags {
      */
     public function register_author_methods($methods) {
         $methods['profile_completion'] = \Voxel_Toolkit_Profile_Completion_Method::class;
+        return $methods;
+    }
+
+    /**
+     * Register methods for order group
+     */
+    public function register_order_methods($methods) {
+        $methods['summary'] = \Voxel_Toolkit_Order_Summary_Method::class;
         return $methods;
     }
 
