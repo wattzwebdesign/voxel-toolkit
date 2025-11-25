@@ -64,6 +64,9 @@ class Voxel_Toolkit_Dynamic_Tags {
         if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-sold-modifier.php')) {
             require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-sold-modifier.php';
         }
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-qr-code-modifier.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-qr-code-modifier.php';
+        }
     }
 
     /**
@@ -86,6 +89,7 @@ class Voxel_Toolkit_Dynamic_Tags {
         $modifiers['address_part'] = \Voxel_Toolkit_Address_Part_Modifier::class;
         $modifiers['tally'] = \Voxel_Toolkit_Tally_Modifier::class;
         $modifiers['sold'] = \Voxel_Toolkit_Sold_Modifier::class;
+        $modifiers['generate_qr_code'] = \Voxel_Toolkit_QR_Code_Modifier::class;
         return $modifiers;
     }
 

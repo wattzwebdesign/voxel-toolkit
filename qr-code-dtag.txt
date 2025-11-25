@@ -1,0 +1,271 @@
+add_filter( 'voxel/dynamic-data/modifiers', function( $modifiers ) {
+
+	class Generate_QR_Code extends \Voxel\Dynamic_Data\Modifiers\Base_Modifier {
+		public function get_label(): string {
+			return 'Generate QR Code From URL';
+		}
+
+		public function get_key(): string {
+			return 'generate_qr_code';
+		}
+
+		protected function define_args(): void {
+			$this->define_arg( [
+				'type' => 'text',
+				'label' => 'Logo link (optional)',
+			] );
+			$this->define_arg( [
+				'type' => 'text',
+				'label' => 'QR Color (optional)',
+			] );
+			$this->define_arg( [
+				'type' => 'text',
+				'label' => 'Download button text (optional)',
+				'default' => 'Download high quality PNG',
+			] );
+			$this->define_arg( [
+				'type' => 'select',
+				'label' => 'Download quality (optional)',
+				'choices' => [
+					'1500' => 'High quality (1500x1500px)',
+					'2000' => 'Very high quality (2000x2000px)',
+					'3000' => 'Ultra high quality (3000x3000px)',
+				],
+				'default' => '2000',
+			] );
+			$this->define_arg( [
+				'type' => 'text',
+				'label' => 'Button color (optional)',
+				'default' => '#222222',
+			] );
+			$this->define_arg( [
+				'type' => 'text',
+				'label' => 'Name of the file (optional)',
+				'default' => 'qr-code',
+			] );
+		}
+
+		public function apply( string $value ) {
+			$logo_url        = trim( $this->get_arg(0) );
+			$color_hex       = trim( $this->get_arg(1) );
+			$button_label    = trim( $this->get_arg(2) );
+			$download_quality= trim( $this->get_arg(3) );
+			$button_color    = trim( $this->get_arg(4) );
+			$filename        = trim( $this->get_arg(5) );
+
+			if ( $button_label === '' ) {
+				$button_label = 'Download high quality PNG';
+			}
+
+			if ( $download_quality === '' ) {
+				$download_quality = '2000';
+			}
+
+			if ( $button_color === '' ) {
+				$button_color = '#222222';
+			}
+
+			if ( $filename === '' ) {
+				$filename = 'qr-code';
+			}
+
+			$filename = strtolower($filename);
+			$filename = remove_accents($filename);
+			$filename = str_replace(' ', '_', $filename);
+			$filename = preg_replace('/[^a-z0-9_-]/', '', $filename);
+			$filename = preg_replace('/[_-]+/', '_', $filename);
+			$filename = trim($filename, '_-');
+
+			if ( empty($filename) ) {
+				$filename = 'qr_code';
+			}
+
+			if ( empty( $value ) || ! filter_var( $value, FILTER_VALIDATE_URL ) ) {
+				return $value;
+			}
+
+			$color_clean = '000000';
+			if ( preg_match('/^#?([a-f0-9]{6})$/i', $color_hex, $m) ) {
+				$color_clean = ltrim($m[1], '#');
+			}
+
+			$button_color_clean = '#222222';
+			if ( preg_match('/^#?([a-f0-9]{6})$/i', $button_color, $m) ) {
+				$button_color_clean = '#' . ltrim($m[1], '#');
+			}
+
+			$qr_code_url = sprintf(
+				'https://api.qrserver.com/v1/create-qr-code/?size=700x700&data=%s&color=%s&bgcolor=ffffff&margin=0&ecc=L&format=png',
+				urlencode( $value ),
+				$color_clean
+			);
+
+			$qr_code_hd_url = sprintf(
+				'https://api.qrserver.com/v1/create-qr-code/?size=%sx%s&data=%s&color=%s&bgcolor=ffffff&margin=0&ecc=L&format=png',
+				$download_quality,
+				$download_quality,
+				urlencode( $value ),
+				$color_clean
+			);
+
+			$logo_pct  = 0.15;
+			$marge_pct = 0.02;
+			$total_pct = $logo_pct + 2 * $marge_pct;
+
+			$uniq_id = 'qr'.uniqid();
+
+			$output = '<div style="position:relative; width:100%; max-width:700px; aspect-ratio:1/1; display:inline-block;">';
+			$output .= sprintf(
+				'<img id="%s-img" src="%s" alt="QR Code" style="width:100%%; height:auto; display:block; image-rendering: -webkit-optimize-contrast; image-rendering: -moz-crisp-edges; image-rendering: pixelated; image-rendering: crisp-edges;" crossorigin="anonymous" />',
+				esc_attr($uniq_id),
+				esc_url( $qr_code_url )
+			);
+
+			if ( !empty($logo_url) && filter_var($logo_url, FILTER_VALIDATE_URL) ) {
+				$output .= sprintf(
+					'<div style="position:absolute; top:50%%; left:50%%; width:%.2f%%; height:%.2f%%; background:rgba(255,255,255,0.9); border-radius:50%%; transform:translate(-50%%,-50%%); z-index:1; box-shadow: 0 0 0 2px rgba(255,255,255,0.9);"></div>',
+					$total_pct * 100,
+					$total_pct * 100
+				);
+				$output .= sprintf(
+					'<img src="%s" alt="Logo in the center of the QR Code" style="position:absolute; top:50%%; left:50%%; width:%.2f%%; height:%.2f%%; border-radius:50%%; transform:translate(-50%%,-50%%); z-index:2; object-fit:cover;" crossorigin="anonymous" />',
+					esc_url($logo_url),
+					$logo_pct * 100,
+					$logo_pct * 100
+				);
+			}
+			$output .= '</div>';
+
+			$output .= sprintf(
+				'<div style="margin-top:18px; text-align:center;">
+				<button type="button" onclick="(function(){
+					var qrSrc = \'%s\';
+					var logoSrc = %s;
+					var canvasSize = %d;
+					var logoPct = %f;
+					var margePct = %f;
+					var totalPct = logoPct + 2 * margePct;
+					var fileName = \'%s\';
+
+					var btn = event.target;
+					var originalText = btn.textContent;
+					btn.textContent = \'Generating...\';
+					btn.disabled = true;
+
+					var canvas = document.createElement(\'canvas\');
+					canvas.width = canvas.height = canvasSize;
+					var ctx = canvas.getContext(\'2d\');
+
+					ctx.imageSmoothingEnabled = false;
+					ctx.webkitImageSmoothingEnabled = false;
+					ctx.mozImageSmoothingEnabled = false;
+					ctx.msImageSmoothingEnabled = false;
+
+					var qrImg = new window.Image();
+					qrImg.crossOrigin = \'anonymous\';
+					qrImg.onload = function() {
+						var tempCanvas = document.createElement(\'canvas\');
+						tempCanvas.width = tempCanvas.height = canvasSize;
+						var tempCtx = tempCanvas.getContext(\'2d\');
+						tempCtx.imageSmoothingEnabled = false;
+
+						var qrWidth = qrImg.naturalWidth || qrImg.width;
+						var qrHeight = qrImg.naturalHeight || qrImg.height;
+						tempCtx.drawImage(qrImg, 0, 0, qrWidth, qrHeight, 0, 0, canvasSize, canvasSize);
+
+						var imageData = tempCtx.getImageData(0, 0, canvasSize, canvasSize);
+						var data = imageData.data;
+
+						for (var i = 0; i < data.length; i += 4) {
+							var red = data[i];
+							var green = data[i + 1];
+							var blue = data[i + 2];
+							if (red > 240 && green > 240 && blue > 240) {
+								data[i + 3] = 0;
+							}
+						}
+
+						ctx.putImageData(imageData, 0, 0);
+
+						if(logoSrc){
+							var center = canvasSize / 2;
+							var cSize = totalPct * canvasSize;
+							var lSize = logoPct * canvasSize;
+
+							var logoImg = new window.Image();
+							logoImg.crossOrigin = \'anonymous\';
+							logoImg.onload = function() {
+								ctx.save();
+								ctx.globalCompositeOperation = \'destination-out\';
+								ctx.beginPath();
+								ctx.arc(center, center, cSize/2, 0, 2*Math.PI, false);
+								ctx.fill();
+								ctx.restore();
+
+								ctx.save();
+								ctx.globalCompositeOperation = \'source-over\';
+								ctx.beginPath();
+								ctx.arc(center, center, lSize/2, 0, 2*Math.PI, false);
+								ctx.closePath();
+								ctx.clip();
+
+								var logoX = center - lSize/2;
+								var logoY = center - lSize/2;
+								ctx.drawImage(logoImg, logoX, logoY, lSize, lSize);
+								ctx.restore();
+
+								downloadCanvas();
+							};
+							logoImg.onerror = function() {
+								console.warn(\'Logo loading error, downloading without logo\');
+								downloadCanvas();
+							};
+							logoImg.src = logoSrc;
+						} else {
+							downloadCanvas();
+						}
+
+						function downloadCanvas() {
+							try {
+								var dataURL = canvas.toDataURL(\'image/png\');
+								var link = document.createElement(\'a\');
+								link.download = fileName + \'.png\';
+								link.href = dataURL;
+								document.body.appendChild(link);
+								link.click();
+								document.body.removeChild(link);
+							} catch(e) {
+								console.error(\'Download error:\', e);
+								alert(\'Error during download. Please try again.\');
+							} finally {
+								btn.textContent = originalText;
+								btn.disabled = false;
+							}
+						}
+					};
+					qrImg.onerror = function() {
+						console.error(\'QR code loading error\');
+						alert(\'QR code loading error. Please try again.\');
+						btn.textContent = originalText;
+						btn.disabled = false;
+					};
+					qrImg.src = qrSrc;
+				})();" style="padding:12px 28px; border-radius:50px; background:%s; color:#fff; text-decoration:none; font-size:1.05rem; font-family:inherit; cursor:pointer; border:none; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" onmouseover="this.style.opacity=\'0.9\'; this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.25)\';" onmouseout="this.style.opacity=\'1\'; this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.15)\';">%s</button>
+				</div>',
+				esc_url($qr_code_hd_url),
+				(!empty($logo_url) && filter_var($logo_url, FILTER_VALIDATE_URL)) ? '\''.esc_url($logo_url).'\'' : 'null',
+				intval($download_quality),
+				$logo_pct,
+				$marge_pct,
+				esc_js($filename),
+				esc_attr($button_color_clean),
+				esc_html($button_label)
+			);
+
+			return $output;
+		}
+	}
+
+	$modifiers['generate_qr_code'] = Generate_QR_Code::class;
+	return $modifiers;
+});
