@@ -116,6 +116,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **E.164 Format**: SMS sends with proper international format (+1234567890)
   - **Auto-Migration**: Existing phone numbers automatically assigned default country code on activation
   - **Bundled with SMS**: Enabled automatically when SMS Notifications is enabled
+- **Active Filters Widget**: Display active search filters as clickable tags
+  - **URL Parameter Parsing**: Reads filters from URL (range, terms, keywords, sort, etc.)
+  - **Human-Readable Labels**: Formats values nicely (e.g., "Price: $0 - $300", "Category: Apartments, Houses")
+  - **Remove Filters**: Click any tag to remove that filter and refresh results
+  - **Clear All Button**: Remove all filters at once with configurable position (before/after)
+  - **Dynamic Updates**: Monitors URL changes for Voxel AJAX filtering without page reload
+  - **Layout Options**: Horizontal (wrap) or vertical (stacked) display
+  - **Heading**: Optional heading text with alignment controls
+  - **Preview Mode**: Show placeholder filters in editor for styling
+  - **Hide Options**: Configure which filter types to hide (type, sort, custom params)
+  - **Styling Controls**:
+    - Filter tags: background, text color, typography, padding, border radius, border, shadow
+    - Remove icon: color, size, spacing, multiple icon styles
+    - Clear All button: color, background, typography, padding, border radius
+    - Heading: color, typography, spacing, alignment
+    - Layout: gap between tags, widget alignment (left/center/right)
+    - Container: background, padding, margin, border, border radius
 
 ### Fixed
 - **Poll Display Widget**: Updated widget icon from non-existent `eicon-poll` to standard Elementor `eicon-checkbox` icon for proper display in widget panel
