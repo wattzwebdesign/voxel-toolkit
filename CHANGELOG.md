@@ -16,6 +16,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Returns total quantity as a number (e.g., "42", "156")
   - Always enabled, no configuration required
   - Documented in Voxel Toolkit > Dynamic Tags admin page
+- **Dynamic Tag Modifier - .summary()**: Generate email-friendly order summary tables
+  - **Usage**: `@order(id).summary()` returns HTML table of all order items
+  - Queries order items from `wp_vx_order_items` table by order ID
+  - Parses JSON details field for product information
+  - **Regular Products**: Displays product name, quantity, unit price, and total
+  - **Booking Products**: Includes date ranges, nights/days calculation, and addons
+  - **Addon Support**: Formats numeric addons and custom-multiselect options with quantities
+  - **Currency Formatting**: Multi-currency symbol support (USD, EUR, GBP, JPY, AUD, CAD)
+  - **Email-Optimized**: Inline CSS styling for email client compatibility
+  - **Grand Total**: Calculates and displays total across all order items
+  - Use in order confirmation emails, receipts, and notifications
+  - Always enabled, no configuration required
+  - Documented in Voxel Toolkit > Dynamic Tags admin page under "Order Modifiers"
 - **Review Collection Widget**: Text alignment controls for enhanced design flexibility
   - **Post Title Alignment**: Responsive left/center/right alignment control
   - **Rating Alignment**: Responsive left/center/right alignment for star ratings
