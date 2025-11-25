@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.5.4] - 2025-11-23
 
 ### Added
+- **Share Menu**: Add 8 additional share options to Voxel's share menu (always enabled)
+  - **Pinterest**: Share images and links to Pinterest boards
+  - **Email**: Share via email with pre-filled subject and body
+  - **Threads**: Share to Meta's Threads platform
+  - **Bluesky**: Share to the Bluesky decentralized social network
+  - **SMS**: Share via text message (mobile devices)
+  - **Line**: Share to Line messaging app (popular in Asia)
+  - **Viber**: Share to Viber messaging app
+  - **Snapchat**: Share to Snapchat
+  - Uses Voxel's `voxel/share-links` filter for seamless integration
+  - Custom SVG icons included for all 8 platforms
+  - Add platforms via Voxel > General Settings > Share menu
 - **Dynamic Tag Modifier - .sold()**: Track total quantity sold for products
   - **Usage**: `@post(id).sold()` returns total quantity sold from orders
   - Queries `vx_order_items` table for product field data

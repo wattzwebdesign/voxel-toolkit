@@ -34,6 +34,9 @@ class Voxel_Toolkit_Functions {
         // Initialize dynamic tags early
         add_action('after_setup_theme', array($this, 'init_dynamic_tags'), 5);
 
+        // Initialize share menu (always enabled) - call directly since after_setup_theme may have passed
+        $this->init_share_menu();
+
         add_action('init', array($this, 'init'), 20);
         add_action('voxel_toolkit/settings_updated', array($this, 'on_settings_updated'), 10, 2);
 
@@ -65,7 +68,22 @@ class Voxel_Toolkit_Functions {
             }
         }
     }
-    
+
+    /**
+     * Initialize share menu additions
+     */
+    public function init_share_menu() {
+        // Load share menu class
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/class-share-menu.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/class-share-menu.php';
+
+            // Initialize share menu (always active)
+            if (class_exists('Voxel_Toolkit_Share_Menu')) {
+                new Voxel_Toolkit_Share_Menu();
+            }
+        }
+    }
+
     /**
      * Register available functions
      */
