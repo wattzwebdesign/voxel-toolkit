@@ -124,6 +124,17 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'heading_text',
+            [
+                'label' => __('Heading', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => '',
+                'placeholder' => __('Active Filters', 'voxel-toolkit'),
+                'description' => __('Optional heading above the filters', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
             'hide_when_empty',
             [
                 'label' => __('Hide When No Filters', 'voxel-toolkit'),
@@ -319,6 +330,64 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
      * Register style tab controls
      */
     private function register_style_controls() {
+        // Heading Styling Section
+        $this->start_controls_section(
+            'heading_style_section',
+            [
+                'label' => __('Heading', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'heading_color',
+            [
+                'label' => __('Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#333333',
+                'selectors' => [
+                    '{{WRAPPER}} .vt-active-filters-heading' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'heading_typography',
+                'label' => __('Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt-active-filters-heading',
+            ]
+        );
+
+        $this->add_responsive_control(
+            'heading_spacing',
+            [
+                'label' => __('Bottom Spacing', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px', 'em'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 50,
+                    ],
+                    'em' => [
+                        'min' => 0,
+                        'max' => 3,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 10,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-active-filters-heading' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+
         // Tag Styling Section
         $this->start_controls_section(
             'tag_style_section',
@@ -687,7 +756,7 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
                 ],
                 'default' => 'flex-start',
                 'selectors' => [
-                    '{{WRAPPER}} .vt-active-filters-widget' => 'justify-content: {{VALUE}};',
+                    '{{WRAPPER}} .vt-active-filters-inner' => 'justify-content: {{VALUE}};',
                     '{{WRAPPER}} .vt-active-filters-list' => 'justify-content: {{VALUE}};',
                 ],
             ]
@@ -1027,31 +1096,38 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
         $clear_all_position = $settings['clear_all_position'];
         $clear_all_text = !empty($settings['clear_all_text']) ? $settings['clear_all_text'] : __('Clear All', 'voxel-toolkit');
         $clear_all_url = $this->get_clear_all_url();
+        $heading_text = !empty($settings['heading_text']) ? $settings['heading_text'] : '';
 
         ?>
         <div class="vt-active-filters-widget">
-            <?php if ($show_clear_all && $clear_all_position === 'before'): ?>
-                <a href="<?php echo esc_url($clear_all_url); ?>" class="vt-clear-all-filters">
-                    <?php echo esc_html($clear_all_text); ?>
-                </a>
+            <?php if ($heading_text): ?>
+                <div class="vt-active-filters-heading"><?php echo esc_html($heading_text); ?></div>
             <?php endif; ?>
 
-            <div class="vt-active-filters-list">
-                <?php foreach ($filters as $filter): ?>
-                    <a href="<?php echo esc_url($filter['remove_url']); ?>" class="vt-active-filter" data-filter-key="<?php echo esc_attr($filter['key']); ?>">
-                        <span class="vt-filter-label"><?php echo esc_html($filter['label']); ?></span>
-                        <?php if ($remove_icon): ?>
-                            <span class="vt-filter-remove"><?php echo $remove_icon; ?></span>
-                        <?php endif; ?>
+            <div class="vt-active-filters-inner">
+                <?php if ($show_clear_all && $clear_all_position === 'before'): ?>
+                    <a href="<?php echo esc_url($clear_all_url); ?>" class="vt-clear-all-filters">
+                        <?php echo esc_html($clear_all_text); ?>
                     </a>
-                <?php endforeach; ?>
-            </div>
+                <?php endif; ?>
 
-            <?php if ($show_clear_all && $clear_all_position === 'after'): ?>
-                <a href="<?php echo esc_url($clear_all_url); ?>" class="vt-clear-all-filters">
-                    <?php echo esc_html($clear_all_text); ?>
-                </a>
-            <?php endif; ?>
+                <div class="vt-active-filters-list">
+                    <?php foreach ($filters as $filter): ?>
+                        <a href="<?php echo esc_url($filter['remove_url']); ?>" class="vt-active-filter" data-filter-key="<?php echo esc_attr($filter['key']); ?>">
+                            <span class="vt-filter-label"><?php echo esc_html($filter['label']); ?></span>
+                            <?php if ($remove_icon): ?>
+                                <span class="vt-filter-remove"><?php echo $remove_icon; ?></span>
+                            <?php endif; ?>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+
+                <?php if ($show_clear_all && $clear_all_position === 'after'): ?>
+                    <a href="<?php echo esc_url($clear_all_url); ?>" class="vt-clear-all-filters">
+                        <?php echo esc_html($clear_all_text); ?>
+                    </a>
+                <?php endif; ?>
+            </div>
         </div>
         <?php
     }

@@ -7,6 +7,22 @@
 /* Container */
 .vt-active-filters-widget {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+/* Heading */
+.vt-active-filters-heading {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+/* Filters wrapper (list + clear all) */
+.vt-active-filters-inner {
+    display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
