@@ -388,6 +388,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-breadcrumbs-widget-manager.php',
                 'icon' => 'eicon-navigation-horizontal',
                 'widget_name' => 'voxel-toolkit-breadcrumbs',
+            ),
+            'active_filters' => array(
+                'name' => __('Active Filters', 'voxel-toolkit'),
+                'description' => __('Display active search filters as clickable tags with remove functionality.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Active_Filters_Widget_Manager',
+                'file' => 'widgets/class-active-filters-widget-manager.php',
+                'icon' => 'eicon-filter',
+                'widget_name' => 'voxel-toolkit-active-filters',
             )
         );
 
