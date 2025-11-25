@@ -118,6 +118,13 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-admin-notifications.php',
                 'settings_callback' => array($this, 'render_admin_notifications_settings'),
             ),
+            'sms_notifications' => array(
+                'name' => __('SMS Notifications', 'voxel-toolkit'),
+                'description' => __('Send SMS notifications via Twilio, Vonage, or MessageBird when Voxel app events occur.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_SMS_Notifications',
+                'file' => 'functions/class-sms-notifications.php',
+                'settings_callback' => array($this, 'render_sms_notifications_settings'),
+            ),
             'membership_notifications' => array(
                 'name' => __('Membership Notifications', 'voxel-toolkit'),
                 'description' => __('Send email notifications to users based on membership expiration dates.', 'voxel-toolkit'),
@@ -891,10 +898,426 @@ class Voxel_Toolkit_Functions {
         </style>
         <?php
     }
-    
+
+    /**
+     * Get phone fields from Voxel profile post type
+     *
+     * @return array Phone fields as key => label pairs
+     */
+    public function get_voxel_phone_fields() {
+        $post_types = get_option('voxel:post_types', array());
+
+        // Handle serialized data
+        if (is_string($post_types)) {
+            $post_types = maybe_unserialize($post_types);
+        }
+
+        // Try JSON decode if it's a JSON string
+        if (is_string($post_types)) {
+            $decoded = json_decode($post_types, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $post_types = $decoded;
+            }
+        }
+
+        if (empty($post_types) || !is_array($post_types)) {
+            return array();
+        }
+
+        // Look for 'profile' post type
+        if (!isset($post_types['profile']) || !is_array($post_types['profile'])) {
+            return array();
+        }
+
+        $profile_data = $post_types['profile'];
+
+        // Get fields array
+        if (!isset($profile_data['fields']) || !is_array($profile_data['fields'])) {
+            return array();
+        }
+
+        $phone_fields = array();
+
+        // Loop through fields and extract phone type fields
+        foreach ($profile_data['fields'] as $field) {
+            if (!isset($field['key']) || empty($field['key'])) {
+                continue;
+            }
+
+            // Only include phone type fields
+            if (!isset($field['type']) || $field['type'] !== 'phone') {
+                continue;
+            }
+
+            $label = isset($field['label']) && !empty($field['label'])
+                ? $field['label']
+                : $field['key'];
+
+            $phone_fields[$field['key']] = $label . ' (' . $field['key'] . ')';
+        }
+
+        return $phone_fields;
+    }
+
+    /**
+     * Render settings for SMS notifications function
+     *
+     * @param array $settings Current settings
+     */
+    public function render_sms_notifications_settings($settings) {
+        $provider = isset($settings['provider']) ? $settings['provider'] : 'twilio';
+        $phone_number = isset($settings['phone_number']) ? $settings['phone_number'] : '';
+
+        // Twilio credentials
+        $twilio_account_sid = isset($settings['twilio_account_sid']) ? $settings['twilio_account_sid'] : '';
+        $twilio_auth_token = isset($settings['twilio_auth_token']) ? $settings['twilio_auth_token'] : '';
+        $twilio_from_number = isset($settings['twilio_from_number']) ? $settings['twilio_from_number'] : '';
+
+        // Vonage credentials
+        $vonage_api_key = isset($settings['vonage_api_key']) ? $settings['vonage_api_key'] : '';
+        $vonage_api_secret = isset($settings['vonage_api_secret']) ? $settings['vonage_api_secret'] : '';
+        $vonage_from = isset($settings['vonage_from']) ? $settings['vonage_from'] : '';
+
+        // MessageBird credentials
+        $messagebird_api_key = isset($settings['messagebird_api_key']) ? $settings['messagebird_api_key'] : '';
+        $messagebird_originator = isset($settings['messagebird_originator']) ? $settings['messagebird_originator'] : '';
+
+        // Check if any provider is configured
+        $has_twilio = !empty($twilio_account_sid) && !empty($twilio_auth_token);
+        $has_vonage = !empty($vonage_api_key) && !empty($vonage_api_secret);
+        $has_messagebird = !empty($messagebird_api_key);
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('SMS Notifications Settings', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 800px;">
+
+                    <!-- Provider Selection -->
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
+                            <?php _e('SMS Provider', 'voxel-toolkit'); ?>
+                        </h3>
+                        <select name="voxel_toolkit_options[sms_notifications][provider]"
+                                id="sms_provider_select"
+                                style="width: 100%; max-width: 300px; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;">
+                            <option value="twilio" <?php selected($provider, 'twilio'); ?>><?php _e('Twilio', 'voxel-toolkit'); ?></option>
+                            <option value="vonage" <?php selected($provider, 'vonage'); ?>><?php _e('Vonage (Nexmo)', 'voxel-toolkit'); ?></option>
+                            <option value="messagebird" <?php selected($provider, 'messagebird'); ?>><?php _e('MessageBird', 'voxel-toolkit'); ?></option>
+                        </select>
+                        <p style="margin: 10px 0 0 0; font-size: 13px; color: #666;">
+                            <?php _e('Select your preferred SMS provider. Configure the credentials below.', 'voxel-toolkit'); ?>
+                        </p>
+                    </div>
+
+                    <!-- Twilio Configuration -->
+                    <div id="twilio_config" class="sms-provider-config" style="margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 6px; <?php echo $provider !== 'twilio' ? 'display: none;' : ''; ?>">
+                        <h4 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 15px;">
+                            <?php _e('Twilio Configuration', 'voxel-toolkit'); ?>
+                            <?php if ($has_twilio): ?>
+                                <span style="background: #d4edda; color: #155724; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 10px;"><?php _e('Configured', 'voxel-toolkit'); ?></span>
+                            <?php endif; ?>
+                        </h4>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('Account SID', 'voxel-toolkit'); ?></label>
+                            <?php if (!empty($twilio_account_sid)): ?>
+                                <div style="background: #f1f1f1; padding: 8px 12px; border-radius: 4px; margin-bottom: 8px; font-family: monospace; font-size: 13px;">
+                                    <?php echo esc_html(substr($twilio_account_sid, 0, 8) . str_repeat('*', 20)); ?>
+                                </div>
+                            <?php endif; ?>
+                            <input type="text"
+                                   name="voxel_toolkit_options[sms_notifications][twilio_account_sid]"
+                                   value=""
+                                   placeholder="<?php echo !empty($twilio_account_sid) ? __('Enter new SID to replace', 'voxel-toolkit') : 'ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'; ?>"
+                                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;" />
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('Auth Token', 'voxel-toolkit'); ?></label>
+                            <?php if (!empty($twilio_auth_token)): ?>
+                                <div style="background: #f1f1f1; padding: 8px 12px; border-radius: 4px; margin-bottom: 8px; font-family: monospace; font-size: 13px;">
+                                    <?php echo str_repeat('*', 32); ?>
+                                </div>
+                            <?php endif; ?>
+                            <input type="password"
+                                   name="voxel_toolkit_options[sms_notifications][twilio_auth_token]"
+                                   value=""
+                                   placeholder="<?php echo !empty($twilio_auth_token) ? __('Enter new token to replace', 'voxel-toolkit') : __('Auth Token', 'voxel-toolkit'); ?>"
+                                   autocomplete="off"
+                                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" />
+                        </div>
+
+                        <div>
+                            <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('From Phone Number', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[sms_notifications][twilio_from_number]"
+                                   value="<?php echo esc_attr($twilio_from_number); ?>"
+                                   placeholder="+15551234567"
+                                   style="width: 100%; max-width: 250px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;" />
+                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                                <?php _e('Your Twilio phone number in E.164 format', 'voxel-toolkit'); ?>
+                            </p>
+                        </div>
+
+                        <p style="margin: 15px 0 0 0; font-size: 13px; color: #666;">
+                            <?php _e('Get your credentials from', 'voxel-toolkit'); ?>
+                            <a href="https://console.twilio.com/" target="_blank" style="color: #2271b1;"><?php _e('Twilio Console', 'voxel-toolkit'); ?></a>
+                        </p>
+                    </div>
+
+                    <!-- Vonage Configuration -->
+                    <div id="vonage_config" class="sms-provider-config" style="margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 6px; <?php echo $provider !== 'vonage' ? 'display: none;' : ''; ?>">
+                        <h4 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 15px;">
+                            <?php _e('Vonage (Nexmo) Configuration', 'voxel-toolkit'); ?>
+                            <?php if ($has_vonage): ?>
+                                <span style="background: #d4edda; color: #155724; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 10px;"><?php _e('Configured', 'voxel-toolkit'); ?></span>
+                            <?php endif; ?>
+                        </h4>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('API Key', 'voxel-toolkit'); ?></label>
+                            <?php if (!empty($vonage_api_key)): ?>
+                                <div style="background: #f1f1f1; padding: 8px 12px; border-radius: 4px; margin-bottom: 8px; font-family: monospace; font-size: 13px;">
+                                    <?php echo esc_html(substr($vonage_api_key, 0, 4) . str_repeat('*', 8)); ?>
+                                </div>
+                            <?php endif; ?>
+                            <input type="text"
+                                   name="voxel_toolkit_options[sms_notifications][vonage_api_key]"
+                                   value=""
+                                   placeholder="<?php echo !empty($vonage_api_key) ? __('Enter new key to replace', 'voxel-toolkit') : 'abcd1234'; ?>"
+                                   style="width: 100%; max-width: 250px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;" />
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('API Secret', 'voxel-toolkit'); ?></label>
+                            <?php if (!empty($vonage_api_secret)): ?>
+                                <div style="background: #f1f1f1; padding: 8px 12px; border-radius: 4px; margin-bottom: 8px; font-family: monospace; font-size: 13px;">
+                                    <?php echo str_repeat('*', 16); ?>
+                                </div>
+                            <?php endif; ?>
+                            <input type="password"
+                                   name="voxel_toolkit_options[sms_notifications][vonage_api_secret]"
+                                   value=""
+                                   placeholder="<?php echo !empty($vonage_api_secret) ? __('Enter new secret to replace', 'voxel-toolkit') : __('API Secret', 'voxel-toolkit'); ?>"
+                                   autocomplete="off"
+                                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" />
+                        </div>
+
+                        <div>
+                            <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('From Name/Number', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[sms_notifications][vonage_from]"
+                                   value="<?php echo esc_attr($vonage_from); ?>"
+                                   placeholder="MyBusiness or +15551234567"
+                                   style="width: 100%; max-width: 250px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" />
+                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                                <?php _e('Alphanumeric (max 11 chars) or phone number', 'voxel-toolkit'); ?>
+                            </p>
+                        </div>
+
+                        <p style="margin: 15px 0 0 0; font-size: 13px; color: #666;">
+                            <?php _e('Get your credentials from', 'voxel-toolkit'); ?>
+                            <a href="https://dashboard.nexmo.com/" target="_blank" style="color: #2271b1;"><?php _e('Vonage Dashboard', 'voxel-toolkit'); ?></a>
+                        </p>
+                    </div>
+
+                    <!-- MessageBird Configuration -->
+                    <div id="messagebird_config" class="sms-provider-config" style="margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 6px; <?php echo $provider !== 'messagebird' ? 'display: none;' : ''; ?>">
+                        <h4 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 15px;">
+                            <?php _e('MessageBird Configuration', 'voxel-toolkit'); ?>
+                            <?php if ($has_messagebird): ?>
+                                <span style="background: #d4edda; color: #155724; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 10px;"><?php _e('Configured', 'voxel-toolkit'); ?></span>
+                            <?php endif; ?>
+                        </h4>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('API Key', 'voxel-toolkit'); ?></label>
+                            <?php if (!empty($messagebird_api_key)): ?>
+                                <div style="background: #f1f1f1; padding: 8px 12px; border-radius: 4px; margin-bottom: 8px; font-family: monospace; font-size: 13px;">
+                                    <?php echo esc_html(substr($messagebird_api_key, 0, 8) . str_repeat('*', 20)); ?>
+                                </div>
+                            <?php endif; ?>
+                            <input type="password"
+                                   name="voxel_toolkit_options[sms_notifications][messagebird_api_key]"
+                                   value=""
+                                   placeholder="<?php echo !empty($messagebird_api_key) ? __('Enter new key to replace', 'voxel-toolkit') : __('API Key', 'voxel-toolkit'); ?>"
+                                   autocomplete="off"
+                                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" />
+                        </div>
+
+                        <div>
+                            <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('Originator', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[sms_notifications][messagebird_originator]"
+                                   value="<?php echo esc_attr($messagebird_originator); ?>"
+                                   placeholder="MyBusiness or +15551234567"
+                                   style="width: 100%; max-width: 250px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" />
+                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                                <?php _e('Sender name (max 11 chars) or phone number', 'voxel-toolkit'); ?>
+                            </p>
+                        </div>
+
+                        <p style="margin: 15px 0 0 0; font-size: 13px; color: #666;">
+                            <?php _e('Get your credentials from', 'voxel-toolkit'); ?>
+                            <a href="https://dashboard.messagebird.com/" target="_blank" style="color: #2271b1;"><?php _e('MessageBird Dashboard', 'voxel-toolkit'); ?></a>
+                        </p>
+                    </div>
+
+                    <!-- Phone Field Selection -->
+                    <?php
+                    $phone_field = isset($settings['phone_field']) ? $settings['phone_field'] : '';
+                    $phone_fields = $this->get_voxel_phone_fields();
+                    $country_code = isset($settings['country_code']) ? $settings['country_code'] : '';
+                    ?>
+                    <div style="margin-bottom: 25px; padding: 20px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px;">
+                        <h4 style="margin: 0 0 15px 0; color: #856404; font-size: 15px;">
+                            <?php _e('Phone Field Selection', 'voxel-toolkit'); ?>
+                        </h4>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 8px;"><?php _e('Profile Phone Field', 'voxel-toolkit'); ?></label>
+                            <select name="voxel_toolkit_options[sms_notifications][phone_field]"
+                                    style="width: 100%; max-width: 350px; padding: 12px; border: 2px solid #ffc107; border-radius: 6px; font-size: 14px; background: white;">
+                                <option value=""><?php _e('-- Select Phone Field --', 'voxel-toolkit'); ?></option>
+                                <?php foreach ($phone_fields as $key => $label): ?>
+                                    <option value="<?php echo esc_attr($key); ?>" <?php selected($phone_field, $key); ?>>
+                                        <?php echo esc_html($label); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <p style="margin: 8px 0 0 0; font-size: 12px; color: #856404;">
+                                <?php _e('Select the phone field from user profiles. SMS notifications will be sent to the recipient\'s phone number stored in this field.', 'voxel-toolkit'); ?>
+                            </p>
+                            <?php if (empty($phone_fields)): ?>
+                                <p style="margin: 8px 0 0 0; font-size: 12px; color: #d63638;">
+                                    <strong><?php _e('No phone fields found.', 'voxel-toolkit'); ?></strong>
+                                    <?php _e('Add a phone field to your Profile post type in Voxel → Post Types → Profile → Fields.', 'voxel-toolkit'); ?>
+                                </p>
+                            <?php endif; ?>
+                        </div>
+
+                        <div style="margin-bottom: 15px; margin-top: 15px;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 8px;"><?php _e('Default Country Code', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[sms_notifications][country_code]"
+                                   value="<?php echo esc_attr($country_code); ?>"
+                                   placeholder="+1"
+                                   style="width: 100%; max-width: 150px; padding: 12px; border: 2px solid #ffc107; border-radius: 6px; font-size: 14px; font-family: monospace;" />
+                            <p style="margin: 8px 0 0 0; font-size: 12px; color: #856404;">
+                                <?php _e('Country code to prepend to phone numbers that don\'t include one (e.g., +1 for US/Canada, +44 for UK, +61 for Australia).', 'voxel-toolkit'); ?>
+                            </p>
+                        </div>
+
+                        <div style="padding: 12px; background: rgba(255,255,255,0.8); border-radius: 4px; font-size: 13px; color: #856404;">
+                            <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
+                            <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+                                <li><?php _e('SMS to Customer → Uses customer\'s profile phone field', 'voxel-toolkit'); ?></li>
+                                <li><?php _e('SMS to Vendor/Author → Uses vendor\'s profile phone field', 'voxel-toolkit'); ?></li>
+                                <li><?php _e('SMS to Admin → Uses admin user\'s profile phone field', 'voxel-toolkit'); ?></li>
+                            </ul>
+                            <p style="margin: 8px 0 0 0;">
+                                <?php _e('If a recipient has no phone number, the SMS will be silently skipped.', 'voxel-toolkit'); ?>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Test SMS -->
+                    <div style="margin-bottom: 25px; padding: 20px; background: #f0f6fc; border: 1px solid #c8d7e5; border-radius: 6px;">
+                        <h4 style="margin: 0 0 15px 0; color: #0d3c61; font-size: 15px;">
+                            <?php _e('Test SMS', 'voxel-toolkit'); ?>
+                        </h4>
+                        <div style="display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <input type="text"
+                                       id="test_sms_phone"
+                                       placeholder="+15551234567"
+                                       style="width: 100%; max-width: 250px; padding: 12px; border: 1px solid #c8d7e5; border-radius: 6px; font-family: monospace; font-size: 14px; background: white;" />
+                                <p style="margin: 8px 0 0 0; font-size: 12px; color: #0d3c61;">
+                                    <?php _e('Enter a phone number to test your SMS provider configuration', 'voxel-toolkit'); ?>
+                                </p>
+                            </div>
+                            <button type="button" id="test_sms_btn" class="button button-secondary" style="padding: 10px 20px;">
+                                <?php _e('Send Test SMS', 'voxel-toolkit'); ?>
+                            </button>
+                        </div>
+                        <div id="test_sms_result" style="margin-top: 10px; display: none;"></div>
+                    </div>
+
+                    <!-- Usage Instructions -->
+                    <div style="padding: 15px; background: #e8f5e9; border: 1px solid #81c784; border-radius: 6px;">
+                        <h4 style="margin: 0 0 10px 0; color: #2e7d32; font-size: 14px;">
+                            <?php _e('Setup Steps', 'voxel-toolkit'); ?>
+                        </h4>
+                        <ol style="margin: 0; padding-left: 20px; font-size: 13px; color: #2e7d32;">
+                            <li><?php _e('Configure your SMS provider credentials above', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Select the phone field from your Profile post type', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Send a test SMS to verify your provider works', 'voxel-toolkit'); ?></li>
+                            <li><?php printf(
+                                __('Go to %s to enable SMS for specific events', 'voxel-toolkit'),
+                                '<a href="' . esc_url(admin_url('admin.php?page=voxel-events')) . '" style="color: #2e7d32; font-weight: 600;">Voxel → App Events & Notifications</a>'
+                            ); ?></li>
+                        </ol>
+                    </div>
+
+                </div>
+
+                <script>
+                jQuery(document).ready(function($) {
+                    // Provider selection toggle
+                    $('#sms_provider_select').on('change', function() {
+                        var provider = $(this).val();
+                        $('.sms-provider-config').hide();
+                        $('#' + provider + '_config').show();
+                    });
+
+                    // Test SMS button
+                    $('#test_sms_btn').on('click', function() {
+                        var $btn = $(this);
+                        var $result = $('#test_sms_result');
+                        var testPhone = $('#test_sms_phone').val().trim();
+
+                        if (!testPhone) {
+                            $result.html('<div style="color: #856404; background: #fff3cd; padding: 10px; border-radius: 4px;"><?php _e('Please enter a phone number to test', 'voxel-toolkit'); ?></div>').show();
+                            return;
+                        }
+
+                        $btn.prop('disabled', true).text('<?php _e('Sending...', 'voxel-toolkit'); ?>');
+                        $result.hide();
+
+                        $.ajax({
+                            url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                            type: 'POST',
+                            data: {
+                                action: 'vt_send_test_sms',
+                                nonce: '<?php echo wp_create_nonce('vt_sms_nonce'); ?>',
+                                phone: testPhone
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    $result.html('<div style="color: #155724; background: #d4edda; padding: 10px; border-radius: 4px;">' + response.data.message + '</div>').show();
+                                } else {
+                                    $result.html('<div style="color: #721c24; background: #f8d7da; padding: 10px; border-radius: 4px;">' + response.data.message + '</div>').show();
+                                }
+                            },
+                            error: function() {
+                                $result.html('<div style="color: #721c24; background: #f8d7da; padding: 10px; border-radius: 4px;"><?php _e('Network error. Please try again.', 'voxel-toolkit'); ?></div>').show();
+                            },
+                            complete: function() {
+                                $btn.prop('disabled', false).text('<?php _e('Send Test SMS', 'voxel-toolkit'); ?>');
+                            }
+                        });
+                    });
+                });
+                </script>
+            </td>
+        </tr>
+        <?php
+    }
+
     /**
      * Render settings for membership notifications function
-     * 
+     *
      * @param array $settings Current settings
      */
     public function render_membership_notifications_settings($settings) {

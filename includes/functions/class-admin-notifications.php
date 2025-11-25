@@ -95,29 +95,55 @@ class Voxel_Toolkit_Admin_Notifications extends \Voxel\Controllers\Base_Controll
      * Processes all configured recipients for admin notifications
      */
     public function send_multiple_admins_notifications($event) {
-        
-        
+
+
         $recipients_config = $this->get_notification_recipients();
-        
+
         $voxel_default_admin = \Voxel\get('settings.notifications.admin_user');
 
         foreach ($recipients_config as $recipient_config) {
-            
+
             if (!$recipient_config['enabled']) {
                 continue;
             }
             if ($recipient_config['id'] === $voxel_default_admin) {
                 continue;
             }
-            
+
             $recipient = \Voxel\User::get($recipient_config['id']);
             if (!$recipient) {
                 continue;
             }
-            
+
+            // Send email/in-app notification
             $this->send_custom_email_notification($event, 'admin', $recipient);
+
+            // Send SMS notification if enabled
+            $this->send_sms_notification_to_recipient($event, $recipient_config['id']);
         }
-        
+
+    }
+
+    /**
+     * Send SMS notification to a recipient
+     *
+     * @param \Voxel\Events\Base_Event $event Event instance
+     * @param int $user_id User ID
+     */
+    private function send_sms_notification_to_recipient($event, $user_id) {
+        // Check if SMS Notifications is available
+        if (!class_exists('Voxel_Toolkit_SMS_Notifications')) {
+            return;
+        }
+
+        $sms = Voxel_Toolkit_SMS_Notifications::instance();
+
+        if (!$sms) {
+            return;
+        }
+
+        // Send SMS for the admin destination
+        $sms->send_event_sms_to_user($event, $user_id, 'admin');
     }
     
     /**

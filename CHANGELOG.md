@@ -100,6 +100,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Post Type Icons**: Visual indicators for posts, pages, and templates
   - **Sorted Results**: Tags displayed by usage count (most used first)
   - **No Shadow/Animation**: Clean, flat card design with subtle blue top bar on hover
+- **SMS Notifications**: Send SMS notifications when Voxel app events occur
+  - **SMS Providers**: Support for Twilio, Vonage, and MessageBird
+  - **Event Integration**: Toggle SMS on/off per event directly in Voxel's App Events page
+  - **Dynamic Messages**: Use Voxel's dynamic tags in SMS message templates
+  - **Destinations**: Send to user, admin, or custom destinations per event
+  - **Test SMS**: Send test messages to verify configuration
+  - **Phone Field Selection**: Choose which profile field contains phone numbers
+  - **Country Code Support**: Default country code setting for phone normalization
+  - **Admin Notifications Integration**: Automatically sends SMS to users configured in Admin Notifications
+- **International Phone Input**: Enhanced phone fields with country code selection
+  - **Flag Dropdown**: Country selector with flag icons on all phone fields
+  - **Separate Storage**: Country code stored separately from phone number
+  - **Clean Display**: Dynamic tags show phone numbers without country code prefix
+  - **E.164 Format**: SMS sends with proper international format (+1234567890)
+  - **Auto-Migration**: Existing phone numbers automatically assigned default country code on activation
+  - **Bundled with SMS**: Enabled automatically when SMS Notifications is enabled
 
 ### Fixed
 - **Poll Display Widget**: Updated widget icon from non-existent `eicon-poll` to standard Elementor `eicon-checkbox` icon for proper display in widget panel

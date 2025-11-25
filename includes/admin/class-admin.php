@@ -171,6 +171,11 @@ class Voxel_Toolkit_Admin {
             VOXEL_TOOLKIT_VERSION
         );
 
+        // Hide WP footer on Voxel Toolkit pages
+        if (strpos($hook, 'voxel-toolkit') !== false) {
+            wp_add_inline_style('voxel-toolkit-admin', '#wpfooter { display: none !important; }');
+        }
+
         // Enqueue Elementor icons for widget cards
         wp_enqueue_style(
             'elementor-icons',
@@ -179,10 +184,15 @@ class Voxel_Toolkit_Admin {
             VOXEL_TOOLKIT_VERSION
         );
 
+        // Load SMS notifications script on Voxel app-events page
+        if (isset($_GET['page']) && $_GET['page'] === 'voxel-events') {
+            $this->enqueue_sms_notifications_script();
+        }
+
         // Load full scripts on our plugin pages and Voxel taxonomies pages
-        $load_full_scripts = (strpos($hook, 'voxel-toolkit') !== false) || 
+        $load_full_scripts = (strpos($hook, 'voxel-toolkit') !== false) ||
                             (isset($_GET['page']) && $_GET['page'] === 'voxel-taxonomies');
-        
+
         if (!$load_full_scripts) {
             return;
         }
@@ -542,14 +552,17 @@ class Voxel_Toolkit_Admin {
         
         // Process any other voxel_toolkit_options if they exist
         if (isset($post_data['voxel_toolkit_options'])) {
-            foreach ($post_data['voxel_toolkit_options'] as $function_key => $function_settings) {
+            // Use sanitize_options to properly sanitize function-specific settings
+            $sanitized_input = $this->sanitize_options($post_data['voxel_toolkit_options']);
+
+            foreach ($sanitized_input as $function_key => $sanitized_settings) {
                 if (!isset($current_options[$function_key])) {
                     $current_options[$function_key] = array();
                 }
 
                 // Special handling for options_page field configuration
                 if ($function_key === 'options_page') {
-                    $current_options[$function_key] = $this->handle_options_page_config($function_settings, $current_options[$function_key]);
+                    $current_options[$function_key] = $this->handle_options_page_config($post_data['voxel_toolkit_options'][$function_key], $current_options[$function_key]);
                     continue;
                 }
 
@@ -557,8 +570,8 @@ class Voxel_Toolkit_Admin {
                 // Only merge the new settings, don't overwrite the enabled status
                 $enabled_status = isset($current_options[$function_key]['enabled']) ? $current_options[$function_key]['enabled'] : false;
 
-                // Merge settings, preserving existing ones
-                $current_options[$function_key] = array_merge($current_options[$function_key], $function_settings);
+                // Merge sanitized settings, preserving existing ones
+                $current_options[$function_key] = array_merge($current_options[$function_key], $sanitized_settings);
 
                 // Ensure the enabled status is preserved
                 $current_options[$function_key]['enabled'] = $enabled_status;
@@ -813,10 +826,85 @@ class Voxel_Toolkit_Admin {
                     
                     case 'ai_review_summary':
                         // API key setting
-                        $sanitized_function['api_key'] = isset($function_input['api_key']) ? 
+                        $sanitized_function['api_key'] = isset($function_input['api_key']) ?
                             sanitize_text_field($function_input['api_key']) : '';
                         break;
-                    
+
+                    case 'sms_notifications':
+                        // Provider selection
+                        $valid_providers = array('twilio', 'vonage', 'messagebird');
+                        $sanitized_function['provider'] = isset($function_input['provider']) && in_array($function_input['provider'], $valid_providers)
+                            ? sanitize_text_field($function_input['provider'])
+                            : 'twilio';
+
+                        // Phone field selection
+                        $sanitized_function['phone_field'] = isset($function_input['phone_field'])
+                            ? sanitize_text_field($function_input['phone_field'])
+                            : '';
+
+                        // Twilio credentials - only update if new value provided
+                        $current_settings = Voxel_Toolkit_Settings::instance()->get_function_settings('sms_notifications', array());
+
+                        // Preserve phone_field if not in new input
+                        if (empty($sanitized_function['phone_field']) && isset($current_settings['phone_field'])) {
+                            $sanitized_function['phone_field'] = $current_settings['phone_field'];
+                        }
+
+                        // Country code
+                        $sanitized_function['country_code'] = isset($function_input['country_code'])
+                            ? sanitize_text_field($function_input['country_code'])
+                            : (isset($current_settings['country_code']) ? $current_settings['country_code'] : '');
+
+                        if (!empty($function_input['twilio_account_sid'])) {
+                            $sanitized_function['twilio_account_sid'] = sanitize_text_field($function_input['twilio_account_sid']);
+                        } elseif (isset($current_settings['twilio_account_sid'])) {
+                            $sanitized_function['twilio_account_sid'] = $current_settings['twilio_account_sid'];
+                        }
+
+                        if (!empty($function_input['twilio_auth_token'])) {
+                            $sanitized_function['twilio_auth_token'] = sanitize_text_field($function_input['twilio_auth_token']);
+                        } elseif (isset($current_settings['twilio_auth_token'])) {
+                            $sanitized_function['twilio_auth_token'] = $current_settings['twilio_auth_token'];
+                        }
+
+                        $sanitized_function['twilio_from_number'] = isset($function_input['twilio_from_number'])
+                            ? sanitize_text_field($function_input['twilio_from_number'])
+                            : (isset($current_settings['twilio_from_number']) ? $current_settings['twilio_from_number'] : '');
+
+                        // Vonage credentials - only update if new value provided
+                        if (!empty($function_input['vonage_api_key'])) {
+                            $sanitized_function['vonage_api_key'] = sanitize_text_field($function_input['vonage_api_key']);
+                        } elseif (isset($current_settings['vonage_api_key'])) {
+                            $sanitized_function['vonage_api_key'] = $current_settings['vonage_api_key'];
+                        }
+
+                        if (!empty($function_input['vonage_api_secret'])) {
+                            $sanitized_function['vonage_api_secret'] = sanitize_text_field($function_input['vonage_api_secret']);
+                        } elseif (isset($current_settings['vonage_api_secret'])) {
+                            $sanitized_function['vonage_api_secret'] = $current_settings['vonage_api_secret'];
+                        }
+
+                        $sanitized_function['vonage_from'] = isset($function_input['vonage_from'])
+                            ? sanitize_text_field($function_input['vonage_from'])
+                            : (isset($current_settings['vonage_from']) ? $current_settings['vonage_from'] : '');
+
+                        // MessageBird credentials - only update if new value provided
+                        if (!empty($function_input['messagebird_api_key'])) {
+                            $sanitized_function['messagebird_api_key'] = sanitize_text_field($function_input['messagebird_api_key']);
+                        } elseif (isset($current_settings['messagebird_api_key'])) {
+                            $sanitized_function['messagebird_api_key'] = $current_settings['messagebird_api_key'];
+                        }
+
+                        $sanitized_function['messagebird_originator'] = isset($function_input['messagebird_originator'])
+                            ? sanitize_text_field($function_input['messagebird_originator'])
+                            : (isset($current_settings['messagebird_originator']) ? $current_settings['messagebird_originator'] : '');
+
+                        // Preserve events settings (managed via AJAX)
+                        if (isset($current_settings['events'])) {
+                            $sanitized_function['events'] = $current_settings['events'];
+                        }
+                        break;
+
                     case 'show_field_description':
                         // No settings needed - styling controlled via Elementor widget
                         break;
@@ -3006,6 +3094,42 @@ class Voxel_Toolkit_Admin {
         Voxel_Toolkit_Settings::instance()->refresh_options();
 
         wp_send_json_success();
+    }
+
+    /**
+     * Enqueue SMS notifications script for Voxel app-events page
+     */
+    private function enqueue_sms_notifications_script() {
+        // Check if SMS notifications function is enabled
+        $settings = Voxel_Toolkit_Settings::instance();
+
+        if (!$settings->is_function_enabled('sms_notifications')) {
+            // Still load script but with disabled flag
+            $sms_settings = array();
+            $is_enabled = false;
+        } else {
+            $sms_settings = $settings->get_function_settings('sms_notifications', array());
+            $is_enabled = true;
+        }
+
+        wp_enqueue_script(
+            'voxel-toolkit-sms-notifications',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/sms-notifications.js',
+            array('jquery'),
+            VOXEL_TOOLKIT_VERSION,
+            true
+        );
+
+        // Localize script with SMS settings
+        wp_localize_script('voxel-toolkit-sms-notifications', 'vt_sms_config', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('vt_sms_nonce'),
+            'enabled' => $is_enabled,
+            'phone_configured' => !empty($sms_settings['phone_field']),
+            'provider' => isset($sms_settings['provider']) ? $sms_settings['provider'] : 'twilio',
+            'events' => isset($sms_settings['events']) ? $sms_settings['events'] : array(),
+            'settings_url' => admin_url('admin.php?page=voxel-toolkit'),
+        ));
     }
 
 }
