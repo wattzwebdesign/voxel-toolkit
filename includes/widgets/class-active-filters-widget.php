@@ -111,6 +111,19 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'show_preview',
+            [
+                'label' => __('Show Preview', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => '',
+                'description' => __('Show placeholder filters for styling in the editor', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
             'hide_when_empty',
             [
                 'label' => __('Hide When No Filters', 'voxel-toolkit'),
@@ -903,6 +916,68 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
     }
 
     /**
+     * Get preview/placeholder filters for editor styling
+     *
+     * @return array Array of placeholder filter data
+     */
+    private function get_preview_filters() {
+        $settings = $this->get_settings_for_display();
+        $show_name = $settings['show_filter_name'] === 'yes';
+        $range_separator = !empty($settings['range_separator']) ? $settings['range_separator'] : ' - ';
+
+        $filters = [];
+
+        // Price range filter
+        $price_label = $show_name ? __('Price', 'voxel-toolkit') . ': $0' . $range_separator . '$500' : '$0' . $range_separator . '$500';
+        $filters[] = [
+            'key' => 'price',
+            'value' => '0..500',
+            'label' => $price_label,
+            'remove_url' => '#',
+        ];
+
+        // Category filter
+        $category_label = $show_name ? __('Category', 'voxel-toolkit') . ': ' . __('Apartments, Houses', 'voxel-toolkit') : __('Apartments, Houses', 'voxel-toolkit');
+        $filters[] = [
+            'key' => 'category',
+            'value' => 'apartments,houses',
+            'label' => $category_label,
+            'remove_url' => '#',
+        ];
+
+        // Keywords filter
+        $keywords_label_prefix = !empty($settings['keywords_label']) ? $settings['keywords_label'] : __('Search', 'voxel-toolkit');
+        $keywords_label = $show_name ? $keywords_label_prefix . ': ' . __('beach house', 'voxel-toolkit') : __('beach house', 'voxel-toolkit');
+        $filters[] = [
+            'key' => 'keywords',
+            'value' => 'beach house',
+            'label' => $keywords_label,
+            'remove_url' => '#',
+        ];
+
+        // Featured filter
+        $featured_label = $show_name ? __('Featured', 'voxel-toolkit') . ': ' . __('Yes', 'voxel-toolkit') : __('Yes', 'voxel-toolkit');
+        $filters[] = [
+            'key' => 'featured',
+            'value' => '1',
+            'label' => $featured_label,
+            'remove_url' => '#',
+        ];
+
+        return $filters;
+    }
+
+    /**
+     * Check if we should show preview
+     *
+     * @return bool
+     */
+    private function should_show_preview() {
+        $settings = $this->get_settings_for_display();
+        return $settings['show_preview'] === 'yes';
+    }
+
+    /**
      * Get remove icon character
      *
      * @return string Icon character
@@ -928,10 +1003,13 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
      */
     protected function render() {
         $settings = $this->get_settings_for_display();
-        $filters = $this->parse_url_filters();
 
-        // Handle empty state
-        if (empty($filters)) {
+        // Use preview filters if enabled, otherwise parse from URL
+        $is_preview = $this->should_show_preview();
+        $filters = $is_preview ? $this->get_preview_filters() : $this->parse_url_filters();
+
+        // Handle empty state (only when not in preview mode)
+        if (empty($filters) && !$is_preview) {
             if ($settings['hide_when_empty'] === 'yes') {
                 return;
             }
