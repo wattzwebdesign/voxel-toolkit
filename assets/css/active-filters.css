@@ -8,8 +8,8 @@
 .vt-active-filters-widget {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     gap: 8px;
+    width: fit-content;
 }
 
 /* Heading */

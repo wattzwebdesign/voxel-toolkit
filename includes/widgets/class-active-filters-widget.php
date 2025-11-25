@@ -734,7 +734,7 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
                 'label' => __('Widget Alignment', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::CHOOSE,
                 'options' => [
-                    'left' => [
+                    'flex-start' => [
                         'title' => __('Left', 'voxel-toolkit'),
                         'icon' => 'eicon-h-align-left',
                     ],
@@ -742,46 +742,14 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
                         'title' => __('Center', 'voxel-toolkit'),
                         'icon' => 'eicon-h-align-center',
                     ],
-                    'right' => [
+                    'flex-end' => [
                         'title' => __('Right', 'voxel-toolkit'),
                         'icon' => 'eicon-h-align-right',
                     ],
                 ],
-                'default' => 'left',
-                'selectors_dictionary' => [
-                    'left' => 'margin-right: auto;',
-                    'center' => 'margin-left: auto; margin-right: auto;',
-                    'right' => 'margin-left: auto;',
-                ],
-                'selectors' => [
-                    '{{WRAPPER}} .vt-active-filters-widget' => '{{VALUE}}',
-                ],
-            ]
-        );
-
-        $this->add_responsive_control(
-            'content_alignment',
-            [
-                'label' => __('Content Alignment', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::CHOOSE,
-                'options' => [
-                    'flex-start' => [
-                        'title' => __('Left', 'voxel-toolkit'),
-                        'icon' => 'eicon-text-align-left',
-                    ],
-                    'center' => [
-                        'title' => __('Center', 'voxel-toolkit'),
-                        'icon' => 'eicon-text-align-center',
-                    ],
-                    'flex-end' => [
-                        'title' => __('Right', 'voxel-toolkit'),
-                        'icon' => 'eicon-text-align-right',
-                    ],
-                ],
                 'default' => 'flex-start',
                 'selectors' => [
-                    '{{WRAPPER}} .vt-active-filters-inner' => 'justify-content: {{VALUE}};',
-                    '{{WRAPPER}} .vt-active-filters-list' => 'justify-content: {{VALUE}};',
+                    '{{WRAPPER}}' => 'display: flex; justify-content: {{VALUE}};',
                 ],
             ]
         );
