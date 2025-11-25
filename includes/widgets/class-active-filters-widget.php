@@ -1095,20 +1095,6 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
         $is_preview = $this->should_show_preview();
         $filters = $is_preview ? $this->get_preview_filters() : $this->parse_url_filters();
 
-        // Handle empty state (only when not in preview mode)
-        if (empty($filters) && !$is_preview) {
-            if ($settings['hide_when_empty'] === 'yes') {
-                return;
-            }
-
-            if (!empty($settings['empty_message'])) {
-                echo '<div class="vt-active-filters-widget vt-active-filters-empty">';
-                echo '<span class="vt-filters-empty-message">' . esc_html($settings['empty_message']) . '</span>';
-                echo '</div>';
-            }
-            return;
-        }
-
         $remove_icon = $this->get_remove_icon();
         $show_clear_all = $settings['show_clear_all'] === 'yes';
         $clear_all_position = $settings['clear_all_position'];
@@ -1118,8 +1104,34 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
         $layout_direction = !empty($settings['layout_direction']) ? $settings['layout_direction'] : 'horizontal';
         $layout_class = $layout_direction === 'vertical' ? ' vt-layout-vertical' : '';
 
+        // Build data attributes for JavaScript
+        $data_attrs = array(
+            'hide-type' => $settings['hide_type'] ?? '',
+            'hide-sort' => $settings['hide_sort'] ?? '',
+            'exclude-params' => $settings['exclude_params'] ?? '',
+            'show-filter-name' => $settings['show_filter_name'] ?? 'yes',
+            'keywords-label' => $settings['keywords_label'] ?? __('Search', 'voxel-toolkit'),
+            'sort-label' => $settings['sort_label'] ?? __('Sort', 'voxel-toolkit'),
+            'range-separator' => $settings['range_separator'] ?? ' - ',
+            'remove-icon' => $remove_icon,
+            'show-clear-all' => $show_clear_all ? 'yes' : '',
+            'clear-all-text' => $clear_all_text,
+            'clear-all-position' => $clear_all_position,
+            'heading-text' => $heading_text,
+            'hide-when-empty' => $settings['hide_when_empty'] ?? 'yes',
+            'is-preview' => $is_preview ? 'yes' : '',
+        );
+        $data_string = '';
+        foreach ($data_attrs as $key => $value) {
+            $data_string .= ' data-' . $key . '="' . esc_attr($value) . '"';
+        }
+
+        // Determine if widget should be hidden initially
+        $is_empty = empty($filters) && !$is_preview;
+        $hide_style = ($is_empty && $settings['hide_when_empty'] === 'yes') ? ' style="display:none;"' : '';
+
         ?>
-        <div class="vt-active-filters-widget<?php echo esc_attr($layout_class); ?>">
+        <div class="vt-active-filters-widget<?php echo esc_attr($layout_class); ?>"<?php echo $data_string; ?><?php echo $hide_style; ?>>
             <?php if ($heading_text): ?>
                 <div class="vt-active-filters-heading"><?php echo esc_html($heading_text); ?></div>
             <?php endif; ?>
