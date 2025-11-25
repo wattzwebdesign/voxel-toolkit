@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Always enabled, no configuration required
   - Documented in Voxel Toolkit > Dynamic Tags admin page under "Order Modifiers"
 - **Dynamic Tag Modifier - .generate_qr_code()**: Generate QR codes from URLs with optional logo overlay
+  - **Important**: Must be used in an Elementor HTML widget
   - **Usage**: `@post(permalink).generate_qr_code(logo_url,color,button_text,quality,button_color,filename)`
   - **Example**: `@post(permalink).generate_qr_code(@post(logo.url),#ff0000,Download the QR Code,2000,#ff0000,@post(title)-qr-code)`
   - **Parameters** (all optional):

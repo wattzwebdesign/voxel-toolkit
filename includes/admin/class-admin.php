@@ -1882,7 +1882,7 @@ class Voxel_Toolkit_Admin {
                         </tr>
                         <tr>
                             <td><code>generate_qr_code</code></td>
-                            <td><?php _e('Generate a QR code image from any URL with optional logo overlay and download button', 'voxel-toolkit'); ?></td>
+                            <td><?php _e('Generate a QR code image from any URL with optional logo overlay and download button. Must be used in an Elementor HTML widget.', 'voxel-toolkit'); ?></td>
                             <td>
                                 <?php _e('1. Logo URL (optional)', 'voxel-toolkit'); ?><br>
                                 <?php _e('2. QR Color hex (optional)', 'voxel-toolkit'); ?><br>
