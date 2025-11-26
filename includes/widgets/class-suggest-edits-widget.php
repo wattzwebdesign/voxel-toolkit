@@ -893,6 +893,14 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                             </div>
                             <input type="hidden" class="vt-photo-ids" value="">
                         </div>
+
+                        <!-- Upload Progress Bar -->
+                        <div class="vt-upload-progress" style="display: none;">
+                            <div class="vt-upload-progress-bar-container">
+                                <div class="vt-upload-progress-bar"></div>
+                            </div>
+                            <span class="vt-upload-progress-text">Uploading...</span>
+                        </div>
                     <?php endif; ?>
 
                     <div class="vt-form-messages"></div>

@@ -184,6 +184,18 @@
                     $hoursContainer.hide();
                 }
             });
+
+            // Frontend: Accept suggestion button
+            $(document).on('click', '.vt-accept-btn', function(e) {
+                e.preventDefault();
+                self.handleFrontendAccept($(this));
+            });
+
+            // Frontend: Reject suggestion button
+            $(document).on('click', '.vt-reject-btn', function(e) {
+                e.preventDefault();
+                self.handleFrontendReject($(this));
+            });
         },
 
         openWorkHoursPopup: function($btn) {
@@ -507,6 +519,19 @@
             // Disable submit button
             $btn.prop('disabled', true).text('Submitting...');
 
+            // Show progress bar if files are being uploaded
+            var pendingUploads = $modal.data('pending-uploads') || [];
+            var $progressContainer = $modal.find('.vt-upload-progress');
+            var $progressText = $modal.find('.vt-upload-progress-text');
+
+            if (pendingUploads.length > 0) {
+                $progressContainer.show();
+                $progressText.text('Uploading...');
+            }
+
+            // Track timing for debugging
+            var startTime = Date.now();
+
             // Prepare form data for file upload
             var formData = new FormData();
             formData.append('action', 'vt_submit_suggestion');
@@ -518,10 +543,21 @@
             formData.append('permanently_closed', isPermanentlyClosed ? 1 : 0);
 
             // Add uploaded files
-            var pendingUploads = $modal.data('pending-uploads') || [];
+            console.log('VT Frontend: Adding ' + pendingUploads.length + ' files to form data');
             pendingUploads.forEach(function(upload, index) {
+                console.log('VT Frontend: Adding file ' + index + ':', upload.file.name, upload.file.size + ' bytes');
                 formData.append('proof_images[]', upload.file);
             });
+
+            // Debug: log all form data keys
+            console.log('VT Frontend: FormData keys:');
+            for (var pair of formData.entries()) {
+                if (pair[1] instanceof File) {
+                    console.log('  ' + pair[0] + ': File - ' + pair[1].name);
+                } else {
+                    console.log('  ' + pair[0] + ': ' + (typeof pair[1] === 'string' && pair[1].length > 50 ? pair[1].substring(0, 50) + '...' : pair[1]));
+                }
+            }
 
             // Submit via AJAX
             $.ajax({
@@ -530,7 +566,22 @@
                 data: formData,
                 processData: false,
                 contentType: false,
+                xhr: function() {
+                    var xhr = new window.XMLHttpRequest();
+
+                    // When upload completes, show processing message
+                    xhr.upload.addEventListener('load', function() {
+                        if (pendingUploads.length > 0) {
+                            $progressText.text('Processing images on server...');
+                        }
+                    }, false);
+
+                    return xhr;
+                },
                 success: function(response) {
+                    var totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
+                    console.log('Suggestion submission response:', response);
+                    console.log('Total submission time: ' + totalTime + ' seconds');
                     if (response.success) {
                         // Show success message
                         this.showMessage($messages, response.data.message || vtSuggestEdits.i18n.submitSuccess, 'success');
@@ -546,14 +597,141 @@
                             $('body').removeClass('vt-modal-open');
                         }, 2000);
                     } else {
+                        console.error('Submission failed:', response);
                         this.showMessage($messages, response.data || vtSuggestEdits.i18n.submitError, 'error');
                     }
                 }.bind(this),
-                error: function() {
-                    this.showMessage($messages, vtSuggestEdits.i18n.submitError, 'error');
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', xhr, status, error);
+                    this.showMessage($messages, vtSuggestEdits.i18n.submitError + ' (' + error + ')', 'error');
                 }.bind(this),
                 complete: function() {
                     $btn.prop('disabled', false).text($btn.data('original-text') || 'Submit');
+                    $progressContainer.hide();
+                }
+            });
+        },
+
+        handleFrontendAccept: function($btn) {
+            var suggestionId = $btn.data('suggestion-id');
+            var $item = $btn.closest('.vt-suggestion-item');
+            var $list = $item.closest('.vt-suggestions-list');
+
+            // Check if this is a permanently closed suggestion
+            var fieldLabel = $item.find('.vt-suggestion-header strong').first().text().trim();
+            var isPermanentlyClosed = (fieldLabel === 'Permanently Closed?');
+
+            // Get custom messages from widget settings (or use defaults)
+            var confirmAccept = $list.data('confirm-accept') || 'Are you sure you want to accept this suggestion?';
+            var confirmDeleteFirst = $list.data('confirm-delete-first') || 'WARNING: Accepting this will PERMANENTLY DELETE the post. This action CANNOT be undone!\n\nThe post will be moved to trash and cannot be recovered.\n\nAre you absolutely sure you want to proceed?';
+            var confirmDeleteSecond = $list.data('confirm-delete-second') || 'FINAL WARNING: You are about to delete this post permanently.\n\nClick OK to confirm deletion, or Cancel to stop.';
+
+            // Show appropriate confirmation
+            var confirmMessage = isPermanentlyClosed ? confirmDeleteFirst : confirmAccept;
+
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
+            // For permanently closed, add a second confirmation
+            if (isPermanentlyClosed) {
+                if (!confirm(confirmDeleteSecond)) {
+                    return;
+                }
+            }
+
+            // Disable buttons
+            $btn.prop('disabled', true).text('Accepting...');
+            $item.find('.vt-reject-btn').prop('disabled', true);
+
+            $.ajax({
+                url: vtSuggestEdits.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'vt_accept_suggestion',
+                    nonce: vtSuggestEdits.nonce,
+                    suggestion_id: suggestionId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Update UI
+                        $item.addClass('vt-status-accepted').removeClass('vt-status-pending vt-status-queued');
+                        $item.find('.vt-status-badge')
+                            .removeClass('vt-status-pending vt-status-queued')
+                            .addClass('vt-status-accepted')
+                            .text('Accepted');
+                        $item.find('.vt-suggestion-actions').remove();
+
+                        // Show a brief success message
+                        var $message = $('<div class="vt-inline-success">Change applied successfully!</div>');
+                        $item.find('.vt-suggestion-body').append($message);
+                        setTimeout(function() {
+                            $message.fadeOut(function() { $(this).remove(); });
+                        }, 3000);
+                    } else {
+                        alert(response.data || 'Failed to accept suggestion');
+                        $btn.prop('disabled', false).text('Accept');
+                        $item.find('.vt-reject-btn').prop('disabled', false);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Error: ' + error);
+                    $btn.prop('disabled', false).text('Accept');
+                    $item.find('.vt-reject-btn').prop('disabled', false);
+                }
+            });
+        },
+
+        handleFrontendReject: function($btn) {
+            var suggestionId = $btn.data('suggestion-id');
+            var $item = $btn.closest('.vt-suggestion-item');
+            var $list = $item.closest('.vt-suggestions-list');
+
+            // Get custom reject message from widget settings (or use default)
+            var confirmReject = $list.data('confirm-reject') || 'Are you sure you want to reject this suggestion?';
+
+            if (!confirm(confirmReject)) {
+                return;
+            }
+
+            // Disable buttons
+            $btn.prop('disabled', true).text('Rejecting...');
+            $item.find('.vt-accept-btn').prop('disabled', true);
+
+            $.ajax({
+                url: vtSuggestEdits.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'vt_reject_suggestion',
+                    nonce: vtSuggestEdits.nonce,
+                    suggestion_id: suggestionId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Update UI
+                        $item.addClass('vt-status-rejected').removeClass('vt-status-pending vt-status-queued');
+                        $item.find('.vt-status-badge')
+                            .removeClass('vt-status-pending vt-status-queued')
+                            .addClass('vt-status-rejected')
+                            .text('Rejected');
+                        $item.find('.vt-suggestion-actions').remove();
+
+                        // Show a brief success message
+                        var $message = $('<div class="vt-inline-success">Suggestion rejected</div>');
+                        $item.find('.vt-suggestion-body').append($message);
+                        setTimeout(function() {
+                            $message.fadeOut(function() { $(this).remove(); });
+                        }, 3000);
+                    } else {
+                        alert(response.data || 'Failed to reject suggestion');
+                        $btn.prop('disabled', false).text('Reject');
+                        $item.find('.vt-accept-btn').prop('disabled', false);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Error: ' + error);
+                    $btn.prop('disabled', false).text('Reject');
+                    $item.find('.vt-accept-btn').prop('disabled', false);
                 }
             });
         },
