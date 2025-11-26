@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.5.4] - 2025-11-23
 
 ### Added
+- **Messenger Widget**: Facebook-style floating chat widget with multi-chat support
+  - **Floating Button**: Customizable position (bottom-right or bottom-left)
+  - **Multi-Chat Support**: Open up to 5 simultaneous chat windows
+  - **Unread Badge**: Shows count of unread messages with customizable styling
+  - **Chat List**: View all conversations with user avatars and last message preview
+  - **Real-Time Updates**: Polls for new messages at configurable intervals
+  - **Custom Icons**: Icon picker for main button, send button, upload button, close button, and minimize button
+  - **Preview Mode**: Test widget appearance in Elementor editor
+  - **Comprehensive Styling**:
+    - Main button: size, colors, border radius, shadow
+    - Chat window: width, height, header colors, background
+    - Messages: bubble colors, typography, timestamps
+    - Input area: background, border, send button styling
+    - Badge: colors, size, position
+  - **Responsive Design**: Adapts to mobile with full-width chat windows
+  - Integrates with Voxel's native messaging system
 - **Share Menu**: Add 8 additional share options to Voxel's share menu (always enabled)
   - **Pinterest**: Share images and links to Pinterest boards
   - **Email**: Share via email with pre-filled subject and body
