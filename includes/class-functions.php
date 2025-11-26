@@ -52,6 +52,91 @@ class Voxel_Toolkit_Functions {
         $this->register_widgets();
         $this->init_active_functions();
         $this->init_active_widgets();
+        $this->register_shortcodes();
+    }
+
+    /**
+     * Register shortcodes
+     */
+    private function register_shortcodes() {
+        add_shortcode('vt_messenger', array($this, 'messenger_shortcode'));
+    }
+
+    /**
+     * Messenger shortcode callback
+     */
+    public function messenger_shortcode($atts) {
+        // Check if user is logged in
+        if (!is_user_logged_in()) {
+            return '';
+        }
+
+        // Check if messenger widget class exists
+        if (!class_exists('Voxel_Toolkit_Messenger_Widget')) {
+            return '';
+        }
+
+        // Parse attributes
+        $atts = shortcode_atts(array(
+            'position' => 'bottom-right',
+            'show_unread_badge' => 'yes',
+            'enable_sound' => 'no',
+            'max_open_chats' => 3,
+        ), $atts);
+
+        // Create a fake widget instance to render
+        $widget = new Voxel_Toolkit_Messenger_Widget(array(), array());
+
+        // Start output buffering
+        ob_start();
+
+        // Manually render with shortcode settings
+        $settings = get_option('voxel_toolkit_messenger_settings', array());
+        if (empty($settings['enabled'])) {
+            return '';
+        }
+
+        $position_class = 'vt-messenger-position-' . $atts['position'];
+        $max_chats = intval($atts['max_open_chats']);
+        ?>
+        <div class="vt-messenger-container <?php echo esc_attr($position_class); ?>"
+             data-max-chats="<?php echo esc_attr($max_chats); ?>"
+             data-show-badge="<?php echo esc_attr($atts['show_unread_badge']); ?>"
+             data-enable-sound="<?php echo esc_attr($atts['enable_sound']); ?>">
+
+            <button class="vt-messenger-button" aria-label="<?php _e('Open messenger', 'voxel-toolkit'); ?>">
+                <i class="eicon-comments"></i>
+                <?php if ($atts['show_unread_badge'] === 'yes'): ?>
+                    <span class="vt-messenger-badge" style="display: none;">0</span>
+                <?php endif; ?>
+            </button>
+
+            <div class="vt-messenger-popup" style="display: none;">
+                <div class="vt-messenger-popup-header">
+                    <h3><?php _e('Chats', 'voxel-toolkit'); ?></h3>
+                    <button class="vt-messenger-close" aria-label="<?php _e('Close', 'voxel-toolkit'); ?>">
+                        <i class="eicon-close"></i>
+                    </button>
+                </div>
+
+                <div class="vt-messenger-search">
+                    <input type="text"
+                           class="vt-messenger-search-input"
+                           placeholder="<?php echo esc_attr__('Search messages...', 'voxel-toolkit'); ?>">
+                </div>
+
+                <div class="vt-messenger-chat-list">
+                    <div class="vt-messenger-loading">
+                        <i class="eicon-loading eicon-animation-spin"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vt-messenger-chat-windows"></div>
+        </div>
+        <?php
+
+        return ob_get_clean();
     }
 
     /**
@@ -170,6 +255,13 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Show_Field_Description',
                 'file' => 'functions/class-show-field-description.php',
                 'settings_callback' => array($this, 'render_show_field_description_settings'),
+            ),
+            'suggest_edits' => array(
+                'name' => __('Suggest Edits', 'voxel-toolkit'),
+                'description' => __('Allow users to suggest edits to posts with moderation workflow and notifications.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Suggest_Edits',
+                'file' => 'functions/class-suggest-edits.php',
+                'settings_callback' => array($this, 'render_suggest_edits_settings'),
             ),
             'duplicate_post' => array(
                 'name' => __('Duplicate Post/Page', 'voxel-toolkit'),
@@ -414,6 +506,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-active-filters-widget-manager.php',
                 'icon' => 'eicon-filter',
                 'widget_name' => 'voxel-toolkit-active-filters',
+            ),
+            'messenger' => array(
+                'name' => __('Messenger (VT)', 'voxel-toolkit'),
+                'description' => __('Facebook-style floating messenger widget with multi-chat support and customizable positioning.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Messenger_Widget_Manager',
+                'file' => 'widgets/class-messenger-widget-manager.php',
+                'icon' => 'eicon-comments',
+                'widget_name' => 'voxel-messenger',
             )
         );
 
@@ -2113,10 +2213,44 @@ class Voxel_Toolkit_Functions {
         </tr>
         <?php
     }
-    
+
+    /**
+     * Render settings for Suggest Edits function
+     *
+     * @param array $settings Current settings
+     */
+    public function render_suggest_edits_settings($settings) {
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('Suggest Edits', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 700px;">
+                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px;">
+                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
+                        <?php _e('This feature allows users to suggest edits to posts with a complete moderation workflow and notification system.', 'voxel-toolkit'); ?>
+                    </div>
+
+                    <div style="margin-top: 20px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; font-size: 14px;">
+                        <strong style="color: #856404;"><?php _e('Features:', 'voxel-toolkit'); ?></strong>
+                        <ul style="margin: 10px 0 0 20px; color: #856404;">
+                            <li><?php _e('Users can suggest edits to posts via Suggest Edits widget', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Post authors receive notifications when edits are suggested', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Authors can approve, reject, or delete suggestions', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Pending Suggestions widget shows all suggestions for review', 'voxel-toolkit'); ?></li>
+                            <li><?php _e('Complete audit trail of all suggestion activity', 'voxel-toolkit'); ?></li>
+                        </ul>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <?php
+    }
+
     /**
      * Render settings for Duplicate Post function
-     * 
+     *
      * @param array $settings Current settings
      */
     public function render_duplicate_post_settings($settings) {
