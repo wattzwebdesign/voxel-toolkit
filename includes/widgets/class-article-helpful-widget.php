@@ -319,7 +319,7 @@ class Voxel_Toolkit_Article_Helpful_Widget extends \Elementor\Widget_Base {
                     'unit' => 'px',
                 ),
                 'selectors' => array(
-                    '{{WRAPPER}} .voxel-helpful-btn:not(:last-child)' => 'margin-right: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .voxel-article-helpful-buttons' => 'gap: {{SIZE}}{{UNIT}};',
                 ),
             )
         );
@@ -552,7 +552,7 @@ class Voxel_Toolkit_Article_Helpful_Widget extends \Elementor\Widget_Base {
                     'size' => 8,
                 ),
                 'selectors' => array(
-                    '{{WRAPPER}} .voxel-article-helpful-buttons' => 'gap: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .voxel-helpful-btn .btn-icon' => 'margin-right: {{SIZE}}{{UNIT}};',
                 ),
             )
         );
