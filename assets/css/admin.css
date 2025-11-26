@@ -537,11 +537,6 @@ body:not(.voxel-toolkit-light-mode) div[class*="field-level"] > .field-head {
     background-color: #40464a !important;
 }
 
-/* Dark mode styles - excluding admin bar */
-body.vx-dark-mode #wpwrap #wpcontent i,
-body.vx-dark-mode #wpwrap #wpbody i {
-    color: white !important;
-}
 
 @media (max-width: 768px) {
     .voxel-toolkit-functions {
