@@ -24,6 +24,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Badge: colors, size, position
   - **Responsive Design**: Adapts to mobile with full-width chat windows
   - Integrates with Voxel's native messaging system
+- **Suggest Edits Widget**: Allow users to suggest edits to post fields with admin review system
+  - **Frontend Widget**: Button that opens a modal for suggesting edits to any post
+  - **Field Selection**: Choose which post fields users can suggest edits for
+  - **Supported Field Types**: Text, textarea, number, email, URL, phone, date, work hours, location
+  - **Guest Support**: Allow guest users to submit suggestions with email
+  - **Admin Interface**: WordPress-style admin page under Voxel menu for reviewing suggestions
+    - Filter by post type and status (pending, approved, rejected)
+    - Search suggestions by content
+    - Bulk actions: approve, reject, delete
+    - Side-by-side comparison of current vs suggested values
+    - One-click apply to instantly update post fields
+  - **Voxel App Event**: Triggers on new suggestion submission for notifications
+  - **Pending Suggestions Widget**: Display pending suggestion count on frontend
+  - **Comprehensive Styling**: Full control over button, modal, and form appearance
 - **Share Menu**: Add 8 additional share options to Voxel's share menu (always enabled)
   - **Pinterest**: Share images and links to Pinterest boards
   - **Email**: Share via email with pre-filled subject and body
