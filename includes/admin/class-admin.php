@@ -749,7 +749,31 @@ class Voxel_Toolkit_Admin {
                             $sanitized_function['post_types'] = array();
                         }
                         break;
-                    
+
+                    case 'duplicate_post':
+                        // Post types
+                        if (isset($function_input['post_types']) && is_array($function_input['post_types'])) {
+                            $sanitized_function['post_types'] = array_map('sanitize_text_field', $function_input['post_types']);
+                        } else {
+                            $sanitized_function['post_types'] = array();
+                        }
+                        // Allowed roles
+                        if (isset($function_input['allowed_roles']) && is_array($function_input['allowed_roles'])) {
+                            $sanitized_function['allowed_roles'] = array_map('sanitize_text_field', $function_input['allowed_roles']);
+                        } else {
+                            $sanitized_function['allowed_roles'] = array('contributor', 'author', 'editor', 'administrator');
+                        }
+                        // Redirect pages
+                        if (isset($function_input['redirect_pages']) && is_array($function_input['redirect_pages'])) {
+                            $sanitized_function['redirect_pages'] = array();
+                            foreach ($function_input['redirect_pages'] as $post_type => $page_id) {
+                                $sanitized_function['redirect_pages'][sanitize_text_field($post_type)] = absint($page_id);
+                            }
+                        } else {
+                            $sanitized_function['redirect_pages'] = array();
+                        }
+                        break;
+
                     case 'membership_notifications':
                         if (isset($function_input['notifications']) && is_array($function_input['notifications'])) {
                             $sanitized_notifications = array();
