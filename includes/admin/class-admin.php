@@ -39,7 +39,6 @@ class Voxel_Toolkit_Admin {
         add_action('admin_init', array($this, 'admin_init'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('admin_notices', array($this, 'admin_notices'));
-        add_action('admin_head', array($this, 'inject_light_mode_styles'));
         
         // Handle AJAX requests
         add_action('wp_ajax_voxel_toolkit_toggle_function', array($this, 'ajax_toggle_function'));
@@ -323,25 +322,7 @@ class Voxel_Toolkit_Admin {
             )
         ));
     }
-
-    /**
-     * Inject light mode styles directly into admin head
-     */
-    public function inject_light_mode_styles() {
-        ?>
-        <style id="voxel-toolkit-light-mode-fix">
-            /* Light mode - black icons */
-            body.vx-dark-mode #wpwrap #wpcontent i,
-            body.vx-dark-mode #wpwrap #wpbody i { color: black !important; }
-            body.vx-dark-mode .panel-icon svg path { fill: black !important; }
-            body.vx-dark-mode a.ts-button.edit-voxel.ts-outline img {
-                filter: brightness(0) !important;
-                background: transparent !important;
-            }
-        </style>
-        <?php
-    }
-
+    
     /**
      * Display admin notices
      */

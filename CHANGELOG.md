@@ -166,10 +166,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Container: background, padding, margin, border, border radius
 
 ### Fixed
-- **Light Mode Icons**: Fixed icon colors in Voxel admin backend when using light mode
-  - Dashboard and menu icons now display in black instead of white
-  - SVG icons in admin panels use correct black fill color
-  - Edit button images no longer have black backgrounds
 - **Poll Display Widget**: Updated widget icon from non-existent `eicon-poll` to standard Elementor `eicon-checkbox` icon for proper display in widget panel
 - **Admin Notifications**: Fixed fatal error during WP-CLI operations (cPanel staging/live pushes, database operations)
   - Added class existence check for `\Voxel\Controllers\Base_Controller` before class definition
