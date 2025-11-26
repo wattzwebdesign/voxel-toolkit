@@ -976,7 +976,22 @@ class Voxel_Toolkit_Admin {
                             }
                         }
                         break;
-                    
+
+                    case 'pre_approve_posts':
+                        // Approved roles (array of role slugs)
+                        if (isset($function_input['approved_roles']) && is_array($function_input['approved_roles'])) {
+                            $sanitized_function['approved_roles'] = array_map('sanitize_text_field', $function_input['approved_roles']);
+                        } else {
+                            $sanitized_function['approved_roles'] = array();
+                        }
+
+                        // Auto-approve verified users (checkbox)
+                        $sanitized_function['approve_verified'] = !empty($function_input['approve_verified']);
+
+                        // Show column in users list (checkbox)
+                        $sanitized_function['show_column'] = !empty($function_input['show_column']);
+                        break;
+
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(
