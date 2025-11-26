@@ -90,6 +90,15 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'input_placeholder',
+            [
+                'label' => __('Input Placeholder', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Enter new value...', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
             'fields_to_show',
             [
                 'label' => __('Fields to Show', 'voxel-toolkit'),
@@ -863,7 +872,7 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                                                 <input type="text"
                                                     class="vt-suggestion-input"
                                                     data-field-key="<?php echo esc_attr($field_key); ?>"
-                                                    placeholder="<?php _e('Enter new value...', 'voxel-toolkit'); ?>">
+                                                    placeholder="<?php echo esc_attr($settings['input_placeholder']); ?>">
                                             <?php endif; ?>
                                         <?php endif; ?>
                                     </div>
