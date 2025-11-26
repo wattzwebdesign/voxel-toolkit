@@ -27,3 +27,19 @@
 .introjs-tooltipbuttons {
     margin-top: 10px;
 }
+
+/* Remove focus outline/border from intro.js elements */
+.introjs-button:focus,
+.introjs-button:active,
+.introjs-skipbutton:focus,
+.introjs-skipbutton:active,
+.introjs-nextbutton:focus,
+.introjs-nextbutton:active,
+.introjs-prevbutton:focus,
+.introjs-prevbutton:active,
+.introjs-donebutton:focus,
+.introjs-donebutton:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
