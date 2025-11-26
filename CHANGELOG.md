@@ -5,6 +5,14 @@ All notable changes to Voxel Toolkit will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.4.1] - 2025-11-26
+
+### Fixed
+- **Suggest Edits Widget**: Now works on all Voxel post types by default
+  - Removed "Suggest Edits is not enabled for this post type" error
+  - Admin menu pages automatically added for all Voxel post types when enabled
+  - No longer requires manual post type selection in settings
+
 ## [1.5.4] - 2025-11-23
 
 ### Added
