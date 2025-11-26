@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - No longer requires manual post type selection in settings
 - **Onboarding Widget**: Removed focus outline/border from tour buttons
   - Buttons no longer show accessibility border when clicked
+- **Duplicate Post**: Fixed settings not saving
+  - Post types, allowed roles, and redirect pages now save correctly
 
 ## [1.5.4] - 2025-11-23
 
