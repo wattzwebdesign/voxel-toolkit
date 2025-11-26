@@ -132,6 +132,14 @@ class Voxel_Toolkit_Suggest_Edits {
         $config = $settings->get_function_settings('suggest_edits');
         $enabled_post_types = $config['post_types'] ?? array();
 
+        // If no specific post types configured, use all Voxel post types
+        if (empty($enabled_post_types)) {
+            if (class_exists('\Voxel\Post_Type')) {
+                $voxel_post_types = \Voxel\Post_Type::get_voxel_types();
+                $enabled_post_types = array_keys($voxel_post_types);
+            }
+        }
+
         if (empty($enabled_post_types)) {
             return;
         }
