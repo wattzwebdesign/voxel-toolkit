@@ -594,12 +594,14 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
         }
 
         // Check if function is enabled for this post type
+        // If no specific post types are configured, allow all post types
         $vt_settings = Voxel_Toolkit_Settings::instance();
         $se_config = $vt_settings->get_function_settings('suggest_edits');
         $enabled_post_types = isset($se_config['post_types']) ? $se_config['post_types'] : array();
         $current_post_type = get_post_type($post_id);
 
-        if (!in_array($current_post_type, $enabled_post_types)) {
+        // Allow all post types if none are specifically configured
+        if (!empty($enabled_post_types) && !in_array($current_post_type, $enabled_post_types)) {
             if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
                 echo '<p>' . __('Suggest Edits is not enabled for this post type.', 'voxel-toolkit') . '</p>';
             }
