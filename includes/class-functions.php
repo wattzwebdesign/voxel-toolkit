@@ -390,6 +390,13 @@ class Voxel_Toolkit_Functions {
                 'settings_callback' => array('Voxel_Toolkit_Post_Fields_Anywhere', 'render_settings'),
                 'always_enabled' => true,
             ),
+            'disable_gutenberg' => array(
+                'name' => __('Disable Gutenberg', 'voxel-toolkit'),
+                'description' => __('Disables the Gutenberg block editor site-wide and restores the classic WordPress editor for all post types and widgets.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Disable_Gutenberg',
+                'file' => 'functions/class-disable-gutenberg.php',
+                'icon' => 'dashicons-editor-classic',
+            ),
             'widget_css_injector' => array(
                 'name' => __('Widget CSS Class & ID', 'voxel-toolkit'),
                 'description' => __('Add CSS Class and ID fields to Voxel widgets (Navbar, User Bar, Advanced List) for custom styling of individual items.', 'voxel-toolkit'),
