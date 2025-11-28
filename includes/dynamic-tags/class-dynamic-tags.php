@@ -31,6 +31,8 @@ class Voxel_Toolkit_Dynamic_Tags {
         add_filter('voxel/dynamic-data/groups/user/methods', array($this, 'register_user_methods'), 10, 1);
         add_filter('voxel/dynamic-data/groups/author/methods', array($this, 'register_author_methods'), 10, 1);
         add_filter('voxel/dynamic-data/groups/order/methods', array($this, 'register_order_methods'), 10, 1);
+        add_filter('voxel/dynamic-data/groups/post/methods', array($this, 'register_post_methods'), 10, 1);
+        add_filter('voxel/dynamic-data/groups/site/methods', array($this, 'register_site_methods'), 10, 1);
 
         // Register modifiers with Voxel
         add_filter('voxel/dynamic-data/modifiers', array($this, 'register_modifiers'), 10, 1);
@@ -67,6 +69,10 @@ class Voxel_Toolkit_Dynamic_Tags {
         if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-qr-code-modifier.php')) {
             require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-qr-code-modifier.php';
         }
+        // Load post field anywhere modifier (always enabled)
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-post-field-anywhere.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-post-field-anywhere.php';
+        }
     }
 
     /**
@@ -90,6 +96,7 @@ class Voxel_Toolkit_Dynamic_Tags {
         $modifiers['tally'] = \Voxel_Toolkit_Tally_Modifier::class;
         $modifiers['sold'] = \Voxel_Toolkit_Sold_Modifier::class;
         $modifiers['generate_qr_code'] = \Voxel_Toolkit_QR_Code_Modifier::class;
+
         return $modifiers;
     }
 
@@ -114,6 +121,24 @@ class Voxel_Toolkit_Dynamic_Tags {
      */
     public function register_order_methods($methods) {
         $methods['summary'] = \Voxel_Toolkit_Order_Summary_Method::class;
+        return $methods;
+    }
+
+    /**
+     * Register methods for post group
+     */
+    public function register_post_methods($methods) {
+        return $methods;
+    }
+
+    /**
+     * Register methods for site group
+     */
+    public function register_site_methods($methods) {
+        // Register render_post_tag method (always enabled)
+        if (class_exists('Voxel_Toolkit_Render_Post_Tag_Method')) {
+            $methods['render_post_tag'] = \Voxel_Toolkit_Render_Post_Tag_Method::class;
+        }
         return $methods;
     }
 

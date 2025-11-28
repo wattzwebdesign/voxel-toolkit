@@ -382,6 +382,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-visitor-location.php',
                 'settings_callback' => array($this, 'render_visitor_location_settings'),
             ),
+            'post_fields_anywhere' => array(
+                'name' => __('Post Fields Anywhere', 'voxel-toolkit'),
+                'description' => __('Display any Voxel field from any post anywhere on your site using dynamic tags. Usage: @site(post:ID).field(field_key) with dot notation for sub-properties like location.city', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Post_Fields_Anywhere',
+                'file' => 'functions/class-post-fields-anywhere.php',
+                'settings_callback' => array('Voxel_Toolkit_Post_Fields_Anywhere', 'render_settings'),
+                'always_enabled' => true,
+            ),
             'widget_css_injector' => array(
                 'name' => __('Widget CSS Class & ID', 'voxel-toolkit'),
                 'description' => __('Add CSS Class and ID fields to Voxel widgets (Navbar, User Bar, Advanced List) for custom styling of individual items.', 'voxel-toolkit'),
