@@ -17,6 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Disables block editor for all post types
   - Restores classic widgets (disables block-based widgets)
   - Removes Gutenberg plugin hooks if installed
+- **Dynamic Tag Modifier - |see_more()**: Expandable text truncation with toggle
+  - Truncates text by word count or character count
+  - Adds "... **See More**" link after truncated content
+  - Smooth slide-down animation when expanded
+  - Toggle functionality with customizable "See Less" text
+  - Usage: `@post(description)|see_more(100, words, See More, See Less)`
+  - Keyboard accessible (Enter/Space keys)
 
 ### Fixed
 - **WP-CLI Compatibility**: Fixed fatal errors during cPanel staging-to-live deployments
