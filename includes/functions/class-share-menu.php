@@ -135,6 +135,19 @@ class Voxel_Toolkit_Share_Menu {
             },
         );
 
+        // KakaoTalk
+        $links['kakaotalk'] = array(
+            'label' => 'KakaoTalk',
+            'icon' => function() {
+                return $this->get_icon('kakaotalk');
+            },
+            'link' => function($details) {
+                return add_query_arg(array(
+                    'url' => $details['link'],
+                ), 'https://story.kakao.com/share');
+            },
+        );
+
         return $links;
     }
 
@@ -159,6 +172,7 @@ class Voxel_Toolkit_Share_Menu {
             'line' => 'line.svg',
             'viber' => 'viber.svg',
             'snapchat' => 'snapchat.svg',
+            'kakaotalk' => 'kakao-talk.svg',
         );
 
         if (isset($icon_map[$platform])) {
