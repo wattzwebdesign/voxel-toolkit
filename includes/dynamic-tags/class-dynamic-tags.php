@@ -73,6 +73,10 @@ class Voxel_Toolkit_Dynamic_Tags {
         if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-post-field-anywhere.php')) {
             require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-post-field-anywhere.php';
         }
+        // Load see more modifier (always enabled)
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-see-more-modifier.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-see-more-modifier.php';
+        }
     }
 
     /**
@@ -96,6 +100,7 @@ class Voxel_Toolkit_Dynamic_Tags {
         $modifiers['tally'] = \Voxel_Toolkit_Tally_Modifier::class;
         $modifiers['sold'] = \Voxel_Toolkit_Sold_Modifier::class;
         $modifiers['generate_qr_code'] = \Voxel_Toolkit_QR_Code_Modifier::class;
+        $modifiers['see_more'] = \Voxel_Toolkit_See_More_Modifier::class;
 
         return $modifiers;
     }
