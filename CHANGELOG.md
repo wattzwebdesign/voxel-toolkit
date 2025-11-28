@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Usage: `@site().render_post_tag(post_id, @post(...))`
   - Full access to all Voxel dynamic tag features (properties, modifiers)
   - Examples: `@site().render_post_tag(123, @post(taxonomy.slug))`, `@site().render_post_tag(123, @post(location.lng))`
+- **Disable Gutenberg**: Disable the Gutenberg block editor site-wide and restore the classic editor
+  - Disables block editor for all post types
+  - Restores classic widgets (disables block-based widgets)
+  - Removes Gutenberg plugin hooks if installed
 
 ### Fixed
 - **WP-CLI Compatibility**: Fixed fatal errors during cPanel staging-to-live deployments
