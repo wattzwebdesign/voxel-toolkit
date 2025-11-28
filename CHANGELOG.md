@@ -5,6 +5,15 @@ All notable changes to Voxel Toolkit will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.5] - 2025-11-28
+
+### Fixed
+- **WP-CLI Compatibility**: Fixed fatal errors during cPanel staging-to-live deployments
+  - Added class existence checks before extending Voxel theme classes
+  - Prevents crashes when WordPress is bootstrapped via WP-CLI without full theme loading
+  - Affected files: dynamic tags, filters, order-by, post fields, and event classes
+- **Duplicate Title Checker**: Fixed error/success message settings not persisting
+
 ## [1.5.4.2] - 2025-11-26
 
 ### Fixed
