@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.5] - 2025-11-28
 
+### Added
+- **Share Menu**: Added KakaoTalk share option
+
 ### Fixed
 - **WP-CLI Compatibility**: Fixed fatal errors during cPanel staging-to-live deployments
   - Added class existence checks before extending Voxel theme classes
