@@ -12,6 +12,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Only define the class if the parent class exists (Voxel theme is loaded)
+if (!class_exists('\Voxel\Dynamic_Data\Modifiers\Base_Modifier')) {
+    return;
+}
+
 /**
  * Sold Modifier - Count total quantity sold for a product
  */

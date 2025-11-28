@@ -12,6 +12,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Only define the class if the parent class exists (Voxel theme is loaded)
+if (!class_exists('\Voxel\Dynamic_Data\Modifiers\Base_Modifier')) {
+    return;
+}
+
 /**
  * Tally Modifier - Count published posts for a post type
  */

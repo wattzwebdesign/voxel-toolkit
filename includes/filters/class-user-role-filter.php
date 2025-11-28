@@ -13,6 +13,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Only define the class if the parent class exists (Voxel theme is loaded)
+if (!class_exists('\Voxel\Post_Types\Filters\Base_Filter')) {
+    return;
+}
+
 class User_Role_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
 
     protected $supported_conditions = ['text'];

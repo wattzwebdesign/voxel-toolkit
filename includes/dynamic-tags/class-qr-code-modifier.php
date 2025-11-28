@@ -11,6 +11,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Only define the class if the parent class exists (Voxel theme is loaded)
+if (!class_exists('\Voxel\Dynamic_Data\Modifiers\Base_Modifier')) {
+    return;
+}
+
 class Voxel_Toolkit_QR_Code_Modifier extends \Voxel\Dynamic_Data\Modifiers\Base_Modifier {
 
     public function get_label(): string {

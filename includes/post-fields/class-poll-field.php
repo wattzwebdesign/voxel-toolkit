@@ -729,6 +729,11 @@ class Voxel_Toolkit_Poll_Field {
     }
 }
 
+// Only define the field type class if the parent class exists (Voxel theme is loaded)
+if (!class_exists('\Voxel\Post_Types\Fields\Base_Post_Field')) {
+    return;
+}
+
 /**
  * Poll Field Type Class
  */

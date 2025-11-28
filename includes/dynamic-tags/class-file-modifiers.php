@@ -11,6 +11,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Only define the classes if the parent class exists (Voxel theme is loaded)
+if (!class_exists('\Voxel\Dynamic_Data\Modifiers\Base_Modifier')) {
+    return;
+}
+
 /**
  * File Size Modifier
  */

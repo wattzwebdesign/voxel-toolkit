@@ -992,6 +992,21 @@ class Voxel_Toolkit_Admin {
                         $sanitized_function['show_column'] = !empty($function_input['show_column']);
                         break;
 
+                    case 'duplicate_title_checker':
+                        // Block duplicate submissions (checkbox)
+                        $sanitized_function['block_duplicate'] = !empty($function_input['block_duplicate']);
+
+                        // Error message (text)
+                        if (isset($function_input['error_message']) && !empty(trim($function_input['error_message']))) {
+                            $sanitized_function['error_message'] = sanitize_text_field($function_input['error_message']);
+                        }
+
+                        // Success message (text)
+                        if (isset($function_input['success_message']) && !empty(trim($function_input['success_message']))) {
+                            $sanitized_function['success_message'] = sanitize_text_field($function_input['success_message']);
+                        }
+                        break;
+
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(

@@ -14,6 +14,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Only define the class if the parent class exists (Voxel theme is loaded)
+if (!class_exists('\Voxel\Post_Types\Order_By\Base_Search_Order')) {
+    return;
+}
+
 class View_Count_Order extends \Voxel\Post_Types\Order_By\Base_Search_Order {
 
     protected $props = [

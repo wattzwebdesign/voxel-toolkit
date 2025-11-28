@@ -11,6 +11,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Only define the class if the parent class exists (Voxel theme is loaded)
+if (!class_exists('\Voxel\Dynamic_Data\Modifiers\Group_Methods\Base_Group_Method')) {
+    return;
+}
+
 /**
  * Order Summary Method for Order Group
  */

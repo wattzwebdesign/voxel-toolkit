@@ -1622,6 +1622,11 @@ class Voxel_Toolkit_Suggest_Edits {
     }
 }
 
+// Only define the event class if the parent class exists (Voxel theme is loaded)
+if (!class_exists('\Voxel\Events\Base_Event')) {
+    return;
+}
+
 /**
  * Suggestion Submitted Event
  */
