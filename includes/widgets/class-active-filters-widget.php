@@ -19,6 +19,11 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
     private $always_hidden_params = array('pg', 'per_page', '_wpnonce', 'action');
 
     /**
+     * Cached filter labels from Voxel post type config
+     */
+    private $filter_labels_cache = null;
+
+    /**
      * Constructor
      */
     public function __construct($data = [], $args = null) {
@@ -951,6 +956,100 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
     }
 
     /**
+     * Get filter labels from Voxel post type configuration
+     *
+     * @return array Associative array of filter key => label
+     */
+    private function get_voxel_filter_labels() {
+        // Return cached labels if available
+        if ($this->filter_labels_cache !== null) {
+            return $this->filter_labels_cache;
+        }
+
+        $this->filter_labels_cache = [];
+
+        // Get the post type from URL
+        $post_type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : '';
+
+        // If no type in URL, try to detect from current page/template
+        if (empty($post_type)) {
+            // Try to get from Voxel's current post type context
+            if (function_exists('\\Voxel\\get_current_post_type')) {
+                $current_post_type = \Voxel\get_current_post_type();
+                if ($current_post_type) {
+                    $post_type = $current_post_type->get_key();
+                }
+            }
+        }
+
+        if (empty($post_type)) {
+            return $this->filter_labels_cache;
+        }
+
+        // Get the post types option from Voxel
+        // Try using Voxel's built-in method first if available
+        if (class_exists('\Voxel\Post_Type') && method_exists('\Voxel\Post_Type', 'get')) {
+            $voxel_post_type = \Voxel\Post_Type::get($post_type);
+            if ($voxel_post_type) {
+                $filters = $voxel_post_type->get_filters();
+                if (!empty($filters)) {
+                    foreach ($filters as $filter) {
+                        $key = $filter->get_key();
+                        $label = $filter->get_label();
+                        if (!empty($key) && !empty($label)) {
+                            $this->filter_labels_cache[$key] = $label;
+                        }
+                    }
+                }
+                return $this->filter_labels_cache;
+            }
+        }
+
+        // Fallback: Read from option directly
+        $post_types = get_option('voxel:post_types', []);
+
+        // Handle JSON-encoded string
+        if (is_string($post_types)) {
+            $decoded = json_decode($post_types, true);
+            if ($decoded) {
+                $post_types = $decoded;
+            }
+        }
+
+        if (empty($post_types) || !is_array($post_types)) {
+            return $this->filter_labels_cache;
+        }
+
+        // Check if this post type exists in the config
+        if (!isset($post_types[$post_type])) {
+            return $this->filter_labels_cache;
+        }
+
+        $post_type_config = $post_types[$post_type];
+
+        // Get filters from the search configuration
+        if (isset($post_type_config['search']['filters']) && is_array($post_type_config['search']['filters'])) {
+            foreach ($post_type_config['search']['filters'] as $filter) {
+                if (isset($filter['key']) && isset($filter['label']) && !empty($filter['label'])) {
+                    $this->filter_labels_cache[$filter['key']] = $filter['label'];
+                }
+            }
+        }
+
+        // Also check for order-by options (sort)
+        if (isset($post_type_config['search']['order']) && is_array($post_type_config['search']['order'])) {
+            foreach ($post_type_config['search']['order'] as $order) {
+                if (isset($order['key']) && isset($order['label']) && !empty($order['label'])) {
+                    // Store sort option labels with 'sort_' prefix for lookup
+                    $this->filter_labels_cache['sort_option_' . $order['key']] = $order['label'];
+                }
+            }
+        }
+
+        return $this->filter_labels_cache;
+    }
+
+    /**
      * Get label prefix for a filter key
      *
      * @param string $key Filter key
@@ -959,7 +1058,13 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
     private function get_filter_label_prefix($key) {
         $settings = $this->get_settings_for_display();
 
-        // Custom labels for specific keys
+        // First, check Voxel's filter configuration for the label
+        $voxel_labels = $this->get_voxel_filter_labels();
+        if (isset($voxel_labels[$key])) {
+            return $voxel_labels[$key];
+        }
+
+        // Custom labels for specific keys (widget settings override)
         $custom_labels = [
             'keywords' => !empty($settings['keywords_label']) ? $settings['keywords_label'] : __('Search', 'voxel-toolkit'),
             'sort' => !empty($settings['sort_label']) ? $settings['sort_label'] : __('Sort', 'voxel-toolkit'),
@@ -1060,6 +1165,11 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
      * @return bool
      */
     private function should_show_preview() {
+        // Only show preview in Elementor editor, never on frontend
+        if (!\Elementor\Plugin::$instance->editor->is_edit_mode() && !\Elementor\Plugin::$instance->preview->is_preview_mode()) {
+            return false;
+        }
+
         $settings = $this->get_settings_for_display();
         return $settings['show_preview'] === 'yes';
     }
@@ -1104,6 +1214,9 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
         $layout_direction = !empty($settings['layout_direction']) ? $settings['layout_direction'] : 'horizontal';
         $layout_class = $layout_direction === 'vertical' ? ' vt-layout-vertical' : '';
 
+        // Get Voxel filter labels for JavaScript
+        $voxel_labels = $this->get_voxel_filter_labels();
+
         // Build data attributes for JavaScript
         $data_attrs = array(
             'hide-type' => $settings['hide_type'] ?? '',
@@ -1120,6 +1233,7 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
             'heading-text' => $heading_text,
             'hide-when-empty' => $settings['hide_when_empty'] ?? 'yes',
             'is-preview' => $is_preview ? 'yes' : '',
+            'filter-labels' => !empty($voxel_labels) ? json_encode($voxel_labels) : '',
         );
         $data_string = '';
         foreach ($data_attrs as $key => $value) {

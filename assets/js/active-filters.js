@@ -31,6 +31,16 @@
      * Initialize a single widget instance
      */
     function initWidget(widget) {
+        // Parse filter labels from JSON
+        var filterLabels = {};
+        try {
+            if (widget.dataset.filterLabels) {
+                filterLabels = JSON.parse(widget.dataset.filterLabels);
+            }
+        } catch (e) {
+            console.warn('VT Active Filters: Could not parse filter labels', e);
+        }
+
         var config = {
             element: widget,
             hideType: widget.dataset.hideType === 'yes',
@@ -46,7 +56,8 @@
             clearAllPosition: widget.dataset.clearAllPosition || 'after',
             headingText: widget.dataset.headingText || '',
             hideWhenEmpty: widget.dataset.hideWhenEmpty === 'yes',
-            isPreview: widget.dataset.isPreview === 'yes'
+            isPreview: widget.dataset.isPreview === 'yes',
+            filterLabels: filterLabels
         };
         widgets.push(config);
     }
@@ -180,12 +191,20 @@
      * Get label prefix for a filter key
      */
     function getFilterLabelPrefix(config, key) {
+        // First check Voxel filter labels
+        if (config.filterLabels && config.filterLabels[key]) {
+            return config.filterLabels[key];
+        }
+
+        // Fallback to custom widget labels
         if (key === 'keywords') {
             return config.keywordsLabel;
         }
         if (key === 'sort') {
             return config.sortLabel;
         }
+
+        // Default: capitalize and replace dashes/underscores
         return capitalize(key.replace(/[-_]/g, ' '));
     }
 
