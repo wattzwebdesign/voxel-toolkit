@@ -31,6 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Prevents crashes when WordPress is bootstrapped via WP-CLI without full theme loading
   - Affected files: dynamic tags, filters, order-by, post fields, and event classes
 - **Duplicate Title Checker**: Fixed error/success message settings not persisting
+- **Messenger Widget**: Multiple fixes and improvements
+  - Added input placeholder text control for customizing "Type a message..." text
+  - Fixed send button icon not accepting custom icon/SVG changes
+  - Fixed upload button icon not accepting custom icon/SVG changes
+  - Added minimize/close button style controls (background, hover, icon color, size)
 
 ## [1.5.4.2] - 2025-11-26
 
