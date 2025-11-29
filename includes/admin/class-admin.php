@@ -589,9 +589,6 @@ class Voxel_Toolkit_Admin {
      * Handle options page field configuration
      */
     private function handle_options_page_config($new_settings, $current_settings) {
-        error_log('OPTIONS PAGE DEBUG: handle_options_page_config called');
-        error_log('OPTIONS PAGE DEBUG: new_settings: ' . print_r($new_settings, true));
-
         // Preserve enabled status
         $enabled_status = isset($current_settings['enabled']) ? $current_settings['enabled'] : false;
 
@@ -613,9 +610,7 @@ class Voxel_Toolkit_Admin {
 
         // Handle add multiple new fields (JSON array)
         if (isset($new_settings['new_fields']) && !empty($new_settings['new_fields'])) {
-            error_log('OPTIONS PAGE DEBUG: new_fields received: ' . $new_settings['new_fields']);
             $new_fields = json_decode($new_settings['new_fields'], true);
-            error_log('OPTIONS PAGE DEBUG: decoded fields: ' . print_r($new_fields, true));
 
             if (is_array($new_fields)) {
                 foreach ($new_fields as $new_field) {
@@ -3050,14 +3045,9 @@ class Voxel_Toolkit_Admin {
      * Save configure fields
      */
     private function save_configure_fields() {
-        error_log('=== SAVE CONFIGURE FIELDS CALLED ===');
-        error_log('POST data: ' . print_r($_POST, true));
-
         $current_options = get_option('voxel_toolkit_options', array());
         $config = isset($current_options['options_page']) ? $current_options['options_page'] : array();
         $fields = isset($config['fields']) ? $config['fields'] : array();
-
-        error_log('Existing fields: ' . print_r($fields, true));
 
         $is_delete = false;
 
@@ -3076,14 +3066,11 @@ class Voxel_Toolkit_Admin {
 
         // Handle single field add/update
         if (isset($_POST['voxel_toolkit_save_field'])) {
-            error_log('Processing single field save...');
             $name = !empty($_POST['field_name']) ? Voxel_Toolkit_Options_Page::sanitize_field_name($_POST['field_name']) : '';
             $label = !empty($_POST['field_label']) ? sanitize_text_field($_POST['field_label']) : '';
             $type = !empty($_POST['field_type']) ? Voxel_Toolkit_Options_Page::validate_field_type($_POST['field_type']) : 'text';
             $default = !empty($_POST['field_default']) ? sanitize_text_field($_POST['field_default']) : '';
             $is_update = !empty($_POST['is_update']);
-
-            error_log("Field data - name: $name, label: $label, type: $type, default: $default, is_update: " . ($is_update ? 'yes' : 'no'));
 
             if (!empty($name)) {
                 // Auto-generate label if empty
@@ -3098,15 +3085,8 @@ class Voxel_Toolkit_Admin {
                         'type' => $type,
                         'default' => $default,
                     );
-                    error_log("Field added/updated: $name");
-                } else {
-                    error_log("Field already exists and not in update mode: $name");
                 }
-            } else {
-                error_log('Field name is empty!');
             }
-        } else {
-            error_log('voxel_toolkit_save_field not set in POST');
         }
 
         // Save

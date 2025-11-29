@@ -95,7 +95,6 @@ class Voxel_Toolkit_Post_Fields {
             if (file_exists($file_path)) {
                 // Check if Voxel's Base_Post_Field class is loaded
                 if (!class_exists('\Voxel\Post_Types\Fields\Base_Post_Field')) {
-                    error_log('Voxel Toolkit: Cannot load post field - Voxel Base_Post_Field class not loaded yet');
                     return;
                 }
 
@@ -113,7 +112,6 @@ class Voxel_Toolkit_Post_Fields {
     private function init_post_field($field_key, $field_data) {
         // Initialize the field class (file should already be loaded)
         if (isset($field_data['class']) && class_exists($field_data['class'])) {
-            error_log('Voxel Toolkit Post Fields: Initializing field class: ' . $field_data['class']);
             new $field_data['class']();
         }
     }

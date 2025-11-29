@@ -638,8 +638,6 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                             $value = $field_obj;
                         }
 
-                        error_log('Voxel Toolkit: Field ' . $field_key . ' (type: ' . $field_type . ') value: ' . print_r($value, true));
-
                         // Skip fields with empty values
                         $is_empty = false;
                         if (empty($value)) {
@@ -652,7 +650,6 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                         }
 
                         if ($is_empty) {
-                            error_log('Voxel Toolkit: Skipping empty field: ' . $field_key);
                             continue;
                         }
 
@@ -666,20 +663,15 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                         if ($field_type === 'taxonomy') {
                             $taxonomy = $field->get_prop('taxonomy');
                             $multiple = $field->get_prop('multiple');
-                            error_log('Voxel Toolkit: Found taxonomy field: ' . $field_key . ', taxonomy: ' . $taxonomy . ', multiple: ' . ($multiple ? 'yes' : 'no'));
 
                             if ($taxonomy) {
                                 $terms = get_terms(array(
                                     'taxonomy' => $taxonomy,
                                     'hide_empty' => false,
                                 ));
-                                error_log('Voxel Toolkit: Retrieved ' . count($terms) . ' terms for taxonomy: ' . $taxonomy);
                                 if (!is_wp_error($terms)) {
                                     $field_data['options'] = $terms;
                                     $field_data['multiple'] = $multiple;
-                                    error_log('Voxel Toolkit: Added terms to field_data');
-                                } else {
-                                    error_log('Voxel Toolkit: Error retrieving terms: ' . $terms->get_error_message());
                                 }
                             }
                         }
@@ -687,7 +679,6 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                         // For select/multiselect fields, get choices
                         if ($field_type === 'select' || $field_type === 'multiselect') {
                             $choices = $field->get_prop('choices');
-                            error_log('Voxel Toolkit: Found ' . $field_type . ' field: ' . $field_key . ', choices: ' . print_r($choices, true));
                             if (!empty($choices)) {
                                 $field_data['options'] = $choices;
                                 $field_data['multiple'] = ($field_type === 'multiselect');
@@ -696,7 +687,6 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
 
                         // For work-hours field, format the schedule data
                         if ($field_type === 'work-hours') {
-                            error_log('Voxel Toolkit: Found work-hours field: ' . $field_key);
 
                             // Value is JSON array of schedule groups
                             if (is_string($value)) {
@@ -723,7 +713,6 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
 
                             $field_data['schedule'] = $formatted_schedule;
                             $field_data['formatted_display'] = Voxel_Toolkit_Field_Formatters::format_work_hours_display($formatted_schedule);
-                            error_log('Voxel Toolkit: Work hours schedule: ' . print_r($formatted_schedule, true));
                         }
 
                         $field_values[$field_key] = $field_data;

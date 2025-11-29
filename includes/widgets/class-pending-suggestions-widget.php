@@ -597,28 +597,19 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
                                         <label><?php echo esc_html($settings['label_proof_images'] ?: __('Proof Images:', 'voxel-toolkit')); ?></label>
                                         <div class="vt-images-grid">
                                             <?php
-                                            // Debug: show what's in proof_images
-                                            error_log('VT: Proof images raw: ' . $suggestion->proof_images);
                                             $image_ids = json_decode($suggestion->proof_images, true);
-                                            error_log('VT: Decoded image IDs: ' . print_r($image_ids, true));
 
                                             if (is_array($image_ids) && !empty($image_ids)) {
                                                 foreach ($image_ids as $image_id) {
-                                                    error_log('VT: Processing image ID: ' . $image_id);
                                                     $image_url = wp_get_attachment_url($image_id);
                                                     $thumbnail_url = wp_get_attachment_image_url($image_id, 'thumbnail');
-                                                    error_log('VT: Image URL: ' . $image_url . ', Thumbnail URL: ' . $thumbnail_url);
 
                                                     if ($image_url) {
                                                         echo '<a href="' . esc_url($image_url) . '" target="_blank" class="vt-proof-image-link">';
                                                         echo '<img src="' . esc_url($thumbnail_url ?: $image_url) . '" alt="' . esc_attr__('Proof image', 'voxel-toolkit') . '">';
                                                         echo '</a>';
-                                                    } else {
-                                                        error_log('VT: No URL found for image ID: ' . $image_id);
                                                     }
                                                 }
-                                            } else {
-                                                error_log('VT: Image IDs not an array or empty');
                                             }
                                             ?>
                                         </div>

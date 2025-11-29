@@ -18,9 +18,7 @@ class Voxel_Toolkit_Poll_Field {
      * Constructor
      */
     public function __construct() {
-        error_log('Voxel Toolkit: Poll Field __construct called');
         $this->init_hooks();
-        error_log('Voxel Toolkit: Poll Field initialized, hooks registered');
     }
 
     /**
@@ -53,19 +51,14 @@ class Voxel_Toolkit_Poll_Field {
         $settings = Voxel_Toolkit_Settings::instance();
         $is_enabled = $settings->is_function_enabled('post_field_poll_field');
 
-        error_log('Voxel Toolkit Poll: register_field_type called. Feature enabled: ' . ($is_enabled ? 'YES' : 'NO'));
-
         if (!$is_enabled) {
-            error_log('Voxel Toolkit Poll: DISABLED - Returning without registering');
             return $fields;
         }
 
         if (!class_exists('\Voxel\Post_Types\Fields\Base_Post_Field')) {
-            error_log('Voxel Toolkit Poll: Base_Post_Field class not found - CANNOT REGISTER');
             return $fields;
         }
 
-        error_log('Voxel Toolkit Poll: ENABLED - Registering poll-vt field type');
         $fields['poll-vt'] = '\Voxel_Toolkit_Poll_Field_Type';
         return $fields;
     }
@@ -550,8 +543,6 @@ class Voxel_Toolkit_Poll_Field {
         $option_index = absint($_POST['option_index'] ?? 0);
         $user_id = get_current_user_id();
 
-        error_log('VT Poll Vote: post_id=' . $post_id . ', field_key=' . $field_key . ', option_index=' . $option_index);
-
         if (!$post_id || !$field_key) {
             wp_send_json_error(['message' => 'Invalid request']);
         }
@@ -564,8 +555,6 @@ class Voxel_Toolkit_Poll_Field {
             $poll_data = json_decode($poll_data, true);
         }
 
-        error_log('VT Poll Vote: poll_data=' . print_r($poll_data, true));
-
         if (!is_array($poll_data)) {
             wp_send_json_error(['message' => 'Invalid poll data']);
         }
@@ -577,10 +566,8 @@ class Voxel_Toolkit_Poll_Field {
 
         // Combine admin options and user-submitted options to find the correct option
         $all_options = array_merge($poll_data['options'], $poll_data['user_submitted_options']);
-        error_log('VT Poll Vote: all_options count=' . count($all_options) . ', checking index=' . $option_index);
 
         if (!isset($all_options[$option_index])) {
-            error_log('VT Poll Vote: Option not found at index ' . $option_index);
             wp_send_json_error(['message' => 'Invalid option']);
         }
 
@@ -655,8 +642,6 @@ class Voxel_Toolkit_Poll_Field {
         $option_label = sanitize_text_field($_POST['option_label'] ?? '');
         $user_id = get_current_user_id();
 
-        error_log('VT Poll Add Option: post_id=' . $post_id . ', field_key=' . $field_key . ', label=' . $option_label);
-
         if (!$post_id || !$field_key || !$option_label) {
             wp_send_json_error(['message' => 'Invalid request']);
         }
@@ -669,10 +654,7 @@ class Voxel_Toolkit_Poll_Field {
             $poll_data = json_decode($poll_data, true);
         }
 
-        error_log('VT Poll Add Option: poll_data=' . print_r($poll_data, true));
-
         if (!is_array($poll_data) || empty($poll_data['allow_user_options'])) {
-            error_log('VT Poll Add Option: User options not allowed. allow_user_options=' . (isset($poll_data['allow_user_options']) ? var_export($poll_data['allow_user_options'], true) : 'not set'));
             wp_send_json_error(['message' => 'User options not allowed']);
         }
 

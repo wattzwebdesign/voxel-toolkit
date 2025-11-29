@@ -370,19 +370,15 @@ class Voxel_Toolkit_Suggest_Edits {
                             // Prepare image URLs for data attribute and count
                             $image_urls = array();
                             if (!empty($suggestion->proof_images)) {
-                                error_log('VT Backend: Raw proof_images: ' . $suggestion->proof_images);
                                 $image_ids = json_decode($suggestion->proof_images, true);
-                                error_log('VT Backend: Decoded IDs: ' . print_r($image_ids, true));
                                 if (is_array($image_ids)) {
                                     foreach ($image_ids as $image_id) {
                                         $url = wp_get_attachment_url($image_id);
-                                        error_log('VT Backend: Image ID ' . $image_id . ' -> URL: ' . ($url ?: 'NOT FOUND'));
                                         if ($url) {
                                             $image_urls[] = $url;
                                         }
                                     }
                                 }
-                                error_log('VT Backend: Final image URLs: ' . print_r($image_urls, true));
                             }
 
                             $data_attrs = sprintf(
@@ -582,21 +578,16 @@ class Voxel_Toolkit_Suggest_Edits {
 
         // Handle file uploads
         $uploaded_image_ids = array();
-        error_log('VT: Checking for proof image uploads...');
-        error_log('VT: $_FILES: ' . print_r($_FILES, true));
 
         if (!empty($_FILES['proof_images'])) {
-            error_log('VT: proof_images found in $_FILES');
             require_once(ABSPATH . 'wp-admin/includes/image.php');
             require_once(ABSPATH . 'wp-admin/includes/file.php');
             require_once(ABSPATH . 'wp-admin/includes/media.php');
 
             $files = $_FILES['proof_images'];
             $file_count = count($files['name']);
-            error_log('VT: File count: ' . $file_count);
 
             for ($i = 0; $i < $file_count; $i++) {
-                error_log('VT: Processing file ' . $i . ' - Error code: ' . $files['error'][$i]);
                 if ($files['error'][$i] === UPLOAD_ERR_OK) {
                     $file = array(
                         'name'     => $files['name'][$i],
@@ -606,11 +597,9 @@ class Voxel_Toolkit_Suggest_Edits {
                         'size'     => $files['size'][$i]
                     );
 
-                    error_log('VT: Attempting to upload file: ' . $file['name']);
                     $upload = wp_handle_upload($file, array('test_form' => false));
 
                     if (!isset($upload['error'])) {
-                        error_log('VT: Upload successful: ' . $upload['file']);
                         $attachment_id = wp_insert_attachment(array(
                             'post_mime_type' => $upload['type'],
                             'post_title'     => sanitize_file_name($file['name']),
@@ -619,25 +608,13 @@ class Voxel_Toolkit_Suggest_Edits {
                         ), $upload['file']);
 
                         if (!is_wp_error($attachment_id)) {
-                            error_log('VT: Attachment created with ID: ' . $attachment_id);
                             wp_update_attachment_metadata($attachment_id, wp_generate_attachment_metadata($attachment_id, $upload['file']));
                             $uploaded_image_ids[] = $attachment_id;
-                        } else {
-                            error_log('VT: Error creating attachment: ' . $attachment_id->get_error_message());
                         }
-                    } else {
-                        error_log('VT: Upload failed: ' . $upload['error']);
                     }
-                } else {
-                    error_log('VT: File ' . $i . ' has upload error code: ' . $files['error'][$i]);
                 }
             }
-        } else {
-            error_log('VT: No proof_images in $_FILES');
         }
-
-        error_log('VT: Total uploaded image IDs: ' . count($uploaded_image_ids));
-        error_log('VT: Uploaded IDs array: ' . print_r($uploaded_image_ids, true));
 
         // Allow submission if either we have suggestions OR permanently closed is marked
         if (!$post_id || (empty($suggestions) && !$permanently_closed)) {
@@ -663,7 +640,6 @@ class Voxel_Toolkit_Suggest_Edits {
 
         // Encode uploaded images for storage (needed for both regular and permanently_closed suggestions)
         $proof_images_json = !empty($uploaded_image_ids) ? json_encode($uploaded_image_ids) : '';
-        error_log('VT: Proof images JSON to be saved: ' . $proof_images_json);
 
         // If permanently closed is marked, create a special suggestion entry
         if ($permanently_closed) {
@@ -1119,17 +1095,13 @@ class Voxel_Toolkit_Suggest_Edits {
         if (!empty($field_updates)) {
             foreach ($field_updates as $field_key => $data) {
                 try {
-                    error_log('Voxel Toolkit: Updating field ' . $field_key . ' with value: ' . $data['value']);
-
                     // Get the field object to check its type
                     $field = $post_type->get_field($field_key);
                     if (!$field) {
-                        error_log('Voxel Toolkit: Field not found: ' . $field_key);
                         continue;
                     }
 
                     $field_type = $field->get_type();
-                    error_log('Voxel Toolkit: Field type for ' . $field_key . ' is: ' . $field_type);
 
                     // Handle based on field type
                     if ($field_type === 'title') {
@@ -1138,18 +1110,15 @@ class Voxel_Toolkit_Suggest_Edits {
                             'ID' => $post_id,
                             'post_title' => $data['value'],
                         ]);
-                        error_log('Voxel Toolkit: Updated post_title');
                     } elseif ($field_type === 'description') {
                         // Update post content
                         wp_update_post([
                             'ID' => $post_id,
                             'post_content' => $data['value'],
                         ]);
-                        error_log('Voxel Toolkit: Updated post_content');
                     } elseif ($field_key === '_thumbnail_id') {
                         // Featured image - stored directly without prefix
                         update_post_meta($post_id, '_thumbnail_id', $data['value']);
-                        error_log('Voxel Toolkit: Updated _thumbnail_id');
                     } elseif ($field_type === 'taxonomy') {
                         // Taxonomy fields - set term relationship
                         $taxonomy = $field->get_prop('taxonomy');
@@ -1159,12 +1128,10 @@ class Voxel_Toolkit_Suggest_Edits {
                                 // Multiple terms
                                 $term_ids = array_map('intval', explode(',', $data['value']));
                                 wp_set_object_terms($post_id, $term_ids, $taxonomy, false);
-                                error_log('Voxel Toolkit: Set terms ' . implode(', ', $term_ids) . ' for taxonomy ' . $taxonomy);
                             } else {
                                 // Single term
                                 $term_id = intval($data['value']);
                                 wp_set_object_terms($post_id, $term_id, $taxonomy, false);
-                                error_log('Voxel Toolkit: Set term ' . $term_id . ' for taxonomy ' . $taxonomy);
                             }
                         }
                     } elseif ($field_type === 'select' || $field_type === 'multiselect') {
@@ -1174,10 +1141,8 @@ class Voxel_Toolkit_Suggest_Edits {
                         if ($field_type === 'multiselect' && strpos($data['value'], ',') !== false) {
                             $values = explode(',', $data['value']);
                             update_post_meta($post_id, $meta_key, $values);
-                            error_log('Voxel Toolkit: Updated ' . $meta_key . ' with multiple values');
                         } else {
                             update_post_meta($post_id, $meta_key, $data['value']);
-                            error_log('Voxel Toolkit: Updated ' . $meta_key);
                         }
                     } elseif ($field_type === 'work-hours') {
                         // Work hours field - use field's native update method
@@ -1185,7 +1150,6 @@ class Voxel_Toolkit_Suggest_Edits {
 
                         $field = $post_type->get_field($field_key);
                         if (!$field) {
-                            error_log('Voxel Toolkit: Work-hours field not found: ' . $field_key);
                             continue;
                         }
 
@@ -1196,21 +1160,18 @@ class Voxel_Toolkit_Suggest_Edits {
                         $schedule = json_decode($data['value'], true);
 
                         if (!is_array($schedule)) {
-                            error_log('Voxel Toolkit: Invalid JSON for work_hours field');
                             continue;
                         }
 
                         // Call field's native update method
                         // This handles: postmeta + work_hours table regeneration
                         $field->update($schedule);
-                        error_log('Voxel Toolkit: Updated work hours via field->update()');
                     } elseif ($field_type === 'location') {
                         // Location field - use field's native update method
                         // This ensures proper JSON structure with address, latitude, longitude
 
                         $field = $post_type->get_field($field_key);
                         if (!$field) {
-                            error_log('Voxel Toolkit: Location field not found: ' . $field_key);
                             continue;
                         }
 
@@ -1228,18 +1189,15 @@ class Voxel_Toolkit_Suggest_Edits {
                                 'latitude' => null,
                                 'longitude' => null
                             );
-                            error_log('Voxel Toolkit: Location received as plain text, using as address: ' . $data['value']);
                         }
 
                         // Call field's native update method
                         // This handles proper postmeta storage with correct structure
                         $field->update($location);
-                        error_log('Voxel Toolkit: Updated location via field->update()');
                     } else {
                         // All other Voxel fields use the 'voxel:' prefix
                         $meta_key = 'voxel:' . $field_key;
                         update_post_meta($post_id, $meta_key, $data['value']);
-                        error_log('Voxel Toolkit: Updated ' . $meta_key);
                     }
 
                     $updated_count++;
@@ -1252,10 +1210,8 @@ class Voxel_Toolkit_Suggest_Edits {
                         array('%s'),
                         array('%d')
                     );
-
-                    error_log('Voxel Toolkit: Successfully updated field ' . $field_key);
                 } catch (\Exception $e) {
-                    error_log('Voxel Toolkit: Failed to update field ' . $field_key . ': ' . $e->getMessage());
+                    // Silently continue on field update failures
                 }
             }
         }

@@ -72,8 +72,6 @@ class Voxel_Toolkit_Intl_Phone {
 
         if (empty($default_country_code)) {
             // No default country code configured, skip migration
-            // Log this for debugging
-            error_log('[VT Intl Phone] Migration skipped: No default country code configured in SMS Notifications settings.');
             return;
         }
 
@@ -133,12 +131,6 @@ class Voxel_Toolkit_Intl_Phone {
             }
         }
 
-        // Log migration result
-        error_log(sprintf(
-            '[VT Intl Phone] Migration complete: %d phone numbers assigned country code +%s',
-            $migrated_count,
-            $default_country_code
-        ));
     }
 
     /**

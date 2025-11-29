@@ -22,19 +22,13 @@ class Voxel_Toolkit_Site_Options_Form extends \Elementor\Widget_Base {
 
     public function handle_form_submission_hook() {
         if (isset($_POST['vt_site_options_nonce']) && wp_verify_nonce($_POST['vt_site_options_nonce'], 'vt_save_site_options')) {
-            error_log('VT Site Options Form: Form submission detected');
-            error_log('VT Site Options Form: POST data: ' . print_r($_POST['vt_options'], true));
-
             // Get configured fields
             $vt_settings = Voxel_Toolkit_Settings::instance();
             $config = $vt_settings->get_function_settings('options_page');
             $fields = isset($config['fields']) ? $config['fields'] : array();
 
-            error_log('VT Site Options Form: Fields configured: ' . count($fields));
-
             if (!empty($fields)) {
                 $this->handle_form_submission($fields);
-                error_log('VT Site Options Form: Data saved, redirecting...');
 
                 // Get clean URL without query params
                 $clean_url = strtok($_SERVER['REQUEST_URI'], '?');

@@ -118,7 +118,6 @@ class Voxel_Toolkit {
             return $fields;
         }
 
-        error_log('Voxel Toolkit: Poll field ENABLED - registering poll-vt in available fields');
         $fields['poll-vt'] = '\Voxel_Toolkit_Poll_Field_Type';
         return $fields;
     }
