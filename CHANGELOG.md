@@ -36,6 +36,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fixed send button icon not accepting custom icon/SVG changes
   - Fixed upload button icon not accepting custom icon/SVG changes
   - Added minimize/close button style controls (background, hover, icon color, size)
+- **Active Filters Widget**: Fixed filter labels displaying URL keys instead of Voxel labels
+  - Now displays "Category: Digital" instead of "Terms: Digital"
+  - Uses Voxel's Post_Type API to get proper filter labels
+  - Fixed preview mode showing on frontend (now only shows in Elementor editor)
 
 ## [1.5.4.2] - 2025-11-26
 
