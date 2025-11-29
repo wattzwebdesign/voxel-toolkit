@@ -427,6 +427,11 @@ class Voxel_Toolkit_Admin {
      * @param array $function_data Function data
      */
     private function render_function_card($function_key, $function_data) {
+        // Skip hidden functions
+        if (!empty($function_data['hidden'])) {
+            return;
+        }
+
         $is_enabled = $this->settings->is_function_enabled($function_key);
         $is_active = $this->functions_manager->is_function_active($function_key);
         $is_always_enabled = isset($function_data['always_enabled']) && $function_data['always_enabled'];
@@ -503,6 +508,10 @@ class Voxel_Toolkit_Admin {
                 <div class="voxel-toolkit-settings">
                     <?php foreach ($available_functions as $function_key => $function_data): ?>
                         <?php
+                        // Skip hidden functions
+                        if (!empty($function_data['hidden'])) {
+                            continue;
+                        }
                         $is_enabled = $this->settings->is_function_enabled($function_key);
                         $is_always_enabled = isset($function_data['always_enabled']) && $function_data['always_enabled'];
                         ?>
@@ -1863,68 +1872,66 @@ class Voxel_Toolkit_Admin {
             <?php endif; ?>
 
             <!-- Post Fields Anywhere -->
-            <?php if ($this->settings->is_function_enabled('post_fields_anywhere')): ?>
-                <div class="settings-section" style="margin-top: 30px;">
-                    <h2><?php _e('Post Fields Anywhere', 'voxel-toolkit'); ?></h2>
-                    <p class="description"><?php _e('Render any @post() tag in the context of a different post. Perfect for displaying related post data, featured listings, or cross-post references.', 'voxel-toolkit'); ?></p>
+            <div class="settings-section" style="margin-top: 30px;">
+                <h2><?php _e('Post Fields Anywhere', 'voxel-toolkit'); ?></h2>
+                <p class="description"><?php _e('Render any @post() tag in the context of a different post. Perfect for displaying related post data, featured listings, or cross-post references.', 'voxel-toolkit'); ?></p>
 
-                    <table class="widefat striped">
-                        <thead>
-                            <tr>
-                                <th><?php _e('Method', 'voxel-toolkit'); ?></th>
-                                <th><?php _e('Description', 'voxel-toolkit'); ?></th>
-                                <th><?php _e('Parameters', 'voxel-toolkit'); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>render_post_tag</code></td>
-                                <td><?php _e('Renders any dynamic tag expression in the context of a specific post ID', 'voxel-toolkit'); ?></td>
-                                <td>
-                                    <code>post_id</code> - <?php _e('The ID of the post to use as context', 'voxel-toolkit'); ?><br>
-                                    <code>tag</code> - <?php _e('The @post() tag to render', 'voxel-toolkit'); ?>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <table class="widefat striped">
+                    <thead>
+                        <tr>
+                            <th><?php _e('Method', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Parameters', 'voxel-toolkit'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>render_post_tag</code></td>
+                            <td><?php _e('Renders any dynamic tag expression in the context of a specific post ID', 'voxel-toolkit'); ?></td>
+                            <td>
+                                <code>post_id</code> - <?php _e('The ID of the post to use as context', 'voxel-toolkit'); ?><br>
+                                <code>tag</code> - <?php _e('The @post() tag to render', 'voxel-toolkit'); ?>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                    <h3 style="margin-top: 20px;"><?php _e('Usage Examples', 'voxel-toolkit'); ?></h3>
-                    <table class="widefat striped">
-                        <thead>
-                            <tr>
-                                <th><?php _e('Example', 'voxel-toolkit'); ?></th>
-                                <th><?php _e('Description', 'voxel-toolkit'); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>@site().render_post_tag(123, @post(title))</code></td>
-                                <td><?php _e('Get the title of post ID 123', 'voxel-toolkit'); ?></td>
-                            </tr>
-                            <tr>
-                                <td><code>@site().render_post_tag(123, @post(taxonomy.slug))</code></td>
-                                <td><?php _e('Get the taxonomy slug of post ID 123', 'voxel-toolkit'); ?></td>
-                            </tr>
-                            <tr>
-                                <td><code>@site().render_post_tag(123, @post(location.lng))</code></td>
-                                <td><?php _e('Get the location longitude of post ID 123', 'voxel-toolkit'); ?></td>
-                            </tr>
-                            <tr>
-                                <td><code>@site().render_post_tag(@post(related_post), @post(price))</code></td>
-                                <td><?php _e('Get price from a related post field (dynamic post ID)', 'voxel-toolkit'); ?></td>
-                            </tr>
-                            <tr>
-                                <td><code>@site().render_post_tag(123, @post(logo.url))</code></td>
-                                <td><?php _e('Get the logo image URL of post ID 123', 'voxel-toolkit'); ?></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <h3 style="margin-top: 20px;"><?php _e('Usage Examples', 'voxel-toolkit'); ?></h3>
+                <table class="widefat striped">
+                    <thead>
+                        <tr>
+                            <th><?php _e('Example', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>@site().render_post_tag(123, @post(title))</code></td>
+                            <td><?php _e('Get the title of post ID 123', 'voxel-toolkit'); ?></td>
+                        </tr>
+                        <tr>
+                            <td><code>@site().render_post_tag(123, @post(taxonomy.slug))</code></td>
+                            <td><?php _e('Get the taxonomy slug of post ID 123', 'voxel-toolkit'); ?></td>
+                        </tr>
+                        <tr>
+                            <td><code>@site().render_post_tag(123, @post(location.lng))</code></td>
+                            <td><?php _e('Get the location longitude of post ID 123', 'voxel-toolkit'); ?></td>
+                        </tr>
+                        <tr>
+                            <td><code>@site().render_post_tag(@post(related_post), @post(price))</code></td>
+                            <td><?php _e('Get price from a related post field (dynamic post ID)', 'voxel-toolkit'); ?></td>
+                        </tr>
+                        <tr>
+                            <td><code>@site().render_post_tag(123, @post(logo.url))</code></td>
+                            <td><?php _e('Get the logo image URL of post ID 123', 'voxel-toolkit'); ?></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                    <p style="margin-top: 15px; background: #f0f6fc; padding: 12px; border-radius: 4px; border-left: 4px solid #2271b1;">
-                        <strong><?php _e('Tip:', 'voxel-toolkit'); ?></strong> <?php _e('This is especially useful for displaying featured posts, related content, or any scenario where you need to show data from a post other than the current one.', 'voxel-toolkit'); ?>
-                    </p>
-                </div>
-            <?php endif; ?>
+                <p style="margin-top: 15px; background: #f0f6fc; padding: 12px; border-radius: 4px; border-left: 4px solid #2271b1;">
+                    <strong><?php _e('Tip:', 'voxel-toolkit'); ?></strong> <?php _e('This is especially useful for displaying featured posts, related content, or any scenario where you need to show data from a post other than the current one.', 'voxel-toolkit'); ?>
+                </p>
+            </div>
 
             <!-- Modifiers -->
             <div class="settings-section" style="margin-top: 30px;">

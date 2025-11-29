@@ -384,11 +384,11 @@ class Voxel_Toolkit_Functions {
             ),
             'post_fields_anywhere' => array(
                 'name' => __('Post Fields Anywhere', 'voxel-toolkit'),
-                'description' => __('Display any Voxel field from any post anywhere on your site using dynamic tags. Usage: @site(post:ID).field(field_key) with dot notation for sub-properties like location.city', 'voxel-toolkit'),
+                'description' => __('Render any @post() tag in the context of a different post. Usage: @site().render_post_tag(post_id, @post(field))', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Post_Fields_Anywhere',
                 'file' => 'functions/class-post-fields-anywhere.php',
-                'settings_callback' => array('Voxel_Toolkit_Post_Fields_Anywhere', 'render_settings'),
                 'always_enabled' => true,
+                'hidden' => true,
             ),
             'disable_gutenberg' => array(
                 'name' => __('Disable Gutenberg', 'voxel-toolkit'),
