@@ -40,6 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Now displays "Category: Digital" instead of "Terms: Digital"
   - Uses Voxel's Post_Type API to get proper filter labels
   - Fixed preview mode showing on frontend (now only shows in Elementor editor)
+- **Performance**: Removed excessive debug logging that was spamming production logs
+  - Poll Field was logging on every page load
+  - Removed ~120 lines of debug error_log() calls across multiple files
 
 ## [1.5.4.2] - 2025-11-26
 
