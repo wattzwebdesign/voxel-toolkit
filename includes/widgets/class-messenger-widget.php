@@ -152,6 +152,17 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'input_placeholder_text',
+            [
+                'label' => __('Input Placeholder', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Type a message...', 'voxel-toolkit'),
+                'placeholder' => __('Type a message...', 'voxel-toolkit'),
+                'description' => __('Placeholder text shown in the message input field', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
             'preview_mode',
             [
                 'label' => __('Preview Mode', 'voxel-toolkit'),
@@ -716,6 +727,74 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'header_buttons_heading',
+            [
+                'label' => __('Header Buttons (Minimize/Close)', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'header_button_background',
+            [
+                'label' => __('Button Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => 'rgba(255, 255, 255, 0.2)',
+                'selectors' => [
+                    '{{WRAPPER}} .vt-messenger-chat-minimize, {{WRAPPER}} .vt-messenger-chat-close' => 'background-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'header_button_hover_background',
+            [
+                'label' => __('Button Hover Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => 'rgba(255, 255, 255, 0.3)',
+                'selectors' => [
+                    '{{WRAPPER}} .vt-messenger-chat-minimize:hover, {{WRAPPER}} .vt-messenger-chat-close:hover' => 'background-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'header_button_icon_color',
+            [
+                'label' => __('Button Icon Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#ffffff',
+                'selectors' => [
+                    '{{WRAPPER}} .vt-messenger-chat-minimize, {{WRAPPER}} .vt-messenger-chat-close' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'header_button_size',
+            [
+                'label' => __('Button Size', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 20,
+                        'max' => 40,
+                        'step' => 2,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 28,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-messenger-chat-minimize, {{WRAPPER}} .vt-messenger-chat-close' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
         $this->end_controls_section();
 
         // Style Tab - Messages
@@ -1196,9 +1275,25 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
         $position_class = 'vt-messenger-position-' . $settings['position'];
         $max_chats = !empty($settings['max_open_chats']) ? $settings['max_open_chats'] : 3;
         ?>
+        <?php
+        // Prepare icon HTML for send button
+        ob_start();
+        $this->render_icon_with_fallback($settings['send_button_icon'], 'fas fa-paper-plane', 'send');
+        $send_icon_html = ob_get_clean();
+
+        // Prepare icon HTML for upload button
+        ob_start();
+        $this->render_icon_with_fallback($settings['upload_button_icon'], 'fas fa-paperclip', 'upload');
+        $upload_icon_html = ob_get_clean();
+
+        $placeholder_text = !empty($settings['input_placeholder_text']) ? $settings['input_placeholder_text'] : __('Type a message...', 'voxel-toolkit');
+        ?>
         <div class="vt-messenger-container <?php echo esc_attr($position_class); ?> <?php echo ($is_editor && $preview_mode) ? 'vt-preview-mode' : ''; ?>"
              data-max-chats="<?php echo esc_attr($max_chats); ?>"
-             data-show-badge="<?php echo esc_attr($settings['show_unread_badge']); ?>">
+             data-show-badge="<?php echo esc_attr($settings['show_unread_badge']); ?>"
+             data-placeholder="<?php echo esc_attr($placeholder_text); ?>"
+             data-send-icon="<?php echo esc_attr($send_icon_html); ?>"
+             data-upload-icon="<?php echo esc_attr($upload_icon_html); ?>">
 
             <!-- Main Messenger Button -->
             <button class="vt-messenger-button" aria-label="<?php _e('Open messenger', 'voxel-toolkit'); ?>">
@@ -1308,7 +1403,7 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
                         </div>
                         <div class="vt-messenger-chat-footer">
                             <textarea class="vt-messenger-input"
-                                      placeholder="<?php echo esc_attr__('Type a message...', 'voxel-toolkit'); ?>"
+                                      placeholder="<?php echo esc_attr($settings['input_placeholder_text'] ?: __('Type a message...', 'voxel-toolkit')); ?>"
                                       rows="1"></textarea>
                             <div class="vt-messenger-upload-buttons">
                                 <button class="vt-messenger-upload-btn vt-upload-device" aria-label="<?php _e('Upload from device', 'voxel-toolkit'); ?>">

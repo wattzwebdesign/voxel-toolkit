@@ -47,6 +47,14 @@
                 // Get configuration
                 self.config = window.vtMessenger || {};
 
+                // Get widget-specific settings from data attributes
+                // Use .attr() instead of .data() to get raw HTML values (avoids jQuery caching/parsing issues)
+                self.widgetConfig = {
+                    placeholder: self.container.attr('data-placeholder') || self.config.i18n.typeMessage,
+                    sendIcon: self.container.attr('data-send-icon') || '',
+                    uploadIcon: self.container.attr('data-upload-icon') || ''
+                };
+
                 // Load unread state from localStorage
                 self.loadUnreadState();
 
@@ -630,19 +638,23 @@
             html += '    </div>';
             html += '  </div>';
 
-            // Footer
+            // Footer - use widget-specific settings
+            var placeholderText = self.widgetConfig.placeholder || self.config.i18n.typeMessage;
+            var sendIconHtml = self.widgetConfig.sendIcon || '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 10L17.5 2.5L10 17.5L8.75 11.25L2.5 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+            var uploadIconHtml = self.widgetConfig.uploadIcon || '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4L12 16M12 4L8 8M12 4L16 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17V19C4 20.1046 4.89543 21 6 21H18C19.1046 21 20 20.1046 20 19V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
             html += '  <div class="vt-messenger-chat-footer">';
-            html += '    <textarea class="vt-messenger-input" placeholder="' + self.config.i18n.typeMessage + '" rows="1"></textarea>';
+            html += '    <textarea class="vt-messenger-input" placeholder="' + self.escapeHtml(placeholderText) + '" rows="1"></textarea>';
             html += '    <div class="vt-messenger-upload-buttons">';
             html += '      <button class="vt-messenger-upload-btn vt-upload-device" title="Upload from device">';
-            html += '        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4L12 16M12 4L8 8M12 4L16 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17V19C4 20.1046 4.89543 21 6 21H18C19.1046 21 20 20.1046 20 19V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+            html += uploadIconHtml;
             html += '      </button>';
             html += '      <button class="vt-messenger-upload-toggle" style="display: none;" title="Attach file">';
             html += '        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
             html += '      </button>';
             html += '    </div>';
             html += '    <button class="vt-messenger-send-btn">';
-            html += '      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 10L17.5 2.5L10 17.5L8.75 11.25L2.5 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+            html += sendIconHtml;
             html += '    </button>';
             html += '    <input type="file" class="vt-messenger-file-input" style="display: none;" accept="image/*,video/*,application/pdf" multiple>';
             html += '  </div>';
