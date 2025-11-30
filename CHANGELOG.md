@@ -5,6 +5,13 @@ All notable changes to Voxel Toolkit will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.6] - 2025-11-29
+
+### Changed
+- **QR Code Modifier**: Added option to hide download button
+  - Leave button text parameter blank to hide the download button
+  - Usage without button: `@post(permalink).generate_qr_code(,,,,)`
+
 ## [1.5.5] - 2025-11-28
 
 ### Added
