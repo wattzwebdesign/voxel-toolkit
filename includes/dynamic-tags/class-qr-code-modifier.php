@@ -37,8 +37,7 @@ class Voxel_Toolkit_QR_Code_Modifier extends \Voxel\Dynamic_Data\Modifiers\Base_
         ]);
         $this->define_arg([
             'type' => 'text',
-            'label' => 'Download button text (optional)',
-            'default' => 'Download high quality PNG',
+            'label' => 'Download button text (leave blank to hide button)',
         ]);
         $this->define_arg([
             'type' => 'select',
@@ -70,9 +69,8 @@ class Voxel_Toolkit_QR_Code_Modifier extends \Voxel\Dynamic_Data\Modifiers\Base_
         $button_color = trim($this->get_arg(4));
         $filename = trim($this->get_arg(5));
 
-        if ($button_label === '') {
-            $button_label = 'Download high quality PNG';
-        }
+        // If button label is empty, we'll hide the button
+        $show_button = ($button_label !== '');
 
         if ($download_quality === '') {
             $download_quality = '2000';
@@ -153,8 +151,10 @@ class Voxel_Toolkit_QR_Code_Modifier extends \Voxel\Dynamic_Data\Modifiers\Base_
         }
         $output .= '</div>';
 
-        $output .= sprintf(
-            '<div style="margin-top:18px; text-align:center;">
+        // Only show download button if button_label is not empty
+        if ($show_button) {
+            $output .= sprintf(
+                '<div style="margin-top:18px; text-align:center;">
             <button type="button" onclick="(function(){
                 var qrSrc = \'%s\';
                 var logoSrc = %s;
@@ -269,15 +269,16 @@ class Voxel_Toolkit_QR_Code_Modifier extends \Voxel\Dynamic_Data\Modifiers\Base_
                 qrImg.src = qrSrc;
             })();" style="padding:12px 28px; border-radius:50px; background:%s; color:#fff; text-decoration:none; font-size:1.05rem; font-family:inherit; cursor:pointer; border:none; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" onmouseover="this.style.opacity=\'0.9\'; this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.25)\';" onmouseout="this.style.opacity=\'1\'; this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.15)\';">%s</button>
             </div>',
-            esc_url($qr_code_hd_url),
-            (!empty($logo_url) && filter_var($logo_url, FILTER_VALIDATE_URL)) ? '\'' . esc_url($logo_url) . '\'' : 'null',
-            intval($download_quality),
-            $logo_pct,
-            $marge_pct,
-            esc_js($filename),
-            esc_attr($button_color_clean),
-            esc_html($button_label)
-        );
+                esc_url($qr_code_hd_url),
+                (!empty($logo_url) && filter_var($logo_url, FILTER_VALIDATE_URL)) ? '\'' . esc_url($logo_url) . '\'' : 'null',
+                intval($download_quality),
+                $logo_pct,
+                $marge_pct,
+                esc_js($filename),
+                esc_attr($button_color_clean),
+                esc_html($button_label)
+            );
+        }
 
         return $output;
     }

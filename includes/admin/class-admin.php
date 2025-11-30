@@ -2006,20 +2006,24 @@ class Voxel_Toolkit_Admin {
                             <td>
                                 <?php _e('1. Logo URL (optional)', 'voxel-toolkit'); ?><br>
                                 <?php _e('2. QR Color hex (optional)', 'voxel-toolkit'); ?><br>
-                                <?php _e('3. Button text (optional)', 'voxel-toolkit'); ?><br>
+                                <?php _e('3. Button text (leave blank to hide)', 'voxel-toolkit'); ?><br>
                                 <?php _e('4. Quality: 1500/2000/3000 (optional)', 'voxel-toolkit'); ?><br>
                                 <?php _e('5. Button color hex (optional)', 'voxel-toolkit'); ?><br>
                                 <?php _e('6. Filename (optional)', 'voxel-toolkit'); ?>
                             </td>
                             <td>
-                                <code>@post(permalink).generate_qr_code(@post(logo.url),#ff0000,Download the QR Code,2000,#ff0000,@post(title)-qr-code)</code>
+                                <code>@post(permalink).generate_qr_code(@post(logo.url),#ff0000,Download QR,2000,#ff0000,@post(title)-qr)</code><br>
+                                <code>@post(permalink).generate_qr_code(,,,,)</code> <em><?php _e('(no button)', 'voxel-toolkit'); ?></em>
                             </td>
                             <td>
-                                <em><?php _e('QR code image with centered logo and download button', 'voxel-toolkit'); ?></em>
+                                <em><?php _e('QR code image with optional logo and download button', 'voxel-toolkit'); ?></em>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                    <?php _e('QR Code modifier contributed by', 'voxel-toolkit'); ?> <a href="https://www.linkedin.com/in/kevinekelmans/" target="_blank" rel="noopener">Kevin Ekelmans</a>
+                </p>
             </div>
 
             <!-- User/Author Methods -->
