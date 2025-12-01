@@ -291,6 +291,13 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-pending-posts-badge.php',
                 'settings_callback' => array($this, 'render_pending_posts_badge_settings'),
             ),
+            'admin_columns' => array(
+                'name' => __('Admin Columns', 'voxel-toolkit'),
+                'description' => __('Configure custom columns for Voxel post types in WordPress admin list tables with sorting and filtering support.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Admin_Columns',
+                'file' => 'admin-columns/class-admin-columns.php',
+                'configure_url' => admin_url('admin.php?page=vt-admin-columns'),
+            ),
             'pre_approve_posts' => array(
                 'name' => __('Pre-Approve Posts', 'voxel-toolkit'),
                 'description' => __('Automatically publish posts from pre-approved users instead of marking them as pending.', 'voxel-toolkit'),
