@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.6] - 2025-11-29
 
+### Changed
+- **Admin Menu Icon**: Updated dashboard menu icon to custom VT logo
+
 ### Added
 - **Media Gallery Widget**: New widget extending Voxel's Gallery with video support
   - Supports mixed photo and video files from Files field
