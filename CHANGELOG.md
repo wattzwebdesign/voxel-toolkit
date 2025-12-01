@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.6] - 2025-11-29
 
+### Added
+- **Media Gallery Widget**: New widget extending Voxel's Gallery with video support
+  - Supports mixed photo and video files from Files field
+  - Video thumbnail capture from configurable time (0-10 seconds, default 1s)
+  - Play icon overlay on video items with full styling controls
+  - Video lightbox with proper aspect ratio preservation
+  - Grid layout controls (columns, gap, row height, aspect ratio)
+  - Mobile responsive design
+
 ### Changed
 - **QR Code Modifier**: Added option to hide download button
   - Leave button text parameter blank to hide the download button
