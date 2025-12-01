@@ -6,18 +6,18 @@
 /* Container and positioning */
 .vt-messenger-container {
     position: fixed;
-    bottom: 20px;
+    bottom: var(--vt-messenger-bottom, 20px);
     z-index: 9999;
     --chat-width: 320px;
     --chat-height: 400px;
 }
 
 .vt-messenger-position-bottom-right {
-    right: 20px;
+    right: var(--vt-messenger-horizontal, 20px);
 }
 
 .vt-messenger-position-bottom-left {
-    left: 20px;
+    left: var(--vt-messenger-horizontal, 20px);
 }
 
 /* Main messenger button */
@@ -293,19 +293,19 @@
 /* Chat windows container */
 .vt-messenger-chat-windows {
     position: fixed;
-    bottom: 20px;
+    bottom: var(--vt-messenger-bottom, 20px);
     display: flex;
     gap: 10px;
     pointer-events: none;
 }
 
 .vt-messenger-position-bottom-right .vt-messenger-chat-windows {
-    right: 90px;
+    right: calc(var(--vt-messenger-horizontal, 20px) + 70px);
     flex-direction: row-reverse;
 }
 
 .vt-messenger-position-bottom-left .vt-messenger-chat-windows {
-    left: 90px;
+    left: calc(var(--vt-messenger-horizontal, 20px) + 70px);
 }
 
 /* Individual chat window */
@@ -722,20 +722,12 @@
         font-size: 22px;
     }
 
-    .vt-messenger-position-bottom-right {
-        right: 15px;
-    }
-
-    .vt-messenger-position-bottom-left {
-        left: 15px;
-    }
-
     .vt-messenger-position-bottom-right .vt-messenger-chat-windows {
-        right: 80px;
+        right: calc(var(--vt-messenger-horizontal, 15px) + 65px);
     }
 
     .vt-messenger-position-bottom-left .vt-messenger-chat-windows {
-        left: 80px;
+        left: calc(var(--vt-messenger-horizontal, 15px) + 65px);
     }
 
     /* Single chat on mobile */
@@ -745,37 +737,27 @@
 }
 
 @media (max-width: 480px) {
-    .vt-messenger-container {
-        bottom: 10px;
-    }
-
-    .vt-messenger-position-bottom-right {
-        right: 10px;
-    }
-
-    .vt-messenger-position-bottom-left {
-        left: 10px;
-    }
-
+    /* Keep avatar circles aligned with main button on mobile */
     .vt-messenger-popup {
-        width: calc(100vw - 20px);
-        right: -10px !important;
+        width: 56px;
+        right: 0 !important;
         left: auto !important;
+        align-items: center;
     }
 
     .vt-messenger-position-bottom-left .vt-messenger-popup {
-        left: -10px !important;
+        left: 0 !important;
         right: auto !important;
     }
 
     /* Full-screen chat on small mobile */
     .vt-messenger-chat-window {
         position: fixed !important;
-        left: 10px !important;
-        right: 10px !important;
-        bottom: 76px !important;
-        width: calc(100vw - 20px) !important;
-        height: calc(100vh - 96px) !important;
+        left: var(--vt-messenger-horizontal, 10px) !important;
+        right: var(--vt-messenger-horizontal, 10px) !important;
+        bottom: calc(var(--vt-messenger-bottom, 10px) + 66px) !important;
+        width: calc(100vw - (var(--vt-messenger-horizontal, 10px) * 2)) !important;
+        height: calc(100vh - var(--vt-messenger-bottom, 10px) - 86px) !important;
         max-height: 500px;
     }
 }

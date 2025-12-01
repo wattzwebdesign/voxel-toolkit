@@ -61,6 +61,63 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'position_offset_heading',
+            [
+                'label' => __('Position Offsets', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_responsive_control(
+            'position_bottom',
+            [
+                'label' => __('Bottom Offset', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 200,
+                        'step' => 1,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 20,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-messenger-container' => '--vt-messenger-bottom: {{SIZE}}{{UNIT}};',
+                ],
+                'description' => __('Distance from the bottom of the screen', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_responsive_control(
+            'position_horizontal',
+            [
+                'label' => __('Horizontal Offset', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 200,
+                        'step' => 1,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 20,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-messenger-container' => '--vt-messenger-horizontal: {{SIZE}}{{UNIT}};',
+                ],
+                'description' => __('Distance from left or right edge (depending on position)', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
             'show_unread_badge',
             [
                 'label' => __('Show Unread Badge', 'voxel-toolkit'),
