@@ -1,0 +1,170 @@
+/**
+ * Media Gallery Widget Styles
+ *
+ * @package Voxel_Toolkit
+ */
+
+/* Video item styling */
+.vt-media-gallery .vt-video-item {
+    position: relative;
+}
+
+.vt-media-gallery .vt-video-item a {
+    position: relative;
+    display: block;
+    height: 100%;
+}
+
+.vt-media-gallery .vt-video-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Play icon overlay */
+.vt-media-gallery .vt-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+.vt-media-gallery .vt-video-item:hover .vt-play-icon {
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Ensure play icon is above overlay */
+.vt-media-gallery .vt-video-item .ts-image-overlay {
+    z-index: 5;
+}
+
+/* Video placeholder styling when no thumbnail */
+.vt-media-gallery .vt-video-item .vt-video-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    width: 100%;
+    height: 100%;
+    min-height: 150px;
+}
+
+/* Hidden container for slideshow items */
+.vt-media-gallery .hidden {
+    display: none;
+}
+
+/* Last item overlay adjustments */
+.vt-media-gallery .ts-gallery-last-item.vt-video-item .ts-image-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .vt-media-gallery .vt-play-icon {
+        padding: 10px !important;
+    }
+
+    .vt-media-gallery .vt-play-icon i,
+    .vt-media-gallery .vt-play-icon svg {
+        font-size: 32px !important;
+        width: 32px !important;
+        height: 32px !important;
+    }
+}
+
+/* Video Lightbox Styles */
+.vt-video-lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vt-video-lightbox-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    cursor: pointer;
+}
+
+.vt-video-lightbox-content {
+    position: relative;
+    z-index: 1;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vt-video-lightbox-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.vt-video-lightbox-close:hover {
+    opacity: 1;
+}
+
+.vt-video-lightbox-close svg {
+    width: 28px;
+    height: 28px;
+}
+
+.vt-video-player {
+    max-width: 90vw;
+    max-height: 85vh;
+    width: auto;
+    height: auto;
+    background: #000;
+    border-radius: 4px;
+    object-fit: contain;
+}
+
+/* Mobile adjustments for lightbox */
+@media (max-width: 768px) {
+    .vt-video-lightbox-close {
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        padding: 10px;
+    }
+
+    .vt-video-player {
+        max-width: 100vw;
+        max-height: 80vh;
+        width: auto;
+        height: auto;
+        border-radius: 0;
+    }
+}
