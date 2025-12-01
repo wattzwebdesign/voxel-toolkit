@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **QR Code Modifier**: Added option to hide download button
   - Leave button text parameter blank to hide the download button
   - Usage without button: `@post(permalink).generate_qr_code(,,,,)`
+- **Messenger Widget**: Added position offset controls and fixed mobile alignment
+  - New responsive Bottom Offset slider (0-200px) to adjust distance from screen bottom
+  - New responsive Horizontal Offset slider (0-200px) to adjust distance from left/right edge
+  - Fixed mobile avatar circles to stay aligned with main chat button
+  - Useful for avoiding overlap with mobile app navigation bars
 
 ## [1.5.5] - 2025-11-28
 
