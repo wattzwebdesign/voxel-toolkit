@@ -1332,6 +1332,58 @@
 }
 
 /* ======================
+   Article Helpful
+   ====================== */
+
+.vt-ac-helpful-summary {
+    line-height: 1.6;
+}
+
+.vt-ac-helpful-yes {
+    color: #46b450;
+}
+
+.vt-ac-helpful-yes .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    margin-right: 2px;
+}
+
+.vt-ac-helpful-no {
+    color: #dc3232;
+}
+
+.vt-ac-helpful-no .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    margin-right: 2px;
+}
+
+.vt-ac-helpful-divider {
+    color: #999;
+    margin: 0 2px;
+}
+
+.vt-ac-helpful-good {
+    background: #d4edda;
+    color: #155724;
+}
+
+.vt-ac-helpful-neutral {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.vt-ac-helpful-bad {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* ======================
    Responsive
    ====================== */
 

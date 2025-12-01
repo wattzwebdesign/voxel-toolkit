@@ -258,6 +258,38 @@ $js_data = $admin_columns->get_js_data();
                                     </div>
                                 </div>
 
+                                <!-- Article Helpful Settings (only for article-helpful fields) -->
+                                <div v-if="isArticleHelpfulField(element.field_key) && element.helpful_settings" class="vt-ac-poll-settings">
+                                    <h4><?php _e('Helpful Display', 'voxel-toolkit'); ?></h4>
+                                    <div class="vt-ac-field-group">
+                                        <label><?php _e('Show', 'voxel-toolkit'); ?></label>
+                                        <select v-model="element.helpful_settings.display" @change="markChanged">
+                                            <option value="summary"><?php _e('Summary (Yes/No + %)', 'voxel-toolkit'); ?></option>
+                                            <option value="yes_count"><?php _e('Yes Count Only', 'voxel-toolkit'); ?></option>
+                                            <option value="no_count"><?php _e('No Count Only', 'voxel-toolkit'); ?></option>
+                                            <option value="total"><?php _e('Total Votes', 'voxel-toolkit'); ?></option>
+                                            <option value="percentage"><?php _e('Percentage Only', 'voxel-toolkit'); ?></option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Text/Textarea Settings (for textarea, description, texteditor fields) -->
+                                <div v-if="isTextareaField(element.field_key) && element.text_settings" class="vt-ac-product-settings">
+                                    <h4><?php _e('Text Display', 'voxel-toolkit'); ?></h4>
+                                    <div class="vt-ac-field-group">
+                                        <label><?php _e('Limit Type', 'voxel-toolkit'); ?></label>
+                                        <select v-model="element.text_settings.limit_type" @change="markChanged">
+                                            <option value="words"><?php _e('Word Limit', 'voxel-toolkit'); ?></option>
+                                            <option value="characters"><?php _e('Character Limit', 'voxel-toolkit'); ?></option>
+                                            <option value="none"><?php _e('No Limit', 'voxel-toolkit'); ?></option>
+                                        </select>
+                                    </div>
+                                    <div v-if="element.text_settings.limit_type !== 'none'" class="vt-ac-field-group">
+                                        <label>{{ element.text_settings.limit_type === 'words' ? '<?php _e('Word Count', 'voxel-toolkit'); ?>' : '<?php _e('Character Count', 'voxel-toolkit'); ?>' }}</label>
+                                        <input type="number" v-model.number="element.text_settings.limit_value" @change="markChanged" min="1" max="1000" style="width: 80px;">
+                                    </div>
+                                </div>
+
                                 <!-- Work Hours Settings (only for work-hours fields) -->
                                 <div v-if="isWorkHoursField(element.field_key) && element.work_hours_settings" class="vt-ac-product-settings">
                                     <h4><?php _e('Work Hours Display', 'voxel-toolkit'); ?></h4>
@@ -286,8 +318,8 @@ $js_data = $admin_columns->get_js_data();
                                     </div>
                                 </div>
 
-                                <!-- Date Settings (only for date fields) -->
-                                <div v-if="isDateField(element.field_key) && element.date_settings" class="vt-ac-product-settings">
+                                <!-- Date Settings (for Voxel date fields and WP date fields) -->
+                                <div v-if="(isDateField(element.field_key) || isWpDateField(element.field_key)) && element.date_settings" class="vt-ac-product-settings">
                                     <h4><?php _e('Date Display', 'voxel-toolkit'); ?></h4>
                                     <div class="vt-ac-field-group">
                                         <label><?php _e('Show', 'voxel-toolkit'); ?></label>
@@ -296,6 +328,40 @@ $js_data = $admin_columns->get_js_data();
                                             <option value="datetime"><?php _e('Date & Time', 'voxel-toolkit'); ?></option>
                                             <option value="relative"><?php _e('Relative (e.g., 2 days ago)', 'voxel-toolkit'); ?></option>
                                         </select>
+                                    </div>
+                                    <div v-if="element.date_settings.display !== 'relative'" class="vt-ac-field-group">
+                                        <label><?php _e('Date Format', 'voxel-toolkit'); ?></label>
+                                        <select v-model="element.date_settings.date_format" @change="markChanged">
+                                            <option value="wordpress"><?php _e('WordPress Default', 'voxel-toolkit'); ?> (<?php echo esc_html(date_i18n(get_option('date_format'))); ?>)</option>
+                                            <option value="j F Y"><?php echo esc_html(date_i18n('j F Y')); ?></option>
+                                            <option value="F j, Y"><?php echo esc_html(date_i18n('F j, Y')); ?></option>
+                                            <option value="Y-m-d"><?php echo esc_html(date_i18n('Y-m-d')); ?></option>
+                                            <option value="m/d/Y"><?php echo esc_html(date_i18n('m/d/Y')); ?></option>
+                                            <option value="d/m/Y"><?php echo esc_html(date_i18n('d/m/Y')); ?></option>
+                                            <option value="d.m.Y"><?php echo esc_html(date_i18n('d.m.Y')); ?></option>
+                                            <option value="M j, Y"><?php echo esc_html(date_i18n('M j, Y')); ?></option>
+                                            <option value="j M Y"><?php echo esc_html(date_i18n('j M Y')); ?></option>
+                                            <option value="custom"><?php _e('Custom', 'voxel-toolkit'); ?></option>
+                                        </select>
+                                    </div>
+                                    <div v-if="element.date_settings.display !== 'relative' && element.date_settings.date_format === 'custom'" class="vt-ac-field-group">
+                                        <label><?php _e('Custom Date Format', 'voxel-toolkit'); ?></label>
+                                        <input type="text" v-model="element.date_settings.custom_date_format" @change="markChanged" placeholder="e.g., Y-m-d" style="width: 120px;">
+                                    </div>
+                                    <div v-if="element.date_settings.display === 'datetime'" class="vt-ac-field-group">
+                                        <label><?php _e('Time Format', 'voxel-toolkit'); ?></label>
+                                        <select v-model="element.date_settings.time_format" @change="markChanged">
+                                            <option value="wordpress"><?php _e('WordPress Default', 'voxel-toolkit'); ?> (<?php echo esc_html(date_i18n(get_option('time_format'))); ?>)</option>
+                                            <option value="g:i a"><?php echo esc_html(date_i18n('g:i a')); ?></option>
+                                            <option value="g:i A"><?php echo esc_html(date_i18n('g:i A')); ?></option>
+                                            <option value="H:i"><?php echo esc_html(date_i18n('H:i')); ?></option>
+                                            <option value="H:i:s"><?php echo esc_html(date_i18n('H:i:s')); ?></option>
+                                            <option value="custom"><?php _e('Custom', 'voxel-toolkit'); ?></option>
+                                        </select>
+                                    </div>
+                                    <div v-if="element.date_settings.display === 'datetime' && element.date_settings.time_format === 'custom'" class="vt-ac-field-group">
+                                        <label><?php _e('Custom Time Format', 'voxel-toolkit'); ?></label>
+                                        <input type="text" v-model="element.date_settings.custom_time_format" @change="markChanged" placeholder="e.g., H:i" style="width: 120px;">
                                     </div>
                                 </div>
 

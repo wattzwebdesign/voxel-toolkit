@@ -216,6 +216,19 @@ function initAdminColumnsApp() {
                                     display: 'most_voted'
                                 };
                             }
+                            // Ensure helpful_settings exists for article-helpful fields
+                            if (col.field_key === ':article_helpful' && !col.helpful_settings) {
+                                col.helpful_settings = {
+                                    display: 'summary'
+                                };
+                            }
+                            // Ensure text_settings exists for textarea/description/texteditor fields
+                            if (field && (field.type === 'textarea' || field.type === 'description' || field.type === 'texteditor') && !col.text_settings) {
+                                col.text_settings = {
+                                    limit_type: 'words',
+                                    limit_value: 20
+                                };
+                            }
                             // Ensure work_hours_settings exists for work-hours fields
                             if (field && field.type === 'work-hours' && !col.work_hours_settings) {
                                 col.work_hours_settings = {
@@ -229,10 +242,22 @@ function initAdminColumnsApp() {
                                 };
                             }
                             // Ensure date_settings exists for date fields
-                            if (field && field.type === 'date' && !col.date_settings) {
-                                col.date_settings = {
-                                    display: 'date'
-                                };
+                            if (field && field.type === 'date') {
+                                if (!col.date_settings) {
+                                    col.date_settings = {
+                                        display: 'date',
+                                        date_format: 'wordpress',
+                                        custom_date_format: '',
+                                        time_format: 'wordpress',
+                                        custom_time_format: ''
+                                    };
+                                } else {
+                                    // Ensure new properties exist on existing configs
+                                    if (!col.date_settings.date_format) col.date_settings.date_format = 'wordpress';
+                                    if (!col.date_settings.custom_date_format) col.date_settings.custom_date_format = '';
+                                    if (!col.date_settings.time_format) col.date_settings.time_format = 'wordpress';
+                                    if (!col.date_settings.custom_time_format) col.date_settings.custom_time_format = '';
+                                }
                             }
                             // Ensure recurring_date_settings exists for recurring-date/event-date fields
                             if (field && (field.type === 'recurring-date' || field.type === 'event-date') && !col.recurring_date_settings) {
@@ -245,6 +270,25 @@ function initAdminColumnsApp() {
                                 col.listing_plan_settings = {
                                     display: 'plan_name'
                                 };
+                            }
+                            // Ensure date_settings exists for WP date fields (:date, :modified)
+                            if ((col.field_key === ':date' || col.field_key === ':modified')) {
+                                if (!col.date_settings) {
+                                    col.date_settings = {
+                                        display: 'datetime',
+                                        date_format: 'wordpress',
+                                        custom_date_format: '',
+                                        time_format: 'wordpress',
+                                        custom_time_format: ''
+                                    };
+                                } else {
+                                    // Ensure new properties exist on existing configs
+                                    if (!col.date_settings.display) col.date_settings.display = 'datetime';
+                                    if (!col.date_settings.date_format) col.date_settings.date_format = 'wordpress';
+                                    if (!col.date_settings.custom_date_format) col.date_settings.custom_date_format = '';
+                                    if (!col.date_settings.time_format) col.date_settings.time_format = 'wordpress';
+                                    if (!col.date_settings.custom_time_format) col.date_settings.custom_time_format = '';
+                                }
                             }
                             // Ensure title_settings exists for title field (with defaults enabled)
                             if (col.field_key === 'title' && !col.title_settings) {
@@ -480,6 +524,31 @@ function initAdminColumnsApp() {
                         delete column.poll_settings;
                     }
 
+                    // Add default helpful settings for article-helpful fields
+                    if (fieldKey === ':article_helpful') {
+                        if (!column.helpful_settings) {
+                            column.helpful_settings = {
+                                display: 'summary'
+                            };
+                        }
+                    } else {
+                        // Remove helpful settings if not an article-helpful field
+                        delete column.helpful_settings;
+                    }
+
+                    // Add default text settings for textarea/description/texteditor fields
+                    if (field.type === 'textarea' || field.type === 'description' || field.type === 'texteditor') {
+                        if (!column.text_settings) {
+                            column.text_settings = {
+                                limit_type: 'words',
+                                limit_value: 20
+                            };
+                        }
+                    } else {
+                        // Remove text settings if not a textarea field
+                        delete column.text_settings;
+                    }
+
                     // Add default work hours settings for work-hours fields
                     if (field.type === 'work-hours') {
                         if (!column.work_hours_settings) {
@@ -508,7 +577,11 @@ function initAdminColumnsApp() {
                     if (field.type === 'date') {
                         if (!column.date_settings) {
                             column.date_settings = {
-                                display: 'date'
+                                display: 'date',
+                                date_format: 'wordpress',
+                                custom_date_format: '',
+                                time_format: 'wordpress',
+                                custom_time_format: ''
                             };
                         }
                     } else {
@@ -539,6 +612,19 @@ function initAdminColumnsApp() {
                 } else {
                     // Remove listing plan settings if not a listing plan field
                     delete column.listing_plan_settings;
+                }
+
+                // Add default date settings for WP date fields (:date, :modified)
+                if (fieldKey === ':date' || fieldKey === ':modified') {
+                    if (!column.date_settings) {
+                        column.date_settings = {
+                            display: 'datetime',
+                            date_format: 'wordpress',
+                            custom_date_format: '',
+                            time_format: 'wordpress',
+                            custom_time_format: ''
+                        };
+                    }
                 }
 
                 // Add default title settings for title field
@@ -620,6 +706,15 @@ function initAdminColumnsApp() {
                 return field && field.type === 'poll-vt';
             }
 
+            function isArticleHelpfulField(fieldKey) {
+                return fieldKey === ':article_helpful';
+            }
+
+            function isTextareaField(fieldKey) {
+                const field = getField(fieldKey);
+                return field && (field.type === 'textarea' || field.type === 'description' || field.type === 'texteditor');
+            }
+
             function isWorkHoursField(fieldKey) {
                 const field = getField(fieldKey);
                 return field && field.type === 'work-hours';
@@ -633,6 +728,10 @@ function initAdminColumnsApp() {
             function isDateField(fieldKey) {
                 const field = getField(fieldKey);
                 return field && field.type === 'date';
+            }
+
+            function isWpDateField(fieldKey) {
+                return fieldKey === ':date' || fieldKey === ':modified';
             }
 
             function isRecurringDateField(fieldKey) {
@@ -789,9 +888,12 @@ function initAdminColumnsApp() {
                 isTitleField,
                 isProductField,
                 isPollField,
+                isArticleHelpfulField,
+                isTextareaField,
                 isWorkHoursField,
                 isLocationField,
                 isDateField,
+                isWpDateField,
                 isRecurringDateField,
                 isListingPlanField,
                 canBeSortable,

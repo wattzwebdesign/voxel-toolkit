@@ -626,6 +626,16 @@ class Voxel_Toolkit_Admin_Columns {
             $grouped_fields['wordpress']['fields'][] = $wp_field;
         }
 
+        // Add Voxel Toolkit specific columns
+        $grouped_fields['toolkit']['fields'][] = array(
+            'key' => ':article_helpful',
+            'label' => __('Article Helpful', 'voxel-toolkit'),
+            'type' => 'article-helpful',
+            'type_label' => __('Voxel Toolkit', 'voxel-toolkit'),
+            'sortable' => true,
+            'filterable' => false,
+        );
+
         // Remove empty groups
         $grouped_fields = array_filter($grouped_fields, function($group) {
             return !empty($group['fields']);
@@ -1165,10 +1175,24 @@ class Voxel_Toolkit_Admin_Columns {
                 // Sanitize date settings if present
                 if (isset($column['date_settings']) && is_array($column['date_settings'])) {
                     $valid_displays = array('date', 'datetime', 'relative');
+                    $valid_date_formats = array('wordpress', 'j F Y', 'F j, Y', 'Y-m-d', 'm/d/Y', 'd/m/Y', 'd.m.Y', 'M j, Y', 'j M Y', 'custom');
+                    $valid_time_formats = array('wordpress', 'g:i a', 'g:i A', 'H:i', 'H:i:s', 'custom');
                     $sanitized_column['date_settings'] = array(
                         'display' => isset($column['date_settings']['display']) && in_array($column['date_settings']['display'], $valid_displays)
                             ? $column['date_settings']['display']
                             : 'date',
+                        'date_format' => isset($column['date_settings']['date_format']) && in_array($column['date_settings']['date_format'], $valid_date_formats)
+                            ? $column['date_settings']['date_format']
+                            : 'wordpress',
+                        'custom_date_format' => isset($column['date_settings']['custom_date_format'])
+                            ? sanitize_text_field($column['date_settings']['custom_date_format'])
+                            : '',
+                        'time_format' => isset($column['date_settings']['time_format']) && in_array($column['date_settings']['time_format'], $valid_time_formats)
+                            ? $column['date_settings']['time_format']
+                            : 'wordpress',
+                        'custom_time_format' => isset($column['date_settings']['custom_time_format'])
+                            ? sanitize_text_field($column['date_settings']['custom_time_format'])
+                            : '',
                     );
                 }
 
@@ -1201,6 +1225,29 @@ class Voxel_Toolkit_Admin_Columns {
                         'show_actions' => isset($column['title_settings']['show_actions'])
                             ? (bool) $column['title_settings']['show_actions']
                             : true,
+                    );
+                }
+
+                // Sanitize text settings if present (for textarea, description, texteditor)
+                if (isset($column['text_settings']) && is_array($column['text_settings'])) {
+                    $valid_limit_types = array('words', 'characters', 'none');
+                    $sanitized_column['text_settings'] = array(
+                        'limit_type' => isset($column['text_settings']['limit_type']) && in_array($column['text_settings']['limit_type'], $valid_limit_types)
+                            ? $column['text_settings']['limit_type']
+                            : 'words',
+                        'limit_value' => isset($column['text_settings']['limit_value'])
+                            ? min(1000, max(1, absint($column['text_settings']['limit_value'])))
+                            : 20,
+                    );
+                }
+
+                // Sanitize helpful settings if present (for article-helpful)
+                if (isset($column['helpful_settings']) && is_array($column['helpful_settings'])) {
+                    $valid_displays = array('summary', 'yes_count', 'no_count', 'total', 'percentage');
+                    $sanitized_column['helpful_settings'] = array(
+                        'display' => isset($column['helpful_settings']['display']) && in_array($column['helpful_settings']['display'], $valid_displays)
+                            ? $column['helpful_settings']['display']
+                            : 'summary',
                     );
                 }
 

@@ -222,6 +222,15 @@ class Voxel_Toolkit_Column_Types {
                 'icon' => 'dashicons-chart-bar',
             ),
 
+            // Article Helpful (VT)
+            'article-helpful' => array(
+                'label' => __('Article Helpful (VT)', 'voxel-toolkit'),
+                'sortable' => true,
+                'filterable' => false,
+                'numeric' => true,
+                'icon' => 'dashicons-thumbs-up',
+            ),
+
             // Taxonomy
             'taxonomy' => array(
                 'label' => __('Taxonomy', 'voxel-toolkit'),

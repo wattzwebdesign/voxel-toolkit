@@ -72,7 +72,7 @@ class Voxel_Toolkit_Column_Renderer {
 
         if (method_exists($this, $method)) {
             // Pass column config to fields that have display settings
-            if (in_array($type, array('image', 'profile-avatar', 'product', 'work-hours', 'location', 'date', 'recurring-date', 'event-date', 'poll-vt', 'title'))) {
+            if (in_array($type, array('image', 'profile-avatar', 'product', 'work-hours', 'location', 'date', 'recurring-date', 'event-date', 'poll-vt', 'title', 'textarea', 'description', 'texteditor'))) {
                 return $this->$method($value, $field, $post, $column_config);
             }
             return $this->$method($value, $field, $post);
@@ -93,9 +93,7 @@ class Voxel_Toolkit_Column_Renderer {
 
         switch ($field_key) {
             case ':date':
-                $timestamp = strtotime($wp_post->post_date);
-                $formatted = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $timestamp);
-                return '<span class="vt-ac-date" title="' . esc_attr($wp_post->post_date) . '">' . esc_html($formatted) . '</span>';
+                return $this->render_wp_date($wp_post->post_date, $column_config);
 
             case ':author':
                 $author = get_userdata($wp_post->post_author);
@@ -115,9 +113,7 @@ class Voxel_Toolkit_Column_Renderer {
                 return '<span class="vt-ac-number">' . esc_html($post_id) . '</span>';
 
             case ':modified':
-                $timestamp = strtotime($wp_post->post_modified);
-                $formatted = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $timestamp);
-                return '<span class="vt-ac-date" title="' . esc_attr($wp_post->post_modified) . '">' . esc_html($formatted) . '</span>';
+                return $this->render_wp_date($wp_post->post_modified, $column_config);
 
             case ':slug':
                 return '<code class="vt-ac-slug">' . esc_html($wp_post->post_name) . '</code>';
@@ -191,9 +187,76 @@ class Voxel_Toolkit_Column_Renderer {
             case ':listing_plan':
                 return $this->render_listing_plan($post_id, $column_config);
 
+            case ':article_helpful':
+                return $this->render_article_helpful($post_id, $column_config);
+
             default:
                 return $this->empty_value();
         }
+    }
+
+    /**
+     * Render WordPress date fields (Date Published, Last Modified)
+     */
+    private function render_wp_date($date_string, $column_config = null) {
+        $timestamp = strtotime($date_string);
+
+        if ($timestamp === false) {
+            return esc_html($date_string);
+        }
+
+        // Get display mode from column config
+        $display_mode = 'datetime';
+        if (isset($column_config['date_settings']['display'])) {
+            $display_mode = $column_config['date_settings']['display'];
+        }
+
+        // Get date format from column config or use WordPress default
+        $date_format = get_option('date_format');
+        if (isset($column_config['date_settings']['date_format'])) {
+            $format_setting = $column_config['date_settings']['date_format'];
+            if ($format_setting === 'wordpress') {
+                $date_format = get_option('date_format');
+            } elseif ($format_setting === 'custom' && !empty($column_config['date_settings']['custom_date_format'])) {
+                $date_format = $column_config['date_settings']['custom_date_format'];
+            } else {
+                // Preset formats
+                $date_format = $format_setting;
+            }
+        }
+
+        // Get time format from column config or use WordPress default
+        $time_format = get_option('time_format');
+        if (isset($column_config['date_settings']['time_format'])) {
+            $format_setting = $column_config['date_settings']['time_format'];
+            if ($format_setting === 'wordpress') {
+                $time_format = get_option('time_format');
+            } elseif ($format_setting === 'custom' && !empty($column_config['date_settings']['custom_time_format'])) {
+                $time_format = $column_config['date_settings']['custom_time_format'];
+            } else {
+                // Preset formats
+                $time_format = $format_setting;
+            }
+        }
+
+        switch ($display_mode) {
+            case 'date':
+                $formatted = date_i18n($date_format, $timestamp);
+                break;
+
+            case 'datetime':
+                $formatted = date_i18n($date_format . ' ' . $time_format, $timestamp);
+                break;
+
+            case 'relative':
+                $formatted = $this->get_relative_date($timestamp);
+                break;
+
+            default:
+                $formatted = date_i18n($date_format . ' ' . $time_format, $timestamp);
+        }
+
+        return '<span class="vt-ac-date" title="' . esc_attr($date_string) . '">' . esc_html($formatted) . '</span>';
     }
 
     /**
@@ -317,6 +380,56 @@ class Voxel_Toolkit_Column_Renderer {
         }
 
         return $output;
+    }
+
+    /**
+     * Render Article Helpful stats (Voxel Toolkit)
+     */
+    private function render_article_helpful($post_id, $column_config = null) {
+        $yes_count = get_post_meta($post_id, '_article_helpful_yes', true);
+        $no_count = get_post_meta($post_id, '_article_helpful_no', true);
+
+        $yes_count = $yes_count ? intval($yes_count) : 0;
+        $no_count = $no_count ? intval($no_count) : 0;
+        $total = $yes_count + $no_count;
+
+        if ($total === 0) {
+            return $this->empty_value();
+        }
+
+        $percentage = round(($yes_count / $total) * 100);
+
+        // Get display mode from column config
+        $display_mode = 'summary';
+        if (isset($column_config['helpful_settings']['display'])) {
+            $display_mode = $column_config['helpful_settings']['display'];
+        }
+
+        switch ($display_mode) {
+            case 'yes_count':
+                return '<span class="vt-ac-helpful-yes"><span class="dashicons dashicons-thumbs-up"></span> ' . number_format_i18n($yes_count) . '</span>';
+
+            case 'no_count':
+                return '<span class="vt-ac-helpful-no"><span class="dashicons dashicons-thumbs-down"></span> ' . number_format_i18n($no_count) . '</span>';
+
+            case 'total':
+                return '<span class="vt-ac-number">' . number_format_i18n($total) . ' ' . _n('vote', 'votes', $total, 'voxel-toolkit') . '</span>';
+
+            case 'percentage':
+                $class = $percentage >= 70 ? 'vt-ac-helpful-good' : ($percentage >= 40 ? 'vt-ac-helpful-neutral' : 'vt-ac-helpful-bad');
+                return '<span class="vt-ac-badge ' . $class . '">' . $percentage . '%</span>';
+
+            case 'summary':
+            default:
+                $output = '<span class="vt-ac-helpful-summary">';
+                $output .= '<span class="vt-ac-helpful-yes" title="' . esc_attr__('Yes votes', 'voxel-toolkit') . '"><span class="dashicons dashicons-thumbs-up"></span> ' . number_format_i18n($yes_count) . '</span>';
+                $output .= ' <span class="vt-ac-helpful-divider">/</span> ';
+                $output .= '<span class="vt-ac-helpful-no" title="' . esc_attr__('No votes', 'voxel-toolkit') . '"><span class="dashicons dashicons-thumbs-down"></span> ' . number_format_i18n($no_count) . '</span>';
+                $class = $percentage >= 70 ? 'vt-ac-helpful-good' : ($percentage >= 40 ? 'vt-ac-helpful-neutral' : 'vt-ac-helpful-bad');
+                $output .= '<br><span class="vt-ac-badge ' . $class . '">' . $percentage . '% ' . __('helpful', 'voxel-toolkit') . '</span>';
+                $output .= '</span>';
+                return $output;
+        }
     }
 
     /**
@@ -865,24 +978,54 @@ class Voxel_Toolkit_Column_Renderer {
     /**
      * Render textarea field
      */
-    private function render_textarea($value, $field, $post) {
-        // Strip HTML and truncate
+    private function render_textarea($value, $field, $post, $column_config = null) {
+        // Strip HTML
         $text = wp_strip_all_tags($value);
-        return $this->truncate($text, 80);
+
+        // Get limit settings
+        $limit_type = 'words';
+        $limit_value = 20;
+
+        if (isset($column_config['text_settings'])) {
+            $limit_type = $column_config['text_settings']['limit_type'] ?? 'words';
+            $limit_value = intval($column_config['text_settings']['limit_value'] ?? 20);
+        }
+
+        // Apply limit based on type
+        switch ($limit_type) {
+            case 'none':
+                return esc_html($text);
+
+            case 'characters':
+                if ($limit_value > 0 && mb_strlen($text) > $limit_value) {
+                    return esc_html(mb_substr($text, 0, $limit_value)) . '&hellip;';
+                }
+                return esc_html($text);
+
+            case 'words':
+            default:
+                if ($limit_value > 0) {
+                    $words = preg_split('/\s+/', $text, -1, PREG_SPLIT_NO_EMPTY);
+                    if (count($words) > $limit_value) {
+                        return esc_html(implode(' ', array_slice($words, 0, $limit_value))) . '&hellip;';
+                    }
+                }
+                return esc_html($text);
+        }
     }
 
     /**
      * Render description field
      */
-    private function render_description($value, $field, $post) {
-        return $this->render_textarea($value, $field, $post);
+    private function render_description($value, $field, $post, $column_config = null) {
+        return $this->render_textarea($value, $field, $post, $column_config);
     }
 
     /**
      * Render text editor field
      */
-    private function render_texteditor($value, $field, $post) {
-        return $this->render_textarea($value, $field, $post);
+    private function render_texteditor($value, $field, $post, $column_config = null) {
+        return $this->render_textarea($value, $field, $post, $column_config);
     }
 
     /**
@@ -940,8 +1083,33 @@ class Voxel_Toolkit_Column_Renderer {
             $display_mode = $column_config['date_settings']['display'];
         }
 
+        // Get date format from column config or use WordPress default
         $date_format = get_option('date_format');
+        if (isset($column_config['date_settings']['date_format'])) {
+            $format_setting = $column_config['date_settings']['date_format'];
+            if ($format_setting === 'wordpress') {
+                $date_format = get_option('date_format');
+            } elseif ($format_setting === 'custom' && !empty($column_config['date_settings']['custom_date_format'])) {
+                $date_format = $column_config['date_settings']['custom_date_format'];
+            } else {
+                // Preset formats
+                $date_format = $format_setting;
+            }
+        }
+
+        // Get time format from column config or use WordPress default
         $time_format = get_option('time_format');
+        if (isset($column_config['date_settings']['time_format'])) {
+            $format_setting = $column_config['date_settings']['time_format'];
+            if ($format_setting === 'wordpress') {
+                $time_format = get_option('time_format');
+            } elseif ($format_setting === 'custom' && !empty($column_config['date_settings']['custom_time_format'])) {
+                $time_format = $column_config['date_settings']['custom_time_format'];
+            } else {
+                // Preset formats
+                $time_format = $format_setting;
+            }
+        }
 
         switch ($display_mode) {
             case 'date':
