@@ -62,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Tag Usage Page**: Fixed memory exhaustion on sites with many Elementor pages
   - Now processes posts in batches of 50 to prevent PHP memory limit errors
+- **Admin Notifications**: Fixed settings not saving (user roles and selected users)
 
 ## [1.5.5] - 2025-11-28
 
