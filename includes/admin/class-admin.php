@@ -1647,8 +1647,18 @@ class Voxel_Toolkit_Admin {
                             <td><code>@post(word_count)</code></td>
                             <td><em>1250</em></td>
                         </tr>
+                        <tr>
+                            <td><code>feed_position</code></td>
+                            <td><?php _e('Position number in post feed (1, 2, 3, etc.). Absolute across pages.', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(feed_position)</code></td>
+                            <td><em>1</em>, <em>2</em>, <em>11</em> (on page 2)</td>
+                        </tr>
                     </tbody>
                 </table>
+                <p style="margin-top: 15px;">
+                    <strong><?php _e('Note for feed_position:', 'voxel-toolkit'); ?></strong>
+                    <em><?php _e('After editing a preview card template in Elementor, refresh the page with the post feed to see correct numbering. This tag only works inside post feed preview cards.', 'voxel-toolkit'); ?></em>
+                </p>
             </div>
 
             <!-- User/Author Properties -->

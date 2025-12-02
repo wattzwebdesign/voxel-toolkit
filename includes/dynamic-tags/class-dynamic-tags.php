@@ -18,9 +18,25 @@ class Voxel_Toolkit_Dynamic_Tags {
         // Load classes first
         $this->load_methods();
         $this->load_properties();
+        $this->load_trackers();
 
         // Register filters - these need to be added immediately, not on a hook
         $this->init_hooks();
+    }
+
+    /**
+     * Load tracker classes for feed context
+     */
+    public function load_trackers() {
+        // Load post position tracker
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/class-post-position-tracker.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/class-post-position-tracker.php';
+
+            // Initialize tracker
+            if (class_exists('Voxel_Toolkit_Post_Position_Tracker')) {
+                Voxel_Toolkit_Post_Position_Tracker::instance();
+            }
+        }
     }
 
     /**
@@ -325,6 +341,18 @@ class Voxel_Toolkit_Dynamic_Tags {
                 $percentage = ($yes_count / $total) * 100;
                 return round($percentage);
             } );
+        }
+
+        // Add feed position property (absolute position across all pages)
+        if (class_exists('Voxel_Toolkit_Post_Position_Tracker')) {
+            $properties['feed_position'] = \Voxel\Dynamic_Data\Tag::Number('Feed Position')
+                ->render(function() use ($group) {
+                    if (!$group->post || !$group->post->get_id()) {
+                        return null;
+                    }
+
+                    return Voxel_Toolkit_Post_Position_Tracker::get_current_position();
+                });
         }
 
         return $properties;
