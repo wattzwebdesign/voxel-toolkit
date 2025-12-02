@@ -130,7 +130,17 @@ function initAdminColumnsApp() {
                     const data = await response.json();
 
                     if (data.success) {
-                        postTypes.value = data.data;
+                        // Add Users as an option at the beginning
+                        postTypes.value = [
+                            {
+                                key: 'users',
+                                label: vtAdminColumns.i18n.users || 'Users',
+                                singular: vtAdminColumns.i18n.user || 'User',
+                                edit_url: vtAdminColumns.usersUrl || '/wp-admin/users.php',
+                                is_users: true,
+                            },
+                            ...data.data
+                        ];
                     } else {
                         console.error('Failed to load post types:', data);
                     }
@@ -141,22 +151,38 @@ function initAdminColumnsApp() {
                 }
             }
 
+            // Check if currently viewing users
+            const isUsersMode = computed(() => {
+                return selectedPostType.value === 'users';
+            });
+
             async function loadFields() {
                 if (!selectedPostType.value) return;
 
                 loadingFields.value = true;
 
                 try {
+                    // Use different AJAX action for users
+                    const action = isUsersMode.value
+                        ? 'vt_user_columns_get_fields'
+                        : 'vt_admin_columns_get_fields';
+
+                    const params = {
+                        action: action,
+                        nonce: vtAdminColumns.nonce,
+                    };
+
+                    // Only include post_type for non-users
+                    if (!isUsersMode.value) {
+                        params.post_type = selectedPostType.value;
+                    }
+
                     const response = await fetch(vtAdminColumns.ajaxUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
                         },
-                        body: new URLSearchParams({
-                            action: 'vt_admin_columns_get_fields',
-                            nonce: vtAdminColumns.nonce,
-                            post_type: selectedPostType.value,
-                        }),
+                        body: new URLSearchParams(params),
                     });
 
                     const data = await response.json();
@@ -177,16 +203,27 @@ function initAdminColumnsApp() {
                 if (!selectedPostType.value) return;
 
                 try {
+                    // Use different AJAX action for users
+                    const action = isUsersMode.value
+                        ? 'vt_user_columns_load'
+                        : 'vt_admin_columns_load';
+
+                    const params = {
+                        action: action,
+                        nonce: vtAdminColumns.nonce,
+                    };
+
+                    // Only include post_type for non-users
+                    if (!isUsersMode.value) {
+                        params.post_type = selectedPostType.value;
+                    }
+
                     const response = await fetch(vtAdminColumns.ajaxUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
                         },
-                        body: new URLSearchParams({
-                            action: 'vt_admin_columns_load',
-                            nonce: vtAdminColumns.nonce,
-                            post_type: selectedPostType.value,
-                        }),
+                        body: new URLSearchParams(params),
                     });
 
                     const data = await response.json();
@@ -297,6 +334,32 @@ function initAdminColumnsApp() {
                                     show_actions: true
                                 };
                             }
+                            // User columns: ensure post_count_settings exists for post count field
+                            if (col.field_key === ':post_count' && !col.post_count_settings) {
+                                col.post_count_settings = {
+                                    post_type: 'post',
+                                    post_statuses: ['publish']
+                                };
+                            }
+                            // User columns: ensure date_settings exists for registered date field
+                            if (col.field_key === ':registered_date') {
+                                if (!col.date_settings) {
+                                    col.date_settings = {
+                                        display: 'date',
+                                        date_format: 'wordpress',
+                                        custom_date_format: '',
+                                        time_format: 'wordpress',
+                                        custom_time_format: ''
+                                    };
+                                }
+                            }
+                            // User columns: ensure image_settings exists for profile picture
+                            if (col.field_key === ':profile_picture' && !col.image_settings) {
+                                col.image_settings = {
+                                    display_width: 40,
+                                    display_height: 40
+                                };
+                            }
                             return col;
                         });
 
@@ -330,17 +393,28 @@ function initAdminColumnsApp() {
                         settings: settings,
                     };
 
+                    // Use different AJAX action for users
+                    const action = isUsersMode.value
+                        ? 'vt_user_columns_save'
+                        : 'vt_admin_columns_save';
+
+                    const params = {
+                        action: action,
+                        nonce: vtAdminColumns.nonce,
+                        config: JSON.stringify(config),
+                    };
+
+                    // Only include post_type for non-users
+                    if (!isUsersMode.value) {
+                        params.post_type = selectedPostType.value;
+                    }
+
                     const response = await fetch(vtAdminColumns.ajaxUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
                         },
-                        body: new URLSearchParams({
-                            action: 'vt_admin_columns_save',
-                            nonce: vtAdminColumns.nonce,
-                            post_type: selectedPostType.value,
-                            config: JSON.stringify(config),
-                        }),
+                        body: new URLSearchParams(params),
                     });
 
                     const data = await response.json();
@@ -372,16 +446,27 @@ function initAdminColumnsApp() {
                 }
 
                 try {
+                    // Use different AJAX action for users
+                    const action = isUsersMode.value
+                        ? 'vt_user_columns_restore_defaults'
+                        : 'vt_admin_columns_restore_defaults';
+
+                    const params = {
+                        action: action,
+                        nonce: vtAdminColumns.nonce,
+                    };
+
+                    // Only include post_type for non-users
+                    if (!isUsersMode.value) {
+                        params.post_type = selectedPostType.value;
+                    }
+
                     const response = await fetch(vtAdminColumns.ajaxUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
                         },
-                        body: new URLSearchParams({
-                            action: 'vt_admin_columns_restore_defaults',
-                            nonce: vtAdminColumns.nonce,
-                            post_type: selectedPostType.value,
-                        }),
+                        body: new URLSearchParams(params),
                     });
 
                     const data = await response.json();
@@ -525,7 +610,7 @@ function initAdminColumnsApp() {
                     }
 
                     // Add default helpful settings for article-helpful fields
-                    if (fieldKey === ':article_helpful') {
+                    if (column.field_key === ':article_helpful') {
                         if (!column.helpful_settings) {
                             column.helpful_settings = {
                                 display: 'summary'
@@ -615,7 +700,7 @@ function initAdminColumnsApp() {
                 }
 
                 // Add default date settings for WP date fields (:date, :modified)
-                if (fieldKey === ':date' || fieldKey === ':modified') {
+                if (column.field_key === ':date' || column.field_key === ':modified') {
                     if (!column.date_settings) {
                         column.date_settings = {
                             display: 'datetime',
@@ -638,6 +723,41 @@ function initAdminColumnsApp() {
                 } else {
                     // Remove title settings if not a title field
                     delete column.title_settings;
+                }
+
+                // User columns: Add default post_count_settings for post count field
+                if (column.field_key === ':post_count') {
+                    if (!column.post_count_settings) {
+                        column.post_count_settings = {
+                            post_type: 'post',
+                            post_statuses: ['publish']
+                        };
+                    }
+                } else {
+                    delete column.post_count_settings;
+                }
+
+                // User columns: Add default date_settings for registered date field
+                if (column.field_key === ':registered_date') {
+                    if (!column.date_settings) {
+                        column.date_settings = {
+                            display: 'date',
+                            date_format: 'wordpress',
+                            custom_date_format: '',
+                            time_format: 'wordpress',
+                            custom_time_format: ''
+                        };
+                    }
+                }
+
+                // User columns: Add default image settings for profile picture
+                if (column.field_key === ':profile_picture') {
+                    if (!column.image_settings) {
+                        column.image_settings = {
+                            display_width: 40,
+                            display_height: 40
+                        };
+                    }
                 }
 
                 // Clear search after selecting
@@ -741,6 +861,19 @@ function initAdminColumnsApp() {
 
             function isListingPlanField(fieldKey) {
                 return fieldKey === ':listing_plan';
+            }
+
+            // User column field type checks
+            function isPostCountField(fieldKey) {
+                return fieldKey === ':post_count';
+            }
+
+            function isUserRegisteredField(fieldKey) {
+                return fieldKey === ':registered_date';
+            }
+
+            function isUserAvatarField(fieldKey) {
+                return fieldKey === ':profile_picture';
             }
 
             function canBeSortable(fieldKey) {
@@ -872,6 +1005,7 @@ function initAdminColumnsApp() {
                 filteredGroupedFields,
                 fieldSearch,
                 dropdownOpen,
+                isUsersMode,
                 // Methods
                 loadPostTypes,
                 saveConfig,
@@ -896,6 +1030,9 @@ function initAdminColumnsApp() {
                 isWpDateField,
                 isRecurringDateField,
                 isListingPlanField,
+                isPostCountField,
+                isUserRegisteredField,
+                isUserAvatarField,
                 canBeSortable,
                 canBeFilterable,
                 clearFieldSearch,
