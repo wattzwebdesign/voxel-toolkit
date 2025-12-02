@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Messenger Widget**: Show "Reply as [listing name]" placeholder in chat window for listing conversations
 
 ### Added
+- **Auto Reply Post Field**: New field type for automatic message responses
+  - Add to any post type (listings, profiles, etc.) for automatic replies when receiving messages
+  - Supports dynamic tags: `@listing(title)`, `@sender(name)`, `@listing(field:key)`
+  - Respects Voxel's 15-minute message throttle
+  - Real-time inbox notifications via Voxel's activity system
+  - Leave field empty to disable auto-reply
 - **Media Gallery Widget**: New widget extending Voxel's Gallery with video support
   - Supports mixed photo and video files from Files field
   - Video thumbnail capture from configurable time (0-10 seconds, default 1s)

@@ -51,6 +51,13 @@ class Voxel_Toolkit_Post_Fields {
                 'icon' => 'dashicons-chart-bar',
                 'required_widgets' => array('widget_poll_display'), // Auto-enable these widgets when field is enabled
             ),
+            'auto_reply_field' => array(
+                'name' => __('Auto Reply (VT)', 'voxel-toolkit'),
+                'description' => __('Automatic reply message for incoming messages. Works with listings and profiles.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Auto_Reply_Field',
+                'file' => 'post-fields/class-auto-reply-field.php',
+                'icon' => 'dashicons-format-chat',
+            ),
         );
 
         // Allow other plugins/themes to register post fields
