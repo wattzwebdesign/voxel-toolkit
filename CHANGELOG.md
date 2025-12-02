@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Messenger Widget**: Show "Reply as [listing name]" placeholder in chat window for listing conversations
 
 ### Added
+- **Admin Columns - User Columns**: Configure custom columns for WordPress Users list
+  - Select "Users" from the Admin Columns settings dropdown
+  - Available fields: User ID, Username, Display Name, Full Name, First Name, Last Name, Nickname, Email, Role, Registered Date, Website, Profile Picture, Language, Post Count
+  - Post Count column with configurable post type and status selection (Published, Pending, Draft, Private)
+  - Sortable columns: User ID, Username, Display Name, Email, Registered Date, First Name, Last Name, Nickname, Language, Post Count
+  - Filterable columns: Role, Language
+  - Profile picture with customizable dimensions
+  - Registered date with format options (date only, date & time, relative)
+  - Edit Columns button on Users list page for quick access
 - **Auto Reply Post Field**: New field type for automatic message responses
   - Add to any post type (listings, profiles, etc.) for automatic replies when receiving messages
   - Supports dynamic tags: `@listing(title)`, `@sender(name)`, `@listing(field:key)`
