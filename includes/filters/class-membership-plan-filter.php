@@ -131,13 +131,31 @@ class Membership_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
     }
 
     /**
+     * Get the correct meta key for membership plan (handles test mode and multisite)
+     */
+    protected function _get_membership_meta_key(): string {
+        // Determine base meta key based on test mode
+        $base_key = 'voxel:plan';
+        if (function_exists('\Voxel\is_test_mode') && \Voxel\is_test_mode()) {
+            $base_key = 'voxel:test_plan';
+        }
+
+        // Handle multisite - use Voxel's helper if available
+        if (function_exists('\Voxel\get_site_specific_user_meta_key')) {
+            return \Voxel\get_site_specific_user_meta_key($base_key);
+        }
+
+        return $base_key;
+    }
+
+    /**
      * Modify the search query to filter by membership plan
      */
     public function query(\Voxel\Post_Types\Index_Query $query, array $args): void {
 
         $value = $this->parse_value($args[$this->get_key()] ?? null);
 
-        if (empty($value)) {
+        if ($value === null) {
             return;
         }
 
@@ -151,54 +169,53 @@ class Membership_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
 
         // Sanitize plan keys
         $plan_keys = array_map('esc_sql', $value);
-        $plan_keys_list = "'" . implode("','", $plan_keys) . "'";
 
-        // Check if 'default' (Guest) is in the selected plans
-        $include_guest = in_array('default', $plan_keys, true);
+        // Check if 'default' (Guest/Free) is in the selected plans
+        $include_default = in_array('default', $plan_keys, true);
+
+        // Remove 'default' from plan keys for the IN clause (it's handled separately)
+        $plan_keys_without_default = array_values(array_filter($plan_keys, function($key) {
+            return $key !== 'default';
+        }));
+
+        // Get escaped table name
+        $table_name = $query->table->get_escaped_name();
+
+        // Get the correct meta key (handles test mode and multisite)
+        $meta_key = esc_sql($this->_get_membership_meta_key());
 
         // Join with posts table to get author
-        $join_sql = sprintf(
-            "LEFT JOIN {$wpdb->posts} AS `%s_posts` ON `%s`.post_id = `%s_posts`.ID",
-            $join_key,
-            $query->table->get_escaped_name(),
-            $join_key
+        $query->join(
+            "LEFT JOIN {$wpdb->posts} AS `{$join_key}_posts` ON `{$table_name}`.post_id = `{$join_key}_posts`.ID"
         );
-        $query->join($join_sql);
 
         // Join with usermeta to get membership plan
-        $join_plan_sql = sprintf(
-            "LEFT JOIN {$wpdb->usermeta} AS `%s_plan` ON (
-                `%s_posts`.post_author = `%s_plan`.user_id
-                AND `%s_plan`.meta_key = 'voxel:plan'
-            )",
-            $join_key,
-            $join_key,
-            $join_key,
-            $join_key
+        $query->join(
+            "LEFT JOIN {$wpdb->usermeta} AS `{$join_key}_plan` ON (
+                `{$join_key}_posts`.post_author = `{$join_key}_plan`.user_id
+                AND `{$join_key}_plan`.meta_key = '{$meta_key}'
+            )"
         );
-        $query->join($join_plan_sql);
 
-        // Build WHERE clause
-        if ($include_guest) {
-            // Include posts where plan is NULL or matches selected plans
-            $where_sql = sprintf(
-                "(
-                    JSON_UNQUOTE(JSON_EXTRACT(`%s_plan`.meta_value, '$.plan')) IN (%s)
-                    OR `%s_plan`.meta_value IS NULL
-                )",
-                $join_key,
-                $plan_keys_list,
-                $join_key
-            );
-        } else {
-            // Only include posts where plan matches selected plans
-            $where_sql = sprintf(
-                "JSON_UNQUOTE(JSON_EXTRACT(`%s_plan`.meta_value, '$.plan')) IN (%s)",
-                $join_key,
-                $plan_keys_list
-            );
+        // Build WHERE clause based on selected plans
+        $conditions = [];
+
+        // If 'default' is selected, include users with default plan OR no plan meta
+        if ($include_default) {
+            $conditions[] = "(JSON_UNQUOTE(JSON_EXTRACT(`{$join_key}_plan`.meta_value, '$.plan')) = 'default' OR `{$join_key}_plan`.meta_value IS NULL)";
         }
-        $query->where($where_sql);
+
+        // If other plans are selected, include those
+        if (!empty($plan_keys_without_default)) {
+            $plan_keys_list = "'" . implode("','", $plan_keys_without_default) . "'";
+            $conditions[] = "JSON_UNQUOTE(JSON_EXTRACT(`{$join_key}_plan`.meta_value, '$.plan')) IN ({$plan_keys_list})";
+        }
+
+        // Combine conditions with OR
+        if (!empty($conditions)) {
+            $where_sql = '(' . implode(' OR ', $conditions) . ')';
+            $query->where($where_sql);
+        }
     }
 
     /**

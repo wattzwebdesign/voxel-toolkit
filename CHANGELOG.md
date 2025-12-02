@@ -5,6 +5,13 @@ All notable changes to Voxel Toolkit will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.6.0.1] - 2025-12-02
+
+### Fixed
+- **Membership Plan Filter**: Fixed filter not returning results on sites using Voxel's test mode
+  - Filter now correctly uses `voxel:test_plan` meta key when Stripe test mode is enabled
+  - Also handles multisite compatibility using Voxel's site-specific meta key helpers
+
 ## [1.5.6] - 2025-11-29
 
 ### Changed
@@ -37,9 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Works with any Voxel post type and taxonomy field
 - **Auto Reply Post Field**: New field type for automatic message responses
   - Add to any post type (listings, profiles, etc.) for automatic replies when receiving messages
-  - Supports dynamic tags: `@listing(title)`, `@sender(name)`, `@listing(field:key)`
   - Respects Voxel's 15-minute message throttle
-  - Real-time inbox notifications via Voxel's activity system
   - Leave field empty to disable auto-reply
 - **Media Gallery Widget**: New widget extending Voxel's Gallery with video support
   - Supports mixed photo and video files from Files field
