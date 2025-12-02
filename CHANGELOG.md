@@ -21,6 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Profile picture with customizable dimensions
   - Registered date with format options (date only, date & time, relative)
   - Edit Columns button on Users list page for quick access
+- **Listing Plan Filter**: New search filter for filtering posts by their listing plan
+  - Filter posts by their assigned listing plan (from Voxel's paid listings)
+  - Includes "No Plan" option for listings without a plan assigned
+  - Supports popup and buttons display modes
+  - Multi-select support for filtering by multiple plans
 - **Auto Reply Post Field**: New field type for automatic message responses
   - Add to any post type (listings, profiles, etc.) for automatic replies when receiving messages
   - Supports dynamic tags: `@listing(title)`, `@sender(name)`, `@listing(field:key)`
