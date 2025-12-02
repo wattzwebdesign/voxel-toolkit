@@ -31,6 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Absolute positioning across pages (page 2 starts at 11 with 10 per page)
   - Works in preview card templates
   - Note: Refresh page after editing preview card in Elementor
+- **Breadcrumbs Widget - Taxonomy Terms**: Add taxonomy terms to breadcrumb trail
+  - Enable "Include Taxonomy Terms" and enter taxonomy field key
+  - Supports parent term hierarchy (e.g., Home > Mechanic > Auto Repair > Listing)
+  - Works with any Voxel post type and taxonomy field
 - **Auto Reply Post Field**: New field type for automatic message responses
   - Add to any post type (listings, profiles, etc.) for automatic replies when receiving messages
   - Supports dynamic tags: `@listing(title)`, `@sender(name)`, `@listing(field:key)`
