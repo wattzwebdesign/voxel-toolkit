@@ -59,6 +59,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fixed mobile avatar circles to stay aligned with main chat button
   - Useful for avoiding overlap with mobile app navigation bars
 
+### Fixed
+- **Tag Usage Page**: Fixed memory exhaustion on sites with many Elementor pages
+  - Now processes posts in batches of 50 to prevent PHP memory limit errors
+
 ## [1.5.5] - 2025-11-28
 
 ### Added
