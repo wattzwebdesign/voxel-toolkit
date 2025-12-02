@@ -53,14 +53,21 @@ class Voxel_Toolkit_Admin_Columns {
     }
 
     /**
+     * User columns instance
+     */
+    private $user_columns = null;
+
+    /**
      * Load required files
      */
     private function load_dependencies() {
         require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/admin-columns/class-column-types.php';
         require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/admin-columns/class-column-renderer.php';
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/admin-columns/class-user-columns.php';
 
         $this->column_types = new Voxel_Toolkit_Column_Types();
         $this->renderer = new Voxel_Toolkit_Column_Renderer($this->column_types);
+        $this->user_columns = Voxel_Toolkit_User_Columns::instance();
     }
 
     /**
@@ -354,6 +361,7 @@ class Voxel_Toolkit_Admin_Columns {
         return array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('vt_admin_columns_nonce'),
+            'usersUrl' => admin_url('users.php'),
             'fieldTypes' => $this->column_types->get_field_type_info(),
             'i18n' => array(
                 'save' => __('Save Changes', 'voxel-toolkit'),
@@ -375,6 +383,8 @@ class Voxel_Toolkit_Admin_Columns {
                 'confirmRestore' => __('Are you sure you want to restore default columns for this post type?', 'voxel-toolkit'),
                 'error' => __('An error occurred. Please try again.', 'voxel-toolkit'),
                 'loading' => __('Loading...', 'voxel-toolkit'),
+                'users' => __('Users', 'voxel-toolkit'),
+                'user' => __('User', 'voxel-toolkit'),
             ),
         );
     }
