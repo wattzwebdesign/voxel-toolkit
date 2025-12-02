@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Includes "No Plan" option for listings without a plan assigned
   - Supports popup and buttons display modes
   - Multi-select support for filtering by multiple plans
+- **Feed Position Dynamic Tag**: New `@post(feed_position)` tag for post feeds
+  - Shows position number of post in feed (1, 2, 3, etc.)
+  - Absolute positioning across pages (page 2 starts at 11 with 10 per page)
+  - Works in preview card templates
+  - Note: Refresh page after editing preview card in Elementor
 - **Auto Reply Post Field**: New field type for automatic message responses
   - Add to any post type (listings, profiles, etc.) for automatic replies when receiving messages
   - Supports dynamic tags: `@listing(title)`, `@sender(name)`, `@listing(field:key)`
