@@ -2612,58 +2612,80 @@ class Voxel_Toolkit_Admin {
     private function scan_dynamic_tag_usage() {
         global $wpdb;
 
-        // Get all posts with Elementor data
-        $results = $wpdb->get_results("
-            SELECT post_id, meta_value
-            FROM {$wpdb->postmeta}
-            WHERE meta_key = '_elementor_data'
-        ");
-
         $tag_usage = array();
+        $batch_size = 50;
+        $offset = 0;
 
-        foreach ($results as $result) {
-            $post_id = $result->post_id;
-            $elementor_data = $result->meta_value;
+        // Process in batches to avoid memory exhaustion
+        do {
+            // Get post IDs with Elementor data in batches
+            $post_ids = $wpdb->get_col($wpdb->prepare("
+                SELECT DISTINCT post_id
+                FROM {$wpdb->postmeta}
+                WHERE meta_key = '_elementor_data'
+                LIMIT %d OFFSET %d
+            ", $batch_size, $offset));
 
-            // Get post details
-            $post = get_post($post_id);
-            if (!$post) {
-                continue;
+            if (empty($post_ids)) {
+                break;
             }
 
-            // Find all dynamic tags using regex
-            // Pattern matches: @post(...), @user(...), @site(...), @author(...), etc.
-            preg_match_all('/@(post|user|site|author|current_user)\([^)]*\)(?:\.[a-zA-Z_]+\([^)]*\))*/', $elementor_data, $matches);
+            foreach ($post_ids as $post_id) {
+                // Get post details first
+                $post = get_post($post_id);
+                if (!$post) {
+                    continue;
+                }
 
-            if (!empty($matches[0])) {
-                foreach ($matches[0] as $tag) {
-                    if (!isset($tag_usage[$tag])) {
-                        $tag_usage[$tag] = array(
-                            'count' => 0,
-                            'locations' => array()
-                        );
-                    }
+                // Get Elementor data for this specific post
+                $elementor_data = get_post_meta($post_id, '_elementor_data', true);
+                if (empty($elementor_data)) {
+                    continue;
+                }
 
-                    // Check if this post is already in locations for this tag
-                    $post_exists = false;
-                    foreach ($tag_usage[$tag]['locations'] as $location) {
-                        if ($location['post_id'] === $post_id) {
-                            $post_exists = true;
-                            break;
+                // Find all dynamic tags using regex
+                // Pattern matches: @post(...), @user(...), @site(...), @author(...), etc.
+                preg_match_all('/@(post|user|site|author|current_user)\([^)]*\)(?:\.[a-zA-Z_]+\([^)]*\))*/', $elementor_data, $matches);
+
+                if (!empty($matches[0])) {
+                    foreach ($matches[0] as $tag) {
+                        if (!isset($tag_usage[$tag])) {
+                            $tag_usage[$tag] = array(
+                                'count' => 0,
+                                'locations' => array()
+                            );
+                        }
+
+                        // Check if this post is already in locations for this tag
+                        $post_exists = false;
+                        foreach ($tag_usage[$tag]['locations'] as $location) {
+                            if ($location['post_id'] === $post_id) {
+                                $post_exists = true;
+                                break;
+                            }
+                        }
+
+                        if (!$post_exists) {
+                            $tag_usage[$tag]['count']++;
+                            $tag_usage[$tag]['locations'][] = array(
+                                'post_id' => $post_id,
+                                'post_title' => $post->post_title,
+                                'post_type' => $post->post_type
+                            );
                         }
                     }
-
-                    if (!$post_exists) {
-                        $tag_usage[$tag]['count']++;
-                        $tag_usage[$tag]['locations'][] = array(
-                            'post_id' => $post_id,
-                            'post_title' => $post->post_title,
-                            'post_type' => $post->post_type
-                        );
-                    }
                 }
+
+                // Free memory
+                unset($elementor_data);
             }
-        }
+
+            $offset += $batch_size;
+
+            // Free memory between batches
+            unset($post_ids);
+
+        } while (true);
 
         // Sort by usage count (descending)
         uasort($tag_usage, function($a, $b) {
