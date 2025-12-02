@@ -640,6 +640,12 @@
 
             // Footer - use widget-specific settings
             var placeholderText = self.widgetConfig.placeholder || self.config.i18n.typeMessage;
+
+            // Show "Reply as [listing name]" when author is a post (listing conversation)
+            if (chat.author && chat.author.type === 'post' && chat.author.name) {
+                placeholderText = self.config.i18n.replyAs.replace('%s', chat.author.name);
+            }
+
             var sendIconHtml = self.widgetConfig.sendIcon || '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 10L17.5 2.5L10 17.5L8.75 11.25L2.5 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
             var uploadIconHtml = self.widgetConfig.uploadIcon || '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4L12 16M12 4L8 8M12 4L16 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17V19C4 20.1046 4.89543 21 6 21H18C19.1046 21 20 20.1046 20 19V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 

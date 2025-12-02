@@ -81,6 +81,7 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
                 'searchPlaceholder' => __('Search messages...', 'voxel-toolkit'),
                 'noChats' => __('No conversations yet', 'voxel-toolkit'),
                 'typeMessage' => __('Type a message...', 'voxel-toolkit'),
+                'replyAs' => __('Reply as %s', 'voxel-toolkit'),
                 'send' => __('Send', 'voxel-toolkit'),
                 'newMessage' => __('New message', 'voxel-toolkit'),
                 'minimize' => __('Minimize', 'voxel-toolkit'),
