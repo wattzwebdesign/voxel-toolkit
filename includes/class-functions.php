@@ -42,6 +42,7 @@ class Voxel_Toolkit_Functions {
 
         // AJAX handlers
         add_action('wp_ajax_voxel_toolkit_sync_submissions', array($this, 'ajax_sync_submissions'));
+        add_action('wp_ajax_vt_send_test_sms', array($this, 'ajax_send_test_sms'));
     }
     
     /**
@@ -4642,6 +4643,198 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         } else {
             wp_send_json_error($result['message']);
         }
+    }
+
+    /**
+     * AJAX handler for sending test SMS
+     * This is registered here so it works even when SMS Notifications function is disabled
+     */
+    public function ajax_send_test_sms() {
+        check_ajax_referer('vt_sms_nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Permission denied', 'voxel-toolkit')));
+        }
+
+        // Get phone number from request
+        $phone = isset($_POST['phone']) ? sanitize_text_field($_POST['phone']) : '';
+
+        if (empty($phone)) {
+            wp_send_json_error(array('message' => __('Please enter a phone number', 'voxel-toolkit')));
+        }
+
+        // Get SMS settings
+        $settings = Voxel_Toolkit_Settings::instance();
+        $sms_settings = $settings->get_function_settings('sms_notifications', array());
+
+        $provider = isset($sms_settings['provider']) ? $sms_settings['provider'] : 'twilio';
+
+        // Normalize phone number (basic normalization)
+        $phone = preg_replace('/[^0-9+]/', '', $phone);
+        if (!empty($phone) && $phone[0] !== '+') {
+            $phone = '+' . $phone;
+        }
+
+        if (empty($phone) || strlen($phone) < 10) {
+            wp_send_json_error(array('message' => __('Invalid phone number format. Include country code (e.g., +1234567890)', 'voxel-toolkit')));
+        }
+
+        $message = sprintf(
+            __('Test SMS from %s - Voxel Toolkit SMS Notifications is working!', 'voxel-toolkit'),
+            get_bloginfo('name')
+        );
+
+        // Send based on provider
+        $result = $this->send_test_sms_via_provider($provider, $phone, $message, $sms_settings);
+
+        if ($result['success']) {
+            wp_send_json_success(array(
+                'message' => __('Test SMS sent successfully!', 'voxel-toolkit'),
+                'message_id' => isset($result['message_id']) ? $result['message_id'] : '',
+            ));
+        } else {
+            wp_send_json_error(array(
+                'message' => sprintf(__('Failed to send SMS: %s', 'voxel-toolkit'), $result['error']),
+            ));
+        }
+    }
+
+    /**
+     * Send test SMS via the configured provider
+     */
+    private function send_test_sms_via_provider($provider, $phone, $message, $settings) {
+        switch ($provider) {
+            case 'twilio':
+                return $this->send_sms_twilio($phone, $message, $settings);
+            case 'vonage':
+                return $this->send_sms_vonage($phone, $message, $settings);
+            case 'messagebird':
+                return $this->send_sms_messagebird($phone, $message, $settings);
+            default:
+                return array('success' => false, 'error' => __('Unknown SMS provider', 'voxel-toolkit'));
+        }
+    }
+
+    /**
+     * Send SMS via Twilio
+     */
+    private function send_sms_twilio($phone, $message, $settings) {
+        $account_sid = isset($settings['twilio_account_sid']) ? $settings['twilio_account_sid'] : '';
+        $auth_token = isset($settings['twilio_auth_token']) ? $settings['twilio_auth_token'] : '';
+        $from_number = isset($settings['twilio_from_number']) ? $settings['twilio_from_number'] : '';
+
+        if (empty($account_sid) || empty($auth_token) || empty($from_number)) {
+            return array('success' => false, 'error' => __('Twilio credentials not configured', 'voxel-toolkit'));
+        }
+
+        $url = "https://api.twilio.com/2010-04-01/Accounts/{$account_sid}/Messages.json";
+
+        $response = wp_remote_post($url, array(
+            'headers' => array(
+                'Authorization' => 'Basic ' . base64_encode("{$account_sid}:{$auth_token}"),
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            ),
+            'body' => array(
+                'To' => $phone,
+                'From' => $from_number,
+                'Body' => $message,
+            ),
+            'timeout' => 30,
+        ));
+
+        if (is_wp_error($response)) {
+            return array('success' => false, 'error' => $response->get_error_message());
+        }
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+        $status_code = wp_remote_retrieve_response_code($response);
+
+        if ($status_code >= 200 && $status_code < 300 && isset($body['sid'])) {
+            return array('success' => true, 'message_id' => $body['sid']);
+        }
+
+        $error = isset($body['message']) ? $body['message'] : __('Unknown Twilio error', 'voxel-toolkit');
+        return array('success' => false, 'error' => $error);
+    }
+
+    /**
+     * Send SMS via Vonage (Nexmo)
+     */
+    private function send_sms_vonage($phone, $message, $settings) {
+        $api_key = isset($settings['vonage_api_key']) ? $settings['vonage_api_key'] : '';
+        $api_secret = isset($settings['vonage_api_secret']) ? $settings['vonage_api_secret'] : '';
+        $from = isset($settings['vonage_from']) ? $settings['vonage_from'] : '';
+
+        if (empty($api_key) || empty($api_secret) || empty($from)) {
+            return array('success' => false, 'error' => __('Vonage credentials not configured', 'voxel-toolkit'));
+        }
+
+        $url = 'https://rest.nexmo.com/sms/json';
+
+        $response = wp_remote_post($url, array(
+            'body' => array(
+                'api_key' => $api_key,
+                'api_secret' => $api_secret,
+                'to' => preg_replace('/[^0-9]/', '', $phone),
+                'from' => $from,
+                'text' => $message,
+            ),
+            'timeout' => 30,
+        ));
+
+        if (is_wp_error($response)) {
+            return array('success' => false, 'error' => $response->get_error_message());
+        }
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (isset($body['messages'][0]['status']) && $body['messages'][0]['status'] === '0') {
+            return array('success' => true, 'message_id' => $body['messages'][0]['message-id']);
+        }
+
+        $error = isset($body['messages'][0]['error-text']) ? $body['messages'][0]['error-text'] : __('Unknown Vonage error', 'voxel-toolkit');
+        return array('success' => false, 'error' => $error);
+    }
+
+    /**
+     * Send SMS via MessageBird
+     */
+    private function send_sms_messagebird($phone, $message, $settings) {
+        $api_key = isset($settings['messagebird_api_key']) ? $settings['messagebird_api_key'] : '';
+        $originator = isset($settings['messagebird_originator']) ? $settings['messagebird_originator'] : '';
+
+        if (empty($api_key) || empty($originator)) {
+            return array('success' => false, 'error' => __('MessageBird credentials not configured', 'voxel-toolkit'));
+        }
+
+        $url = 'https://rest.messagebird.com/messages';
+
+        $response = wp_remote_post($url, array(
+            'headers' => array(
+                'Authorization' => 'AccessKey ' . $api_key,
+                'Content-Type' => 'application/json',
+            ),
+            'body' => json_encode(array(
+                'recipients' => array(preg_replace('/[^0-9]/', '', $phone)),
+                'originator' => $originator,
+                'body' => $message,
+            )),
+            'timeout' => 30,
+        ));
+
+        if (is_wp_error($response)) {
+            return array('success' => false, 'error' => $response->get_error_message());
+        }
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+        $status_code = wp_remote_retrieve_response_code($response);
+
+        if ($status_code >= 200 && $status_code < 300 && isset($body['id'])) {
+            return array('success' => true, 'message_id' => $body['id']);
+        }
+
+        $error = isset($body['errors'][0]['description']) ? $body['errors'][0]['description'] : __('Unknown MessageBird error', 'voxel-toolkit');
+        return array('success' => false, 'error' => $error);
     }
 
     /**
