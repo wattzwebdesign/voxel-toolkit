@@ -778,6 +778,25 @@ class Voxel_Toolkit_Admin {
                         }
                         break;
 
+                    case 'admin_notifications':
+                        // Sanitize user roles array
+                        if (isset($function_input['user_roles']) && is_array($function_input['user_roles'])) {
+                            $sanitized_function['user_roles'] = array_map('sanitize_text_field', $function_input['user_roles']);
+                        } else {
+                            $sanitized_function['user_roles'] = array();
+                        }
+
+                        // Sanitize selected users array
+                        if (isset($function_input['selected_users']) && is_array($function_input['selected_users'])) {
+                            $sanitized_function['selected_users'] = array_map('absint', array_filter($function_input['selected_users']));
+                        } elseif (isset($function_input['selected_users']) && $function_input['selected_users'] === '') {
+                            // Handle empty hidden field value
+                            $sanitized_function['selected_users'] = array();
+                        } else {
+                            $sanitized_function['selected_users'] = array();
+                        }
+                        break;
+
                     case 'membership_notifications':
                         if (isset($function_input['notifications']) && is_array($function_input['notifications'])) {
                             $sanitized_notifications = array();
