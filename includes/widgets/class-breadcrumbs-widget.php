@@ -205,6 +205,58 @@ class Voxel_Toolkit_Breadcrumbs_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'taxonomy_terms_heading',
+            [
+                'label' => __('Taxonomy Terms', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'include_taxonomy_terms',
+            [
+                'label' => __('Include Taxonomy Terms', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => '',
+                'description' => __('Add taxonomy terms (categories) to the breadcrumb trail', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'taxonomy_field_key',
+            [
+                'label' => __('Taxonomy Field Key', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => '',
+                'placeholder' => __('e.g., job-category, listing-type', 'voxel-toolkit'),
+                'description' => __('Enter the Voxel taxonomy field key to use for breadcrumbs', 'voxel-toolkit'),
+                'condition' => [
+                    'include_taxonomy_terms' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'show_term_parents',
+            [
+                'label' => __('Show Parent Terms', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+                'description' => __('Include parent terms in the breadcrumb hierarchy', 'voxel-toolkit'),
+                'condition' => [
+                    'include_taxonomy_terms' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
             'prefix_text',
             [
                 'label' => __('Prefix Text', 'voxel-toolkit'),
@@ -733,8 +785,12 @@ class Voxel_Toolkit_Breadcrumbs_Widget extends \Elementor\Widget_Base {
             $breadcrumbs = array_merge($breadcrumbs, $parent_breadcrumbs);
         }
 
-        // Add primary taxonomy term for non-hierarchical post types
-        if (!is_post_type_hierarchical($post_type) && $post_type === 'post') {
+        // Add taxonomy terms if enabled
+        if (!empty($settings['include_taxonomy_terms']) && $settings['include_taxonomy_terms'] === 'yes') {
+            $taxonomy_breadcrumbs = $this->get_taxonomy_term_breadcrumbs($post, $settings);
+            $breadcrumbs = array_merge($breadcrumbs, $taxonomy_breadcrumbs);
+        } elseif (!is_post_type_hierarchical($post_type) && $post_type === 'post') {
+            // Legacy behavior: Add primary category for standard posts
             $category = get_the_category($post->ID);
             if (!empty($category)) {
                 $category = $category[0];
@@ -896,6 +952,123 @@ class Voxel_Toolkit_Breadcrumbs_Widget extends \Elementor\Widget_Base {
                     'is_current' => false,
                 ];
             }
+        }
+
+        return $breadcrumbs;
+    }
+
+    /**
+     * Get taxonomy term breadcrumbs for a post
+     *
+     * @param WP_Post $post The post object
+     * @param array $settings Widget settings
+     * @return array Taxonomy term breadcrumb items
+     */
+    private function get_taxonomy_term_breadcrumbs($post, $settings) {
+        $breadcrumbs = [];
+        $field_key = !empty($settings['taxonomy_field_key']) ? sanitize_text_field($settings['taxonomy_field_key']) : '';
+        $show_parents = !empty($settings['show_term_parents']) && $settings['show_term_parents'] === 'yes';
+
+        if (empty($field_key)) {
+            return $breadcrumbs;
+        }
+
+        $taxonomy = null;
+        $term = null;
+
+        // Try to get the Voxel post and field to find the taxonomy
+        if (class_exists('\Voxel\Post')) {
+            $voxel_post = \Voxel\Post::get($post);
+
+            if ($voxel_post) {
+                $field = $voxel_post->get_field($field_key);
+
+                if ($field) {
+                    // Get taxonomy slug from field
+                    if (method_exists($field, 'get_prop')) {
+                        $taxonomy = $field->get_prop('taxonomy');
+                    }
+
+                    // Fallback: try get_taxonomy method
+                    if (empty($taxonomy) && method_exists($field, 'get_taxonomy')) {
+                        $taxonomy = $field->get_taxonomy();
+                    }
+
+                    // Fallback: use field key as taxonomy
+                    if (empty($taxonomy)) {
+                        $taxonomy = $field_key;
+                    }
+                }
+            }
+        }
+
+        // Fallback: try field key directly as taxonomy
+        if (empty($taxonomy)) {
+            $taxonomy = $field_key;
+        }
+
+        // Verify taxonomy exists
+        if (!taxonomy_exists($taxonomy)) {
+            return $breadcrumbs;
+        }
+
+        // Get terms using wp_get_post_terms (most reliable method)
+        $terms = wp_get_post_terms($post->ID, $taxonomy);
+
+        if (is_wp_error($terms) || empty($terms)) {
+            return $breadcrumbs;
+        }
+
+        // Use the first term (primary term)
+        $term = $terms[0];
+
+        if ($term && !is_wp_error($term)) {
+            $term_breadcrumbs = $this->build_term_hierarchy_breadcrumbs($term, $show_parents);
+            $breadcrumbs = array_merge($breadcrumbs, $term_breadcrumbs);
+        }
+
+        return $breadcrumbs;
+    }
+
+    /**
+     * Build breadcrumb items from term hierarchy
+     *
+     * @param WP_Term $term The term object
+     * @param bool $show_parents Whether to include parent terms
+     * @return array Breadcrumb items for the term hierarchy
+     */
+    private function build_term_hierarchy_breadcrumbs($term, $show_parents = true) {
+        $breadcrumbs = [];
+        $term_chain = [];
+
+        // Build the parent chain if enabled
+        if ($show_parents && $term->parent) {
+            $parent_id = $term->parent;
+
+            while ($parent_id) {
+                $parent_term = get_term($parent_id, $term->taxonomy);
+
+                if ($parent_term && !is_wp_error($parent_term)) {
+                    array_unshift($term_chain, $parent_term);
+                    $parent_id = $parent_term->parent;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        // Add the current term at the end
+        $term_chain[] = $term;
+
+        // Convert term chain to breadcrumb items
+        foreach ($term_chain as $chain_term) {
+            $term_link = get_term_link($chain_term);
+
+            $breadcrumbs[] = [
+                'title' => $chain_term->name,
+                'url' => !is_wp_error($term_link) ? $term_link : '',
+                'is_current' => false,
+            ];
         }
 
         return $breadcrumbs;
