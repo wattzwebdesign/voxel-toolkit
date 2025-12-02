@@ -53,6 +53,12 @@ class Voxel_Toolkit_Filter_Manager {
         if (file_exists($role_template)) {
             require $role_template;
         }
+
+        // Load listing plan filter template
+        $listing_plan_template = VOXEL_TOOLKIT_PLUGIN_DIR . 'templates/listing-plan-filter.php';
+        if (file_exists($listing_plan_template)) {
+            require $listing_plan_template;
+        }
     }
 
     /**
@@ -100,6 +106,86 @@ class Voxel_Toolkit_Filter_Manager {
                     },
                     onBlur() {
                         console.log('Membership Plan Filter - onBlur() called');
+                        this.saveValue();
+                    },
+                    onClear() {
+                        this.value = {};
+                        this.search = '';
+                        this.$refs.searchInput?.focus();
+                    },
+                    isFilled() {
+                        return Object.keys(this.value).length > 0;
+                    },
+                    _getFirstLabel() {
+                        return Object.values(this.value)[0]?.label || '';
+                    },
+                    _getRemainingCount() {
+                        return Object.values(this.value).length - 1;
+                    },
+                    selectPlan(plan) {
+                        if (this.value[plan.key]) {
+                            delete this.value[plan.key];
+                        } else {
+                            this.value[plan.key] = plan;
+                        }
+
+                        // For buttons display, save and submit immediately
+                        if (this.filter.props.display_as === 'buttons') {
+                            this.saveValue();
+                        }
+                    },
+                    onReset() {
+                        this.search = '';
+                        this.value = {};
+                        this.saveValue();
+                    }
+                },
+                computed: {
+                    filteredPlans() {
+                        const plans = Object.values(this.filter.props.choices);
+                        if (!this.search.trim().length) {
+                            return plans;
+                        }
+                        const searchTerm = this.search.trim().toLowerCase();
+                        return plans.filter(plan =>
+                            plan.label.toLowerCase().includes(searchTerm)
+                        );
+                    },
+                    isPending() {
+                        return false;
+                    }
+                }
+            });
+
+            // Register listing plan filter component
+            app.component('filter-listing-plan', {
+                template: '#sf-listing-plan-filter',
+                name: 'listing-plan-filter',
+                props: { filter: Object, repeaterId: String },
+                data() {
+                    return {
+                        value: this.filter.props.selected || {},
+                        search: '',
+                        firstLabel: '',
+                        remainingCount: 0
+                    };
+                },
+                created() {
+                    this.firstLabel = this._getFirstLabel();
+                    this.remainingCount = this._getRemainingCount();
+                },
+                methods: {
+                    saveValue() {
+                        const newValue = this.isFilled() ? Object.keys(this.value).join(',') : null;
+                        this.filter.value = newValue;
+                        this.firstLabel = this._getFirstLabel();
+                        this.remainingCount = this._getRemainingCount();
+                    },
+                    onSave() {
+                        this.saveValue();
+                        this.$refs.formGroup?.blur();
+                    },
+                    onBlur() {
                         this.saveValue();
                     },
                     onClear() {
@@ -275,8 +361,14 @@ add_filter('voxel/filter-types', function($filter_types) {
         require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/filters/class-user-role-filter.php';
     }
 
+    // Load listing plan filter class
+    if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/filters/class-listing-plan-filter.php')) {
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/filters/class-listing-plan-filter.php';
+    }
+
     $filter_types['membership-plan'] = \Voxel_Toolkit\Filters\Membership_Plan_Filter::class;
     $filter_types['user-role'] = \Voxel_Toolkit\Filters\User_Role_Filter::class;
+    $filter_types['listing-plan'] = \Voxel_Toolkit\Filters\Listing_Plan_Filter::class;
 
     return $filter_types;
 });
