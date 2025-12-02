@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Admin Menu Icon**: Updated dashboard menu icon to custom VT logo
+- **Messenger Widget**: Show "Reply as [listing name]" placeholder in chat window for listing conversations
 
 ### Added
 - **Media Gallery Widget**: New widget extending Voxel's Gallery with video support
