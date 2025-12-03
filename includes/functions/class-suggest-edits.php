@@ -711,6 +711,11 @@ class Voxel_Toolkit_Suggest_Edits {
                         $current_value = $field_obj;
                     }
 
+                    // Get field type for special handling
+                    $post_type_obj = $voxel_post->post_type;
+                    $field_def = $post_type_obj->get_field($field_key);
+                    $field_type = $field_def ? $field_def->get_type() : '';
+
                     // For work_hours and location, keep as JSON string
                     if ($is_work_hours || $is_location) {
                         if (is_string($current_value)) {
@@ -718,6 +723,26 @@ class Voxel_Toolkit_Suggest_Edits {
                             $current_value = $current_value;
                         } elseif (is_array($current_value)) {
                             $current_value = json_encode($current_value);
+                        }
+                    }
+                    // Handle taxonomy fields - convert term IDs to labels
+                    elseif ($field_type === 'taxonomy' && $field_def) {
+                        $taxonomy = $field_def->get_prop('taxonomy');
+                        if ($taxonomy && is_array($current_value)) {
+                            $term_labels = array();
+                            foreach ($current_value as $item) {
+                                if (is_object($item) && method_exists($item, 'get_label')) {
+                                    $term_labels[] = $item->get_label();
+                                } elseif (is_numeric($item)) {
+                                    $term = get_term($item, $taxonomy);
+                                    if ($term && !is_wp_error($term)) {
+                                        $term_labels[] = $term->name;
+                                    }
+                                } else {
+                                    $term_labels[] = $item;
+                                }
+                            }
+                            $current_value = implode(', ', $term_labels);
                         }
                     }
                     // Convert arrays/objects to string for storage

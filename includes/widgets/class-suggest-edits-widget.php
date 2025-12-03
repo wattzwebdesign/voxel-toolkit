@@ -122,6 +122,18 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'show_permanently_closed',
+            [
+                'label' => __('Show "Permanently Closed" Option', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
             'enable_photo_upload',
             [
                 'label' => __('Enable Photo Upload', 'voxel-toolkit'),
@@ -657,6 +669,7 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                             'label' => $field->get_label(),
                             'value' => $value,
                             'type' => $field_type,
+                            'field' => $field,
                         );
 
                         // For taxonomy fields, get all available terms
@@ -752,6 +765,7 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                 </div>
 
                 <div class="vt-suggest-modal-body">
+                    <?php if ($settings['show_permanently_closed'] === 'yes'): ?>
                     <!-- Permanently Closed Checkbox -->
                     <div class="vt-permanently-closed-wrapper">
                         <label class="vt-checkbox-label">
@@ -759,6 +773,7 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                             <span><?php echo esc_html(!empty($settings['label_permanently_closed']) ? $settings['label_permanently_closed'] : __('Mark as Permanently Closed', 'voxel-toolkit')); ?></span>
                         </label>
                     </div>
+                    <?php endif; ?>
 
                     <?php if (!is_user_logged_in() && !empty($se_config['allow_guests'])): ?>
                         <div class="vt-guest-info">
@@ -808,13 +823,13 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                                                     if ($image_url) {
                                                         echo '<img src="' . esc_url($image_url) . '" alt="" style="max-width: 100px; max-height: 100px; border-radius: 4px; display: block;">';
                                                     } else {
-                                                        echo esc_html($this->format_value($field_data['value'], $field_data['type']));
+                                                        echo esc_html($this->format_value($field_data['value'], $field_data['type'], $field_data['field'] ?? null));
                                                     }
                                                 } else {
-                                                    echo esc_html($this->format_value($field_data['value'], $field_data['type']));
+                                                    echo esc_html($this->format_value($field_data['value'], $field_data['type'], $field_data['field'] ?? null));
                                                 }
                                             } else {
-                                                echo esc_html($this->format_value($field_data['value'], $field_data['type']));
+                                                echo esc_html($this->format_value($field_data['value'], $field_data['type'], $field_data['field'] ?? null));
                                             }
                                             ?>
                                         </div>
@@ -944,10 +959,40 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
     /**
      * Format field value for display
      */
-    private function format_value($value, $type) {
+    private function format_value($value, $type, $field = null) {
         // Handle location fields - extract address
         if ($type === 'location' && is_array($value) && isset($value['address'])) {
             return !empty($value['address']) ? $value['address'] : __('(empty)', 'voxel-toolkit');
+        }
+
+        // Handle taxonomy fields - convert term IDs to labels
+        if ($type === 'taxonomy' && $field) {
+            $taxonomy = $field->get_prop('taxonomy');
+            if ($taxonomy) {
+                $term_ids = is_array($value) ? $value : array($value);
+                $term_labels = array();
+
+                foreach ($term_ids as $item) {
+                    if (is_object($item)) {
+                        // Voxel Term object
+                        if (method_exists($item, 'get_label')) {
+                            $term_labels[] = $item->get_label();
+                        } elseif (isset($item->name)) {
+                            $term_labels[] = $item->name;
+                        }
+                    } elseif (is_numeric($item)) {
+                        // Term ID - look up the term name
+                        $term = get_term($item, $taxonomy);
+                        if ($term && !is_wp_error($term)) {
+                            $term_labels[] = $term->name;
+                        }
+                    } else {
+                        $term_labels[] = $item;
+                    }
+                }
+
+                return !empty($term_labels) ? implode(', ', $term_labels) : __('(empty)', 'voxel-toolkit');
+            }
         }
 
         // Handle arrays (taxonomy terms, etc.) - check this BEFORE empty check

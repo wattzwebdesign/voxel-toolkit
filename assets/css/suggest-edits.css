@@ -30,8 +30,11 @@
     box-shadow: 0 4px 12px rgba(30, 58, 95, 0.3);
 }
 
-.vt-suggest-edit-btn i {
-    font-size: 16px;
+.vt-suggest-edit-btn i,
+.vt-suggest-edit-btn svg {
+    font-size: 1em;
+    width: 1em;
+    height: 1em;
 }
 
 /* ===================================

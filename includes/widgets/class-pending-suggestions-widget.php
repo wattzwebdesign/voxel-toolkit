@@ -537,7 +537,7 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
                                         <?php printf(__('by %s', 'voxel-toolkit'), esc_html($suggestion->suggester_name)); ?>
                                     </span>
                                     <span class="vt-suggestion-date">
-                                        <?php echo human_time_diff(strtotime($suggestion->created_at), time()) . ' ' . __('ago', 'voxel-toolkit'); ?>
+                                        <?php echo human_time_diff(strtotime($suggestion->created_at), current_time('timestamp')) . ' ' . __('ago', 'voxel-toolkit'); ?>
                                     </span>
                                 </div>
                                 <div class="vt-suggestion-status">
@@ -682,8 +682,9 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
             return '';
         }
 
-        // Get field type
+        // Get field info
         $field_type = $this->get_field_type($post_id, $field_key);
+        $field = $this->get_field($post_id, $field_key);
 
         // Handle work-hours field specially
         if ($field_type === 'work-hours') {
@@ -698,8 +699,51 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
             return Voxel_Toolkit_Field_Formatters::format_location_display($value);
         }
 
+        // Handle taxonomy field - convert term IDs to labels
+        if ($field_type === 'taxonomy' && $field) {
+            $taxonomy = $field->get_prop('taxonomy');
+            if ($taxonomy) {
+                // Value could be a single ID, comma-separated IDs, or already formatted labels
+                $term_ids = is_array($value) ? $value : explode(',', $value);
+                $term_labels = array();
+
+                foreach ($term_ids as $term_id) {
+                    $term_id = trim($term_id);
+                    if (!empty($term_id)) {
+                        if (is_numeric($term_id)) {
+                            // It's a term ID - look up the name
+                            $term = get_term((int)$term_id, $taxonomy);
+                            if ($term && !is_wp_error($term)) {
+                                $term_labels[] = $term->name;
+                            }
+                        } else {
+                            // It's already a label/name string
+                            $term_labels[] = $term_id;
+                        }
+                    }
+                }
+
+                return esc_html(implode(', ', $term_labels));
+            }
+        }
+
         // Default formatting
         return esc_html($value);
+    }
+
+    /**
+     * Get field object from post
+     */
+    private function get_field($post_id, $field_key) {
+        if (class_exists('\Voxel\Post')) {
+            $voxel_post = \Voxel\Post::get($post_id);
+            if ($voxel_post) {
+                $post_type = $voxel_post->post_type;
+                return $post_type->get_field($field_key);
+            }
+        }
+
+        return null;
     }
 
     /**
