@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Membership Plan Filter**: Fixed filter not returning results on sites using Voxel's test mode
   - Filter now correctly uses `voxel:test_plan` meta key when Stripe test mode is enabled
   - Also handles multisite compatibility using Voxel's site-specific meta key helpers
+- **SMS Notifications**: Fixed 400 error when toggling SMS in App Events page
+  - Created separate AJAX handler class that doesn't depend on Voxel Base_Controller
+  - SMS toggle now only appears when SMS Notifications is enabled in Toolkit Settings
 
 ## [1.5.6] - 2025-11-29
 
