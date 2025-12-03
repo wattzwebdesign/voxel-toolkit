@@ -11,7 +11,120 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Check if Voxel Base_Controller exists before defining class
+/**
+ * AJAX Handler class - defined separately so it works even when Voxel isn't fully loaded
+ * This handles the App Events page SMS toggle functionality
+ */
+if (!class_exists('Voxel_Toolkit_SMS_Ajax_Handler')) {
+    class Voxel_Toolkit_SMS_Ajax_Handler {
+
+        private static $instance = null;
+
+        public static function instance() {
+            if (self::$instance === null) {
+                self::$instance = new self();
+            }
+            return self::$instance;
+        }
+
+        public function __construct() {
+            add_action('wp_ajax_vt_save_sms_event_settings', array($this, 'ajax_save_event_settings'));
+            add_action('wp_ajax_vt_send_test_sms', array($this, 'ajax_send_test_sms'));
+            add_action('wp_ajax_vt_get_sms_event_settings', array($this, 'ajax_get_event_settings'));
+        }
+
+        /**
+         * AJAX: Save SMS event settings
+         */
+        public function ajax_save_event_settings() {
+            check_ajax_referer('vt_sms_nonce', 'nonce');
+
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error(array('message' => __('Permission denied', 'voxel-toolkit')));
+            }
+
+            $event_key = isset($_POST['event_key']) ? sanitize_text_field($_POST['event_key']) : '';
+            $destination = isset($_POST['destination']) ? sanitize_text_field($_POST['destination']) : '';
+            $enabled = isset($_POST['enabled']) && $_POST['enabled'] === 'true';
+            $message = isset($_POST['message']) ? sanitize_textarea_field($_POST['message']) : '';
+
+            if (empty($event_key) || empty($destination)) {
+                wp_send_json_error(array('message' => __('Invalid parameters', 'voxel-toolkit')));
+            }
+
+            // Get current settings
+            $settings = Voxel_Toolkit_Settings::instance();
+            $current_settings = $settings->get_function_settings('sms_notifications', array());
+
+            // Initialize events array if needed
+            if (!isset($current_settings['events'])) {
+                $current_settings['events'] = array();
+            }
+
+            if (!isset($current_settings['events'][$event_key])) {
+                $current_settings['events'][$event_key] = array();
+            }
+
+            // Update settings for this event/destination
+            $current_settings['events'][$event_key][$destination] = array(
+                'enabled' => $enabled,
+                'message' => $message,
+            );
+
+            // Save settings
+            $settings->update_function_settings('sms_notifications', $current_settings);
+
+            wp_send_json_success(array('message' => __('SMS settings saved', 'voxel-toolkit')));
+        }
+
+        /**
+         * AJAX: Get SMS event settings
+         */
+        public function ajax_get_event_settings() {
+            check_ajax_referer('vt_sms_nonce', 'nonce');
+
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error(array('message' => __('Permission denied', 'voxel-toolkit')));
+            }
+
+            $settings = Voxel_Toolkit_Settings::instance();
+            $function_settings = $settings->get_function_settings('sms_notifications', array());
+            $events = isset($function_settings['events']) ? $function_settings['events'] : array();
+            $enabled = isset($function_settings['enabled']) ? $function_settings['enabled'] : false;
+
+            wp_send_json_success(array(
+                'events' => $events,
+                'enabled' => $enabled,
+                'phone_configured' => !empty($function_settings['phone_field']),
+                'provider' => isset($function_settings['provider']) ? $function_settings['provider'] : 'twilio',
+            ));
+        }
+
+        /**
+         * AJAX: Send test SMS
+         */
+        public function ajax_send_test_sms() {
+            check_ajax_referer('vt_sms_nonce', 'nonce');
+
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error(array('message' => __('Permission denied', 'voxel-toolkit')));
+            }
+
+            // Check if main SMS class exists and is initialized
+            if (!class_exists('Voxel_Toolkit_SMS_Notifications') || !Voxel_Toolkit_SMS_Notifications::instance()) {
+                wp_send_json_error(array('message' => __('SMS Notifications not fully initialized. Please ensure Voxel theme is active.', 'voxel-toolkit')));
+            }
+
+            // Delegate to the main class
+            Voxel_Toolkit_SMS_Notifications::instance()->ajax_send_test_sms_handler();
+        }
+    }
+
+    // Initialize AJAX handler immediately
+    Voxel_Toolkit_SMS_Ajax_Handler::instance();
+}
+
+// Check if Voxel Base_Controller exists before defining main class
 // This prevents fatal errors during WP-CLI operations (cPanel, staging/live pushes, etc.)
 if (!class_exists('\Voxel\Controllers\Base_Controller')) {
     return;
@@ -72,11 +185,6 @@ class Voxel_Toolkit_SMS_Notifications extends \Voxel\Controllers\Base_Controller
 
         // Listen for settings updates
         add_action('voxel_toolkit/settings_updated', array($this, 'on_settings_updated'), 10, 2);
-
-        // Register AJAX handlers for saving event settings
-        add_action('wp_ajax_vt_save_sms_event_settings', array($this, 'ajax_save_event_settings'));
-        add_action('wp_ajax_vt_send_test_sms', array($this, 'ajax_send_test_sms'));
-        add_action('wp_ajax_vt_get_sms_event_settings', array($this, 'ajax_get_event_settings'));
     }
 
     /**
@@ -509,82 +617,9 @@ class Voxel_Toolkit_SMS_Notifications extends \Voxel\Controllers\Base_Controller
     }
 
     /**
-     * AJAX: Save SMS event settings
+     * AJAX: Send test SMS (handler called from Voxel_Toolkit_SMS_Ajax_Handler)
      */
-    public function ajax_save_event_settings() {
-        check_ajax_referer('vt_sms_nonce', 'nonce');
-
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => __('Permission denied', 'voxel-toolkit')));
-        }
-
-        $event_key = isset($_POST['event_key']) ? sanitize_text_field($_POST['event_key']) : '';
-        $destination = isset($_POST['destination']) ? sanitize_text_field($_POST['destination']) : '';
-        $enabled = isset($_POST['enabled']) && $_POST['enabled'] === 'true';
-        $message = isset($_POST['message']) ? sanitize_textarea_field($_POST['message']) : '';
-
-        if (empty($event_key) || empty($destination)) {
-            wp_send_json_error(array('message' => __('Invalid parameters', 'voxel-toolkit')));
-        }
-
-        // Get current settings
-        $current_settings = $this->settings->get_function_settings('sms_notifications', array());
-
-        // Initialize events array if needed
-        if (!isset($current_settings['events'])) {
-            $current_settings['events'] = array();
-        }
-
-        if (!isset($current_settings['events'][$event_key])) {
-            $current_settings['events'][$event_key] = array();
-        }
-
-        // Update settings for this event/destination
-        $current_settings['events'][$event_key][$destination] = array(
-            'enabled' => $enabled,
-            'message' => $message,
-        );
-
-        // Save settings
-        $this->settings->update_function_settings('sms_notifications', $current_settings);
-
-        // Reload settings
-        $this->load_settings();
-
-        wp_send_json_success(array('message' => __('SMS settings saved', 'voxel-toolkit')));
-    }
-
-    /**
-     * AJAX: Get SMS event settings
-     */
-    public function ajax_get_event_settings() {
-        check_ajax_referer('vt_sms_nonce', 'nonce');
-
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => __('Permission denied', 'voxel-toolkit')));
-        }
-
-        // Get all event settings
-        $events = isset($this->function_settings['events']) ? $this->function_settings['events'] : array();
-
-        wp_send_json_success(array(
-            'events' => $events,
-            'enabled' => $this->enabled,
-            'phone_configured' => !empty($this->function_settings['phone_field']),
-            'provider' => isset($this->function_settings['provider']) ? $this->function_settings['provider'] : 'twilio',
-        ));
-    }
-
-    /**
-     * AJAX: Send test SMS
-     */
-    public function ajax_send_test_sms() {
-        check_ajax_referer('vt_sms_nonce', 'nonce');
-
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => __('Permission denied', 'voxel-toolkit')));
-        }
-
+    public function ajax_send_test_sms_handler() {
         // Get phone number from request for testing
         $phone = isset($_POST['phone']) ? sanitize_text_field($_POST['phone']) : '';
 

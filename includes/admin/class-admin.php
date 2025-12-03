@@ -3281,14 +3281,12 @@ class Voxel_Toolkit_Admin {
         // Check if SMS notifications function is enabled
         $settings = Voxel_Toolkit_Settings::instance();
 
+        // Don't load the script at all if SMS notifications is disabled
         if (!$settings->is_function_enabled('sms_notifications')) {
-            // Still load script but with disabled flag
-            $sms_settings = array();
-            $is_enabled = false;
-        } else {
-            $sms_settings = $settings->get_function_settings('sms_notifications', array());
-            $is_enabled = true;
+            return;
         }
+
+        $sms_settings = $settings->get_function_settings('sms_notifications', array());
 
         wp_enqueue_script(
             'voxel-toolkit-sms-notifications',
@@ -3302,7 +3300,7 @@ class Voxel_Toolkit_Admin {
         wp_localize_script('voxel-toolkit-sms-notifications', 'vt_sms_config', array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('vt_sms_nonce'),
-            'enabled' => $is_enabled,
+            'enabled' => true,
             'phone_configured' => !empty($sms_settings['phone_field']),
             'provider' => isset($sms_settings['provider']) ? $sms_settings['provider'] : 'twilio',
             'events' => isset($sms_settings['events']) ? $sms_settings['events'] : array(),

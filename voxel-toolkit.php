@@ -262,6 +262,7 @@ class Voxel_Toolkit {
             'includes/functions/class-admin-menu-hide.php',
             'includes/functions/class-admin-notifications.php',
             'includes/functions/class-featured-posts.php',
+            'includes/functions/class-sms-notifications.php', // Loads AJAX handlers early
             'includes/dynamic-tags/class-dynamic-tags.php'
             // Note: order-by-manager is loaded at top level before theme config
         );
