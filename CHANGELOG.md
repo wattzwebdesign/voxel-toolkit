@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **SMS Notifications**: Fixed 400 error when toggling SMS in App Events page
   - Created separate AJAX handler class that doesn't depend on Voxel Base_Controller
   - SMS toggle now only appears when SMS Notifications is enabled in Toolkit Settings
+- **Suggest Edits Widget**: Multiple fixes
+  - Fixed taxonomy terms showing IDs instead of labels in pending suggestions
+  - Added toggle to hide "Permanently Closed" option in widget settings
+  - Button icon now scales with typography size settings
+  - Fixed time display to use WordPress timezone
 
 ## [1.5.6] - 2025-11-29
 
