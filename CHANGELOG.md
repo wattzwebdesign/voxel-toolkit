@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.5.6.0.1] - 2025-12-02
 
 ### Fixed
+- **AI Review Summary**: Fixed OpenAI API key not being saved when entering it in Toolkit Settings
+  - API key was being overwritten during settings sanitization
+- **Messenger Settings**: Fixed "The link has expired" error when saving Messenger configuration
+  - Converted settings page to use custom form handler instead of WordPress Settings API
 - **Membership Plan Filter**: Fixed filter not returning results on sites using Voxel's test mode
   - Filter now correctly uses `voxel:test_plan` meta key when Stripe test mode is enabled
   - Also handles multisite compatibility using Voxel's site-specific meta key helpers
