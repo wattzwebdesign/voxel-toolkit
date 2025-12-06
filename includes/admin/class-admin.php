@@ -872,9 +872,21 @@ class Voxel_Toolkit_Admin {
                         break;
                     
                     case 'ai_review_summary':
-                        // API key setting
-                        $sanitized_function['api_key'] = isset($function_input['api_key']) ?
-                            sanitize_text_field($function_input['api_key']) : '';
+                        // Get current settings to preserve API key
+                        $current_ai_settings = Voxel_Toolkit_Settings::instance()->get_function_settings('ai_review_summary', array());
+
+                        // API key - preserve existing if not provided in form
+                        // Note: API key is sent separately via 'ai_api_key' field, not through voxel_toolkit_options
+                        if (!empty($function_input['api_key'])) {
+                            $sanitized_function['api_key'] = sanitize_text_field($function_input['api_key']);
+                        } elseif (isset($current_ai_settings['api_key'])) {
+                            $sanitized_function['api_key'] = $current_ai_settings['api_key'];
+                        }
+
+                        // Language setting
+                        if (isset($function_input['language'])) {
+                            $sanitized_function['language'] = sanitize_text_field($function_input['language']);
+                        }
                         break;
 
                     case 'sms_notifications':

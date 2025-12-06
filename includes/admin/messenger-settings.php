@@ -23,8 +23,7 @@ class Voxel_Toolkit_Messenger_Settings {
     }
 
     private function __construct() {
-        add_action('admin_menu', array($this, 'add_settings_page'), 20); // Priority 20 to load after main menu
-        add_action('admin_init', array($this, 'register_settings'));
+        add_action('admin_menu', array($this, 'add_settings_page'), 20);
     }
 
     /**
@@ -42,79 +41,9 @@ class Voxel_Toolkit_Messenger_Settings {
     }
 
     /**
-     * Register settings
-     */
-    public function register_settings() {
-        register_setting(
-            'voxel_toolkit_messenger_settings',
-            'voxel_toolkit_messenger_settings',
-            array(
-                'type' => 'array',
-                'sanitize_callback' => array($this, 'sanitize_settings'),
-            )
-        );
-
-        // General settings section
-        add_settings_section(
-            'voxel_toolkit_messenger_general',
-            __('General Settings', 'voxel-toolkit'),
-            array($this, 'render_general_section'),
-            'voxel-toolkit-messenger'
-        );
-
-        add_settings_field(
-            'enabled',
-            __('Enable Messenger Widget', 'voxel-toolkit'),
-            array($this, 'render_enabled_field'),
-            'voxel-toolkit-messenger',
-            'voxel_toolkit_messenger_general'
-        );
-
-        add_settings_field(
-            'default_avatar',
-            __('Default Avatar Image', 'voxel-toolkit'),
-            array($this, 'render_default_avatar_field'),
-            'voxel-toolkit-messenger',
-            'voxel_toolkit_messenger_general'
-        );
-
-        // Page rules section
-        add_settings_section(
-            'voxel_toolkit_messenger_page_rules',
-            __('Page Display Rules', 'voxel-toolkit'),
-            array($this, 'render_page_rules_section'),
-            'voxel-toolkit-messenger'
-        );
-
-        add_settings_field(
-            'excluded_rules',
-            __('Exclude From Page Types', 'voxel-toolkit'),
-            array($this, 'render_excluded_rules_field'),
-            'voxel-toolkit-messenger',
-            'voxel_toolkit_messenger_page_rules'
-        );
-
-        add_settings_field(
-            'excluded_post_ids',
-            __('Exclude Specific Posts (IDs)', 'voxel-toolkit'),
-            array($this, 'render_excluded_post_ids_field'),
-            'voxel-toolkit-messenger',
-            'voxel_toolkit_messenger_page_rules'
-        );
-
-        add_settings_field(
-            'excluded_post_types',
-            __('Exclude Post Types', 'voxel-toolkit'),
-            array($this, 'render_excluded_post_types_field'),
-            'voxel-toolkit-messenger',
-            'voxel_toolkit_messenger_page_rules'
-        );
-    }
-
-    /**
      * Sanitize settings
      */
-    public function sanitize_settings($input) {
+    private function sanitize_settings($input) {
         $sanitized = array();
 
         $sanitized['enabled'] = !empty($input['enabled']) ? 1 : 0;
@@ -150,27 +79,170 @@ class Voxel_Toolkit_Messenger_Settings {
             return;
         }
 
-        // Save settings
-        if (isset($_GET['settings-updated'])) {
-            add_settings_error(
-                'voxel_toolkit_messenger_messages',
-                'voxel_toolkit_messenger_message',
-                __('Settings saved successfully.', 'voxel-toolkit'),
-                'updated'
-            );
+        $saved = false;
+
+        // Handle form submission
+        if (isset($_POST['submit']) && check_admin_referer('voxel_toolkit_messenger_settings_nonce', 'voxel_toolkit_messenger_nonce')) {
+            $input = isset($_POST['voxel_toolkit_messenger_settings']) ? $_POST['voxel_toolkit_messenger_settings'] : array();
+            $sanitized = $this->sanitize_settings($input);
+            update_option('voxel_toolkit_messenger_settings', $sanitized);
+            $saved = true;
         }
 
-        settings_errors('voxel_toolkit_messenger_messages');
+        $settings = get_option('voxel_toolkit_messenger_settings', array());
         ?>
         <div class="wrap">
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 
-            <form method="post" action="options.php">
-                <?php
-                settings_fields('voxel_toolkit_messenger_settings');
-                do_settings_sections('voxel-toolkit-messenger');
-                submit_button(__('Save Settings', 'voxel-toolkit'));
-                ?>
+            <?php if ($saved): ?>
+                <div class="notice notice-success is-dismissible">
+                    <p><?php _e('Settings saved successfully.', 'voxel-toolkit'); ?></p>
+                </div>
+            <?php endif; ?>
+
+            <form method="post" action="">
+                <?php wp_nonce_field('voxel_toolkit_messenger_settings_nonce', 'voxel_toolkit_messenger_nonce'); ?>
+
+                <table class="form-table" role="presentation">
+                    <tbody>
+                        <!-- General Settings Section -->
+                        <tr>
+                            <th scope="row" colspan="2">
+                                <h2 style="margin: 0;"><?php _e('General Settings', 'voxel-toolkit'); ?></h2>
+                                <p class="description"><?php _e('Control the messenger widget globally.', 'voxel-toolkit'); ?></p>
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <th scope="row"><?php _e('Enable Messenger Widget', 'voxel-toolkit'); ?></th>
+                            <td>
+                                <?php $enabled = !empty($settings['enabled']) ? 1 : 0; ?>
+                                <label>
+                                    <input type="checkbox"
+                                           name="voxel_toolkit_messenger_settings[enabled]"
+                                           value="1"
+                                           <?php checked($enabled, 1); ?>>
+                                    <?php _e('Enable the messenger widget site-wide', 'voxel-toolkit'); ?>
+                                </label>
+                                <p class="description">
+                                    <?php _e('When enabled, the messenger widget will appear on pages unless excluded by rules below.', 'voxel-toolkit'); ?>
+                                </p>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th scope="row"><?php _e('Default Avatar Image', 'voxel-toolkit'); ?></th>
+                            <td>
+                                <?php $default_avatar = !empty($settings['default_avatar']) ? $settings['default_avatar'] : ''; ?>
+                                <div class="vt-messenger-avatar-upload">
+                                    <input type="hidden"
+                                           id="vt_default_avatar"
+                                           name="voxel_toolkit_messenger_settings[default_avatar]"
+                                           value="<?php echo esc_attr($default_avatar); ?>">
+
+                                    <button type="button" class="button vt-upload-avatar-btn">
+                                        <?php _e('Upload/Select Image', 'voxel-toolkit'); ?>
+                                    </button>
+
+                                    <button type="button" class="button vt-remove-avatar-btn" style="<?php echo empty($default_avatar) ? 'display:none;' : ''; ?>">
+                                        <?php _e('Remove Image', 'voxel-toolkit'); ?>
+                                    </button>
+
+                                    <div class="vt-avatar-preview" style="margin-top: 10px;">
+                                        <?php if (!empty($default_avatar)): ?>
+                                            <img src="<?php echo esc_url($default_avatar); ?>" style="max-width: 100px; height: auto; border-radius: 50%; border: 2px solid #ddd;">
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <p class="description">
+                                        <?php _e('This image will be displayed in chat circles when a user has no avatar image.', 'voxel-toolkit'); ?>
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Page Display Rules Section -->
+                        <tr>
+                            <th scope="row" colspan="2">
+                                <h2 style="margin: 20px 0 0 0;"><?php _e('Page Display Rules', 'voxel-toolkit'); ?></h2>
+                                <p class="description"><?php _e('Choose which pages should NOT display the messenger widget.', 'voxel-toolkit'); ?></p>
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <th scope="row"><?php _e('Exclude From Page Types', 'voxel-toolkit'); ?></th>
+                            <td>
+                                <?php
+                                $excluded_rules = !empty($settings['excluded_rules']) ? $settings['excluded_rules'] : array();
+                                $rules = array(
+                                    'singular' => __('Singular Pages (Single Posts/Pages)', 'voxel-toolkit'),
+                                    'archive' => __('Archive Pages', 'voxel-toolkit'),
+                                    'home' => __('Home/Front Page', 'voxel-toolkit'),
+                                    'search' => __('Search Results', 'voxel-toolkit'),
+                                    '404' => __('404 Error Pages', 'voxel-toolkit'),
+                                );
+                                ?>
+                                <fieldset>
+                                    <?php foreach ($rules as $rule => $label): ?>
+                                        <label style="display: block; margin-bottom: 8px;">
+                                            <input type="checkbox"
+                                                   name="voxel_toolkit_messenger_settings[excluded_rules][]"
+                                                   value="<?php echo esc_attr($rule); ?>"
+                                                   <?php checked(in_array($rule, $excluded_rules), true); ?>>
+                                            <?php echo esc_html($label); ?>
+                                        </label>
+                                    <?php endforeach; ?>
+                                </fieldset>
+                                <p class="description">
+                                    <?php _e('The messenger will NOT appear on the selected page types.', 'voxel-toolkit'); ?>
+                                </p>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th scope="row"><?php _e('Exclude Specific Posts (IDs)', 'voxel-toolkit'); ?></th>
+                            <td>
+                                <?php $excluded_post_ids = !empty($settings['excluded_post_ids']) ? $settings['excluded_post_ids'] : ''; ?>
+                                <input type="text"
+                                       name="voxel_toolkit_messenger_settings[excluded_post_ids]"
+                                       value="<?php echo esc_attr($excluded_post_ids); ?>"
+                                       class="regular-text"
+                                       placeholder="123, 456, 789">
+                                <p class="description">
+                                    <?php _e('Enter post/page IDs separated by commas. The messenger will not appear on these specific posts.', 'voxel-toolkit'); ?>
+                                </p>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th scope="row"><?php _e('Exclude Post Types', 'voxel-toolkit'); ?></th>
+                            <td>
+                                <?php
+                                $excluded_post_types = !empty($settings['excluded_post_types']) ? $settings['excluded_post_types'] : array();
+                                $post_types = get_post_types(array('public' => true), 'objects');
+                                ?>
+                                <fieldset>
+                                    <?php foreach ($post_types as $post_type): ?>
+                                        <?php if ($post_type->name === 'attachment') continue; ?>
+                                        <label style="display: block; margin-bottom: 8px;">
+                                            <input type="checkbox"
+                                                   name="voxel_toolkit_messenger_settings[excluded_post_types][]"
+                                                   value="<?php echo esc_attr($post_type->name); ?>"
+                                                   <?php checked(in_array($post_type->name, $excluded_post_types), true); ?>>
+                                            <?php echo esc_html($post_type->label); ?>
+                                            <span style="color: #666;">(<?php echo esc_html($post_type->name); ?>)</span>
+                                        </label>
+                                    <?php endforeach; ?>
+                                </fieldset>
+                                <p class="description">
+                                    <?php _e('The messenger will NOT appear on singular pages of the selected post types.', 'voxel-toolkit'); ?>
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <?php submit_button(__('Save Settings', 'voxel-toolkit')); ?>
             </form>
 
             <div class="card" style="max-width: 800px; margin-top: 30px;">
@@ -192,67 +264,6 @@ class Voxel_Toolkit_Messenger_Settings {
                     <li><?php _e('Mobile users see a scaled-down version optimized for touch', 'voxel-toolkit'); ?></li>
                 </ul>
             </div>
-        </div>
-        <?php
-    }
-
-    /**
-     * Render general section description
-     */
-    public function render_general_section() {
-        echo '<p>' . __('Control the messenger widget globally.', 'voxel-toolkit') . '</p>';
-    }
-
-    /**
-     * Render enabled field
-     */
-    public function render_enabled_field() {
-        $settings = get_option('voxel_toolkit_messenger_settings', array());
-        $enabled = !empty($settings['enabled']) ? 1 : 0;
-        ?>
-        <label>
-            <input type="checkbox"
-                   name="voxel_toolkit_messenger_settings[enabled]"
-                   value="1"
-                   <?php checked($enabled, 1); ?>>
-            <?php _e('Enable the messenger widget site-wide', 'voxel-toolkit'); ?>
-        </label>
-        <p class="description">
-            <?php _e('When enabled, the messenger widget will appear on pages unless excluded by rules below.', 'voxel-toolkit'); ?>
-        </p>
-        <?php
-    }
-
-    /**
-     * Render default avatar field
-     */
-    public function render_default_avatar_field() {
-        $settings = get_option('voxel_toolkit_messenger_settings', array());
-        $default_avatar = !empty($settings['default_avatar']) ? $settings['default_avatar'] : '';
-        ?>
-        <div class="vt-messenger-avatar-upload">
-            <input type="hidden"
-                   id="vt_default_avatar"
-                   name="voxel_toolkit_messenger_settings[default_avatar]"
-                   value="<?php echo esc_attr($default_avatar); ?>">
-
-            <button type="button" class="button vt-upload-avatar-btn">
-                <?php _e('Upload/Select Image', 'voxel-toolkit'); ?>
-            </button>
-
-            <button type="button" class="button vt-remove-avatar-btn" style="<?php echo empty($default_avatar) ? 'display:none;' : ''; ?>">
-                <?php _e('Remove Image', 'voxel-toolkit'); ?>
-            </button>
-
-            <div class="vt-avatar-preview" style="margin-top: 10px;">
-                <?php if (!empty($default_avatar)): ?>
-                    <img src="<?php echo esc_url($default_avatar); ?>" style="max-width: 100px; height: auto; border-radius: 50%; border: 2px solid #ddd;">
-                <?php endif; ?>
-            </div>
-
-            <p class="description">
-                <?php _e('This image will be displayed in chat circles when a user has no avatar image.', 'voxel-toolkit'); ?>
-            </p>
         </div>
 
         <script>
@@ -293,92 +304,6 @@ class Voxel_Toolkit_Messenger_Settings {
             });
         });
         </script>
-        <?php
-    }
-
-    /**
-     * Render page rules section description
-     */
-    public function render_page_rules_section() {
-        echo '<p>' . __('Choose which pages should NOT display the messenger widget.', 'voxel-toolkit') . '</p>';
-    }
-
-    /**
-     * Render excluded rules field
-     */
-    public function render_excluded_rules_field() {
-        $settings = get_option('voxel_toolkit_messenger_settings', array());
-        $excluded_rules = !empty($settings['excluded_rules']) ? $settings['excluded_rules'] : array();
-
-        $rules = array(
-            'singular' => __('Singular Pages (Single Posts/Pages)', 'voxel-toolkit'),
-            'archive' => __('Archive Pages', 'voxel-toolkit'),
-            'home' => __('Home/Front Page', 'voxel-toolkit'),
-            'search' => __('Search Results', 'voxel-toolkit'),
-            '404' => __('404 Error Pages', 'voxel-toolkit'),
-        );
-        ?>
-        <fieldset>
-            <?php foreach ($rules as $rule => $label): ?>
-                <label style="display: block; margin-bottom: 8px;">
-                    <input type="checkbox"
-                           name="voxel_toolkit_messenger_settings[excluded_rules][]"
-                           value="<?php echo esc_attr($rule); ?>"
-                           <?php checked(in_array($rule, $excluded_rules), true); ?>>
-                    <?php echo esc_html($label); ?>
-                </label>
-            <?php endforeach; ?>
-        </fieldset>
-        <p class="description">
-            <?php _e('The messenger will NOT appear on the selected page types.', 'voxel-toolkit'); ?>
-        </p>
-        <?php
-    }
-
-    /**
-     * Render excluded post IDs field
-     */
-    public function render_excluded_post_ids_field() {
-        $settings = get_option('voxel_toolkit_messenger_settings', array());
-        $excluded_post_ids = !empty($settings['excluded_post_ids']) ? $settings['excluded_post_ids'] : '';
-        ?>
-        <input type="text"
-               name="voxel_toolkit_messenger_settings[excluded_post_ids]"
-               value="<?php echo esc_attr($excluded_post_ids); ?>"
-               class="regular-text"
-               placeholder="123, 456, 789">
-        <p class="description">
-            <?php _e('Enter post/page IDs separated by commas. The messenger will not appear on these specific posts.', 'voxel-toolkit'); ?>
-        </p>
-        <?php
-    }
-
-    /**
-     * Render excluded post types field
-     */
-    public function render_excluded_post_types_field() {
-        $settings = get_option('voxel_toolkit_messenger_settings', array());
-        $excluded_post_types = !empty($settings['excluded_post_types']) ? $settings['excluded_post_types'] : array();
-
-        // Get all public post types
-        $post_types = get_post_types(array('public' => true), 'objects');
-        ?>
-        <fieldset>
-            <?php foreach ($post_types as $post_type): ?>
-                <?php if ($post_type->name === 'attachment') continue; ?>
-                <label style="display: block; margin-bottom: 8px;">
-                    <input type="checkbox"
-                           name="voxel_toolkit_messenger_settings[excluded_post_types][]"
-                           value="<?php echo esc_attr($post_type->name); ?>"
-                           <?php checked(in_array($post_type->name, $excluded_post_types), true); ?>>
-                    <?php echo esc_html($post_type->label); ?>
-                    <span style="color: #666;">(<?php echo esc_html($post_type->name); ?>)</span>
-                </label>
-            <?php endforeach; ?>
-        </fieldset>
-        <p class="description">
-            <?php _e('The messenger will NOT appear on singular pages of the selected post types.', 'voxel-toolkit'); ?>
-        </p>
         <?php
     }
 }
