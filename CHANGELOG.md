@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Sync step visibility with Voxel's conditional logic (hidden steps are hidden in TOC)
   - New Elementor style controls: indicator colors, sizes, field text colors, spacing, and typography
 
+### Changed
+- **Table of Contents Widget**: Renamed to "Table of Contents (VT)" in Elementor for clarity
+
 ## [1.5.6.0.1] - 2025-12-02
 
 ### Fixed

@@ -22,7 +22,7 @@ class Voxel_Toolkit_Elementor_Table_Of_Contents extends \Elementor\Widget_Base {
      * Get widget title
      */
     public function get_title() {
-        return __('Table of Contents', 'voxel-toolkit');
+        return __('Table of Contents (VT)', 'voxel-toolkit');
     }
 
     /**
