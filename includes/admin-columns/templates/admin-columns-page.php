@@ -522,6 +522,20 @@ $js_data = $admin_columns->get_js_data();
                                     </div>
                                 </div>
 
+                                <!-- User Membership Plan Settings -->
+                                <div v-if="isMembershipPlanField(element.field_key) && element.membership_plan_settings" class="vt-ac-product-settings">
+                                    <h4><?php _e('Membership Plan Display', 'voxel-toolkit'); ?></h4>
+                                    <div class="vt-ac-field-group">
+                                        <label><?php _e('Show', 'voxel-toolkit'); ?></label>
+                                        <select v-model="element.membership_plan_settings.display" @change="markChanged">
+                                            <option value="plan_name"><?php _e('Plan Name', 'voxel-toolkit'); ?></option>
+                                            <option value="status"><?php _e('Status (Active/Expired/Canceled)', 'voxel-toolkit'); ?></option>
+                                            <option value="expiration"><?php _e('Expiration Date', 'voxel-toolkit'); ?></option>
+                                            <option value="summary"><?php _e('Summary (Name + Status + Expiration)', 'voxel-toolkit'); ?></option>
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <!-- Toggles - Disabled based on field type capabilities -->
                                 <div class="vt-ac-toggles">
                                     <label class="vt-ac-toggle" :class="{ disabled: !canBeSortable(element.field_key) }">
@@ -593,6 +607,20 @@ $js_data = $admin_columns->get_js_data();
                         <br>
                         <strong>{{ availableFields.length }}</strong> <?php _e('fields available', 'voxel-toolkit'); ?>
                     </p>
+                </div>
+
+                <!-- User Quick Actions Setting (only for users) -->
+                <div v-if="isUsersMode" class="vt-ac-sidebar-card">
+                    <h3><?php _e('Quick Actions', 'voxel-toolkit'); ?></h3>
+                    <p style="font-size: 13px; color: #666; margin: 0 0 10px;">
+                        <?php _e('Select which column displays the row actions (Edit, Delete, View).', 'voxel-toolkit'); ?>
+                    </p>
+                    <select v-model="settings.quick_actions_column" @change="markChanged" style="width: 100%;">
+                        <option value=""><?php _e('None (default WordPress behavior)', 'voxel-toolkit'); ?></option>
+                        <option v-for="col in quickActionColumns" :key="col.id" :value="col.id">
+                            {{ col.label || getField(col.field_key)?.label || col.field_key }}
+                        </option>
+                    </select>
                 </div>
 
             </div>

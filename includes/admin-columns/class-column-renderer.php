@@ -293,7 +293,6 @@ class Voxel_Toolkit_Column_Renderer {
         // Build output showing total and 30d
         $output = '<span class="vt-ac-view-counts">';
         $output .= '<span class="vt-ac-views-total" title="' . esc_attr__('Total views', 'voxel-toolkit') . '">';
-        $output .= '<span class="dashicons dashicons-visibility"></span> ';
         $output .= number_format_i18n($total_views);
         $output .= '</span>';
 

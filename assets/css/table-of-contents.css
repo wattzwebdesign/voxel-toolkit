@@ -26,3 +26,44 @@
 .voxel-toc-item:last-child {
     margin-bottom: 0 !important;
 }
+
+/* Hidden steps (filtered by Voxel conditional logic) */
+.voxel-toc-item.vt-toc-hidden {
+    display: none !important;
+}
+
+/* CSS counter-based numbering for visible items only */
+.voxel-toc-list.vt-toc-numbered {
+    counter-reset: toc-counter;
+    list-style: none;
+    padding-left: 0;
+}
+
+.voxel-toc-list.vt-toc-numbered .voxel-toc-item:not(.vt-toc-hidden) {
+    counter-increment: toc-counter;
+}
+
+.voxel-toc-list.vt-toc-numbered .voxel-toc-item:not(.vt-toc-hidden)::before {
+    content: counter(toc-counter) ". ";
+}
+
+/* When using ol element with native numbering, hide hidden items properly */
+ol.voxel-toc-list {
+    counter-reset: toc-counter;
+}
+
+ol.voxel-toc-list .voxel-toc-item {
+    list-style: none;
+}
+
+ol.voxel-toc-list .voxel-toc-item:not(.vt-toc-hidden) {
+    counter-increment: toc-counter;
+}
+
+ol.voxel-toc-list .voxel-toc-item:not(.vt-toc-hidden)::before {
+    content: counter(toc-counter) ". ";
+}
+
+ol.voxel-toc-list .voxel-toc-item.vt-toc-hidden::before {
+    content: none;
+}
