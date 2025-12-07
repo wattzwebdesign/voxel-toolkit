@@ -5,7 +5,7 @@ All notable changes to Voxel Toolkit will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.6.0.2] - 2025-12-06
+## [1.5.6.0.1] - 2025-12-02
 
 ### Added
 - **Table of Contents Widget - Field Indicators**: Show individual fields under each step with completion status
@@ -16,8 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Table of Contents Widget**: Renamed to "Table of Contents (VT)" in Elementor for clarity
-
-## [1.5.6.0.1] - 2025-12-02
 
 ### Fixed
 - **AI Review Summary**: Fixed OpenAI API key not being saved when entering it in Toolkit Settings
