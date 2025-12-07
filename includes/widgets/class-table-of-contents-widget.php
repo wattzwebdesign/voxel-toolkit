@@ -43,7 +43,7 @@ class Voxel_Toolkit_Table_Of_Contents_Widget {
     /**
      * Get post type steps from wp_options
      */
-    public static function get_post_type_steps($post_type_key) {
+    public static function get_post_type_steps($post_type_key, $include_fields = false) {
         // Get the voxel:post_types option
         $post_types = get_option('voxel:post_types', array());
 
@@ -77,13 +77,29 @@ class Voxel_Toolkit_Table_Of_Contents_Widget {
         }
 
         $steps = array();
+        $current_step_index = -1;
+
+        // UI field types that should be excluded from the fields list
+        $ui_field_types = array('ui-step', 'ui-heading', 'ui-image', 'ui-html');
 
         // Loop through fields and find ui-step types
         foreach ($post_type_data['fields'] as $field) {
-            if (isset($field['type']) && $field['type'] === 'ui-step') {
+            $field_type = isset($field['type']) ? $field['type'] : '';
+
+            if ($field_type === 'ui-step') {
+                $current_step_index++;
                 $steps[] = array(
                     'key' => isset($field['key']) ? $field['key'] : '',
                     'label' => isset($field['label']) ? $field['label'] : '',
+                    'fields' => array(),
+                );
+            } elseif ($include_fields && $current_step_index >= 0 && !in_array($field_type, $ui_field_types)) {
+                // Add field to current step (exclude UI-only fields)
+                $steps[$current_step_index]['fields'][] = array(
+                    'key' => isset($field['key']) ? $field['key'] : '',
+                    'label' => isset($field['label']) ? $field['label'] : ucfirst(str_replace(array('-', '_'), ' ', isset($field['key']) ? $field['key'] : '')),
+                    'type' => $field_type,
+                    'required' => isset($field['required']) ? $field['required'] : false,
                 );
             }
         }
@@ -144,6 +160,12 @@ class Voxel_Toolkit_Table_Of_Contents_Widget {
             'list_style' => 'numbered',
             'alignment' => 'left',
             'container_class' => '',
+            // Field display options
+            'show_fields' => false,
+            'indicator_empty_color' => '#e0e0e0',
+            'indicator_filled_color' => '#22c55e',
+            'indicator_size' => 12,
+            'field_indent' => 20,
             // Style options
             'title_color' => '#333333',
             'title_typography' => array(),
@@ -166,8 +188,8 @@ class Voxel_Toolkit_Table_Of_Contents_Widget {
 
         $args = wp_parse_args($args, $defaults);
 
-        // Get steps for the selected post type
-        $steps = self::get_post_type_steps($args['post_type']);
+        // Get steps for the selected post type (include fields if showing them)
+        $steps = self::get_post_type_steps($args['post_type'], $args['show_fields']);
 
         if (empty($steps)) {
             return '';
@@ -238,9 +260,10 @@ class Voxel_Toolkit_Table_Of_Contents_Widget {
         </style>
         <?php endif; ?>
 
-        <div class="voxel-table-of-contents <?php echo esc_attr($unique_id); ?> <?php echo esc_attr($args['container_class']); ?>"
+        <div class="voxel-table-of-contents <?php echo esc_attr($unique_id); ?> <?php echo esc_attr($args['container_class']); ?><?php echo $args['show_fields'] ? ' vt-toc-with-fields' : ''; ?>"
              style="<?php echo esc_attr(implode('; ', $container_styles)); ?>"
-             data-current-step="<?php echo esc_attr($current_step); ?>">
+             data-current-step="<?php echo esc_attr($current_step); ?>"
+             data-show-fields="<?php echo $args['show_fields'] ? 'true' : 'false'; ?>">
 
             <?php if ($args['show_title'] && !empty($args['title'])): ?>
                 <<?php echo esc_attr($args['title_tag']); ?> class="voxel-toc-title" style="<?php echo esc_attr(implode('; ', $title_styles)); ?>">
@@ -253,11 +276,22 @@ class Voxel_Toolkit_Table_Of_Contents_Widget {
                     <?php
                     $is_active = ($current_step === $step['key']);
                     $item_class = 'voxel-toc-item' . ($is_active ? ' active' : '');
+                    $has_fields = $args['show_fields'] && !empty($step['fields']);
                     ?>
-                    <li class="<?php echo esc_attr($item_class); ?>"
+                    <li class="<?php echo esc_attr($item_class); ?><?php echo $has_fields ? ' vt-toc-has-fields' : ''; ?>"
                         style="<?php echo esc_attr(implode('; ', $item_styles)); ?>"
                         data-step-key="<?php echo esc_attr($step['key']); ?>">
-                        <?php echo esc_html($step['label']); ?>
+                        <span class="vt-toc-step-label"><?php echo esc_html($step['label']); ?></span>
+                        <?php if ($has_fields): ?>
+                            <ul class="vt-toc-fields">
+                                <?php foreach ($step['fields'] as $field): ?>
+                                    <li class="vt-toc-field" data-field-key="<?php echo esc_attr($field['key']); ?>" data-field-type="<?php echo esc_attr($field['type']); ?>">
+                                        <span class="vt-toc-field-indicator"></span>
+                                        <span class="vt-toc-field-label"><?php echo esc_html($field['label']); ?></span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
                     </li>
                 <?php endforeach; ?>
             </<?php echo $args['list_style'] === 'none' ? 'div' : 'ol'; ?>>
