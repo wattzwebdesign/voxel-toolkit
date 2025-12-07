@@ -5,6 +5,15 @@ All notable changes to Voxel Toolkit will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.6.0.2] - 2025-12-06
+
+### Added
+- **Table of Contents Widget - Field Indicators**: Show individual fields under each step with completion status
+  - Empty circle indicator when field has no value, filled circle when completed
+  - Real-time field detection for all Voxel field types (taxonomy, select, product, description, gallery, etc.)
+  - Sync step visibility with Voxel's conditional logic (hidden steps are hidden in TOC)
+  - New Elementor style controls: indicator colors, sizes, field text colors, spacing, and typography
+
 ## [1.5.6.0.1] - 2025-12-02
 
 ### Fixed
