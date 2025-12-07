@@ -26,3 +26,125 @@
 .voxel-toc-item:last-child {
     margin-bottom: 0 !important;
 }
+
+/* Hidden steps (filtered by Voxel conditional logic) */
+.voxel-toc-item.vt-toc-hidden {
+    display: none !important;
+}
+
+/* CSS counter-based numbering for visible items only */
+.voxel-toc-list.vt-toc-numbered {
+    counter-reset: toc-counter;
+    list-style: none;
+    padding-left: 0;
+}
+
+.voxel-toc-list.vt-toc-numbered .voxel-toc-item:not(.vt-toc-hidden) {
+    counter-increment: toc-counter;
+}
+
+.voxel-toc-list.vt-toc-numbered .voxel-toc-item:not(.vt-toc-hidden)::before {
+    content: counter(toc-counter) ". ";
+}
+
+/* When using ol element with native numbering, hide hidden items properly */
+ol.voxel-toc-list {
+    counter-reset: toc-counter;
+}
+
+ol.voxel-toc-list .voxel-toc-item {
+    list-style: none;
+}
+
+ol.voxel-toc-list .voxel-toc-item:not(.vt-toc-hidden) {
+    counter-increment: toc-counter;
+}
+
+ol.voxel-toc-list .voxel-toc-item:not(.vt-toc-hidden)::before {
+    content: counter(toc-counter) ". ";
+}
+
+ol.voxel-toc-list .voxel-toc-item.vt-toc-hidden::before {
+    content: none;
+}
+
+/* Field indicators styles */
+.vt-toc-with-fields .voxel-toc-item {
+    display: block;
+}
+
+.vt-toc-step-label {
+    display: inline;
+}
+
+.vt-toc-fields {
+    list-style: none;
+    margin: 8px 0 0 0;
+    padding: 0 0 0 20px;
+}
+
+.vt-toc-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.vt-toc-field:last-child {
+    margin-bottom: 0;
+}
+
+.vt-toc-field-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    min-width: 12px;
+    border-radius: 50%;
+    border: 2px solid #e0e0e0;
+    background-color: transparent;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.vt-toc-field.is-filled .vt-toc-field-indicator {
+    background-color: #22c55e;
+    border-color: #22c55e;
+}
+
+.vt-toc-field-label {
+    font-size: 0.9em;
+    color: #888888;
+    transition: color 0.2s ease;
+}
+
+.vt-toc-field.is-filled .vt-toc-field-label {
+    color: #333333;
+}
+
+/* Hide fields list for hidden steps */
+.voxel-toc-item.vt-toc-hidden .vt-toc-fields {
+    display: none;
+}
+
+/* Step numbering with fields - maintain proper counter behavior */
+.vt-toc-with-fields ol.voxel-toc-list .voxel-toc-item:not(.vt-toc-hidden)::before {
+    content: counter(toc-counter) ". ";
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .vt-toc-fields {
+        padding-left: 15px;
+    }
+
+    .vt-toc-field-indicator {
+        width: 10px;
+        height: 10px;
+        min-width: 10px;
+    }
+
+    .vt-toc-field-label {
+        font-size: 0.85em;
+    }
+}

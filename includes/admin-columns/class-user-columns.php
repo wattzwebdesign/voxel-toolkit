@@ -20,6 +20,46 @@ class Voxel_Toolkit_User_Columns {
     private static $instance = null;
 
     /**
+     * Custom post count subquery for sorting
+     */
+    private $post_count_subquery = null;
+
+    /**
+     * Post count sort order
+     */
+    private $post_count_order = 'DESC';
+
+    /**
+     * Membership expiration filter value
+     */
+    private $membership_expiration_filter = null;
+
+    /**
+     * Membership expiration sort data
+     */
+    private $membership_expiration_sort_order = 'ASC';
+
+    /**
+     * User field filters for pre_user_query
+     */
+    private $user_field_filters = array();
+
+    /**
+     * Post count filter data
+     */
+    private $post_count_filter = null;
+
+    /**
+     * Filter logic (AND/OR)
+     */
+    private $filter_logic = 'AND';
+
+    /**
+     * All filters for combined processing
+     */
+    private $all_filters = array();
+
+    /**
      * Get singleton instance
      */
     public static function instance() {
@@ -78,6 +118,26 @@ class Voxel_Toolkit_User_Columns {
             array(),
             VOXEL_TOOLKIT_VERSION
         );
+
+        // Check if any columns have filterable enabled
+        $has_filterable = false;
+        foreach ($config['columns'] as $col) {
+            if (!empty($col['filterable'])) {
+                $has_filterable = true;
+                break;
+            }
+        }
+
+        // Enqueue filter bar JS if there are filterable columns
+        if ($has_filterable) {
+            wp_enqueue_script(
+                'vt-admin-filter-bar',
+                VOXEL_TOOLKIT_PLUGIN_URL . 'includes/admin-columns/assets/js/admin-filter-bar.js',
+                array('jquery'),
+                VOXEL_TOOLKIT_VERSION,
+                true
+            );
+        }
 
         // Output column width styles
         $this->output_column_width_styles($config);
@@ -151,7 +211,7 @@ class Voxel_Toolkit_User_Columns {
                 'type' => 'user-id',
                 'type_label' => __('WordPress', 'voxel-toolkit'),
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':username',
@@ -159,7 +219,7 @@ class Voxel_Toolkit_User_Columns {
                 'type' => 'user-username',
                 'type_label' => __('WordPress', 'voxel-toolkit'),
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':display_name',
@@ -167,7 +227,7 @@ class Voxel_Toolkit_User_Columns {
                 'type' => 'user-display-name',
                 'type_label' => __('WordPress', 'voxel-toolkit'),
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':full_name',
@@ -175,7 +235,7 @@ class Voxel_Toolkit_User_Columns {
                 'type' => 'user-full-name',
                 'type_label' => __('WordPress', 'voxel-toolkit'),
                 'sortable' => false,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':first_name',
@@ -183,7 +243,7 @@ class Voxel_Toolkit_User_Columns {
                 'type' => 'user-first-name',
                 'type_label' => __('WordPress', 'voxel-toolkit'),
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':last_name',
@@ -191,7 +251,7 @@ class Voxel_Toolkit_User_Columns {
                 'type' => 'user-last-name',
                 'type_label' => __('WordPress', 'voxel-toolkit'),
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':nickname',
@@ -199,7 +259,7 @@ class Voxel_Toolkit_User_Columns {
                 'type' => 'user-nickname',
                 'type_label' => __('WordPress', 'voxel-toolkit'),
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':role',
@@ -215,7 +275,7 @@ class Voxel_Toolkit_User_Columns {
                 'type' => 'user-registered',
                 'type_label' => __('WordPress', 'voxel-toolkit'),
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
             ),
         );
 
@@ -227,7 +287,7 @@ class Voxel_Toolkit_User_Columns {
                 'type' => 'user-email',
                 'type_label' => __('WordPress', 'voxel-toolkit'),
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':website',
@@ -235,7 +295,7 @@ class Voxel_Toolkit_User_Columns {
                 'type' => 'user-website',
                 'type_label' => __('WordPress', 'voxel-toolkit'),
                 'sortable' => false,
-                'filterable' => false,
+                'filterable' => true,
             ),
         );
 
@@ -268,10 +328,28 @@ class Voxel_Toolkit_User_Columns {
                 'type' => 'user-post-count',
                 'type_label' => __('WordPress', 'voxel-toolkit'),
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
                 'has_post_type_setting' => true,
             ),
         );
+
+        // Voxel fields (only show if Voxel is active)
+        if (class_exists('\Voxel\Modules\Paid_Memberships\Plan')) {
+            $grouped_fields['voxel'] = array(
+                'label' => __('Voxel', 'voxel-toolkit'),
+                'fields' => array(
+                    array(
+                        'key' => ':membership_plan',
+                        'label' => __('Membership Plan', 'voxel-toolkit'),
+                        'type' => 'user-membership-plan',
+                        'type_label' => __('Voxel', 'voxel-toolkit'),
+                        'sortable' => true,
+                        'filterable' => true,
+                        'has_membership_plan_setting' => true,
+                    ),
+                ),
+            );
+        }
 
         // Remove empty groups
         $grouped_fields = array_filter($grouped_fields, function($group) {
@@ -463,6 +541,16 @@ class Voxel_Toolkit_User_Columns {
                     );
                 }
 
+                // Sanitize membership plan settings if present
+                if (isset($column['membership_plan_settings']) && is_array($column['membership_plan_settings'])) {
+                    $valid_displays = array('plan_name', 'status', 'expiration', 'summary');
+                    $sanitized_column['membership_plan_settings'] = array(
+                        'display' => isset($column['membership_plan_settings']['display']) && in_array($column['membership_plan_settings']['display'], $valid_displays)
+                            ? $column['membership_plan_settings']['display']
+                            : 'plan_name',
+                    );
+                }
+
                 $sanitized['columns'][] = $sanitized_column;
             }
         }
@@ -478,6 +566,11 @@ class Voxel_Toolkit_User_Columns {
                         ? $config['settings']['default_sort']['order']
                         : 'desc',
                 );
+            }
+
+            // Quick actions column - which column displays row actions
+            if (isset($config['settings']['quick_actions_column'])) {
+                $sanitized['settings']['quick_actions_column'] = sanitize_text_field($config['settings']['quick_actions_column']);
             }
         }
 
@@ -513,11 +606,14 @@ class Voxel_Toolkit_User_Columns {
         // Handle sorting
         add_action('pre_get_users', array($this, 'handle_sort_query'));
 
-        // Add filter dropdowns
-        add_action('restrict_manage_users', array($this, 'render_filter_dropdowns'));
+        // Add filter bar
+        add_action('restrict_manage_users', array($this, 'render_filter_bar'));
 
         // Handle filter query
         add_action('pre_get_users', array($this, 'handle_filter_query'));
+
+        // Enqueue filter bar assets
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_filter_assets'));
 
         // Add Edit Columns link
         add_action('manage_users_extra_tablenav', array($this, 'render_edit_columns_link'));
@@ -578,7 +674,89 @@ class Voxel_Toolkit_User_Columns {
             return '&mdash;';
         }
 
-        return $this->render_user_field($column_config['field_key'], $user_id, $column_config);
+        $rendered = $this->render_user_field($column_config['field_key'], $user_id, $column_config);
+
+        // Check if this column should have row actions
+        $quick_actions_column = isset($config['settings']['quick_actions_column']) ? $config['settings']['quick_actions_column'] : '';
+        if ($quick_actions_column && $quick_actions_column === $column_id) {
+            $rendered .= $this->render_user_row_actions($user_id);
+        }
+
+        return $rendered;
+    }
+
+    /**
+     * Render row actions for user
+     */
+    private function render_user_row_actions($user_id) {
+        $user = get_userdata($user_id);
+        if (!$user) {
+            return '';
+        }
+
+        $actions = array();
+
+        // Edit link
+        if (current_user_can('edit_user', $user_id)) {
+            $edit_url = get_edit_user_link($user_id);
+            $actions['edit'] = '<a href="' . esc_url($edit_url) . '">' . __('Edit', 'voxel-toolkit') . '</a>';
+        }
+
+        // Delete/Remove link
+        if ($user_id !== get_current_user_id()) {
+            if (is_multisite()) {
+                if (current_user_can('remove_user', $user_id)) {
+                    $remove_url = wp_nonce_url(
+                        add_query_arg('action', 'remove', "users.php?user=$user_id"),
+                        'bulk-users'
+                    );
+                    $actions['remove'] = '<a href="' . esc_url($remove_url) . '" class="submitdelete">' . __('Remove', 'voxel-toolkit') . '</a>';
+                }
+            } else {
+                if (current_user_can('delete_user', $user_id)) {
+                    $delete_url = wp_nonce_url(
+                        add_query_arg('action', 'delete', "users.php?user=$user_id"),
+                        'bulk-users'
+                    );
+                    $actions['delete'] = '<a href="' . esc_url($delete_url) . '" class="submitdelete">' . __('Delete', 'voxel-toolkit') . '</a>';
+                }
+            }
+        }
+
+        // View link (author archive)
+        if (get_current_blog_id() === get_user_meta($user_id, 'primary_blog', true)) {
+            $author_url = get_author_posts_url($user_id);
+            if ($author_url) {
+                $actions['view'] = '<a href="' . esc_url($author_url) . '" target="_blank">' . __('View', 'voxel-toolkit') . '</a>';
+            }
+        }
+
+        // Send password reset
+        if (current_user_can('edit_user', $user_id)) {
+            $reset_url = wp_nonce_url(
+                add_query_arg(array('action' => 'resetpassword', 'users' => $user_id), 'users.php'),
+                'bulk-users'
+            );
+            $actions['resetpassword'] = '<a href="' . esc_url($reset_url) . '">' . __('Send password reset', 'voxel-toolkit') . '</a>';
+        }
+
+        if (empty($actions)) {
+            return '';
+        }
+
+        // Build the row actions HTML
+        $action_links = array();
+        $i = 0;
+        foreach ($actions as $action => $link) {
+            $i++;
+            if ($i === 1) {
+                $action_links[] = '<span class="' . esc_attr($action) . '">' . $link . '</span>';
+            } else {
+                $action_links[] = '<span class="' . esc_attr($action) . '"> | ' . $link . '</span>';
+            }
+        }
+
+        return '<div class="row-actions">' . implode('', $action_links) . '</div>';
     }
 
     /**
@@ -665,6 +843,9 @@ class Voxel_Toolkit_User_Columns {
 
             case ':post_count':
                 return $this->render_user_post_count($user_id, $column_config);
+
+            case ':membership_plan':
+                return $this->render_user_membership_plan($user_id, $column_config);
 
             default:
                 return '&mdash;';
@@ -794,6 +975,219 @@ class Voxel_Toolkit_User_Columns {
     }
 
     /**
+     * Render user membership plan
+     */
+    private function render_user_membership_plan($user_id, $column_config = null) {
+        // Get plan data from user meta (handles test mode)
+        $plan_data = $this->get_user_membership_data($user_id);
+
+        if (empty($plan_data)) {
+            // Default/Guest plan
+            return '<span class="vt-ac-badge vt-ac-membership-plan vt-ac-guest">' . esc_html__('Guest', 'voxel-toolkit') . '</span>';
+        }
+
+        // Get display mode from column config
+        $display_mode = 'plan_name';
+        if (isset($column_config['membership_plan_settings']['display'])) {
+            $display_mode = $column_config['membership_plan_settings']['display'];
+        }
+
+        $plan_key = isset($plan_data['plan']) ? $plan_data['plan'] : '';
+
+        // Handle default/guest plan explicitly
+        if (empty($plan_key) || $plan_key === 'default') {
+            return '<span class="vt-ac-badge vt-ac-membership-plan vt-ac-guest">' . esc_html__('Guest', 'voxel-toolkit') . '</span>';
+        }
+
+        switch ($display_mode) {
+            case 'plan_name':
+                return $this->render_membership_plan_name($plan_key);
+
+            case 'status':
+                return $this->render_membership_plan_status($plan_data);
+
+            case 'expiration':
+                return $this->render_membership_plan_expiration($plan_data);
+
+            case 'summary':
+                return $this->render_membership_plan_summary($plan_key, $plan_data);
+
+            default:
+                return $this->render_membership_plan_name($plan_key);
+        }
+    }
+
+    /**
+     * Get user membership data (handles both test mode and regular mode)
+     */
+    private function get_user_membership_data($user_id) {
+        // Determine which meta key to use based on test mode
+        $meta_key = 'voxel:plan';
+        if (function_exists('\Voxel\is_test_mode') && \Voxel\is_test_mode()) {
+            $meta_key = 'voxel:test_plan';
+        }
+
+        // Handle multisite if needed
+        if (function_exists('\Voxel\get_site_specific_user_meta_key')) {
+            $meta_key = \Voxel\get_site_specific_user_meta_key($meta_key);
+        }
+
+        $plan_data = get_user_meta($user_id, $meta_key, true);
+
+        if (empty($plan_data)) {
+            return null;
+        }
+
+        // Decode if JSON string
+        if (is_string($plan_data)) {
+            $plan_data = json_decode($plan_data, true);
+        }
+
+        if (!is_array($plan_data)) {
+            return null;
+        }
+
+        return $plan_data;
+    }
+
+    /**
+     * Get membership plan label from plan key
+     */
+    private function get_membership_plan_label($plan_key) {
+        if (empty($plan_key) || $plan_key === 'default') {
+            return __('Guest', 'voxel-toolkit');
+        }
+
+        // Try to get label from Voxel
+        if (class_exists('\Voxel\Modules\Paid_Memberships\Plan')) {
+            $plans = \Voxel\Modules\Paid_Memberships\Plan::active();
+            foreach ($plans as $plan) {
+                if ($plan->get_key() === $plan_key) {
+                    return $plan->get_label();
+                }
+            }
+        }
+
+        // Fallback to formatted key
+        return ucwords(str_replace(array('-', '_'), ' ', $plan_key));
+    }
+
+    /**
+     * Render membership plan name
+     */
+    private function render_membership_plan_name($plan_key) {
+        $label = $this->get_membership_plan_label($plan_key);
+        return '<span class="vt-ac-badge vt-ac-membership-plan"><span class="dashicons dashicons-groups"></span> ' . esc_html($label) . '</span>';
+    }
+
+    /**
+     * Render membership plan status
+     */
+    private function render_membership_plan_status($plan_data) {
+        $is_active = false;
+        $status_label = __('Unknown', 'voxel-toolkit');
+
+        // New format (order-based)
+        if (isset($plan_data['type']) && $plan_data['type'] === 'order') {
+            if (isset($plan_data['billing']['is_active'])) {
+                $is_active = $plan_data['billing']['is_active'];
+            }
+            if ($is_active) {
+                $status_label = isset($plan_data['billing']['is_canceled']) && $plan_data['billing']['is_canceled']
+                    ? __('Canceled', 'voxel-toolkit')
+                    : __('Active', 'voxel-toolkit');
+            } else {
+                $status_label = __('Expired', 'voxel-toolkit');
+            }
+        }
+        // Old format (Stripe subscription-based)
+        elseif (isset($plan_data['type']) && $plan_data['type'] === 'subscription') {
+            $status = isset($plan_data['status']) ? $plan_data['status'] : '';
+            switch ($status) {
+                case 'active':
+                    $is_active = true;
+                    $status_label = isset($plan_data['cancel_at_period_end']) && $plan_data['cancel_at_period_end']
+                        ? __('Canceling', 'voxel-toolkit')
+                        : __('Active', 'voxel-toolkit');
+                    break;
+                case 'trialing':
+                    $is_active = true;
+                    $status_label = __('Trial', 'voxel-toolkit');
+                    break;
+                case 'past_due':
+                    $status_label = __('Past Due', 'voxel-toolkit');
+                    break;
+                case 'canceled':
+                    $status_label = __('Canceled', 'voxel-toolkit');
+                    break;
+                default:
+                    $status_label = ucfirst($status);
+            }
+        }
+
+        $class = $is_active ? 'vt-ac-status-publish' : 'vt-ac-status-draft';
+        return '<span class="vt-ac-badge ' . esc_attr($class) . '">' . esc_html($status_label) . '</span>';
+    }
+
+    /**
+     * Render membership plan expiration
+     */
+    private function render_membership_plan_expiration($plan_data) {
+        $expiration = null;
+
+        // New format (order-based)
+        if (isset($plan_data['type']) && $plan_data['type'] === 'order') {
+            if (isset($plan_data['billing']['current_period']['end'])) {
+                $expiration = strtotime($plan_data['billing']['current_period']['end']);
+            }
+        }
+        // Old format (Stripe subscription-based)
+        elseif (isset($plan_data['type']) && $plan_data['type'] === 'subscription') {
+            if (isset($plan_data['current_period_end'])) {
+                $expiration = intval($plan_data['current_period_end']);
+            }
+        }
+
+        if (!$expiration) {
+            return '&mdash;';
+        }
+
+        $now = time();
+        $formatted = date_i18n(get_option('date_format'), $expiration);
+
+        if ($expiration < $now) {
+            return '<span class="vt-ac-date vt-ac-muted" title="' . esc_attr__('Expired', 'voxel-toolkit') . '">' . esc_html($formatted) . '</span>';
+        }
+
+        $days_left = ceil(($expiration - $now) / DAY_IN_SECONDS);
+        $title = sprintf(_n('%d day left', '%d days left', $days_left, 'voxel-toolkit'), $days_left);
+
+        return '<span class="vt-ac-date" title="' . esc_attr($title) . '">' . esc_html($formatted) . '</span>';
+    }
+
+    /**
+     * Render membership plan summary
+     */
+    private function render_membership_plan_summary($plan_key, $plan_data) {
+        $parts = array();
+
+        // Plan name
+        $label = $this->get_membership_plan_label($plan_key);
+        $parts[] = '<span class="vt-ac-badge vt-ac-membership-plan">' . esc_html($label) . '</span>';
+
+        // Status
+        $parts[] = $this->render_membership_plan_status($plan_data);
+
+        // Expiration
+        $expiration = $this->render_membership_plan_expiration($plan_data);
+        if ($expiration !== '&mdash;') {
+            $parts[] = $expiration;
+        }
+
+        return '<span class="vt-ac-summary">' . implode(' ', $parts) . '</span>';
+    }
+
+    /**
      * Register sortable columns
      */
     public function register_sortable_columns($sortable) {
@@ -817,11 +1211,17 @@ class Voxel_Toolkit_User_Columns {
      * Handle sort query
      */
     public function handle_sort_query($query) {
-        if (!is_admin() || !$query->is_main_query()) {
+        // Only run in admin on users.php
+        if (!is_admin()) {
             return;
         }
 
-        $orderby = $query->get('orderby');
+        global $pagenow;
+        if ($pagenow !== 'users.php') {
+            return;
+        }
+
+        $orderby = isset($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : '';
         if (empty($orderby)) {
             return;
         }
@@ -835,38 +1235,68 @@ class Voxel_Toolkit_User_Columns {
             if ($col['field_key'] === $orderby && !empty($col['sortable'])) {
                 switch ($col['field_key']) {
                     case ':user_id':
-                        $query->set('orderby', 'ID');
+                        $query->query_vars['orderby'] = 'ID';
                         break;
                     case ':username':
-                        $query->set('orderby', 'user_login');
+                        $query->query_vars['orderby'] = 'user_login';
                         break;
                     case ':display_name':
-                        $query->set('orderby', 'display_name');
+                        $query->query_vars['orderby'] = 'display_name';
                         break;
                     case ':email':
-                        $query->set('orderby', 'user_email');
+                        $query->query_vars['orderby'] = 'user_email';
                         break;
                     case ':registered_date':
-                        $query->set('orderby', 'registered');
+                        $query->query_vars['orderby'] = 'registered';
                         break;
                     case ':first_name':
-                        $query->set('meta_key', 'first_name');
-                        $query->set('orderby', 'meta_value');
+                        $query->query_vars['meta_key'] = 'first_name';
+                        $query->query_vars['orderby'] = 'meta_value';
                         break;
                     case ':last_name':
-                        $query->set('meta_key', 'last_name');
-                        $query->set('orderby', 'meta_value');
+                        $query->query_vars['meta_key'] = 'last_name';
+                        $query->query_vars['orderby'] = 'meta_value';
                         break;
                     case ':nickname':
-                        $query->set('meta_key', 'nickname');
-                        $query->set('orderby', 'meta_value');
+                        $query->query_vars['meta_key'] = 'nickname';
+                        $query->query_vars['orderby'] = 'meta_value';
                         break;
                     case ':post_count':
-                        $query->set('orderby', 'post_count');
+                        // Get the specific post type and statuses from the column config
+                        $post_type = 'post';
+                        $post_statuses = array('publish');
+                        if (isset($col['post_count_settings'])) {
+                            if (!empty($col['post_count_settings']['post_type'])) {
+                                $post_type = $col['post_count_settings']['post_type'];
+                            }
+                            if (!empty($col['post_count_settings']['post_statuses'])) {
+                                $post_statuses = $col['post_count_settings']['post_statuses'];
+                            }
+                        }
+
+                        // Build the subquery for custom post type counting
+                        global $wpdb;
+                        $statuses_placeholder = implode(',', array_fill(0, count($post_statuses), '%s'));
+                        $subquery = $wpdb->prepare(
+                            "(SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_author = {$wpdb->users}.ID AND post_type = %s AND post_status IN ({$statuses_placeholder}))",
+                            array_merge(array($post_type), $post_statuses)
+                        );
+
+                        // Store for later use in the query filter
+                        $this->post_count_subquery = $subquery;
+                        $this->post_count_order = isset($_GET['order']) ? strtoupper(sanitize_text_field($_GET['order'])) : 'DESC';
+
+                        // Use pre_user_query to modify the query
+                        add_filter('pre_user_query', array($this, 'modify_post_count_query'));
                         break;
                     case ':language':
-                        $query->set('meta_key', 'locale');
-                        $query->set('orderby', 'meta_value');
+                        $query->query_vars['meta_key'] = 'locale';
+                        $query->query_vars['orderby'] = 'meta_value';
+                        break;
+                    case ':membership_plan':
+                        // Sort by expiration date
+                        $this->membership_expiration_sort_order = isset($_GET['order']) ? strtoupper(sanitize_text_field($_GET['order'])) : 'ASC';
+                        add_filter('pre_user_query', array($this, 'sort_by_membership_expiration'));
                         break;
                 }
                 break;
@@ -875,9 +1305,78 @@ class Voxel_Toolkit_User_Columns {
     }
 
     /**
-     * Render filter dropdowns
+     * Sort users by membership expiration date
      */
-    public function render_filter_dropdowns($which) {
+    public function sort_by_membership_expiration($user_query) {
+        remove_filter('pre_user_query', array($this, 'sort_by_membership_expiration'));
+
+        global $wpdb;
+        $meta_key = $this->get_membership_meta_key();
+        $order = $this->membership_expiration_sort_order === 'DESC' ? 'DESC' : 'ASC';
+
+        // Join with usermeta to get the plan data and extract expiration
+        // Handle both order format (billing.current_period.end as datetime) and subscription format (current_period_end as timestamp)
+        $user_query->query_from .= $wpdb->prepare(
+            " LEFT JOIN {$wpdb->usermeta} AS vt_plan_meta ON ({$wpdb->users}.ID = vt_plan_meta.user_id AND vt_plan_meta.meta_key = %s)",
+            $meta_key
+        );
+
+        // Order by expiration date - coalesce both formats into a comparable value
+        // For order type: extract datetime string and convert
+        // For subscription type: extract unix timestamp and convert
+        $user_query->query_orderby = "ORDER BY
+            COALESCE(
+                CASE
+                    WHEN vt_plan_meta.meta_value LIKE '%\"type\":\"order\"%'
+                    THEN STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(vt_plan_meta.meta_value, '$.billing.current_period.end')), '%Y-%m-%d %H:%i:%s')
+                    WHEN vt_plan_meta.meta_value LIKE '%\"type\":\"subscription\"%'
+                    THEN FROM_UNIXTIME(CAST(JSON_UNQUOTE(JSON_EXTRACT(vt_plan_meta.meta_value, '$.current_period_end')) AS UNSIGNED))
+                    ELSE NULL
+                END,
+                '9999-12-31'
+            ) {$order}";
+
+        return $user_query;
+    }
+
+    /**
+     * Modify user query for custom post count sorting
+     */
+    public function modify_post_count_query($user_query) {
+        if (empty($this->post_count_subquery)) {
+            return $user_query;
+        }
+
+        // Remove this filter to prevent running multiple times
+        remove_filter('pre_user_query', array($this, 'modify_post_count_query'));
+
+        // Add the orderby clause using the subquery
+        $order = $this->post_count_order === 'ASC' ? 'ASC' : 'DESC';
+        $user_query->query_orderby = "ORDER BY {$this->post_count_subquery} {$order}";
+
+        // Clear the stored subquery
+        $this->post_count_subquery = null;
+
+        return $user_query;
+    }
+
+    /**
+     * Enqueue filter bar assets
+     */
+    public function enqueue_filter_assets($hook) {
+        if ($hook !== 'users.php') {
+            return;
+        }
+
+        // Include the filter bar class
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/admin-columns/class-filter-bar.php';
+        Voxel_Toolkit_Filter_Bar::enqueue_assets();
+    }
+
+    /**
+     * Render filter bar
+     */
+    public function render_filter_bar($which) {
         if ($which !== 'top') {
             return;
         }
@@ -887,82 +1386,979 @@ class Voxel_Toolkit_User_Columns {
             return;
         }
 
+        // Build filterable fields list
+        $filterable_fields = $this->get_filterable_fields($config);
+
+        if (empty($filterable_fields)) {
+            return;
+        }
+
+        // Include the filter bar class
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/admin-columns/class-filter-bar.php';
+
+        $filter_bar = new Voxel_Toolkit_Filter_Bar('users');
+        $filter_bar->set_fields($filterable_fields);
+        $filter_bar->render();
+    }
+
+    /**
+     * Get filterable fields from config
+     */
+    private function get_filterable_fields($config) {
+        $fields = array();
+
         foreach ($config['columns'] as $col) {
             if (empty($col['filterable'])) {
                 continue;
             }
 
-            if ($col['field_key'] === ':role') {
-                // Role filter is already provided by WordPress
-                continue;
+            $field = array(
+                'key' => $col['field_key'],
+                'label' => !empty($col['label']) ? $col['label'] : $this->get_field_label($col['field_key']),
+                'filter_type' => $this->get_field_filter_type($col['field_key']),
+            );
+
+            // Add options for select-type fields
+            $options = $this->get_field_filter_options($col);
+            if (!empty($options)) {
+                $field['options'] = $options;
             }
 
-            if ($col['field_key'] === ':language') {
-                $this->render_language_filter($col);
-            }
+            $fields[] = $field;
         }
+
+        return $fields;
     }
 
     /**
-     * Render language filter dropdown
+     * Get field label
      */
-    private function render_language_filter($col) {
-        $current_value = isset($_GET['vt_filter_language']) ? sanitize_text_field($_GET['vt_filter_language']) : '';
+    private function get_field_label($field_key) {
+        $labels = array(
+            ':user_id' => __('User ID', 'voxel-toolkit'),
+            ':username' => __('Username', 'voxel-toolkit'),
+            ':email' => __('Email', 'voxel-toolkit'),
+            ':display_name' => __('Display Name', 'voxel-toolkit'),
+            ':first_name' => __('First Name', 'voxel-toolkit'),
+            ':last_name' => __('Last Name', 'voxel-toolkit'),
+            ':nickname' => __('Nickname', 'voxel-toolkit'),
+            ':full_name' => __('Full Name', 'voxel-toolkit'),
+            ':role' => __('Role', 'voxel-toolkit'),
+            ':registered_date' => __('Registered Date', 'voxel-toolkit'),
+            ':language' => __('Language', 'voxel-toolkit'),
+            ':post_count' => __('Post Count', 'voxel-toolkit'),
+            ':membership_plan' => __('Membership Plan', 'voxel-toolkit'),
+        );
 
-        require_once ABSPATH . 'wp-admin/includes/translation-install.php';
-        $translations = wp_get_available_translations();
+        return isset($labels[$field_key]) ? $labels[$field_key] : $field_key;
+    }
 
-        ?>
-        <select name="vt_filter_language" style="float: none; margin-left: 6px;">
-            <option value=""><?php echo esc_html($col['label'] ?: __('Language', 'voxel-toolkit')); ?></option>
-            <option value="_site_default" <?php selected($current_value, '_site_default'); ?>><?php _e('Site Default', 'voxel-toolkit'); ?></option>
-            <?php foreach ($translations as $locale => $translation) : ?>
-                <option value="<?php echo esc_attr($locale); ?>" <?php selected($current_value, $locale); ?>>
-                    <?php echo esc_html($translation['native_name']); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <?php
+    /**
+     * Get field filter type
+     */
+    private function get_field_filter_type($field_key) {
+        $types = array(
+            ':user_id' => 'number',
+            ':username' => 'text',
+            ':email' => 'text',
+            ':display_name' => 'text',
+            ':first_name' => 'text',
+            ':last_name' => 'text',
+            ':nickname' => 'text',
+            ':full_name' => 'text',
+            ':role' => 'select',
+            ':registered_date' => 'date',
+            ':language' => 'select',
+            ':post_count' => 'number',
+            ':membership_plan' => 'select',
+        );
+
+        return isset($types[$field_key]) ? $types[$field_key] : 'text';
+    }
+
+    /**
+     * Get field filter options
+     */
+    private function get_field_filter_options($col) {
+        $field_key = $col['field_key'];
+        $options = array();
+
+        switch ($field_key) {
+            case ':role':
+                global $wp_roles;
+                foreach ($wp_roles->roles as $role_key => $role_data) {
+                    $options[] = array('value' => $role_key, 'label' => $role_data['name']);
+                }
+                break;
+
+            case ':language':
+                require_once ABSPATH . 'wp-admin/includes/translation-install.php';
+                $translations = wp_get_available_translations();
+
+                $options[] = array('value' => '_site_default', 'label' => __('Site Default', 'voxel-toolkit'));
+                foreach ($translations as $locale => $translation) {
+                    $options[] = array('value' => $locale, 'label' => $translation['native_name']);
+                }
+                break;
+
+            case ':membership_plan':
+                // Check display mode first
+                $display_mode = isset($col['membership_plan_settings']['display']) ? $col['membership_plan_settings']['display'] : 'plan_name';
+
+                if ($display_mode === 'status') {
+                    $options = array(
+                        array('value' => 'active', 'label' => __('Active', 'voxel-toolkit')),
+                        array('value' => 'canceled', 'label' => __('Canceled', 'voxel-toolkit')),
+                        array('value' => 'expired', 'label' => __('Expired', 'voxel-toolkit')),
+                        array('value' => 'trial', 'label' => __('Trial', 'voxel-toolkit')),
+                        array('value' => 'guest', 'label' => __('Guest (No Plan)', 'voxel-toolkit')),
+                    );
+                } elseif ($display_mode === 'expiration') {
+                    $options = array(
+                        array('value' => 'expired', 'label' => __('Already Expired', 'voxel-toolkit')),
+                        array('value' => '7days', 'label' => __('Expires within 7 days', 'voxel-toolkit')),
+                        array('value' => '30days', 'label' => __('Expires within 30 days', 'voxel-toolkit')),
+                        array('value' => '90days', 'label' => __('Expires within 90 days', 'voxel-toolkit')),
+                        array('value' => 'active', 'label' => __('Not Expired', 'voxel-toolkit')),
+                    );
+                } else {
+                    // Default: filter by plan name
+                    // Add Guest option first
+                    $options[] = array('value' => 'default', 'label' => __('Guest', 'voxel-toolkit'));
+
+                    // Get membership plans (skip if key is 'default' to avoid duplicate)
+                    if (class_exists('\Voxel\Modules\Paid_Memberships\Plan')) {
+                        $voxel_plans = \Voxel\Modules\Paid_Memberships\Plan::active();
+                        foreach ($voxel_plans as $plan) {
+                            $plan_key = $plan->get_key();
+                            if ($plan_key !== 'default') {
+                                $options[] = array('value' => $plan_key, 'label' => $plan->get_label());
+                            }
+                        }
+                    }
+                }
+                break;
+        }
+
+        return $options;
+    }
+
+    /**
+     * Get available membership plans for filter
+     */
+    private function get_available_membership_plans() {
+        $plans = array();
+
+        // Add Guest/Default option first
+        $plans['default'] = __('Guest', 'voxel-toolkit');
+
+        // Get all active membership plans from Voxel
+        if (class_exists('\Voxel\Modules\Paid_Memberships\Plan')) {
+            $voxel_plans = \Voxel\Modules\Paid_Memberships\Plan::active();
+            foreach ($voxel_plans as $plan) {
+                $plans[$plan->get_key()] = $plan->get_label();
+            }
+        }
+
+        return $plans;
     }
 
     /**
      * Handle filter query
      */
     public function handle_filter_query($query) {
-        if (!is_admin() || !$query->is_main_query()) {
+        // Only run in admin on users.php
+        if (!is_admin()) {
             return;
         }
 
-        $meta_query = $query->get('meta_query') ?: array();
+        global $pagenow;
+        if ($pagenow !== 'users.php') {
+            return;
+        }
 
-        // Language filter
-        if (isset($_GET['vt_filter_language']) && $_GET['vt_filter_language'] !== '') {
-            $language = sanitize_text_field($_GET['vt_filter_language']);
+        // Include the filter bar class
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/admin-columns/class-filter-bar.php';
 
-            if ($language === '_site_default') {
-                // Users with no locale set (using site default)
-                $meta_query[] = array(
-                    'relation' => 'OR',
-                    array(
-                        'key' => 'locale',
-                        'compare' => 'NOT EXISTS',
-                    ),
-                    array(
-                        'key' => 'locale',
-                        'value' => '',
-                    ),
-                );
-            } else {
-                $meta_query[] = array(
-                    'key' => 'locale',
-                    'value' => $language,
-                );
+        // Parse filters from the new system
+        $filters = Voxel_Toolkit_Filter_Bar::parse_filters();
+
+        if (empty($filters)) {
+            return;
+        }
+
+        // Get filter logic FIRST before processing any filters
+        $this->filter_logic = Voxel_Toolkit_Filter_Bar::get_filter_logic();
+
+        // Get column config for looking up field settings
+        $config = get_option('voxel_toolkit_user_columns', array());
+        $columns_by_key = array();
+        if (!empty($config['columns'])) {
+            foreach ($config['columns'] as $col) {
+                $columns_by_key[$col['field_key']] = $col;
             }
         }
 
-        if (!empty($meta_query)) {
-            $query->set('meta_query', $meta_query);
+        $membership_meta_key = $this->get_membership_meta_key();
+
+        // Store all filter data for processing in pre_user_query
+        $this->all_filters = array();
+
+        foreach ($filters as $filter) {
+            $field_key = $filter['field'];
+            $operator = $filter['operator'];
+            $value = $filter['value'];
+            $column_config = isset($columns_by_key[$field_key]) ? $columns_by_key[$field_key] : array();
+
+            $filter_data = array(
+                'field_key' => $field_key,
+                'operator' => $operator,
+                'value' => $value,
+                'column_config' => $column_config,
+                'membership_meta_key' => $membership_meta_key,
+            );
+
+            $this->all_filters[] = $filter_data;
         }
+
+        // Add single hook to handle all filters with proper AND/OR logic
+        if (!empty($this->all_filters)) {
+            add_filter('pre_user_query', array($this, 'apply_all_filters_to_query'));
+        }
+    }
+
+    /**
+     * Apply all filters to query with proper AND/OR logic
+     */
+    public function apply_all_filters_to_query($user_query) {
+        if (empty($this->all_filters)) {
+            return $user_query;
+        }
+
+        global $wpdb;
+
+        $conditions = array();
+
+        foreach ($this->all_filters as $filter) {
+            $field_key = $filter['field_key'];
+            $operator = $filter['operator'];
+            $value = $filter['value'];
+            $column_config = $filter['column_config'];
+            $membership_meta_key = $filter['membership_meta_key'];
+
+            $condition = $this->build_sql_condition($field_key, $operator, $value, $column_config, $membership_meta_key);
+            if ($condition) {
+                $conditions[] = $condition;
+            }
+        }
+
+        // Apply conditions with AND or OR logic
+        if (!empty($conditions)) {
+            $logic = $this->filter_logic === 'OR' ? ' OR ' : ' AND ';
+            $user_query->query_where .= ' AND (' . implode($logic, $conditions) . ')';
+        }
+
+        // Clear filters after applying
+        $this->all_filters = array();
+
+        return $user_query;
+    }
+
+    /**
+     * Build SQL condition for a single filter
+     */
+    private function build_sql_condition($field_key, $operator, $value, $column_config, $membership_meta_key) {
+        global $wpdb;
+
+        switch ($field_key) {
+            case ':user_id':
+                return $this->build_user_field_sql('ID', $operator, $value);
+
+            case ':username':
+                return $this->build_user_field_sql('user_login', $operator, $value);
+
+            case ':email':
+                return $this->build_user_field_sql('user_email', $operator, $value);
+
+            case ':display_name':
+                return $this->build_user_field_sql('display_name', $operator, $value);
+
+            case ':registered_date':
+                return $this->build_user_field_sql('user_registered', $operator, $value);
+
+            case ':website':
+                return $this->build_user_field_sql('user_url', $operator, $value);
+
+            case ':role':
+                if ($operator === 'equals' && !empty($value)) {
+                    // Role is stored in usermeta as wp_capabilities
+                    $cap_key = $wpdb->prefix . 'capabilities';
+                    return $wpdb->prepare(
+                        "({$wpdb->users}.ID IN (SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s AND meta_value LIKE %s))",
+                        $cap_key,
+                        '%"' . $wpdb->esc_like($value) . '"%'
+                    );
+                } elseif ($operator === 'not_equals' && !empty($value)) {
+                    $cap_key = $wpdb->prefix . 'capabilities';
+                    return $wpdb->prepare(
+                        "({$wpdb->users}.ID NOT IN (SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s AND meta_value LIKE %s))",
+                        $cap_key,
+                        '%"' . $wpdb->esc_like($value) . '"%'
+                    );
+                }
+                return '';
+
+            case ':first_name':
+            case ':last_name':
+            case ':nickname':
+                $meta_key = ltrim($field_key, ':');
+                return $this->build_meta_sql($meta_key, $operator, $value);
+
+            case ':full_name':
+                if ($operator === 'contains' && !empty($value)) {
+                    $first = $this->build_meta_sql('first_name', 'contains', $value);
+                    $last = $this->build_meta_sql('last_name', 'contains', $value);
+                    return "({$first} OR {$last})";
+                }
+                return '';
+
+            case ':post_count':
+                $post_type = 'post';
+                $post_statuses = array('publish');
+                if (!empty($column_config['post_count_settings']['post_type'])) {
+                    $post_type = $column_config['post_count_settings']['post_type'];
+                }
+                if (!empty($column_config['post_count_settings']['post_statuses'])) {
+                    $post_statuses = $column_config['post_count_settings']['post_statuses'];
+                }
+                return $this->build_post_count_sql($operator, intval($value), $post_type, $post_statuses);
+
+            case ':membership_plan':
+                return $this->build_membership_sql($membership_meta_key, $operator, $value);
+
+            case ':language':
+                if ($value === '_site_default') {
+                    return "({$wpdb->users}.ID NOT IN (SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = 'locale' AND meta_value != ''))";
+                }
+                return $this->build_meta_sql('locale', $operator, $value);
+
+            default:
+                // Generic meta field
+                $meta_key = ltrim($field_key, ':');
+                return $this->build_meta_sql($meta_key, $operator, $value);
+        }
+    }
+
+    /**
+     * Build SQL for user table field
+     */
+    private function build_user_field_sql($field, $operator, $value) {
+        global $wpdb;
+        $column = "{$wpdb->users}.{$field}";
+
+        switch ($operator) {
+            case 'equals':
+                return $wpdb->prepare("{$column} = %s", $value);
+            case 'not_equals':
+                return $wpdb->prepare("{$column} != %s", $value);
+            case 'contains':
+                return $wpdb->prepare("{$column} LIKE %s", '%' . $wpdb->esc_like($value) . '%');
+            case 'not_contains':
+                return $wpdb->prepare("{$column} NOT LIKE %s", '%' . $wpdb->esc_like($value) . '%');
+            case 'starts_with':
+                return $wpdb->prepare("{$column} LIKE %s", $wpdb->esc_like($value) . '%');
+            case 'ends_with':
+                return $wpdb->prepare("{$column} LIKE %s", '%' . $wpdb->esc_like($value));
+            case 'greater_than':
+                return $wpdb->prepare("{$column} > %s", $value);
+            case 'less_than':
+                return $wpdb->prepare("{$column} < %s", $value);
+            case 'greater_equal':
+                return $wpdb->prepare("{$column} >= %s", $value);
+            case 'less_equal':
+                return $wpdb->prepare("{$column} <= %s", $value);
+            case 'is_empty':
+                return "({$column} IS NULL OR {$column} = '')";
+            case 'is_not_empty':
+                return "({$column} IS NOT NULL AND {$column} != '')";
+        }
+        return '';
+    }
+
+    /**
+     * Build SQL for meta field
+     */
+    private function build_meta_sql($meta_key, $operator, $value) {
+        global $wpdb;
+
+        switch ($operator) {
+            case 'equals':
+                return $wpdb->prepare(
+                    "({$wpdb->users}.ID IN (SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s AND meta_value = %s))",
+                    $meta_key, $value
+                );
+            case 'not_equals':
+                return $wpdb->prepare(
+                    "({$wpdb->users}.ID NOT IN (SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s AND meta_value = %s))",
+                    $meta_key, $value
+                );
+            case 'contains':
+                return $wpdb->prepare(
+                    "({$wpdb->users}.ID IN (SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s AND meta_value LIKE %s))",
+                    $meta_key, '%' . $wpdb->esc_like($value) . '%'
+                );
+            case 'not_contains':
+                return $wpdb->prepare(
+                    "({$wpdb->users}.ID NOT IN (SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s AND meta_value LIKE %s))",
+                    $meta_key, '%' . $wpdb->esc_like($value) . '%'
+                );
+            case 'is_empty':
+                return $wpdb->prepare(
+                    "({$wpdb->users}.ID NOT IN (SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s AND meta_value != ''))",
+                    $meta_key
+                );
+            case 'is_not_empty':
+                return $wpdb->prepare(
+                    "({$wpdb->users}.ID IN (SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s AND meta_value != ''))",
+                    $meta_key
+                );
+        }
+        return '';
+    }
+
+    /**
+     * Build SQL for post count
+     */
+    private function build_post_count_sql($operator, $value, $post_type, $post_statuses) {
+        global $wpdb;
+
+        $status_placeholders = implode(',', array_fill(0, count($post_statuses), '%s'));
+        $prepare_args = array_merge(array($post_type), $post_statuses);
+
+        $subquery = $wpdb->prepare(
+            "(SELECT COUNT(*) FROM {$wpdb->posts} WHERE {$wpdb->posts}.post_author = {$wpdb->users}.ID AND {$wpdb->posts}.post_type = %s AND {$wpdb->posts}.post_status IN ({$status_placeholders}))",
+            $prepare_args
+        );
+
+        switch ($operator) {
+            case 'equals':
+                return "{$subquery} = {$value}";
+            case 'not_equals':
+                return "{$subquery} != {$value}";
+            case 'greater_than':
+                return "{$subquery} > {$value}";
+            case 'less_than':
+                return "{$subquery} < {$value}";
+            case 'greater_equal':
+                return "{$subquery} >= {$value}";
+            case 'less_equal':
+                return "{$subquery} <= {$value}";
+        }
+        return '';
+    }
+
+    /**
+     * Build SQL for membership plan
+     */
+    private function build_membership_sql($meta_key, $operator, $value) {
+        global $wpdb;
+
+        switch ($operator) {
+            case 'equals':
+                if ($value === 'default') {
+                    // Guest users have no membership meta or it's empty
+                    return $wpdb->prepare(
+                        "({$wpdb->users}.ID NOT IN (SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s AND meta_value != '' AND meta_value IS NOT NULL))",
+                        $meta_key
+                    );
+                }
+                return $wpdb->prepare(
+                    "({$wpdb->users}.ID IN (SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s AND meta_value LIKE %s))",
+                    $meta_key, '%"plan":"' . $wpdb->esc_like($value) . '"%'
+                );
+            case 'not_equals':
+                if ($value === 'default') {
+                    return $wpdb->prepare(
+                        "({$wpdb->users}.ID IN (SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s AND meta_value != '' AND meta_value IS NOT NULL))",
+                        $meta_key
+                    );
+                }
+                return $wpdb->prepare(
+                    "({$wpdb->users}.ID NOT IN (SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s AND meta_value LIKE %s))",
+                    $meta_key, '%"plan":"' . $wpdb->esc_like($value) . '"%'
+                );
+        }
+        return '';
+    }
+
+    /**
+     * Apply filter to user table field (non-meta) - DEPRECATED, kept for compatibility
+     */
+    private function apply_user_field_filter($query, $field, $operator, $value) {
+        $this->user_field_filters[] = array(
+            'field' => $field,
+            'operator' => $operator,
+            'value' => $value,
+        );
+
+        // Add filter hook if not already added
+        if (count($this->user_field_filters) === 1) {
+            add_filter('pre_user_query', array($this, 'apply_user_field_filters_to_query'));
+        }
+    }
+
+    /**
+     * Apply user field filters to query
+     */
+    public function apply_user_field_filters_to_query($user_query) {
+        if (empty($this->user_field_filters)) {
+            return $user_query;
+        }
+
+        global $wpdb;
+
+        $conditions = array();
+
+        foreach ($this->user_field_filters as $filter) {
+            $field = $filter['field'];
+            $operator = $filter['operator'];
+            $value = $filter['value'];
+
+            $column = "{$wpdb->users}.{$field}";
+            $condition = '';
+
+            switch ($operator) {
+                case 'equals':
+                    $condition = $wpdb->prepare("{$column} = %s", $value);
+                    break;
+                case 'not_equals':
+                    $condition = $wpdb->prepare("{$column} != %s", $value);
+                    break;
+                case 'contains':
+                    $condition = $wpdb->prepare("{$column} LIKE %s", '%' . $wpdb->esc_like($value) . '%');
+                    break;
+                case 'not_contains':
+                    $condition = $wpdb->prepare("{$column} NOT LIKE %s", '%' . $wpdb->esc_like($value) . '%');
+                    break;
+                case 'starts_with':
+                    $condition = $wpdb->prepare("{$column} LIKE %s", $wpdb->esc_like($value) . '%');
+                    break;
+                case 'ends_with':
+                    $condition = $wpdb->prepare("{$column} LIKE %s", '%' . $wpdb->esc_like($value));
+                    break;
+                case 'greater_than':
+                    $condition = $wpdb->prepare("{$column} > %s", $value);
+                    break;
+                case 'less_than':
+                    $condition = $wpdb->prepare("{$column} < %s", $value);
+                    break;
+                case 'greater_equal':
+                    $condition = $wpdb->prepare("{$column} >= %s", $value);
+                    break;
+                case 'less_equal':
+                    $condition = $wpdb->prepare("{$column} <= %s", $value);
+                    break;
+                case 'is_empty':
+                    $condition = "({$column} IS NULL OR {$column} = '')";
+                    break;
+                case 'is_not_empty':
+                    $condition = "{$column} IS NOT NULL AND {$column} != ''";
+                    break;
+            }
+
+            if ($condition) {
+                $conditions[] = $condition;
+            }
+        }
+
+        // Apply conditions with AND or OR logic
+        if (!empty($conditions)) {
+            $logic = $this->filter_logic === 'OR' ? ' OR ' : ' AND ';
+            $user_query->query_where .= ' AND (' . implode($logic, $conditions) . ')';
+        }
+
+        // Clear filters after applying
+        $this->user_field_filters = array();
+
+        return $user_query;
+    }
+
+    /**
+     * Apply post count filter to query
+     */
+    public function apply_post_count_filter_to_query($user_query) {
+        if (empty($this->post_count_filter)) {
+            return $user_query;
+        }
+
+        global $wpdb;
+
+        $operator = $this->post_count_filter['operator'];
+        $value = $this->post_count_filter['value'];
+        $post_type = isset($this->post_count_filter['post_type']) ? $this->post_count_filter['post_type'] : 'post';
+        $post_statuses = isset($this->post_count_filter['post_statuses']) ? $this->post_count_filter['post_statuses'] : array('publish');
+
+        // Build status condition
+        $status_placeholders = implode(',', array_fill(0, count($post_statuses), '%s'));
+        $status_sql = $wpdb->prepare("AND {$wpdb->posts}.post_status IN ({$status_placeholders})", $post_statuses);
+
+        // Subquery to count posts
+        $post_count_sql = "(SELECT COUNT(*) FROM {$wpdb->posts} WHERE {$wpdb->posts}.post_author = {$wpdb->users}.ID AND {$wpdb->posts}.post_type = %s {$status_sql})";
+        $post_count_sql = $wpdb->prepare($post_count_sql, $post_type);
+
+        switch ($operator) {
+            case 'equals':
+                $user_query->query_where .= $wpdb->prepare(" AND {$post_count_sql} = %d", $value);
+                break;
+            case 'not_equals':
+                $user_query->query_where .= $wpdb->prepare(" AND {$post_count_sql} != %d", $value);
+                break;
+            case 'greater_than':
+                $user_query->query_where .= $wpdb->prepare(" AND {$post_count_sql} > %d", $value);
+                break;
+            case 'less_than':
+                $user_query->query_where .= $wpdb->prepare(" AND {$post_count_sql} < %d", $value);
+                break;
+            case 'greater_equal':
+                $user_query->query_where .= $wpdb->prepare(" AND {$post_count_sql} >= %d", $value);
+                break;
+            case 'less_equal':
+                $user_query->query_where .= $wpdb->prepare(" AND {$post_count_sql} <= %d", $value);
+                break;
+        }
+
+        // Clear filter after applying
+        $this->post_count_filter = null;
+
+        return $user_query;
+    }
+
+    /**
+     * Build meta filter array
+     */
+    private function build_meta_filter($meta_key, $operator, $value) {
+        $meta_query = array();
+
+        switch ($operator) {
+            case 'equals':
+                $meta_query[] = array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => '=',
+                );
+                break;
+            case 'not_equals':
+                $meta_query[] = array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => '!=',
+                );
+                break;
+            case 'contains':
+                $meta_query[] = array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => 'LIKE',
+                );
+                break;
+            case 'not_contains':
+                $meta_query[] = array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => 'NOT LIKE',
+                );
+                break;
+            case 'starts_with':
+                $meta_query[] = array(
+                    'key' => $meta_key,
+                    'value' => $value . '%',
+                    'compare' => 'LIKE',
+                );
+                break;
+            case 'ends_with':
+                $meta_query[] = array(
+                    'key' => $meta_key,
+                    'value' => '%' . $value,
+                    'compare' => 'LIKE',
+                );
+                break;
+            case 'greater_than':
+                $meta_query[] = array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => '>',
+                    'type' => is_numeric($value) ? 'NUMERIC' : 'CHAR',
+                );
+                break;
+            case 'less_than':
+                $meta_query[] = array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => '<',
+                    'type' => is_numeric($value) ? 'NUMERIC' : 'CHAR',
+                );
+                break;
+            case 'greater_equal':
+                $meta_query[] = array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => '>=',
+                    'type' => is_numeric($value) ? 'NUMERIC' : 'CHAR',
+                );
+                break;
+            case 'less_equal':
+                $meta_query[] = array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => '<=',
+                    'type' => is_numeric($value) ? 'NUMERIC' : 'CHAR',
+                );
+                break;
+            case 'is_empty':
+                $meta_query[] = array(
+                    'relation' => 'OR',
+                    array(
+                        'key' => $meta_key,
+                        'compare' => 'NOT EXISTS',
+                    ),
+                    array(
+                        'key' => $meta_key,
+                        'value' => '',
+                        'compare' => '=',
+                    ),
+                );
+                break;
+            case 'is_not_empty':
+                $meta_query[] = array(
+                    'key' => $meta_key,
+                    'compare' => 'EXISTS',
+                );
+                $meta_query[] = array(
+                    'key' => $meta_key,
+                    'value' => '',
+                    'compare' => '!=',
+                );
+                break;
+        }
+
+        return $meta_query;
+    }
+
+    /**
+     * Build membership plan filter
+     */
+    private function build_membership_filter($meta_key, $operator, $value) {
+        $meta_query = array();
+
+        // Handle special membership values
+        switch ($value) {
+            case 'default':
+            case 'guest':
+                // Guest users (no plan)
+                if ($operator === 'equals') {
+                    $meta_query[] = array(
+                        'relation' => 'OR',
+                        array(
+                            'key' => $meta_key,
+                            'compare' => 'NOT EXISTS',
+                        ),
+                        array(
+                            'key' => $meta_key,
+                            'value' => '',
+                        ),
+                        array(
+                            'key' => $meta_key,
+                            'value' => '"plan":"default"',
+                            'compare' => 'LIKE',
+                        ),
+                    );
+                } else {
+                    // not_equals guest = has a plan
+                    $meta_query[] = array(
+                        'key' => $meta_key,
+                        'compare' => 'EXISTS',
+                    );
+                    $meta_query[] = array(
+                        'key' => $meta_key,
+                        'value' => '',
+                        'compare' => '!=',
+                    );
+                }
+                break;
+
+            case 'active':
+                $meta_query[] = array(
+                    'relation' => 'OR',
+                    array(
+                        'key' => $meta_key,
+                        'value' => '"is_active":true',
+                        'compare' => 'LIKE',
+                    ),
+                    array(
+                        'key' => $meta_key,
+                        'value' => '"status":"active"',
+                        'compare' => 'LIKE',
+                    ),
+                );
+                break;
+
+            case 'canceled':
+                $meta_query[] = array(
+                    'relation' => 'OR',
+                    array(
+                        'key' => $meta_key,
+                        'value' => '"is_canceled":true',
+                        'compare' => 'LIKE',
+                    ),
+                    array(
+                        'key' => $meta_key,
+                        'value' => '"status":"canceled"',
+                        'compare' => 'LIKE',
+                    ),
+                    array(
+                        'key' => $meta_key,
+                        'value' => '"cancel_at_period_end":true',
+                        'compare' => 'LIKE',
+                    ),
+                );
+                break;
+
+            case 'trial':
+                $meta_query[] = array(
+                    'key' => $meta_key,
+                    'value' => '"status":"trialing"',
+                    'compare' => 'LIKE',
+                );
+                break;
+
+            case 'expired':
+            case '7days':
+            case '30days':
+            case '90days':
+                // Handle expiration filters via custom SQL
+                $this->membership_expiration_filter = $value;
+                add_filter('pre_user_query', array($this, 'filter_membership_by_expiration'));
+                break;
+
+            default:
+                // Regular plan key filter
+                if ($operator === 'equals') {
+                    $meta_query[] = array(
+                        'key' => $meta_key,
+                        'value' => '"plan":"' . $value . '"',
+                        'compare' => 'LIKE',
+                    );
+                } else {
+                    $meta_query[] = array(
+                        'key' => $meta_key,
+                        'value' => '"plan":"' . $value . '"',
+                        'compare' => 'NOT LIKE',
+                    );
+                }
+                break;
+        }
+
+        return $meta_query;
+    }
+
+    /**
+     * Filter users by membership expiration date
+     */
+    public function filter_membership_by_expiration($user_query) {
+        if (empty($this->membership_expiration_filter)) {
+            return $user_query;
+        }
+
+        remove_filter('pre_user_query', array($this, 'filter_membership_by_expiration'));
+
+        global $wpdb;
+        $meta_key = $this->get_membership_meta_key();
+        $filter = $this->membership_expiration_filter;
+        $now = current_time('timestamp');
+
+        // Build the WHERE clause based on filter type
+        switch ($filter) {
+            case 'expired':
+                // Find users whose plan has expired
+                $user_query->query_where .= $wpdb->prepare(
+                    " AND {$wpdb->users}.ID IN (
+                        SELECT user_id FROM {$wpdb->usermeta}
+                        WHERE meta_key = %s
+                        AND (
+                            (meta_value LIKE %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.billing.current_period.end')) AS DATETIME) < NOW())
+                            OR
+                            (meta_value LIKE %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.current_period_end')) AS UNSIGNED) < %d)
+                        )
+                    )",
+                    $meta_key,
+                    '%"type":"order"%',
+                    '%"type":"subscription"%',
+                    $now
+                );
+                break;
+            case '7days':
+            case '30days':
+            case '90days':
+                $days = intval($filter);
+                $future = $now + ($days * DAY_IN_SECONDS);
+                $user_query->query_where .= $wpdb->prepare(
+                    " AND {$wpdb->users}.ID IN (
+                        SELECT user_id FROM {$wpdb->usermeta}
+                        WHERE meta_key = %s
+                        AND (
+                            (meta_value LIKE %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.billing.current_period.end')) AS DATETIME) BETWEEN NOW() AND %s)
+                            OR
+                            (meta_value LIKE %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.current_period_end')) AS UNSIGNED) BETWEEN %d AND %d)
+                        )
+                    )",
+                    $meta_key,
+                    '%"type":"order"%',
+                    date('Y-m-d H:i:s', $future),
+                    '%"type":"subscription"%',
+                    $now,
+                    $future
+                );
+                break;
+            case 'active':
+                // Not expired
+                $user_query->query_where .= $wpdb->prepare(
+                    " AND {$wpdb->users}.ID IN (
+                        SELECT user_id FROM {$wpdb->usermeta}
+                        WHERE meta_key = %s
+                        AND (
+                            (meta_value LIKE %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.billing.current_period.end')) AS DATETIME) > NOW())
+                            OR
+                            (meta_value LIKE %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.current_period_end')) AS UNSIGNED) > %d)
+                        )
+                    )",
+                    $meta_key,
+                    '%"type":"order"%',
+                    '%"type":"subscription"%',
+                    $now
+                );
+                break;
+        }
+
+        $this->membership_expiration_filter = null;
+        return $user_query;
+    }
+
+    /**
+     * Get the correct meta key for membership plan (handles test mode and multisite)
+     */
+    private function get_membership_meta_key() {
+        // Determine base meta key based on test mode
+        $base_key = 'voxel:plan';
+        if (function_exists('\Voxel\is_test_mode') && \Voxel\is_test_mode()) {
+            $base_key = 'voxel:test_plan';
+        }
+
+        // Handle multisite - use Voxel's helper if available
+        if (function_exists('\Voxel\get_site_specific_user_meta_key')) {
+            return \Voxel\get_site_specific_user_meta_key($base_key);
+        }
+
+        return $base_key;
     }
 
     /**

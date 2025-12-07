@@ -33,6 +33,7 @@ function initAdminColumnsApp() {
             const settings = reactive({
                 default_sort: { column: 'date', order: 'desc' },
                 primary_column: 'title',
+                quick_actions_column: '', // For user columns - which column shows row actions
             });
 
             const loading = ref(false);
@@ -73,6 +74,12 @@ function initAdminColumnsApp() {
             const unusedFields = computed(() => {
                 const usedKeys = columns.value.map(col => col.field_key);
                 return availableFields.value.filter(field => !usedKeys.includes(field.key));
+            });
+
+            // Columns that can have quick actions (user columns only)
+            const quickActionColumns = computed(() => {
+                const allowedKeys = [':username', ':email', ':full_name', ':first_name', ':last_name', ':nickname', ':display_name'];
+                return columns.value.filter(col => allowedKeys.includes(col.field_key));
             });
 
             // Filtered and grouped fields for the dropdown
@@ -358,6 +365,12 @@ function initAdminColumnsApp() {
                                 col.image_settings = {
                                     display_width: 40,
                                     display_height: 40
+                                };
+                            }
+                            // User columns: ensure membership_plan_settings exists for membership plan field
+                            if (col.field_key === ':membership_plan' && !col.membership_plan_settings) {
+                                col.membership_plan_settings = {
+                                    display: 'plan_name'
                                 };
                             }
                             return col;
@@ -760,6 +773,17 @@ function initAdminColumnsApp() {
                     }
                 }
 
+                // User columns: Add default membership_plan_settings for membership plan field
+                if (column.field_key === ':membership_plan') {
+                    if (!column.membership_plan_settings) {
+                        column.membership_plan_settings = {
+                            display: 'plan_name'
+                        };
+                    }
+                } else {
+                    delete column.membership_plan_settings;
+                }
+
                 // Clear search after selecting
                 fieldSearch.value = '';
                 hasChanges.value = true;
@@ -874,6 +898,10 @@ function initAdminColumnsApp() {
 
             function isUserAvatarField(fieldKey) {
                 return fieldKey === ':profile_picture';
+            }
+
+            function isMembershipPlanField(fieldKey) {
+                return fieldKey === ':membership_plan';
             }
 
             function canBeSortable(fieldKey) {
@@ -1006,6 +1034,7 @@ function initAdminColumnsApp() {
                 fieldSearch,
                 dropdownOpen,
                 isUsersMode,
+                quickActionColumns,
                 // Methods
                 loadPostTypes,
                 saveConfig,
@@ -1033,6 +1062,7 @@ function initAdminColumnsApp() {
                 isPostCountField,
                 isUserRegisteredField,
                 isUserAvatarField,
+                isMembershipPlanField,
                 canBeSortable,
                 canBeFilterable,
                 clearFieldSearch,

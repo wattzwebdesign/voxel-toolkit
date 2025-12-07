@@ -156,6 +156,29 @@ class Voxel_Toolkit_Elementor_Table_Of_Contents extends \Elementor\Widget_Base {
             ]
         );
 
+        // Show Fields Toggle
+        $this->add_control(
+            'show_fields_heading',
+            [
+                'label' => __('Field Indicators', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'show_fields',
+            [
+                'label' => __('Show Fields Under Steps', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Show', 'voxel-toolkit'),
+                'label_off' => __('Hide', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => '',
+                'description' => __('Display individual fields under each step with completion indicators', 'voxel-toolkit'),
+            ]
+        );
+
         $this->end_controls_section();
 
         // Title Style Section
@@ -359,6 +382,160 @@ class Voxel_Toolkit_Elementor_Table_Of_Contents extends \Elementor\Widget_Base {
         );
 
         $this->end_controls_section();
+
+        // Field Indicators Style Section
+        $this->start_controls_section(
+            'fields_style_section',
+            [
+                'label' => __('Field Indicators', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+                'condition' => [
+                    'show_fields' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'indicator_empty_color',
+            [
+                'label' => __('Empty Indicator Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#e0e0e0',
+                'selectors' => [
+                    '{{WRAPPER}} .vt-toc-field-indicator' => 'border-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'indicator_filled_color',
+            [
+                'label' => __('Filled Indicator Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#22c55e',
+                'selectors' => [
+                    '{{WRAPPER}} .vt-toc-field.is-filled .vt-toc-field-indicator' => 'background-color: {{VALUE}}; border-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'indicator_size',
+            [
+                'label' => __('Indicator Size', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 8,
+                        'max' => 24,
+                    ],
+                ],
+                'default' => [
+                    'size' => 12,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-toc-field-indicator' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'field_text_color',
+            [
+                'label' => __('Field Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#888888',
+                'selectors' => [
+                    '{{WRAPPER}} .vt-toc-field-label' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'field_filled_text_color',
+            [
+                'label' => __('Filled Field Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#333333',
+                'selectors' => [
+                    '{{WRAPPER}} .vt-toc-field.is-filled .vt-toc-field-label' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'field_typography',
+                'selector' => '{{WRAPPER}} .vt-toc-field-label',
+            ]
+        );
+
+        $this->add_responsive_control(
+            'field_indent',
+            [
+                'label' => __('Field Indent', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 50,
+                    ],
+                ],
+                'default' => [
+                    'size' => 20,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-toc-fields' => 'padding-left: {{SIZE}}{{UNIT}}',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'field_spacing',
+            [
+                'label' => __('Field Spacing', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 20,
+                    ],
+                ],
+                'default' => [
+                    'size' => 6,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-toc-field' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'fields_top_spacing',
+            [
+                'label' => __('Fields Top Spacing', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 30,
+                    ],
+                ],
+                'default' => [
+                    'size' => 8,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-toc-fields' => 'margin-top: {{SIZE}}{{UNIT}}',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
     }
 
     /**
@@ -374,6 +551,7 @@ class Voxel_Toolkit_Elementor_Table_Of_Contents extends \Elementor\Widget_Base {
             'title_tag' => $settings['title_tag'],
             'list_style' => $settings['list_style'],
             'alignment' => $settings['alignment'],
+            'show_fields' => ($settings['show_fields'] === 'yes'),
             '_elementor' => true, // Flag to disable inline styles
         );
 

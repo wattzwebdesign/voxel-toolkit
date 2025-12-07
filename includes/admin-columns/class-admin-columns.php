@@ -58,12 +58,28 @@ class Voxel_Toolkit_Admin_Columns {
     private $user_columns = null;
 
     /**
+     * Filter logic (AND/OR)
+     */
+    private $filter_logic = 'AND';
+
+    /**
+     * All filters for combined processing
+     */
+    private $all_post_filters = array();
+
+    /**
+     * Current post type being filtered
+     */
+    private $filtering_post_type = null;
+
+    /**
      * Load required files
      */
     private function load_dependencies() {
         require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/admin-columns/class-column-types.php';
         require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/admin-columns/class-column-renderer.php';
         require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/admin-columns/class-user-columns.php';
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/admin-columns/class-filter-bar.php';
 
         $this->column_types = new Voxel_Toolkit_Column_Types();
         $this->renderer = new Voxel_Toolkit_Column_Renderer($this->column_types);
@@ -514,7 +530,7 @@ class Voxel_Toolkit_Admin_Columns {
             'type' => 'voxel-view-counts',
             'type_label' => __('Voxel', 'voxel-toolkit'),
             'sortable' => true,
-            'filterable' => false,
+            'filterable' => true,
         );
 
         $grouped_fields['voxel']['fields'][] = array(
@@ -523,7 +539,7 @@ class Voxel_Toolkit_Admin_Columns {
             'type' => 'voxel-review-stats',
             'type_label' => __('Voxel', 'voxel-toolkit'),
             'sortable' => true,
-            'filterable' => false,
+            'filterable' => true,
         );
 
         $grouped_fields['voxel']['fields'][] = array(
@@ -549,21 +565,21 @@ class Voxel_Toolkit_Admin_Columns {
                 'label' => __('Comments', 'voxel-toolkit'),
                 'type' => 'wp-comments',
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':date',
                 'label' => __('Date Published', 'voxel-toolkit'),
                 'type' => 'wp-date',
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':excerpt',
                 'label' => __('Excerpt', 'voxel-toolkit'),
                 'type' => 'wp-excerpt',
                 'sortable' => false,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':thumbnail',
@@ -578,21 +594,21 @@ class Voxel_Toolkit_Admin_Columns {
                 'label' => __('Last Modified', 'voxel-toolkit'),
                 'type' => 'wp-modified',
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':menu_order',
                 'label' => __('Menu Order', 'voxel-toolkit'),
                 'type' => 'wp-menu-order',
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':parent',
                 'label' => __('Parent', 'voxel-toolkit'),
                 'type' => 'wp-parent',
                 'sortable' => false,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':permalink',
@@ -606,14 +622,14 @@ class Voxel_Toolkit_Admin_Columns {
                 'label' => __('Post ID', 'voxel-toolkit'),
                 'type' => 'wp-id',
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':slug',
                 'label' => __('Slug', 'voxel-toolkit'),
                 'type' => 'wp-slug',
                 'sortable' => true,
-                'filterable' => false,
+                'filterable' => true,
             ),
             array(
                 'key' => ':status',
@@ -627,7 +643,7 @@ class Voxel_Toolkit_Admin_Columns {
                 'label' => __('Word Count', 'voxel-toolkit'),
                 'type' => 'wp-word-count',
                 'sortable' => false,
-                'filterable' => false,
+                'filterable' => true,
             ),
         );
 
@@ -643,7 +659,7 @@ class Voxel_Toolkit_Admin_Columns {
             'type' => 'article-helpful',
             'type_label' => __('Voxel Toolkit', 'voxel-toolkit'),
             'sortable' => true,
-            'filterable' => false,
+            'filterable' => true,
         );
 
         // Remove empty groups
@@ -1389,11 +1405,11 @@ class Voxel_Toolkit_Admin_Columns {
         // Handle filter query
         add_action('pre_get_posts', array($this, 'handle_filter_query'));
 
-        // Add filter dropdowns
-        add_action('restrict_manage_posts', array($this, 'render_filter_dropdowns'));
+        // Add filter bar
+        add_action('restrict_manage_posts', array($this, 'render_filter_bar'));
 
-        // Add clear filter button (via JavaScript to position it correctly)
-        add_action('admin_footer', array($this, 'render_clear_filter_button'));
+        // Enqueue filter bar assets
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_filter_assets'));
 
         // Add export modal
         add_action('admin_footer', array($this, 'render_export_modal'));
@@ -2064,78 +2080,212 @@ class Voxel_Toolkit_Admin_Columns {
     }
 
     /**
-     * Render filter dropdowns
+     * Enqueue filter bar assets for post list pages
      */
-    public function render_filter_dropdowns($post_type) {
+    public function enqueue_filter_assets($hook) {
+        if ($hook !== 'edit.php') {
+            return;
+        }
+
+        global $typenow;
+
+        if (empty($typenow)) {
+            return;
+        }
+
+        $configs = get_option('voxel_toolkit_admin_columns', array());
+
+        if (!isset($configs[$typenow])) {
+            return;
+        }
+
+        // Check if any columns have filterable enabled
+        $has_filterable = false;
+        foreach ($configs[$typenow]['columns'] as $col) {
+            if (!empty($col['filterable'])) {
+                $has_filterable = true;
+                break;
+            }
+        }
+
+        if (!$has_filterable) {
+            return;
+        }
+
+        Voxel_Toolkit_Filter_Bar::enqueue_assets();
+    }
+
+    /**
+     * Render the filter bar for posts
+     */
+    public function render_filter_bar($post_type) {
         $configs = get_option('voxel_toolkit_admin_columns', array());
 
         if (!isset($configs[$post_type])) {
             return;
         }
 
-        foreach ($configs[$post_type]['columns'] as $col) {
+        // Get filterable fields
+        $filterable_fields = $this->get_filterable_fields($post_type, $configs[$post_type]);
+
+        if (empty($filterable_fields)) {
+            return;
+        }
+
+        // Create and render filter bar
+        $filter_bar = new Voxel_Toolkit_Filter_Bar('posts', $post_type);
+        $filter_bar->set_fields($filterable_fields);
+        $filter_bar->render();
+    }
+
+    /**
+     * Get filterable fields for a post type
+     */
+    private function get_filterable_fields($post_type, $config) {
+        $fields = array();
+
+        foreach ($config['columns'] as $col) {
             if (empty($col['filterable'])) {
                 continue;
             }
 
-            // Handle WordPress core fields
+            $field = array(
+                'key' => $col['field_key'],
+                'label' => $col['label'],
+            );
+
+            // Determine filter type based on field
             if ($col['field_key'] === ':status') {
-                $this->render_status_filter($col);
-                continue;
+                $field['filter_type'] = 'select';
+                $field['options'] = $this->get_status_options();
+            } elseif ($col['field_key'] === ':author') {
+                $field['filter_type'] = 'select';
+                $field['options'] = $this->get_author_options();
+            } elseif ($col['field_key'] === ':listing_plan') {
+                $field['filter_type'] = 'select';
+                $field['options'] = $this->get_listing_plan_options($post_type);
+            } else {
+                // Get field type from Voxel
+                $voxel_type = $this->get_field_type($col['field_key'], $post_type);
+
+                // Map field types to appropriate filter types for operator selection
+                $filter_type = $this->map_field_to_filter_type($voxel_type, $col['field_key']);
+                $field['filter_type'] = $filter_type;
+
+                // Get options for select/taxonomy fields
+                if ($voxel_type === 'taxonomy') {
+                    $taxonomy = $this->get_field_taxonomy($col['field_key'], $post_type);
+                    if ($taxonomy) {
+                        $field['taxonomy'] = $taxonomy;
+                        $field['options'] = $this->get_taxonomy_options($taxonomy);
+                    }
+                } elseif ($voxel_type === 'select') {
+                    $field['options'] = $this->get_select_field_options($col['field_key'], $post_type);
+                } elseif ($voxel_type === 'switcher') {
+                    $field['options'] = array(
+                        array('value' => '1', 'label' => __('Yes', 'voxel-toolkit')),
+                        array('value' => '0', 'label' => __('No', 'voxel-toolkit')),
+                    );
+                }
             }
 
-            if ($col['field_key'] === ':author') {
-                $this->render_author_filter($col);
-                continue;
-            }
-
-            if ($col['field_key'] === ':listing_plan') {
-                $this->render_listing_plan_filter($col, $post_type);
-                continue;
-            }
-
-            $field_type = $this->get_field_type($col['field_key'], $post_type);
-
-            // Handle taxonomy fields
-            if ($field_type === 'taxonomy') {
-                $this->render_taxonomy_filter($col, $post_type);
-                continue;
-            }
-
-            // Render filters for select and switcher types
-            if (in_array($field_type, array('select', 'switcher'))) {
-                $this->render_single_filter($col, $post_type, $field_type);
-            }
+            $fields[] = $field;
         }
+
+        return $fields;
     }
 
     /**
-     * Render the post status filter dropdown
+     * Map field types to filter types for appropriate operator selection
+     *
+     * @param string $field_type The Voxel field type
+     * @param string $field_key The field key
+     * @return string The filter type for operator selection
      */
-    private function render_status_filter($col) {
-        $current_value = isset($_GET['post_status']) ? sanitize_text_field($_GET['post_status']) : '';
+    private function map_field_to_filter_type($field_type, $field_key) {
+        // WordPress core fields with specific types
+        $wp_field_types = array(
+            ':id' => 'number',
+            ':date' => 'date',
+            ':modified' => 'date',
+            ':menu_order' => 'number',
+            ':comments' => 'number',
+            ':word_count' => 'number',
+            ':view_counts' => 'number',
+            ':review_stats' => 'number',
+            ':article_helpful' => 'number',
+        );
 
+        if (isset($wp_field_types[$field_key])) {
+            return $wp_field_types[$field_key];
+        }
+
+        // Map Voxel field types to filter types
+        $type_map = array(
+            // Numeric types - use number operators (equals, greater than, less than, etc.)
+            'number' => 'number',
+            'product' => 'number',
+            'poll' => 'number',
+            'poll-vt' => 'number',
+            'article-helpful' => 'number',
+
+            // Date types - use date operators (equals, before, after)
+            'date' => 'date',
+            'recurring-date' => 'date',
+            'event-date' => 'date',
+            'time' => 'date',
+
+            // Text types - use text operators (equals, contains, starts with, etc.)
+            'text' => 'text',
+            'title' => 'text',
+            'textarea' => 'text',
+            'texteditor' => 'text',
+            'description' => 'text',
+            'email' => 'text',
+            'phone' => 'text',
+            'url' => 'text',
+            'color' => 'text',
+            'timezone' => 'text',
+            'profile-name' => 'text',
+
+            // Select types - use select operators (is, is not)
+            'select' => 'select',
+            'multiselect' => 'select',
+            'post-relation' => 'select',
+
+            // Taxonomy - use taxonomy operators
+            'taxonomy' => 'taxonomy',
+
+            // Boolean/existence - use boolean operators (is empty, is not empty)
+            'switcher' => 'boolean',
+            'image' => 'boolean',
+            'file' => 'boolean',
+        );
+
+        return isset($type_map[$field_type]) ? $type_map[$field_type] : 'text';
+    }
+
+    /**
+     * Get status options for filter
+     */
+    private function get_status_options() {
         $statuses = get_post_stati(array('show_in_admin_status_list' => true), 'objects');
+        $options = array();
 
-        ?>
-        <select name="post_status">
-            <option value=""><?php echo esc_html($col['label'] ?: __('Status', 'voxel-toolkit')); ?></option>
-            <?php foreach ($statuses as $status): ?>
-                <option value="<?php echo esc_attr($status->name); ?>" <?php selected($current_value, $status->name); ?>>
-                    <?php echo esc_html($status->label); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <?php
+        foreach ($statuses as $status) {
+            $options[] = array(
+                'value' => $status->name,
+                'label' => $status->label,
+            );
+        }
+
+        return $options;
     }
 
     /**
-     * Render author filter dropdown
+     * Get author options for filter
      */
-    private function render_author_filter($col) {
-        $current_value = isset($_GET['author']) ? absint($_GET['author']) : '';
-
-        // Get authors who have posts
+    private function get_author_options() {
         $authors = get_users(array(
             'who' => 'authors',
             'has_published_posts' => true,
@@ -2143,41 +2293,73 @@ class Voxel_Toolkit_Admin_Columns {
             'order' => 'ASC',
         ));
 
-        ?>
-        <select name="author">
-            <option value=""><?php echo esc_html($col['label'] ?: __('Author', 'voxel-toolkit')); ?></option>
-            <?php foreach ($authors as $author): ?>
-                <option value="<?php echo esc_attr($author->ID); ?>" <?php selected($current_value, $author->ID); ?>>
-                    <?php echo esc_html($author->display_name); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <?php
+        $options = array();
+        foreach ($authors as $author) {
+            $options[] = array(
+                'value' => (string) $author->ID,
+                'label' => $author->display_name,
+            );
+        }
+
+        return $options;
     }
 
     /**
-     * Render listing plan filter dropdown
+     * Get listing plan options for filter
      */
-    private function render_listing_plan_filter($col, $post_type) {
-        $current_value = isset($_GET['vt_filter_listing_plan']) ? sanitize_text_field($_GET['vt_filter_listing_plan']) : '';
-
-        // Get available plans for this post type
+    private function get_listing_plan_options($post_type) {
         $plans = $this->get_listing_plans($post_type);
+        $options = array();
 
-        if (empty($plans)) {
-            return;
+        foreach ($plans as $key => $label) {
+            $options[] = array(
+                'value' => $key,
+                'label' => $label,
+            );
         }
 
-        ?>
-        <select name="vt_filter_listing_plan">
-            <option value=""><?php echo esc_html($col['label'] ?: __('Listing Plan', 'voxel-toolkit')); ?></option>
-            <?php foreach ($plans as $plan_key => $plan_label): ?>
-                <option value="<?php echo esc_attr($plan_key); ?>" <?php selected($current_value, $plan_key); ?>>
-                    <?php echo esc_html($plan_label); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <?php
+        return $options;
+    }
+
+    /**
+     * Get taxonomy options for filter
+     */
+    private function get_taxonomy_options($taxonomy) {
+        $terms = get_terms(array(
+            'taxonomy' => $taxonomy,
+            'hide_empty' => true,
+            'orderby' => 'name',
+            'order' => 'ASC',
+        ));
+
+        $options = array();
+        if (!is_wp_error($terms)) {
+            foreach ($terms as $term) {
+                $options[] = array(
+                    'value' => (string) $term->term_id,
+                    'label' => $term->name . ' (' . $term->count . ')',
+                );
+            }
+        }
+
+        return $options;
+    }
+
+    /**
+     * Get select field options
+     */
+    private function get_select_field_options($field_key, $post_type) {
+        $filter_options = $this->get_filter_options($field_key, $post_type, 'select');
+        $options = array();
+
+        foreach ($filter_options as $value => $label) {
+            $options[] = array(
+                'value' => $value,
+                'label' => $label,
+            );
+        }
+
+        return $options;
     }
 
     /**
@@ -2206,89 +2388,6 @@ class Voxel_Toolkit_Admin_Columns {
         }
 
         return $plans;
-    }
-
-    /**
-     * Render taxonomy filter dropdown
-     */
-    private function render_taxonomy_filter($col, $post_type) {
-        // Get the taxonomy from the field
-        if (!class_exists('\Voxel\Post_Type')) {
-            return;
-        }
-
-        $voxel_post_type = \Voxel\Post_Type::get($post_type);
-        if (!$voxel_post_type) {
-            return;
-        }
-
-        $field = $voxel_post_type->get_field($col['field_key']);
-        if (!$field) {
-            return;
-        }
-
-        // Get taxonomy key from field props
-        $taxonomy = null;
-        if (method_exists($field, 'get_prop')) {
-            $taxonomy = $field->get_prop('taxonomy');
-        }
-
-        if (empty($taxonomy)) {
-            return;
-        }
-
-        $current_value = isset($_GET['vt_filter_' . $col['field_key']])
-            ? sanitize_text_field($_GET['vt_filter_' . $col['field_key']])
-            : '';
-
-        // Get terms for this taxonomy
-        $terms = get_terms(array(
-            'taxonomy' => $taxonomy,
-            'hide_empty' => true,
-            'orderby' => 'name',
-            'order' => 'ASC',
-        ));
-
-        if (is_wp_error($terms) || empty($terms)) {
-            return;
-        }
-
-        ?>
-        <select name="vt_filter_<?php echo esc_attr($col['field_key']); ?>">
-            <option value=""><?php echo esc_html($col['label'] ?: $col['field_key']); ?></option>
-            <?php foreach ($terms as $term): ?>
-                <option value="<?php echo esc_attr($term->term_id); ?>" <?php selected($current_value, $term->term_id); ?>>
-                    <?php echo esc_html($term->name); ?> (<?php echo $term->count; ?>)
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <?php
-    }
-
-    /**
-     * Render a single filter dropdown
-     */
-    private function render_single_filter($col, $post_type, $field_type) {
-        $current_value = isset($_GET['vt_filter_' . $col['field_key']])
-            ? sanitize_text_field($_GET['vt_filter_' . $col['field_key']])
-            : '';
-
-        $options = $this->get_filter_options($col['field_key'], $post_type, $field_type);
-
-        if (empty($options)) {
-            return;
-        }
-
-        ?>
-        <select name="vt_filter_<?php echo esc_attr($col['field_key']); ?>">
-            <option value=""><?php echo esc_html($col['label'] ?: $col['field_key']); ?></option>
-            <?php foreach ($options as $value => $label): ?>
-                <option value="<?php echo esc_attr($value); ?>" <?php selected($current_value, $value); ?>>
-                    <?php echo esc_html($label); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <?php
     }
 
     /**
@@ -2370,70 +2469,804 @@ class Voxel_Toolkit_Admin_Columns {
             return;
         }
 
-        $meta_query = $query->get('meta_query') ?: array();
-        $tax_query = $query->get('tax_query') ?: array();
+        // Parse filters from new filter bar system
+        $filters = Voxel_Toolkit_Filter_Bar::parse_filters();
 
+        if (empty($filters)) {
+            return;
+        }
+
+        // Get filter logic FIRST
+        $this->filter_logic = Voxel_Toolkit_Filter_Bar::get_filter_logic();
+        $this->filtering_post_type = $post_type;
+
+        // Build field config for filter bar
+        $field_config = array();
         foreach ($configs[$post_type]['columns'] as $col) {
             if (empty($col['filterable'])) {
                 continue;
             }
 
-            // Handle listing plan filter
-            if ($col['field_key'] === ':listing_plan') {
-                if (isset($_GET['vt_filter_listing_plan']) && $_GET['vt_filter_listing_plan'] !== '') {
-                    $plan_key = sanitize_text_field($_GET['vt_filter_listing_plan']);
-                    // Listing plan is stored in voxel_subscriptions table, use meta query on plan key
-                    $meta_query[] = array(
-                        'key' => 'voxel:plan',
-                        'value' => $plan_key,
-                        'compare' => '=',
-                    );
-                }
-                continue;
-            }
-
-            // Handle taxonomy filter
             $field_type = $this->get_field_type($col['field_key'], $post_type);
-            if ($field_type === 'taxonomy') {
-                $filter_key = 'vt_filter_' . $col['field_key'];
-                if (isset($_GET[$filter_key]) && $_GET[$filter_key] !== '') {
-                    $term_id = absint($_GET[$filter_key]);
+            $field_config[$col['field_key']] = array(
+                'filter_type' => $field_type,
+                'field_type' => $field_type,
+                'column_config' => $col,
+            );
 
-                    // Get taxonomy from field
-                    $taxonomy = $this->get_field_taxonomy($col['field_key'], $post_type);
+            if ($field_type === 'taxonomy') {
+                $taxonomy = $this->get_field_taxonomy($col['field_key'], $post_type);
+                if ($taxonomy) {
+                    $field_config[$col['field_key']]['taxonomy'] = $taxonomy;
+                }
+            }
+        }
+
+        // Store all filters for processing in posts_where
+        $this->all_post_filters = array();
+
+        foreach ($filters as $filter) {
+            $field_key = $filter['field'];
+            $filter_data = array(
+                'field_key' => $field_key,
+                'operator' => $filter['operator'],
+                'value' => $filter['value'],
+                'field_config' => isset($field_config[$field_key]) ? $field_config[$field_key] : array(),
+            );
+            $this->all_post_filters[] = $filter_data;
+        }
+
+        // Add single hook to handle all filters with proper AND/OR logic
+        if (!empty($this->all_post_filters)) {
+            add_filter('posts_where', array($this, 'apply_all_post_filters_to_query'), 10, 2);
+            add_filter('posts_join', array($this, 'apply_post_filters_join'), 10, 2);
+        }
+    }
+
+    /**
+     * Add necessary JOINs for post filters
+     */
+    public function apply_post_filters_join($join, $query) {
+        if (!is_admin() || !$query->is_main_query()) {
+            return $join;
+        }
+
+        if (empty($this->all_post_filters)) {
+            return $join;
+        }
+
+        global $wpdb;
+
+        // Track which joins we've added
+        static $joins_added = array();
+        $join_key = md5(serialize($this->all_post_filters));
+
+        if (isset($joins_added[$join_key])) {
+            return $join;
+        }
+        $joins_added[$join_key] = true;
+
+        // Check if we need postmeta join
+        $needs_postmeta = false;
+        foreach ($this->all_post_filters as $filter) {
+            $field_key = $filter['field_key'];
+            // Fields that use postmeta
+            if (!in_array($field_key, array(':status', ':author', ':id', ':slug', ':date', ':modified', ':parent', ':menu_order', ':comments'))) {
+                if (empty($filter['field_config']['filter_type']) || $filter['field_config']['filter_type'] !== 'taxonomy') {
+                    $needs_postmeta = true;
+                    break;
+                }
+            }
+        }
+
+        // Only add the join if we need it and it's not already there
+        if ($needs_postmeta && strpos($join, 'vt_postmeta') === false) {
+            // We don't add a global join - we handle each meta filter with subqueries
+        }
+
+        return $join;
+    }
+
+    /**
+     * Apply all post filters to query with proper AND/OR logic
+     */
+    public function apply_all_post_filters_to_query($where, $query) {
+        if (!is_admin() || !$query->is_main_query()) {
+            return $where;
+        }
+
+        if (empty($this->all_post_filters)) {
+            return $where;
+        }
+
+        global $wpdb;
+
+        $conditions = array();
+
+        foreach ($this->all_post_filters as $filter) {
+            $field_key = $filter['field_key'];
+            $operator = $filter['operator'];
+            $value = $filter['value'];
+            $field_config = $filter['field_config'];
+
+            $condition = $this->build_post_sql_condition($field_key, $operator, $value, $field_config);
+            if ($condition) {
+                $conditions[] = $condition;
+            }
+        }
+
+        // Apply conditions with AND or OR logic
+        if (!empty($conditions)) {
+            $logic = $this->filter_logic === 'OR' ? ' OR ' : ' AND ';
+            $where .= ' AND (' . implode($logic, $conditions) . ')';
+        }
+
+        // Clear filters after applying
+        $this->all_post_filters = array();
+
+        return $where;
+    }
+
+    /**
+     * Build SQL condition for a single post filter
+     */
+    private function build_post_sql_condition($field_key, $operator, $value, $field_config) {
+        global $wpdb;
+
+        switch ($field_key) {
+            case ':id':
+                return $this->build_post_field_sql('ID', $operator, $value);
+
+            case ':status':
+                return $this->build_post_field_sql('post_status', $operator, $value);
+
+            case ':author':
+                return $this->build_post_field_sql('post_author', $operator, $value);
+
+            case ':date':
+                return $this->build_post_date_sql('post_date', $operator, $value);
+
+            case ':modified':
+                return $this->build_post_date_sql('post_modified', $operator, $value);
+
+            case ':slug':
+                return $this->build_post_field_sql('post_name', $operator, $value);
+
+            case ':parent':
+                return $this->build_post_field_sql('post_parent', $operator, $value);
+
+            case ':menu_order':
+                return $this->build_post_field_sql('menu_order', $operator, $value);
+
+            case ':excerpt':
+                return $this->build_post_field_sql('post_excerpt', $operator, $value);
+
+            case ':comments':
+                return $this->build_post_field_sql('comment_count', $operator, $value);
+
+            case ':word_count':
+                // Word count is calculated, use post_content length as approximation
+                return $this->build_word_count_sql($operator, $value);
+
+            case ':listing_plan':
+                return $this->build_post_meta_sql('voxel:plan', $operator, $value);
+
+            case ':view_counts':
+                return $this->build_view_counts_sql($operator, $value);
+
+            case ':review_stats':
+                return $this->build_review_stats_sql($operator, $value);
+
+            case ':article_helpful':
+                return $this->build_article_helpful_sql($operator, $value);
+
+            default:
+                // Check if taxonomy
+                if (!empty($field_config['filter_type']) && $field_config['filter_type'] === 'taxonomy') {
+                    $taxonomy = isset($field_config['taxonomy']) ? $field_config['taxonomy'] : null;
                     if ($taxonomy) {
-                        $tax_query[] = array(
-                            'taxonomy' => $taxonomy,
-                            'field' => 'term_id',
-                            'terms' => $term_id,
-                        );
+                        return $this->build_taxonomy_sql($taxonomy, $operator, $value);
                     }
                 }
-                continue;
-            }
 
-            // Handle regular meta field filters (select, switcher)
-            $filter_key = 'vt_filter_' . $col['field_key'];
+                // Check if product field (price stored as JSON)
+                if (!empty($field_config['field_type']) && $field_config['field_type'] === 'product') {
+                    return $this->build_product_sql($field_key, $operator, $value);
+                }
 
-            if (!isset($_GET[$filter_key]) || $_GET[$filter_key] === '') {
-                continue;
-            }
+                // Check if image/file field (only is_empty/is_not_empty make sense)
+                if (!empty($field_config['field_type']) && in_array($field_config['field_type'], array('image', 'file'))) {
+                    return $this->build_media_exists_sql($field_key, $operator);
+                }
 
-            $filter_value = sanitize_text_field($_GET[$filter_key]);
+                // Check if post-relation field (array of post IDs)
+                if (!empty($field_config['field_type']) && $field_config['field_type'] === 'post-relation') {
+                    return $this->build_post_relation_sql($field_key, $operator, $value);
+                }
 
-            $meta_query[] = array(
-                'key' => $col['field_key'],
-                'value' => $filter_value,
-                'compare' => '=',
-            );
+                // Regular meta field (Voxel fields store without the leading colon in some cases)
+                $meta_key = $field_key;
+                return $this->build_post_meta_sql($meta_key, $operator, $value);
         }
+    }
 
-        if (!empty($meta_query)) {
-            $query->set('meta_query', $meta_query);
+    /**
+     * Build SQL for post table field
+     */
+    private function build_post_field_sql($field, $operator, $value) {
+        global $wpdb;
+        $column = "{$wpdb->posts}.{$field}";
+
+        switch ($operator) {
+            case 'equals':
+                return $wpdb->prepare("{$column} = %s", $value);
+            case 'not_equals':
+                return $wpdb->prepare("{$column} != %s", $value);
+            case 'contains':
+                return $wpdb->prepare("{$column} LIKE %s", '%' . $wpdb->esc_like($value) . '%');
+            case 'not_contains':
+                return $wpdb->prepare("{$column} NOT LIKE %s", '%' . $wpdb->esc_like($value) . '%');
+            case 'starts_with':
+                return $wpdb->prepare("{$column} LIKE %s", $wpdb->esc_like($value) . '%');
+            case 'ends_with':
+                return $wpdb->prepare("{$column} LIKE %s", '%' . $wpdb->esc_like($value));
+            case 'greater_than':
+                return $wpdb->prepare("{$column} > %s", $value);
+            case 'less_than':
+                return $wpdb->prepare("{$column} < %s", $value);
+            case 'greater_equal':
+                return $wpdb->prepare("{$column} >= %s", $value);
+            case 'less_equal':
+                return $wpdb->prepare("{$column} <= %s", $value);
+            case 'is_empty':
+                return "({$column} IS NULL OR {$column} = '')";
+            case 'is_not_empty':
+                return "({$column} IS NOT NULL AND {$column} != '')";
         }
+        return '';
+    }
 
-        if (!empty($tax_query)) {
-            $query->set('tax_query', $tax_query);
+    /**
+     * Build SQL for post date field
+     */
+    private function build_post_date_sql($field, $operator, $value) {
+        global $wpdb;
+        $column = "{$wpdb->posts}.{$field}";
+
+        switch ($operator) {
+            case 'equals':
+                return $wpdb->prepare("DATE({$column}) = %s", $value);
+            case 'not_equals':
+                return $wpdb->prepare("DATE({$column}) != %s", $value);
+            case 'greater_than':
+            case 'after':
+                return $wpdb->prepare("{$column} > %s", $value);
+            case 'less_than':
+            case 'before':
+                return $wpdb->prepare("{$column} < %s", $value);
+            case 'greater_equal':
+                return $wpdb->prepare("{$column} >= %s", $value);
+            case 'less_equal':
+                return $wpdb->prepare("{$column} <= %s", $value);
+        }
+        return '';
+    }
+
+    /**
+     * Build SQL for post meta field
+     */
+    private function build_post_meta_sql($meta_key, $operator, $value, $type = 'CHAR') {
+        global $wpdb;
+
+        switch ($operator) {
+            case 'equals':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s))",
+                    $meta_key, $value
+                );
+            case 'not_equals':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s))",
+                    $meta_key, $value
+                );
+            case 'contains':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value LIKE %s))",
+                    $meta_key, '%' . $wpdb->esc_like($value) . '%'
+                );
+            case 'not_contains':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value LIKE %s))",
+                    $meta_key, '%' . $wpdb->esc_like($value) . '%'
+                );
+            case 'greater_than':
+                if ($type === 'NUMERIC') {
+                    return $wpdb->prepare(
+                        "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(meta_value AS SIGNED) > %d))",
+                        $meta_key, intval($value)
+                    );
+                }
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value > %s))",
+                    $meta_key, $value
+                );
+            case 'less_than':
+                if ($type === 'NUMERIC') {
+                    return $wpdb->prepare(
+                        "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(meta_value AS SIGNED) < %d))",
+                        $meta_key, intval($value)
+                    );
+                }
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value < %s))",
+                    $meta_key, $value
+                );
+            case 'greater_equal':
+                if ($type === 'NUMERIC') {
+                    return $wpdb->prepare(
+                        "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(meta_value AS SIGNED) >= %d))",
+                        $meta_key, intval($value)
+                    );
+                }
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value >= %s))",
+                    $meta_key, $value
+                );
+            case 'less_equal':
+                if ($type === 'NUMERIC') {
+                    return $wpdb->prepare(
+                        "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(meta_value AS SIGNED) <= %d))",
+                        $meta_key, intval($value)
+                    );
+                }
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value <= %s))",
+                    $meta_key, $value
+                );
+            case 'is_empty':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value != ''))",
+                    $meta_key
+                );
+            case 'is_not_empty':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value != ''))",
+                    $meta_key
+                );
+        }
+        return '';
+    }
+
+    /**
+     * Build SQL for taxonomy field
+     */
+    private function build_taxonomy_sql($taxonomy, $operator, $value) {
+        global $wpdb;
+
+        switch ($operator) {
+            case 'equals':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT object_id FROM {$wpdb->term_relationships} tr
+                     INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                     WHERE tt.taxonomy = %s AND tt.term_id = %d))",
+                    $taxonomy, absint($value)
+                );
+            case 'not_equals':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT object_id FROM {$wpdb->term_relationships} tr
+                     INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                     WHERE tt.taxonomy = %s AND tt.term_id = %d))",
+                    $taxonomy, absint($value)
+                );
+            case 'is_empty':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT object_id FROM {$wpdb->term_relationships} tr
+                     INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                     WHERE tt.taxonomy = %s))",
+                    $taxonomy
+                );
+            case 'is_not_empty':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT object_id FROM {$wpdb->term_relationships} tr
+                     INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                     WHERE tt.taxonomy = %s))",
+                    $taxonomy
+                );
+        }
+        return '';
+    }
+
+    /**
+     * Build SQL for word count
+     */
+    private function build_word_count_sql($operator, $value) {
+        global $wpdb;
+        // Approximate word count by dividing content length by average word length (5 chars + space)
+        $word_count_expr = "(LENGTH({$wpdb->posts}.post_content) - LENGTH(REPLACE({$wpdb->posts}.post_content, ' ', '')) + 1)";
+        $int_value = intval($value);
+
+        switch ($operator) {
+            case 'equals':
+                return "{$word_count_expr} = {$int_value}";
+            case 'not_equals':
+                return "{$word_count_expr} != {$int_value}";
+            case 'greater_than':
+                return "{$word_count_expr} > {$int_value}";
+            case 'less_than':
+                return "{$word_count_expr} < {$int_value}";
+            case 'greater_equal':
+                return "{$word_count_expr} >= {$int_value}";
+            case 'less_equal':
+                return "{$word_count_expr} <= {$int_value}";
+        }
+        return '';
+    }
+
+    /**
+     * Build SQL for article helpful
+     */
+    private function build_article_helpful_sql($operator, $value) {
+        global $wpdb;
+        // Article helpful is stored as meta with yes/no counts
+        $meta_key = '_vt_article_helpful';
+        $int_value = intval($value);
+
+        switch ($operator) {
+            case 'greater_than':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(meta_value AS SIGNED) > %d))",
+                    $meta_key . '_yes', $int_value
+                );
+            case 'less_than':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(meta_value AS SIGNED) < %d))",
+                    $meta_key . '_yes', $int_value
+                );
+            case 'equals':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(meta_value AS SIGNED) = %d))",
+                    $meta_key . '_yes', $int_value
+                );
+        }
+        return '';
+    }
+
+    /**
+     * Build SQL for product field (price stored as JSON)
+     */
+    private function build_product_sql($meta_key, $operator, $value) {
+        global $wpdb;
+        // Product data is stored as JSON: {"base_price":{"amount":"100","currency":"USD"}}
+        // Use MySQL JSON_EXTRACT to filter by base_price.amount
+        $decimal_value = floatval($value);
+
+        switch ($operator) {
+            case 'equals':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.base_price.amount')) AS DECIMAL(10,2)) = %f))",
+                    $meta_key, $decimal_value
+                );
+            case 'not_equals':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.base_price.amount')) AS DECIMAL(10,2)) = %f))",
+                    $meta_key, $decimal_value
+                );
+            case 'greater_than':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.base_price.amount')) AS DECIMAL(10,2)) > %f))",
+                    $meta_key, $decimal_value
+                );
+            case 'less_than':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.base_price.amount')) AS DECIMAL(10,2)) < %f))",
+                    $meta_key, $decimal_value
+                );
+            case 'greater_equal':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.base_price.amount')) AS DECIMAL(10,2)) >= %f))",
+                    $meta_key, $decimal_value
+                );
+            case 'less_equal':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.base_price.amount')) AS DECIMAL(10,2)) <= %f))",
+                    $meta_key, $decimal_value
+                );
+            case 'is_empty':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value IS NOT NULL AND meta_value != ''))",
+                    $meta_key
+                );
+            case 'is_not_empty':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value IS NOT NULL AND meta_value != ''))",
+                    $meta_key
+                );
+        }
+        return '';
+    }
+
+    /**
+     * Build SQL for view counts field (stored as JSON in voxel:view_counts)
+     */
+    private function build_view_counts_sql($operator, $value) {
+        global $wpdb;
+        // View counts data is stored as JSON: {"views":{"all":123,"30d":45}}
+        // Use MySQL JSON_EXTRACT to filter by views.all
+        $meta_key = 'voxel:view_counts';
+        $int_value = intval($value);
+
+        switch ($operator) {
+            case 'equals':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.views.all')) AS SIGNED) = %d))",
+                    $meta_key, $int_value
+                );
+            case 'not_equals':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.views.all')) AS SIGNED) = %d))",
+                    $meta_key, $int_value
+                );
+            case 'greater_than':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.views.all')) AS SIGNED) > %d))",
+                    $meta_key, $int_value
+                );
+            case 'less_than':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.views.all')) AS SIGNED) < %d))",
+                    $meta_key, $int_value
+                );
+            case 'greater_equal':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.views.all')) AS SIGNED) >= %d))",
+                    $meta_key, $int_value
+                );
+            case 'less_equal':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.views.all')) AS SIGNED) <= %d))",
+                    $meta_key, $int_value
+                );
+            case 'is_empty':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value IS NOT NULL AND meta_value != '' AND JSON_EXTRACT(meta_value, '$.views.all') IS NOT NULL))",
+                    $meta_key
+                );
+            case 'is_not_empty':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value IS NOT NULL AND meta_value != '' AND JSON_EXTRACT(meta_value, '$.views.all') IS NOT NULL))",
+                    $meta_key
+                );
+        }
+        return '';
+    }
+
+    /**
+     * Build SQL for review stats field (stored as JSON in voxel:review_stats)
+     * Filters by total number of reviews
+     */
+    private function build_review_stats_sql($operator, $value) {
+        global $wpdb;
+        // Review stats data is stored as JSON: {"total":5,"average":1.5}
+        // Filter by total number of reviews
+        $meta_key = 'voxel:review_stats';
+        $int_value = intval($value);
+
+        switch ($operator) {
+            case 'equals':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.total')) AS SIGNED) = %d))",
+                    $meta_key, $int_value
+                );
+            case 'not_equals':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.total')) AS SIGNED) = %d))",
+                    $meta_key, $int_value
+                );
+            case 'greater_than':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.total')) AS SIGNED) > %d))",
+                    $meta_key, $int_value
+                );
+            case 'less_than':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.total')) AS SIGNED) < %d))",
+                    $meta_key, $int_value
+                );
+            case 'greater_equal':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.total')) AS SIGNED) >= %d))",
+                    $meta_key, $int_value
+                );
+            case 'less_equal':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.total')) AS SIGNED) <= %d))",
+                    $meta_key, $int_value
+                );
+            case 'is_empty':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value IS NOT NULL AND meta_value != '' AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.total')) AS SIGNED) > 0))",
+                    $meta_key
+                );
+            case 'is_not_empty':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value IS NOT NULL AND meta_value != '' AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.total')) AS SIGNED) > 0))",
+                    $meta_key
+                );
+        }
+        return '';
+    }
+
+    /**
+     * Build SQL for image/file fields (check existence only)
+     */
+    private function build_media_exists_sql($meta_key, $operator) {
+        global $wpdb;
+
+        switch ($operator) {
+            case 'is_empty':
+            case 'equals':
+                // Treat "equals" with no value as empty check
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value IS NOT NULL AND meta_value != '' AND meta_value != '[]'))",
+                    $meta_key
+                );
+            case 'is_not_empty':
+            case 'not_equals':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value IS NOT NULL AND meta_value != '' AND meta_value != '[]'))",
+                    $meta_key
+                );
+        }
+        return '';
+    }
+
+    /**
+     * Build SQL for post-relation fields (array of post IDs stored as JSON)
+     */
+    private function build_post_relation_sql($meta_key, $operator, $value) {
+        global $wpdb;
+
+        switch ($operator) {
+            case 'equals':
+                // Check if the relation contains the specified post ID
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND (meta_value LIKE %s OR meta_value LIKE %s OR meta_value LIKE %s)))",
+                    $meta_key,
+                    '[' . $value . ',%',  // First item
+                    '%,' . $value . ',%', // Middle item
+                    '%,' . $value . ']'   // Last item
+                );
+            case 'not_equals':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND (meta_value LIKE %s OR meta_value LIKE %s OR meta_value LIKE %s)))",
+                    $meta_key,
+                    '[' . $value . ',%',
+                    '%,' . $value . ',%',
+                    '%,' . $value . ']'
+                );
+            case 'is_empty':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value IS NOT NULL AND meta_value != '' AND meta_value != '[]'))",
+                    $meta_key
+                );
+            case 'is_not_empty':
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value IS NOT NULL AND meta_value != '' AND meta_value != '[]'))",
+                    $meta_key
+                );
+        }
+        return '';
+    }
+
+    /**
+     * Build a single meta filter based on operator
+     */
+    private function build_single_meta_filter($meta_key, $operator, $value) {
+        switch ($operator) {
+            case 'equals':
+                return array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => '=',
+                );
+
+            case 'not_equals':
+                return array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => '!=',
+                );
+
+            case 'contains':
+                return array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => 'LIKE',
+                );
+
+            case 'not_contains':
+                return array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => 'NOT LIKE',
+                );
+
+            case 'starts_with':
+                return array(
+                    'key' => $meta_key,
+                    'value' => $value . '%',
+                    'compare' => 'LIKE',
+                );
+
+            case 'ends_with':
+                return array(
+                    'key' => $meta_key,
+                    'value' => '%' . $value,
+                    'compare' => 'LIKE',
+                );
+
+            case 'greater_than':
+                return array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => '>',
+                    'type' => is_numeric($value) ? 'NUMERIC' : 'CHAR',
+                );
+
+            case 'less_than':
+                return array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => '<',
+                    'type' => is_numeric($value) ? 'NUMERIC' : 'CHAR',
+                );
+
+            case 'greater_equal':
+                return array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => '>=',
+                    'type' => is_numeric($value) ? 'NUMERIC' : 'CHAR',
+                );
+
+            case 'less_equal':
+                return array(
+                    'key' => $meta_key,
+                    'value' => $value,
+                    'compare' => '<=',
+                    'type' => is_numeric($value) ? 'NUMERIC' : 'CHAR',
+                );
+
+            case 'is_empty':
+                return array(
+                    'relation' => 'OR',
+                    array(
+                        'key' => $meta_key,
+                        'compare' => 'NOT EXISTS',
+                    ),
+                    array(
+                        'key' => $meta_key,
+                        'value' => '',
+                        'compare' => '=',
+                    ),
+                );
+
+            case 'is_not_empty':
+                return array(
+                    'relation' => 'AND',
+                    array(
+                        'key' => $meta_key,
+                        'compare' => 'EXISTS',
+                    ),
+                    array(
+                        'key' => $meta_key,
+                        'value' => '',
+                        'compare' => '!=',
+                    ),
+                );
+
+            default:
+                return null;
         }
     }
 
