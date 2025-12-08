@@ -5,6 +5,11 @@ All notable changes to Voxel Toolkit will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.7] - 2025-12-07
+
+### Added
+- **Calendar Week Start**: New function that makes Voxel date pickers respect WordPress "Week Starts On" setting instead of always starting on Monday. Works with date fields and booking product calendars.
+
 ## [1.5.6.0.1] - 2025-12-02
 
 ### Added
