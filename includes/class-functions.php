@@ -398,6 +398,13 @@ class Voxel_Toolkit_Functions {
                 'always_enabled' => true,
                 'hidden' => true,
             ),
+            'calendar_week_start' => array(
+                'name' => __('Calendar Week Start', 'voxel-toolkit'),
+                'description' => __('Makes Voxel date pickers respect WordPress "Week Starts On" setting instead of always starting on Monday.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Calendar_Week_Start',
+                'file' => 'functions/class-calendar-week-start.php',
+                'icon' => 'dashicons-calendar-alt',
+            ),
             'disable_gutenberg' => array(
                 'name' => __('Disable Gutenberg', 'voxel-toolkit'),
                 'description' => __('Disables the Gutenberg block editor site-wide and restores the classic WordPress editor for all post types and widgets.', 'voxel-toolkit'),
@@ -537,6 +544,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-messenger-widget-manager.php',
                 'icon' => 'eicon-comments',
                 'widget_name' => 'voxel-messenger',
+            ),
+            'media_gallery' => array(
+                'name' => __('Media Gallery (VT)', 'voxel-toolkit'),
+                'description' => __('Enhanced gallery widget supporting images, videos, and mixed media with customizable layouts.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Media_Gallery_Widget_Manager',
+                'file' => 'widgets/class-media-gallery-widget-manager.php',
+                'icon' => 'eicon-gallery-justified',
+                'widget_name' => 'vt-media-gallery',
             )
         );
 
