@@ -140,6 +140,16 @@ class Voxel_Toolkit_Admin {
             'voxel-toolkit-settings',
             array($this, 'render_settings_page')
         );
+
+        // Docs - External link
+        add_submenu_page(
+            'voxel-toolkit',
+            __('Docs', 'voxel-toolkit'),
+            __('Docs', 'voxel-toolkit'),
+            'manage_options',
+            'voxel-toolkit-docs',
+            '__return_null'
+        );
     }
     
     /**
@@ -175,6 +185,16 @@ class Voxel_Toolkit_Admin {
         if (strpos($hook, 'voxel-toolkit') !== false) {
             wp_add_inline_style('voxel-toolkit-admin', '#wpfooter { display: none !important; }');
         }
+
+        // Make Docs menu item open in new tab
+        wp_add_inline_script('jquery', '
+            jQuery(document).ready(function($) {
+                var docsLink = $("#adminmenu a[href*=\"page=voxel-toolkit-docs\"]");
+                if (docsLink.length) {
+                    docsLink.attr("href", "https://codewattz.com/doc/").attr("target", "_blank");
+                }
+            });
+        ');
 
         // Enqueue Elementor icons for widget cards
         wp_enqueue_style(
