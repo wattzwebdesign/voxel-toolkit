@@ -3,6 +3,7 @@
  * Messenger Settings Page
  *
  * Settings for controlling where the messenger widget appears
+ * Uses AJAX to save settings to avoid caching/nonce issues on Cloudways
  *
  * @package Voxel_Toolkit
  */
@@ -24,6 +25,7 @@ class Voxel_Toolkit_Messenger_Settings {
 
     private function __construct() {
         add_action('admin_menu', array($this, 'add_settings_page'), 20);
+        add_action('wp_ajax_vt_save_messenger_settings', array($this, 'ajax_save_settings'));
     }
 
     /**
@@ -38,6 +40,30 @@ class Voxel_Toolkit_Messenger_Settings {
             'voxel-toolkit-messenger',
             array($this, 'render_settings_page')
         );
+    }
+
+    /**
+     * AJAX handler for saving settings
+     */
+    public function ajax_save_settings() {
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => 'Permission denied'));
+        }
+
+        // Verify nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'vt_messenger_settings_ajax')) {
+            wp_send_json_error(array('message' => 'Security check failed'));
+        }
+
+        // Get and sanitize settings
+        $input = isset($_POST['settings']) ? $_POST['settings'] : array();
+        $sanitized = $this->sanitize_settings($input);
+
+        // Save
+        update_option('voxel_toolkit_messenger_settings', $sanitized);
+
+        wp_send_json_success(array('message' => 'Settings saved successfully'));
     }
 
     /**
@@ -79,30 +105,17 @@ class Voxel_Toolkit_Messenger_Settings {
             return;
         }
 
-        $saved = false;
-
-        // Handle form submission
-        if (isset($_POST['submit']) && check_admin_referer('voxel_toolkit_messenger_settings_nonce', 'voxel_toolkit_messenger_nonce')) {
-            $input = isset($_POST['voxel_toolkit_messenger_settings']) ? $_POST['voxel_toolkit_messenger_settings'] : array();
-            $sanitized = $this->sanitize_settings($input);
-            update_option('voxel_toolkit_messenger_settings', $sanitized);
-            $saved = true;
-        }
-
         $settings = get_option('voxel_toolkit_messenger_settings', array());
+        $ajax_nonce = wp_create_nonce('vt_messenger_settings_ajax');
         ?>
         <div class="wrap">
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 
-            <?php if ($saved): ?>
-                <div class="notice notice-success is-dismissible">
-                    <p><?php _e('Settings saved successfully.', 'voxel-toolkit'); ?></p>
-                </div>
-            <?php endif; ?>
+            <div id="vt-messenger-notice" style="display:none;" class="notice is-dismissible">
+                <p></p>
+            </div>
 
-            <form method="post" action="">
-                <?php wp_nonce_field('voxel_toolkit_messenger_settings_nonce', 'voxel_toolkit_messenger_nonce'); ?>
-
+            <form id="vt-messenger-settings-form">
                 <table class="form-table" role="presentation">
                     <tbody>
                         <!-- General Settings Section -->
@@ -119,7 +132,7 @@ class Voxel_Toolkit_Messenger_Settings {
                                 <?php $enabled = !empty($settings['enabled']) ? 1 : 0; ?>
                                 <label>
                                     <input type="checkbox"
-                                           name="voxel_toolkit_messenger_settings[enabled]"
+                                           name="enabled"
                                            value="1"
                                            <?php checked($enabled, 1); ?>>
                                     <?php _e('Enable the messenger widget site-wide', 'voxel-toolkit'); ?>
@@ -137,7 +150,7 @@ class Voxel_Toolkit_Messenger_Settings {
                                 <div class="vt-messenger-avatar-upload">
                                     <input type="hidden"
                                            id="vt_default_avatar"
-                                           name="voxel_toolkit_messenger_settings[default_avatar]"
+                                           name="default_avatar"
                                            value="<?php echo esc_attr($default_avatar); ?>">
 
                                     <button type="button" class="button vt-upload-avatar-btn">
@@ -186,7 +199,7 @@ class Voxel_Toolkit_Messenger_Settings {
                                     <?php foreach ($rules as $rule => $label): ?>
                                         <label style="display: block; margin-bottom: 8px;">
                                             <input type="checkbox"
-                                                   name="voxel_toolkit_messenger_settings[excluded_rules][]"
+                                                   name="excluded_rules[]"
                                                    value="<?php echo esc_attr($rule); ?>"
                                                    <?php checked(in_array($rule, $excluded_rules), true); ?>>
                                             <?php echo esc_html($label); ?>
@@ -204,7 +217,7 @@ class Voxel_Toolkit_Messenger_Settings {
                             <td>
                                 <?php $excluded_post_ids = !empty($settings['excluded_post_ids']) ? $settings['excluded_post_ids'] : ''; ?>
                                 <input type="text"
-                                       name="voxel_toolkit_messenger_settings[excluded_post_ids]"
+                                       name="excluded_post_ids"
                                        value="<?php echo esc_attr($excluded_post_ids); ?>"
                                        class="regular-text"
                                        placeholder="123, 456, 789">
@@ -226,7 +239,7 @@ class Voxel_Toolkit_Messenger_Settings {
                                         <?php if ($post_type->name === 'attachment') continue; ?>
                                         <label style="display: block; margin-bottom: 8px;">
                                             <input type="checkbox"
-                                                   name="voxel_toolkit_messenger_settings[excluded_post_types][]"
+                                                   name="excluded_post_types[]"
                                                    value="<?php echo esc_attr($post_type->name); ?>"
                                                    <?php checked(in_array($post_type->name, $excluded_post_types), true); ?>>
                                             <?php echo esc_html($post_type->label); ?>
@@ -242,7 +255,12 @@ class Voxel_Toolkit_Messenger_Settings {
                     </tbody>
                 </table>
 
-                <?php submit_button(__('Save Settings', 'voxel-toolkit')); ?>
+                <p class="submit">
+                    <button type="submit" class="button button-primary" id="vt-save-messenger-settings">
+                        <?php _e('Save Settings', 'voxel-toolkit'); ?>
+                    </button>
+                    <span class="spinner" style="float: none; margin-top: 0;"></span>
+                </p>
             </form>
 
             <div class="card" style="max-width: 800px; margin-top: 30px;">
@@ -270,6 +288,7 @@ class Voxel_Toolkit_Messenger_Settings {
         jQuery(document).ready(function($) {
             var mediaUploader;
 
+            // Media uploader for avatar
             $('.vt-upload-avatar-btn').on('click', function(e) {
                 e.preventDefault();
 
@@ -301,6 +320,74 @@ class Voxel_Toolkit_Messenger_Settings {
                 $('#vt_default_avatar').val('');
                 $('.vt-avatar-preview').html('');
                 $(this).hide();
+            });
+
+            // AJAX form submission
+            $('#vt-messenger-settings-form').on('submit', function(e) {
+                e.preventDefault();
+
+                var $form = $(this);
+                var $button = $('#vt-save-messenger-settings');
+                var $spinner = $form.find('.spinner');
+                var $notice = $('#vt-messenger-notice');
+
+                // Gather form data
+                var settings = {
+                    enabled: $form.find('input[name="enabled"]').is(':checked') ? 1 : 0,
+                    default_avatar: $form.find('input[name="default_avatar"]').val(),
+                    excluded_rules: [],
+                    excluded_post_ids: $form.find('input[name="excluded_post_ids"]').val(),
+                    excluded_post_types: []
+                };
+
+                $form.find('input[name="excluded_rules[]"]:checked').each(function() {
+                    settings.excluded_rules.push($(this).val());
+                });
+
+                $form.find('input[name="excluded_post_types[]"]:checked').each(function() {
+                    settings.excluded_post_types.push($(this).val());
+                });
+
+                // Disable button and show spinner
+                $button.prop('disabled', true);
+                $spinner.addClass('is-active');
+                $notice.hide();
+
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'vt_save_messenger_settings',
+                        nonce: '<?php echo $ajax_nonce; ?>',
+                        settings: settings
+                    },
+                    success: function(response) {
+                        $button.prop('disabled', false);
+                        $spinner.removeClass('is-active');
+
+                        if (response.success) {
+                            $notice.removeClass('notice-error').addClass('notice-success');
+                            $notice.find('p').text(response.data.message);
+                        } else {
+                            $notice.removeClass('notice-success').addClass('notice-error');
+                            $notice.find('p').text(response.data.message || 'An error occurred');
+                        }
+                        $notice.show();
+
+                        // Scroll to top to show notice
+                        $('html, body').animate({ scrollTop: 0 }, 300);
+                    },
+                    error: function(xhr, status, error) {
+                        $button.prop('disabled', false);
+                        $spinner.removeClass('is-active');
+
+                        $notice.removeClass('notice-success').addClass('notice-error');
+                        $notice.find('p').text('Request failed: ' + error);
+                        $notice.show();
+
+                        $('html, body').animate({ scrollTop: 0 }, 300);
+                    }
+                });
             });
         });
         </script>
