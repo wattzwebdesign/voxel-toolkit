@@ -530,6 +530,19 @@
     max-height: 100px;
     min-height: 36px;
     transition: border-color 0.2s;
+    overflow: hidden;
+}
+
+/* Allow scrolling only when user is typing (has content) */
+.vt-messenger-input:not(:placeholder-shown) {
+    overflow-y: auto;
+}
+
+/* Truncate long placeholder text with ellipsis */
+.vt-messenger-input::placeholder {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .vt-messenger-input:focus {

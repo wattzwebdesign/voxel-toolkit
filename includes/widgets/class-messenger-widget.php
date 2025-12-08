@@ -220,6 +220,17 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'reply_as_text',
+            [
+                'label' => __('Reply As Text', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Reply as %s', 'voxel-toolkit'),
+                'placeholder' => __('Reply as %s', 'voxel-toolkit'),
+                'description' => __('Placeholder text when replying as a listing. Use %s for the listing name.', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
             'preview_mode',
             [
                 'label' => __('Preview Mode', 'voxel-toolkit'),
@@ -1344,11 +1355,13 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
         $upload_icon_html = ob_get_clean();
 
         $placeholder_text = !empty($settings['input_placeholder_text']) ? $settings['input_placeholder_text'] : __('Type a message...', 'voxel-toolkit');
+        $reply_as_text = !empty($settings['reply_as_text']) ? $settings['reply_as_text'] : __('Reply as %s', 'voxel-toolkit');
         ?>
         <div class="vt-messenger-container <?php echo esc_attr($position_class); ?> <?php echo ($is_editor && $preview_mode) ? 'vt-preview-mode' : ''; ?>"
              data-max-chats="<?php echo esc_attr($max_chats); ?>"
              data-show-badge="<?php echo esc_attr($settings['show_unread_badge']); ?>"
              data-placeholder="<?php echo esc_attr($placeholder_text); ?>"
+             data-reply-as="<?php echo esc_attr($reply_as_text); ?>"
              data-send-icon="<?php echo esc_attr($send_icon_html); ?>"
              data-upload-icon="<?php echo esc_attr($upload_icon_html); ?>">
 

@@ -51,6 +51,7 @@
                 // Use .attr() instead of .data() to get raw HTML values (avoids jQuery caching/parsing issues)
                 self.widgetConfig = {
                     placeholder: self.container.attr('data-placeholder') || self.config.i18n.typeMessage,
+                    replyAs: self.container.attr('data-reply-as') || self.config.i18n.replyAs,
                     sendIcon: self.container.attr('data-send-icon') || '',
                     uploadIcon: self.container.attr('data-upload-icon') || ''
                 };
@@ -643,7 +644,8 @@
 
             // Show "Reply as [listing name]" when author is a post (listing conversation)
             if (chat.author && chat.author.type === 'post' && chat.author.name) {
-                placeholderText = self.config.i18n.replyAs.replace('%s', chat.author.name);
+                var replyAsTemplate = self.widgetConfig.replyAs || self.config.i18n.replyAs;
+                placeholderText = replyAsTemplate.replace('%s', chat.author.name);
             }
 
             var sendIconHtml = self.widgetConfig.sendIcon || '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 10L17.5 2.5L10 17.5L8.75 11.25L2.5 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
