@@ -368,4 +368,15 @@ class Voxel_Toolkit_Auto_Reply_Field_Type extends \Voxel\Post_Types\Fields\Base_
         // This field is internal only - no public display
         return '';
     }
+
+    /**
+     * Export field value as dynamic data for @post(field_key) tags
+     *
+     * @return \Voxel\Dynamic_Data\Data_Types\Base_Data_Type
+     */
+    public function dynamic_data() {
+        return \Voxel\Dynamic_Data\Tag::String($this->get_label())->render(function() {
+            return $this->get_value();
+        });
+    }
 }

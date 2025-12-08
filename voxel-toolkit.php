@@ -148,6 +148,12 @@ class Voxel_Toolkit {
             return $fields;
         }
 
+        // Load the field file to ensure the class is available
+        $field_file = VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/post-fields/class-auto-reply-field.php';
+        if (file_exists($field_file) && !class_exists('Voxel_Toolkit_Auto_Reply_Field_Type')) {
+            require_once $field_file;
+        }
+
         $fields['auto-reply-vt'] = '\Voxel_Toolkit_Auto_Reply_Field_Type';
         return $fields;
     }
