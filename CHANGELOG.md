@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Messenger Settings**: Fixed "The link you followed has expired" error on Cloudways/cached hosting
   - Switched from form POST to AJAX-based saving to bypass server-level caching issues
+- **Messenger Widget**: Fixed placeholder text issues when replying as a listing
+  - Added translatable "Reply As Text" setting in Elementor (use %s for listing name)
+  - Fixed scrollbar appearing when listing name is too long - now truncates with ellipsis
 
 ## [1.5.6.0.1] - 2025-12-02
 
