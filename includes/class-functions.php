@@ -420,6 +420,13 @@ class Voxel_Toolkit_Functions {
                 'settings_callback' => array('Voxel_Toolkit_Widget_CSS_Injector', 'render_settings'),
                 'always_enabled' => true,
             ),
+            'share_count' => array(
+                'name' => __('Share Count', 'voxel-toolkit'),
+                'description' => __('Track the number of times posts are shared via the share menu. Adds @post(share_count) dynamic tag.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Share_Count',
+                'file' => 'functions/class-share-count.php',
+                'icon' => 'dashicons-share',
+            ),
         );
 
         // Allow other plugins/themes to register functions

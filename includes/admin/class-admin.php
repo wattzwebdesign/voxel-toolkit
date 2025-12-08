@@ -1827,6 +1827,118 @@ class Voxel_Toolkit_Admin {
                 </div>
             <?php endif; ?>
 
+            <!-- Share Count -->
+            <?php if ($this->settings->is_function_enabled('share_count')): ?>
+                <div class="settings-section" style="margin-top: 30px;">
+                    <h2><?php _e('Share Count', 'voxel-toolkit'); ?></h2>
+                    <p class="description"><?php _e('Dynamic properties for tracking share button clicks. Use with @post() syntax on posts with share functionality.', 'voxel-toolkit'); ?></p>
+
+                    <table class="widefat striped">
+                        <thead>
+                            <tr>
+                                <th><?php _e('Property', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Output Example', 'voxel-toolkit'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>share_count</code></td>
+                                <td><?php _e('Total number of shares across all networks (shorthand for share_count.total)', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(share_count)</code></td>
+                                <td><em>156</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>share_count.total</code></td>
+                                <td><?php _e('Total number of shares across all networks', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(share_count.total)</code></td>
+                                <td><em>156</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>share_count.facebook</code></td>
+                                <td><?php _e('Number of Facebook shares', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(share_count.facebook)</code></td>
+                                <td><em>42</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>share_count.twitter</code></td>
+                                <td><?php _e('Number of X/Twitter shares', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(share_count.twitter)</code></td>
+                                <td><em>28</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>share_count.linkedin</code></td>
+                                <td><?php _e('Number of LinkedIn shares', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(share_count.linkedin)</code></td>
+                                <td><em>15</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>share_count.whatsapp</code></td>
+                                <td><?php _e('Number of WhatsApp shares', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(share_count.whatsapp)</code></td>
+                                <td><em>22</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>share_count.telegram</code></td>
+                                <td><?php _e('Number of Telegram shares', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(share_count.telegram)</code></td>
+                                <td><em>8</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>share_count.copy-link</code></td>
+                                <td><?php _e('Number of Copy Link actions', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(share_count.copy-link)</code></td>
+                                <td><em>35</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>share_count.email</code></td>
+                                <td><?php _e('Number of Email shares', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(share_count.email)</code></td>
+                                <td><em>12</em></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-top: 15px;">
+                        <strong><?php _e('Additional Networks:', 'voxel-toolkit'); ?></strong>
+                        <code>reddit</code>, <code>tumblr</code>, <code>pinterest</code>, <code>threads</code>, <code>bluesky</code>, <code>sms</code>, <code>line</code>, <code>viber</code>, <code>snapchat</code>, <code>kakaotalk</code>, <code>native-share</code>
+                    </p>
+                    <p style="margin-top: 10px;">
+                        <em><?php _e('Note: Shares are tracked when users click on share menu items. Counts are stored per-post and per-network.', 'voxel-toolkit'); ?></em>
+                    </p>
+                </div>
+            <?php endif; ?>
+
+            <!-- Auto Reply Field -->
+            <?php if ($this->settings->is_function_enabled('post_field_auto_reply_field')): ?>
+                <div class="settings-section" style="margin-top: 30px;">
+                    <h2><?php _e('Auto Reply Field', 'voxel-toolkit'); ?></h2>
+                    <p class="description"><?php _e('Custom field type for automatic message responses. Add this field to any post type and access the value via dynamic tags.', 'voxel-toolkit'); ?></p>
+
+                    <table class="widefat striped">
+                        <thead>
+                            <tr>
+                                <th><?php _e('Property', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                                <th><?php _e('Output Example', 'voxel-toolkit'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>auto-reply-vt</code></td>
+                                <td><?php _e('The auto-reply message configured for this post', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(auto-reply-vt)</code></td>
+                                <td><em>Thanks for reaching out! I'll get back to you shortly.</em></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-top: 15px;">
+                        <em><?php _e('Note: The field key may vary if you customize it when adding the field to your post type.', 'voxel-toolkit'); ?></em>
+                    </p>
+                </div>
+            <?php endif; ?>
+
             <!-- Site Options -->
             <?php if ($this->settings->is_function_enabled('options_page')): ?>
                 <?php
