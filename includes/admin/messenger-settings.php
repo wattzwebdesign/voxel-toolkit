@@ -115,7 +115,7 @@ class Voxel_Toolkit_Messenger_Settings {
                 <p></p>
             </div>
 
-            <form id="vt-messenger-settings-form">
+            <div id="vt-messenger-settings-form">
                 <table class="form-table" role="presentation">
                     <tbody>
                         <!-- General Settings Section -->
@@ -256,12 +256,12 @@ class Voxel_Toolkit_Messenger_Settings {
                 </table>
 
                 <p class="submit">
-                    <button type="submit" class="button button-primary" id="vt-save-messenger-settings">
+                    <button type="button" class="button button-primary" id="vt-save-messenger-settings">
                         <?php _e('Save Settings', 'voxel-toolkit'); ?>
                     </button>
                     <span class="spinner" style="float: none; margin-top: 0;"></span>
                 </p>
-            </form>
+            </div>
 
             <div class="card" style="max-width: 800px; margin-top: 30px;">
                 <h2><?php _e('Usage Instructions', 'voxel-toolkit'); ?></h2>
@@ -322,11 +322,11 @@ class Voxel_Toolkit_Messenger_Settings {
                 $(this).hide();
             });
 
-            // AJAX form submission
-            $('#vt-messenger-settings-form').on('submit', function(e) {
+            // AJAX save on button click
+            $('#vt-save-messenger-settings').on('click', function(e) {
                 e.preventDefault();
 
-                var $form = $(this);
+                var $form = $('#vt-messenger-settings-form');
                 var $button = $('#vt-save-messenger-settings');
                 var $spinner = $form.find('.spinner');
                 var $notice = $('#vt-messenger-notice');
