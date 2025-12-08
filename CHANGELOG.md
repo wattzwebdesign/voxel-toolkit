@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Calendar Week Start**: New function that makes Voxel date pickers respect WordPress "Week Starts On" setting instead of always starting on Monday. Works with date fields and booking product calendars.
 - **Docs Menu Link**: Added "Docs" submenu item under Voxel Toolkit that opens documentation in a new tab.
+- **Auto Reply Dynamic Tag**: Auto Reply field now exposes its value as a dynamic tag `@post(field_key)` for use in templates.
 
 ## [1.5.6.0.1] - 2025-12-02
 
