@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Supports all Voxel share menu networks plus additional ones from Share Menu function
 - **Dynamic Tags Page**: Added Share Count and Auto Reply Field sections to Dynamic Tags documentation page
 
+### Fixed
+- **Messenger Settings**: Fixed "The link you followed has expired" error on Cloudways/cached hosting
+  - Switched from form POST to AJAX-based saving to bypass server-level caching issues
+
 ## [1.5.6.0.1] - 2025-12-02
 
 ### Added
