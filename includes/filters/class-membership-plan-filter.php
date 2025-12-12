@@ -155,7 +155,14 @@ class Membership_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
 
         $value = $this->parse_value($args[$this->get_key()] ?? null);
 
+        // Debug logging
+        error_log('Membership Plan Filter - query() called');
+        error_log('  Filter key: ' . $this->get_key());
+        error_log('  Args: ' . print_r($args, true));
+        error_log('  Parsed value: ' . print_r($value, true));
+
         if ($value === null) {
+            error_log('  Value is null, returning early');
             return;
         }
 
@@ -202,20 +209,36 @@ class Membership_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
 
         // If 'default' is selected, include users with default plan OR no plan meta
         if ($include_default) {
-            $conditions[] = "(JSON_UNQUOTE(JSON_EXTRACT(`{$join_key}_plan`.meta_value, '$.plan')) = 'default' OR `{$join_key}_plan`.meta_value IS NULL)";
+            $conditions[] = "(
+                `{$join_key}_plan`.meta_value IS NULL
+                OR `{$join_key}_plan`.meta_value = ''
+                OR (
+                    `{$join_key}_plan`.meta_value IS NOT NULL
+                    AND JSON_VALID(`{$join_key}_plan`.meta_value)
+                    AND JSON_UNQUOTE(JSON_EXTRACT(`{$join_key}_plan`.meta_value, '$.plan')) = 'default'
+                )
+            )";
         }
 
         // If other plans are selected, include those
         if (!empty($plan_keys_without_default)) {
             $plan_keys_list = "'" . implode("','", $plan_keys_without_default) . "'";
-            $conditions[] = "JSON_UNQUOTE(JSON_EXTRACT(`{$join_key}_plan`.meta_value, '$.plan')) IN ({$plan_keys_list})";
+            $conditions[] = "(
+                `{$join_key}_plan`.meta_value IS NOT NULL
+                AND `{$join_key}_plan`.meta_value != ''
+                AND JSON_VALID(`{$join_key}_plan`.meta_value)
+                AND JSON_UNQUOTE(JSON_EXTRACT(`{$join_key}_plan`.meta_value, '$.plan')) IN ({$plan_keys_list})
+            )";
         }
 
         // Combine conditions with OR
         if (!empty($conditions)) {
             $where_sql = '(' . implode(' OR ', $conditions) . ')';
+            error_log('  WHERE SQL: ' . $where_sql);
             $query->where($where_sql);
         }
+
+        error_log('  Query complete');
     }
 
     /**

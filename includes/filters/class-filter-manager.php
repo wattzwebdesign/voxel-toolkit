@@ -137,6 +137,21 @@ class Voxel_Toolkit_Filter_Manager {
                     onReset() {
                         this.search = '';
                         this.value = {};
+
+                        // Restore from resets_to if available (handles default value on reset)
+                        if (this.filter.resets_to && this.filter.resets_to.length) {
+                            // resets_to is an array of plan keys
+                            let resetsTo = Array.isArray(this.filter.resets_to)
+                                ? this.filter.resets_to
+                                : this.filter.resets_to.split(',').map(k => k.trim());
+
+                            resetsTo.forEach(key => {
+                                if (this.filter.props.choices[key]) {
+                                    this.value[key] = this.filter.props.choices[key];
+                                }
+                            });
+                        }
+
                         this.saveValue();
                     }
                 },
@@ -217,6 +232,20 @@ class Voxel_Toolkit_Filter_Manager {
                     onReset() {
                         this.search = '';
                         this.value = {};
+
+                        // Restore from resets_to if available (handles default value on reset)
+                        if (this.filter.resets_to && this.filter.resets_to.length) {
+                            let resetsTo = Array.isArray(this.filter.resets_to)
+                                ? this.filter.resets_to
+                                : this.filter.resets_to.split(',').map(k => k.trim());
+
+                            resetsTo.forEach(key => {
+                                if (this.filter.props.choices[key]) {
+                                    this.value[key] = this.filter.props.choices[key];
+                                }
+                            });
+                        }
+
                         this.saveValue();
                     }
                 },
@@ -312,6 +341,20 @@ class Voxel_Toolkit_Filter_Manager {
                     onReset() {
                         this.search = '';
                         this.value = {};
+
+                        // Restore from resets_to if available (handles default value on reset)
+                        if (this.filter.resets_to && this.filter.resets_to.length) {
+                            let resetsTo = Array.isArray(this.filter.resets_to)
+                                ? this.filter.resets_to
+                                : this.filter.resets_to.split(',').map(k => k.trim());
+
+                            resetsTo.forEach(key => {
+                                if (this.filter.props.choices[key]) {
+                                    this.value[key] = this.filter.props.choices[key];
+                                }
+                            });
+                        }
+
                         this.saveValue();
                     }
                 },
