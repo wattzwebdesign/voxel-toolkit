@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Messenger Widget**: Fixed placeholder text issues when replying as a listing
   - Added translatable "Reply As Text" setting in Elementor (use %s for listing name)
   - Fixed scrollbar appearing when listing name is too long - now truncates with ellipsis
+- **Membership Plan Filter**: Fixed filter not working on profiles post type
+  - Added JSON validation to prevent database errors when user has no membership meta
+  - Fixed reset behavior to properly restore default value when configured in Elementor
 
 ## [1.5.6.0.1] - 2025-12-02
 
