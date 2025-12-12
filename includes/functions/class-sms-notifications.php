@@ -29,7 +29,8 @@ if (!class_exists('Voxel_Toolkit_SMS_Ajax_Handler')) {
 
         public function __construct() {
             add_action('wp_ajax_vt_save_sms_event_settings', array($this, 'ajax_save_event_settings'));
-            add_action('wp_ajax_vt_send_test_sms', array($this, 'ajax_send_test_sms'));
+            // Note: vt_send_test_sms is handled by Voxel_Toolkit_Functions::ajax_send_test_sms()
+            // which works without requiring Voxel Base_Controller to be loaded
             add_action('wp_ajax_vt_get_sms_event_settings', array($this, 'ajax_get_event_settings'));
         }
 
@@ -100,24 +101,6 @@ if (!class_exists('Voxel_Toolkit_SMS_Ajax_Handler')) {
             ));
         }
 
-        /**
-         * AJAX: Send test SMS
-         */
-        public function ajax_send_test_sms() {
-            check_ajax_referer('vt_sms_nonce', 'nonce');
-
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error(array('message' => __('Permission denied', 'voxel-toolkit')));
-            }
-
-            // Check if main SMS class exists and is initialized
-            if (!class_exists('Voxel_Toolkit_SMS_Notifications') || !Voxel_Toolkit_SMS_Notifications::instance()) {
-                wp_send_json_error(array('message' => __('SMS Notifications not fully initialized. Please ensure Voxel theme is active.', 'voxel-toolkit')));
-            }
-
-            // Delegate to the main class
-            Voxel_Toolkit_SMS_Notifications::instance()->ajax_send_test_sms_handler();
-        }
     }
 
     // Initialize AJAX handler immediately
@@ -614,43 +597,6 @@ class Voxel_Toolkit_SMS_Notifications extends \Voxel\Controllers\Base_Controller
         }
 
         return $credentials;
-    }
-
-    /**
-     * AJAX: Send test SMS (handler called from Voxel_Toolkit_SMS_Ajax_Handler)
-     */
-    public function ajax_send_test_sms_handler() {
-        // Get phone number from request for testing
-        $phone = isset($_POST['phone']) ? sanitize_text_field($_POST['phone']) : '';
-
-        if (empty($phone)) {
-            wp_send_json_error(array('message' => __('Please enter a phone number', 'voxel-toolkit')));
-        }
-
-        // Normalize the phone number
-        $phone = $this->normalize_phone($phone);
-
-        if (empty($phone)) {
-            wp_send_json_error(array('message' => __('Invalid phone number format', 'voxel-toolkit')));
-        }
-
-        $message = sprintf(
-            __('Test SMS from %s - Voxel Toolkit SMS Notifications is working!', 'voxel-toolkit'),
-            get_bloginfo('name')
-        );
-
-        $result = $this->send_sms($phone, $message);
-
-        if ($result['success']) {
-            wp_send_json_success(array(
-                'message' => __('Test SMS sent successfully!', 'voxel-toolkit'),
-                'message_id' => $result['message_id'],
-            ));
-        } else {
-            wp_send_json_error(array(
-                'message' => sprintf(__('Failed to send SMS: %s', 'voxel-toolkit'), $result['error']),
-            ));
-        }
     }
 
     /**
