@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Dynamic Tags Page**: Added Share Count and Auto Reply Field sections to Dynamic Tags documentation page
 
 ### Fixed
+- **Suggest Edits Widget**: Fixed modal appearing behind other page elements (cards, carousels, etc.)
+  - Modal now moves to body element when opened to escape parent stacking contexts
+  - Added Border Color control to "Suggest an Edit Button" style section
 - **Messenger Settings**: Fixed "The link you followed has expired" error on Cloudways/cached hosting
   - Switched from form POST to AJAX-based saving to bypass server-level caching issues
 - **Messenger Widget**: Fixed placeholder text issues when replying as a listing
