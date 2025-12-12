@@ -30,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added JSON validation to prevent database errors when user has no membership meta
   - Fixed reset behavior to properly restore default value when configured in Elementor
 - **SMS Notifications**: Fixed "SMS Notifications not fully initialized" error when testing SMS on sites using Voxel child themes
+- **Messenger Widget**: Fixed toggle and tooltip inconsistencies
+  - Chat circles now reliably show/hide on repeated button clicks
+  - Tooltips no longer flicker when hovering between chat circles
 
 ## [1.5.6.0.1] - 2025-12-02
 
