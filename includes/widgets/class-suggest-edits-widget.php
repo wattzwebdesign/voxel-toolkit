@@ -297,6 +297,17 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'button_border_color',
+            [
+                'label' => __('Border Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-suggest-edit-btn' => 'border: 1px solid {{VALUE}}',
+                ],
+            ]
+        );
+
         $this->end_controls_section();
 
         // Field Title Style

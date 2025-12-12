@@ -17,6 +17,12 @@
                 e.preventDefault();
                 var postId = $(this).data('post-id');
                 var $modal = $('#vt-suggest-modal-' + postId);
+
+                // Move modal to body to escape any parent stacking contexts
+                if (!$modal.parent().is('body')) {
+                    $modal.appendTo('body');
+                }
+
                 $modal.fadeIn(200);
                 $('body').addClass('vt-modal-open');
 

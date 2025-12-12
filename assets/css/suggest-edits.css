@@ -50,20 +50,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    isolation: isolate;
 }
 
 .vt-suggest-modal-overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(4px);
+    z-index: 999999;
 }
 
 .vt-suggest-modal-content {
     position: relative;
+    z-index: 1000000;
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
