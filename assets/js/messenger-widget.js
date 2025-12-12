@@ -15,6 +15,7 @@
         config: {},
         originalTitle: document.title,
         titleFlashInterval: null,
+        tooltipHideTimeout: null,
         state: {
             isOpen: false,
             chats: [],
@@ -220,6 +221,12 @@
                 var name = $item.data('name');
                 var excerpt = $item.data('excerpt');
 
+                // Cancel any pending hide
+                if (self.tooltipHideTimeout) {
+                    clearTimeout(self.tooltipHideTimeout);
+                    self.tooltipHideTimeout = null;
+                }
+
                 // Update tooltip content
                 self.tooltip.find('.vt-tooltip-name').text(name);
                 self.tooltip.find('.vt-tooltip-message').text(excerpt);
@@ -245,20 +252,24 @@
 
                 tooltipTop = offset.top + (itemHeight / 2);
 
+                // Show tooltip - use visibility for smooth transitions
                 self.tooltip.css({
                     'left': tooltipLeft + 'px',
                     'top': tooltipTop + 'px',
-                    'display': 'block',
-                    'opacity': '1'
+                    'display': 'block'
                 });
+                // Trigger reflow before adding opacity for smooth transition
+                self.tooltip[0].offsetHeight;
+                self.tooltip.css('opacity', '1');
             });
 
             // Hide tooltip on mouse leave
             $(document).on('mouseleave', '.vt-messenger-chat-item', function(e) {
-                self.tooltip.css({
-                    'display': 'none',
-                    'opacity': '0'
-                });
+                // Fade out first, then hide
+                self.tooltip.css('opacity', '0');
+                self.tooltipHideTimeout = setTimeout(function() {
+                    self.tooltip.css('display', 'none');
+                }, 150); // Match CSS transition duration
             });
 
             // Minimize chat window
@@ -361,7 +372,10 @@
         },
 
         togglePopup: function() {
-            if (this.state.isOpen) {
+            // Check actual visibility, not just state (they can get out of sync)
+            var isActuallyVisible = this.popup.is(':visible');
+
+            if (isActuallyVisible) {
                 // Only close if no chats are open
                 if (this.state.openChats.length === 0) {
                     this.closePopup();
