@@ -822,13 +822,21 @@ class Voxel_Toolkit_Functions {
     public function render_admin_menu_hide_settings($settings) {
         // Get available menus from the class if possible
         $available_menus = array(
-            'structure' => array(
-                'name' => __('Structure (Post Types)', 'voxel-toolkit'),
-                'description' => __('Hide the Voxel Post Types configuration page', 'voxel-toolkit')
+            'voxel_settings' => array(
+                'name' => __('Voxel Menu', 'voxel-toolkit'),
+                'description' => __('Hide the main Voxel settings menu', 'voxel-toolkit')
             ),
-            'membership' => array(
-                'name' => __('Membership', 'voxel-toolkit'),
-                'description' => __('Hide the Voxel Membership configuration page', 'voxel-toolkit')
+            'voxel_post_types' => array(
+                'name' => __('Structure', 'voxel-toolkit'),
+                'description' => __('Hide the Voxel Structure (Post Types) menu', 'voxel-toolkit')
+            ),
+            'voxel_templates' => array(
+                'name' => __('Design', 'voxel-toolkit'),
+                'description' => __('Hide the Voxel Design/Templates menu', 'voxel-toolkit')
+            ),
+            'voxel_users' => array(
+                'name' => __('Users (Voxel)', 'voxel-toolkit'),
+                'description' => __('Hide the Users (Voxel) submenu under Users', 'voxel-toolkit')
             )
         );
         

@@ -747,7 +747,7 @@ class Voxel_Toolkit_Admin {
                     case 'admin_menu_hide':
                         if (isset($function_input['hidden_menus']) && is_array($function_input['hidden_menus'])) {
                             // Validate menu keys against allowed values
-                            $allowed_menus = array('structure', 'membership');
+                            $allowed_menus = array('voxel_settings', 'voxel_post_types', 'voxel_templates', 'voxel_users');
                             $sanitized_function['hidden_menus'] = array_intersect(
                                 array_map('sanitize_text_field', $function_input['hidden_menus']),
                                 $allowed_menus
