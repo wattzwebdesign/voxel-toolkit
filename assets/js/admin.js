@@ -846,7 +846,9 @@ jQuery(document).ready(function($) {
 
             // Build settings object from form
             const settings = {};
-            settings[functionKey] = {};
+            settings[functionKey] = {
+                _form_submitted: '1' // Marker to ensure data is sent even when all arrays are empty
+            };
 
             // First, find all checkboxes and initialize them
             $form.find('input[type="checkbox"]').each(function() {

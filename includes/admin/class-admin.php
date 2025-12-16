@@ -761,25 +761,26 @@ class Voxel_Toolkit_Admin {
 
         // Process settings - always run sanitization even if settings appear empty
         // This ensures unchecked checkboxes (empty arrays) are properly saved
-        if (isset($settings_data[$function_key])) {
-            // Build input array for sanitization
-            $input = array($function_key => $settings_data[$function_key]);
+        // Get the function data, defaulting to empty array if not set
+        $function_data = isset($settings_data[$function_key]) ? $settings_data[$function_key] : array();
 
-            // Sanitize the input
-            $sanitized = $this->sanitize_options($input);
+        // Build input array for sanitization
+        $input = array($function_key => $function_data);
 
-            if (isset($sanitized[$function_key])) {
-                // Special handling for options_page
-                if ($function_key === 'options_page') {
-                    $current_options[$function_key] = $this->handle_options_page_config(
-                        $settings_data[$function_key],
-                        $current_options[$function_key]
-                    );
-                } else {
-                    // Merge sanitized settings, ensuring arrays are replaced not merged
-                    foreach ($sanitized[$function_key] as $key => $value) {
-                        $current_options[$function_key][$key] = $value;
-                    }
+        // Sanitize the input
+        $sanitized = $this->sanitize_options($input);
+
+        if (isset($sanitized[$function_key])) {
+            // Special handling for options_page
+            if ($function_key === 'options_page') {
+                $current_options[$function_key] = $this->handle_options_page_config(
+                    $function_data,
+                    $current_options[$function_key]
+                );
+            } else {
+                // Merge sanitized settings, ensuring arrays are replaced not merged
+                foreach ($sanitized[$function_key] as $key => $value) {
+                    $current_options[$function_key][$key] = $value;
                 }
             }
         }
