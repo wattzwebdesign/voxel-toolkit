@@ -5,6 +5,21 @@ All notable changes to Voxel Toolkit will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.8] - 2025-12-12
+
+### Fixed
+- **Suggest Edits Widget**: Fixed modal appearing behind other page elements (cards, carousels, etc.)
+- Modal now moves to body element when opened to escape parent stacking contexts
+- Added Border Color control to "Suggest an Edit Button" style section
+- **Membership Plan Filter**: Fixed filter not working on profiles post type
+- Added JSON validation to prevent database errors when user has no membership meta
+- Fixed reset behavior to properly restore default value when configured in Elementor
+- **SMS Notifications**: Fixed "SMS Notifications not fully initialized" error when testing SMS on sites using Voxel child themes
+- **Messenger Widget**: Fixed toggle and tooltip inconsistencies
+- Chat circles now reliably show/hide on repeated button clicks
+- Tooltips no longer flicker when hovering between chat circles
+
+
 ## [1.5.7] - 2025-12-07
 
 ### Added

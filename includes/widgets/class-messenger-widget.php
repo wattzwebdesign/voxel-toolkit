@@ -1108,6 +1108,20 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'input_placeholder_color',
+            [
+                'label' => __('Placeholder Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-messenger-input::placeholder' => 'color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-messenger-input::-webkit-input-placeholder' => 'color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-messenger-input::-moz-placeholder' => 'color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-messenger-input:-ms-input-placeholder' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
         $this->add_group_control(
             \Elementor\Group_Control_Typography::get_type(),
             [
