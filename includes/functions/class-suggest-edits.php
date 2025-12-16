@@ -1279,6 +1279,12 @@ class Voxel_Toolkit_Suggest_Edits {
     public function get_pending_count($post_type = null) {
         global $wpdb;
 
+        // Check if table exists first to prevent errors during admin_menu hook
+        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$this->table_name}'");
+        if ($table_exists != $this->table_name) {
+            return 0;
+        }
+
         if ($post_type) {
             $sql = $wpdb->prepare(
                 "SELECT COUNT(*) FROM {$this->table_name} es
