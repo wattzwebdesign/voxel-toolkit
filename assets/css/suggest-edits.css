@@ -263,6 +263,20 @@ body.vt-modal-open {
     font-size: 14px;
 }
 
+/* HTML content styling for description/texteditor fields */
+.vt-current-value .vt-html-content {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.vt-current-value .vt-html-content p {
+    margin: 0 0 0.75em 0;
+}
+
+.vt-current-value .vt-html-content p:last-child {
+    margin-bottom: 0;
+}
+
 .vt-field-suggested {
     margin-bottom: 12px;
 }

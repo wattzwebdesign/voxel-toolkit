@@ -840,7 +840,15 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                                                     echo esc_html($this->format_value($field_data['value'], $field_data['type'], $field_data['field'] ?? null));
                                                 }
                                             } else {
-                                                echo esc_html($this->format_value($field_data['value'], $field_data['type'], $field_data['field'] ?? null));
+                                                $field_type = $field_data['type'] ?? '';
+                                                $formatted_value = $this->format_value($field_data['value'], $field_data['type'], $field_data['field'] ?? null);
+
+                                                // Allow safe HTML for rich text fields
+                                                if (in_array($field_type, ['texteditor', 'description'])) {
+                                                    echo '<div class="vt-html-content">' . wp_kses_post($formatted_value) . '</div>';
+                                                } else {
+                                                    echo esc_html($formatted_value);
+                                                }
                                             }
                                             ?>
                                         </div>
