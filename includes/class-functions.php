@@ -785,32 +785,23 @@ class Voxel_Toolkit_Functions {
     public function render_auto_verify_posts_settings($settings) {
         $post_types = Voxel_Toolkit_Settings::instance()->get_available_post_types();
         $selected_types = isset($settings['post_types']) ? $settings['post_types'] : array();
-        
+
         ?>
-        <tr>
-            <th scope="row">
-                <label for="auto_verify_posts_post_types"><?php _e('Post Types to Auto-Verify', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <fieldset>
-                    <legend class="screen-reader-text">
-                        <span><?php _e('Select post types to automatically verify', 'voxel-toolkit'); ?></span>
-                    </legend>
-                    <?php foreach ($post_types as $post_type => $label): ?>
-                        <label>
-                            <input type="checkbox" 
-                                   name="voxel_toolkit_options[auto_verify_posts][post_types][]" 
-                                   value="<?php echo esc_attr($post_type); ?>"
-                                   <?php checked(in_array($post_type, $selected_types)); ?> />
-                            <?php echo esc_html($label); ?>
-                        </label><br>
-                    <?php endforeach; ?>
-                    <p class="description">
-                        <?php _e('Select which post types should be automatically marked as verified when submitted.', 'voxel-toolkit'); ?>
-                    </p>
-                </fieldset>
-            </td>
-        </tr>
+        <div class="vt-info-box">
+            <?php _e('Select which post types should be automatically marked as verified when submitted.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-checkbox-grid">
+            <?php foreach ($post_types as $post_type => $label): ?>
+                <label>
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[auto_verify_posts][post_types][]"
+                           value="<?php echo esc_attr($post_type); ?>"
+                           <?php checked(in_array($post_type, $selected_types)); ?> />
+                    <?php echo esc_html($label); ?>
+                </label>
+            <?php endforeach; ?>
+        </div>
         <?php
     }
     
@@ -822,46 +813,45 @@ class Voxel_Toolkit_Functions {
     public function render_admin_menu_hide_settings($settings) {
         // Get available menus from the class if possible
         $available_menus = array(
-            'structure' => array(
-                'name' => __('Structure (Post Types)', 'voxel-toolkit'),
-                'description' => __('Hide the Voxel Post Types configuration page', 'voxel-toolkit')
+            'voxel_settings' => array(
+                'name' => __('Voxel Menu', 'voxel-toolkit'),
+                'description' => __('Hide the main Voxel settings menu', 'voxel-toolkit')
             ),
-            'membership' => array(
-                'name' => __('Membership', 'voxel-toolkit'),
-                'description' => __('Hide the Voxel Membership configuration page', 'voxel-toolkit')
+            'voxel_post_types' => array(
+                'name' => __('Structure', 'voxel-toolkit'),
+                'description' => __('Hide the Voxel Structure (Post Types) menu', 'voxel-toolkit')
+            ),
+            'voxel_templates' => array(
+                'name' => __('Design', 'voxel-toolkit'),
+                'description' => __('Hide the Voxel Design/Templates menu', 'voxel-toolkit')
+            ),
+            'voxel_users' => array(
+                'name' => __('Users (Voxel)', 'voxel-toolkit'),
+                'description' => __('Hide the Users (Voxel) submenu under Users', 'voxel-toolkit')
             )
         );
-        
+
         $hidden_menus = isset($settings['hidden_menus']) ? $settings['hidden_menus'] : array();
-        
+
         ?>
-        <tr>
-            <th scope="row">
-                <label for="admin_menu_hide_menus"><?php _e('Menus to Hide', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <fieldset>
-                    <legend class="screen-reader-text">
-                        <span><?php _e('Select admin menus to hide', 'voxel-toolkit'); ?></span>
-                    </legend>
-                    <?php foreach ($available_menus as $menu_key => $menu_data): ?>
-                        <label>
-                            <input type="checkbox" 
-                                   name="voxel_toolkit_options[admin_menu_hide][hidden_menus][]" 
-                                   value="<?php echo esc_attr($menu_key); ?>"
-                                   <?php checked(in_array($menu_key, $hidden_menus)); ?> />
-                            <strong><?php echo esc_html($menu_data['name']); ?></strong>
-                        </label>
-                        <p class="description" style="margin-left: 25px; margin-bottom: 10px;">
-                            <?php echo esc_html($menu_data['description']); ?>
-                        </p>
-                    <?php endforeach; ?>
-                    <p class="description">
-                        <?php _e('Select which admin menus should be hidden from the WordPress admin interface.', 'voxel-toolkit'); ?>
-                    </p>
-                </fieldset>
-            </td>
-        </tr>
+        <div class="vt-info-box">
+            <?php _e('Select which admin menus should be hidden from the WordPress admin interface.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-checkbox-list">
+            <?php foreach ($available_menus as $menu_key => $menu_data): ?>
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[admin_menu_hide][hidden_menus][]"
+                           value="<?php echo esc_attr($menu_key); ?>"
+                           <?php checked(in_array($menu_key, $hidden_menus)); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php echo esc_html($menu_data['name']); ?></span>
+                        <p class="vt-checkbox-item-description"><?php echo esc_html($menu_data['description']); ?></p>
+                    </div>
+                </label>
+            <?php endforeach; ?>
+        </div>
         <?php
     }
     
@@ -874,32 +864,23 @@ class Voxel_Toolkit_Functions {
     public function render_admin_bar_publish_settings($settings) {
         $post_types = Voxel_Toolkit_Settings::instance()->get_available_post_types();
         $selected_types = isset($settings['post_types']) ? $settings['post_types'] : array();
-        
+
         ?>
-        <tr>
-            <th scope="row">
-                <label for="admin_bar_publish_post_types"><?php _e('Post Types with Admin Bar Button', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <fieldset>
-                    <legend class="screen-reader-text">
-                        <span><?php _e('Select post types to show admin bar publish button', 'voxel-toolkit'); ?></span>
-                    </legend>
-                    <?php foreach ($post_types as $post_type => $label): ?>
-                        <label>
-                            <input type="checkbox" 
-                                   name="voxel_toolkit_options[admin_bar_publish][post_types][]" 
-                                   value="<?php echo esc_attr($post_type); ?>"
-                                   <?php checked(in_array($post_type, $selected_types)); ?> />
-                            <?php echo esc_html($label); ?>
-                        </label><br>
-                    <?php endforeach; ?>
-                    <p class="description">
-                        <?php _e('Select which post types should show the Publish/Mark as Pending button in the admin bar. The button will appear when viewing or editing posts of these types.', 'voxel-toolkit'); ?>
-                    </p>
-                </fieldset>
-            </td>
-        </tr>
+        <div class="vt-info-box">
+            <?php _e('Select which post types should show the Publish/Mark as Pending button in the admin bar. The button will appear when viewing or editing posts of these types.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-checkbox-grid">
+            <?php foreach ($post_types as $post_type => $label): ?>
+                <label>
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[admin_bar_publish][post_types][]"
+                           value="<?php echo esc_attr($post_type); ?>"
+                           <?php checked(in_array($post_type, $selected_types)); ?> />
+                    <?php echo esc_html($label); ?>
+                </label>
+            <?php endforeach; ?>
+        </div>
         <?php
     }
     
@@ -911,36 +892,27 @@ class Voxel_Toolkit_Functions {
     public function render_delete_post_media_settings($settings) {
         $post_types = Voxel_Toolkit_Settings::instance()->get_available_post_types();
         $selected_types = isset($settings['post_types']) ? $settings['post_types'] : array();
-        
+
         ?>
-        <tr>
-            <th scope="row">
-                <label for="delete_post_media_post_types"><?php _e('Post Types with Media Auto-Delete', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <fieldset>
-                    <legend class="screen-reader-text">
-                        <span><?php _e('Select post types to automatically delete media when post is deleted', 'voxel-toolkit'); ?></span>
-                    </legend>
-                    <?php foreach ($post_types as $post_type => $label): ?>
-                        <label>
-                            <input type="checkbox" 
-                                   name="voxel_toolkit_options[delete_post_media][post_types][]" 
-                                   value="<?php echo esc_attr($post_type); ?>"
-                                   <?php checked(in_array($post_type, $selected_types)); ?> />
-                            <?php echo esc_html($label); ?>
-                        </label><br>
-                    <?php endforeach; ?>
-                    <p class="description">
-                        <?php _e('Select which post types should automatically delete all attached media when the post is deleted. A double confirmation dialog will appear to prevent accidental deletions.', 'voxel-toolkit'); ?>
-                    </p>
-                    <p class="description" style="color: #d63638; font-weight: 600;">
-                        <span class="dashicons dashicons-warning"></span>
-                        <?php _e('Warning: This will permanently delete media files from your server. This action cannot be undone.', 'voxel-toolkit'); ?>
-                    </p>
-                </fieldset>
-            </td>
-        </tr>
+        <div class="vt-info-box">
+            <?php _e('Select which post types should automatically delete all attached media when the post is deleted. A double confirmation dialog will appear to prevent accidental deletions.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-warning-box">
+            <strong><?php _e('Warning:', 'voxel-toolkit'); ?></strong> <?php _e('This will permanently delete media files from your server. This action cannot be undone.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-checkbox-grid">
+            <?php foreach ($post_types as $post_type => $label): ?>
+                <label>
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[delete_post_media][post_types][]"
+                           value="<?php echo esc_attr($post_type); ?>"
+                           <?php checked(in_array($post_type, $selected_types)); ?> />
+                    <?php echo esc_html($label); ?>
+                </label>
+            <?php endforeach; ?>
+        </div>
         <?php
     }
     
@@ -954,46 +926,34 @@ class Voxel_Toolkit_Functions {
         $selected_users = isset($settings['selected_users']) ? $settings['selected_users'] : array();
         $roles = get_editable_roles();
         ?>
-        <tr>
-            <th scope="row">
-                <label><?php _e('User Roles', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <fieldset>
-                    <legend class="screen-reader-text">
-                        <span><?php _e('Select user roles to receive admin notifications', 'voxel-toolkit'); ?></span>
-                    </legend>
-                    <div class="vt-role-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px;">
-                        <?php foreach ($roles as $role_key => $role_data): ?>
-                            <label style="background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px; padding: 10px; display: flex; align-items: center; cursor: pointer; transition: all 0.2s;">
-                                <input type="checkbox" 
-                                       name="voxel_toolkit_options[admin_notifications][user_roles][]" 
-                                       value="<?php echo esc_attr($role_key); ?>"
-                                       <?php checked(in_array($role_key, $user_roles)); ?> 
-                                       style="margin-right: 8px;" />
-                                <?php echo esc_html($role_data['name']); ?>
-                            </label>
-                        <?php endforeach; ?>
-                    </div>
-                    <p class="description">
-                        <?php _e('Replace default admin notifications with notifications sent to all users with the selected roles.', 'voxel-toolkit'); ?>
-                    </p>
-                </fieldset>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">
-                <label for="admin_notifications_selected_users"><?php _e('Individual Users', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <!-- Hidden field to ensure empty selection is properly handled -->
+        <div class="vt-info-box">
+            <?php _e('Replace default admin notifications with notifications sent to all users with the selected roles.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('User Roles', 'voxel-toolkit'); ?></h4>
+            <div class="vt-checkbox-grid">
+                <?php foreach ($roles as $role_key => $role_data): ?>
+                    <label>
+                        <input type="checkbox"
+                               name="voxel_toolkit_options[admin_notifications][user_roles][]"
+                               value="<?php echo esc_attr($role_key); ?>"
+                               <?php checked(in_array($role_key, $user_roles)); ?> />
+                        <?php echo esc_html($role_data['name']); ?>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Individual Users', 'voxel-toolkit'); ?></h4>
+            <div class="vt-field-group">
                 <input type="hidden" name="voxel_toolkit_options[admin_notifications][selected_users]" value="" />
-                
-                <select id="admin_notifications_selected_users" 
-                        name="voxel_toolkit_options[admin_notifications][selected_users][]" 
-                        multiple="multiple" 
-                        style="width: 100%; min-height: 120px;"
-                        class="vt-user-search-select">
+                <select id="admin_notifications_selected_users"
+                        name="voxel_toolkit_options[admin_notifications][selected_users][]"
+                        multiple="multiple"
+                        class="vt-user-search-select"
+                        style="width: 100%; max-width: 500px; min-height: 120px;">
                     <?php foreach($selected_users as $user_id): ?>
                         <?php if ($user_data = get_userdata($user_id)): ?>
                             <option selected value="<?php echo esc_attr($user_id); ?>">
@@ -1002,15 +962,14 @@ class Voxel_Toolkit_Functions {
                         <?php endif; ?>
                     <?php endforeach; ?>
                 </select>
-                <p class="description">
-                    <?php _e('Search and select individual users to receive admin notifications instead of the default admin. Type at least 3 characters to search.', 'voxel-toolkit'); ?>
+                <p class="vt-field-description">
+                    <?php _e('Search and select individual users to receive admin notifications. Type at least 3 characters to search.', 'voxel-toolkit'); ?>
                 </p>
-            </td>
-        </tr>
-        
+            </div>
+        </div>
+
         <script>
         jQuery(document).ready(function($) {
-            // Initialize Select2 for user search if not already done
             if (!$('#admin_notifications_selected_users').hasClass('select2-hidden-accessible')) {
                 $('#admin_notifications_selected_users').select2({
                     ajax: {
@@ -1025,48 +984,18 @@ class Voxel_Toolkit_Functions {
                             };
                         },
                         processResults: function(data) {
-                            return {
-                                results: data
-                            };
+                            return { results: data };
                         },
                         cache: true
                     },
-                    escapeMarkup: function(markup) {
-                        return markup;
-                    },
+                    escapeMarkup: function(markup) { return markup; },
                     minimumInputLength: 3,
                     placeholder: '<?php _e('Search for users by name or email...', 'voxel-toolkit'); ?>',
                     allowClear: true
                 });
             }
-            
-            // Handle form submission to ensure empty selection is properly saved
-            $('form').on('submit', function() {
-                var selectedValues = $('#admin_notifications_selected_users').val();
-                if (!selectedValues || selectedValues.length === 0) {
-                    // If no users selected, ensure the hidden field value is kept empty
-                    $('input[name="voxel_toolkit_options[admin_notifications][selected_users]"]').val('');
-                }
-            });
         });
         </script>
-        
-        <style>
-        .vt-role-grid label:hover {
-            background: #f0f0f1 !important;
-        }
-        .vt-role-grid input[type="checkbox"]:checked + span {
-            font-weight: 600;
-            color: #2271b1;
-        }
-        .select2-container {
-            max-width: 100%;
-        }
-        .select2-container--default .select2-selection--multiple {
-            min-height: 38px;
-            padding: 2px;
-        }
-        </style>
         <?php
     }
 
@@ -1494,17 +1423,12 @@ class Voxel_Toolkit_Functions {
     public function render_membership_notifications_settings($settings) {
         $notifications = isset($settings['notifications']) ? $settings['notifications'] : array();
         ?>
-        <tr>
-            <th scope="row">
-                <label><?php _e('Email Notifications', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
                 <div id="membership-notifications-container">
-                    <div class="membership-notifications-intro" style="background: #f8f9fa; border: 1px solid #e1e5e9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 18px;">Email Notification Setup</h3>
-                        <p style="margin: 0 0 15px 0; line-height: 1.6; color: #646970;">Configure automated email notifications to send to members before their subscription expires. Create multiple notification rules with different timing.</p>
-                        
-                        <div style="background: white; padding: 15px; border-radius: 6px; border: 1px solid #e1e5e9;">
+                    <div class="vt-info-box" style="margin-bottom: 20px;">
+                        <strong><?php _e('Email Notification Setup', 'voxel-toolkit'); ?></strong><br>
+                        <?php _e('Configure automated email notifications to send to members before their subscription expires. Create multiple notification rules with different timing.', 'voxel-toolkit'); ?>
+
+                        <div style="background: white; padding: 15px; border-radius: 6px; border: 1px solid #e1e5e9; margin-top: 15px;">
                             <strong style="display: block; margin-bottom: 8px; color: #1e1e1e;">Available Variables (click to copy):</strong>
                             <div class="variable-tags" style="display: flex; flex-wrap: wrap; gap: 8px;">
                                 <span class="variable-tag" data-variable="{expiration_date}" style="background: #f1f1f1; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-family: monospace; font-size: 13px; border: 1px solid #ddd; transition: all 0.2s;" title="Click to copy">{expiration_date}</span>
@@ -1824,11 +1748,9 @@ class Voxel_Toolkit_Functions {
                     });
                 });
                 </script>
-            </td>
-        </tr>
         <?php
     }
-    
+
     /**
      * Render settings for guest view function
      * 
@@ -1836,143 +1758,85 @@ class Voxel_Toolkit_Functions {
      */
     public function render_guest_view_settings($settings) {
         ?>
-        <tr>
-            <th scope="row">
-                <label><?php _e('Guest View Settings', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 600px;">
-                    <!-- General Settings -->
-                    <div style="margin-bottom: 30px;">
-                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;"><?php _e('General Settings', 'voxel-toolkit'); ?></h3>
-                        
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: flex; align-items: center; gap: 8px; font-weight: 500;">
-                                <input type="checkbox" 
-                                       name="voxel_toolkit_options[guest_view][show_confirmation]" 
-                                       value="1"
-                                       <?php checked(!empty($settings['show_confirmation'])); ?> />
-                                <?php _e('Show confirmation dialog', 'voxel-toolkit'); ?>
-                            </label>
-                            <p style="margin: 5px 0 0 26px; font-size: 13px; color: #666; font-style: italic;"><?php _e('Ask for confirmation before switching to guest view', 'voxel-toolkit'); ?></p>
-                        </div>
-                        
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; font-weight: 500; margin-bottom: 8px;"><?php _e('Button Position', 'voxel-toolkit'); ?></label>
-                            <select name="voxel_toolkit_options[guest_view][button_position]" style="width: 200px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                                <option value="top-left" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'top-left'); ?>><?php _e('Top Left', 'voxel-toolkit'); ?></option>
-                                <option value="top-right" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'top-right'); ?>><?php _e('Top Right', 'voxel-toolkit'); ?></option>
-                                <option value="middle-left" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'middle-left'); ?>><?php _e('Middle Left', 'voxel-toolkit'); ?></option>
-                                <option value="middle-right" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'middle-right'); ?>><?php _e('Middle Right', 'voxel-toolkit'); ?></option>
-                                <option value="bottom-left" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'bottom-left'); ?>><?php _e('Bottom Left', 'voxel-toolkit'); ?></option>
-                                <option value="bottom-right" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'bottom-right'); ?>><?php _e('Bottom Right', 'voxel-toolkit'); ?></option>
-                            </select>
-                            <p style="margin: 5px 0 0 0; font-size: 13px; color: #666; font-style: italic;"><?php _e('Where to show the floating "Exit Guest View" button (always bottom center on mobile)', 'voxel-toolkit'); ?></p>
-                        </div>
+        <div class="vt-info-box">
+            <?php _e('Add the "Guest View Button" widget to your pages using Elementor (found in "Voxel Toolkit" category).', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('General Settings', 'voxel-toolkit'); ?></h4>
+            <div class="vt-checkbox-list">
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[guest_view][show_confirmation]"
+                           value="1"
+                           <?php checked(!empty($settings['show_confirmation'])); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Show confirmation dialog', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Ask for confirmation before switching to guest view', 'voxel-toolkit'); ?></p>
                     </div>
-                    
-                    <!-- Color Settings -->
-                    <div style="margin-bottom: 20px;">
-                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;"><?php _e('Exit Button Colors', 'voxel-toolkit'); ?></h3>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                            <div>
-                                <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('Background Color', 'voxel-toolkit'); ?></label>
-                                <input type="text" 
-                                       name="voxel_toolkit_options[guest_view][bg_color]" 
-                                       value="<?php echo esc_attr(isset($settings['bg_color']) ? $settings['bg_color'] : '#667eea'); ?>"
-                                       placeholder="#667eea"
-                                       pattern="^#[A-Fa-f0-9]{6}$"
-                                       class="guest-view-bg-color"
-                                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;" />
-                                <p style="margin: 3px 0 0 0; font-size: 12px; color: #666; font-style: italic;"><?php _e('Button background color', 'voxel-toolkit'); ?></p>
-                            </div>
-                            
-                            <div>
-                                <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('Text Color', 'voxel-toolkit'); ?></label>
-                                <input type="text" 
-                                       name="voxel_toolkit_options[guest_view][text_color]" 
-                                       value="<?php echo esc_attr(isset($settings['text_color']) ? $settings['text_color'] : '#ffffff'); ?>"
-                                       placeholder="#ffffff"
-                                       pattern="^#[A-Fa-f0-9]{6}$"
-                                       class="guest-view-text-color"
-                                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;" />
-                                <p style="margin: 3px 0 0 0; font-size: 12px; color: #666; font-style: italic;"><?php _e('"Exit Guest View" text color', 'voxel-toolkit'); ?></p>
-                            </div>
-                        </div>
-                        
-                        <!-- Live Preview -->
-                        <div style="background: #f8f9fa; border: 1px solid #e1e5e9; border-radius: 6px; padding: 20px; text-align: center;">
-                            <p style="margin: 0 0 15px 0; font-weight: 500; color: #1e1e1e;"><?php _e('Live Preview:', 'voxel-toolkit'); ?></p>
-                            <div id="guest-view-button-preview" style="display: inline-block;">
-                                <button type="button" 
-                                        style="background: <?php echo esc_attr(isset($settings['bg_color']) ? $settings['bg_color'] : '#667eea'); ?>; 
-                                               color: <?php echo esc_attr(isset($settings['text_color']) ? $settings['text_color'] : '#ffffff'); ?>; 
-                                               border: none; 
-                                               padding: 12px 20px; 
-                                               border-radius: 25px; 
-                                               font-size: 14px; 
-                                               font-weight: 600; 
-                                               cursor: pointer; 
-                                               transition: all 0.2s; 
-                                               white-space: nowrap; 
-                                               text-decoration: none; 
-                                               box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
-                                               min-width: 140px;">
-                                    <?php _e('Exit Guest View', 'voxel-toolkit'); ?>
-                                </button>
-                            </div>
-                            <p style="margin: 10px 0 0 0; font-size: 12px; color: #666; font-style: italic;"><?php _e('This is how the button will appear when guest view is active', 'voxel-toolkit'); ?></p>
-                        </div>
-                    </div>
-                    
-                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px;">
-                        <strong><?php _e('How to use:', 'voxel-toolkit'); ?></strong> <?php _e('Add the "Guest View Button" widget to your pages using Elementor (found in "Voxel Toolkit" category).', 'voxel-toolkit'); ?>
-                    </div>
+                </label>
+            </div>
+
+            <div class="vt-field-group" style="margin-top: 20px;">
+                <label class="vt-field-label"><?php _e('Button Position', 'voxel-toolkit'); ?></label>
+                <select name="voxel_toolkit_options[guest_view][button_position]" class="vt-select">
+                    <option value="top-left" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'top-left'); ?>><?php _e('Top Left', 'voxel-toolkit'); ?></option>
+                    <option value="top-right" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'top-right'); ?>><?php _e('Top Right', 'voxel-toolkit'); ?></option>
+                    <option value="middle-left" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'middle-left'); ?>><?php _e('Middle Left', 'voxel-toolkit'); ?></option>
+                    <option value="middle-right" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'middle-right'); ?>><?php _e('Middle Right', 'voxel-toolkit'); ?></option>
+                    <option value="bottom-left" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'bottom-left'); ?>><?php _e('Bottom Left', 'voxel-toolkit'); ?></option>
+                    <option value="bottom-right" <?php selected(isset($settings['button_position']) ? $settings['button_position'] : '', 'bottom-right'); ?>><?php _e('Bottom Right', 'voxel-toolkit'); ?></option>
+                </select>
+                <p class="vt-field-description"><?php _e('Where to show the floating "Exit Guest View" button (always bottom center on mobile)', 'voxel-toolkit'); ?></p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Exit Button Colors', 'voxel-toolkit'); ?></h4>
+            <div class="vt-checkbox-inline" style="gap: 32px; margin-bottom: 20px;">
+                <div class="vt-field-group">
+                    <label class="vt-field-label"><?php _e('Background Color', 'voxel-toolkit'); ?></label>
+                    <input type="text"
+                           name="voxel_toolkit_options[guest_view][bg_color]"
+                           value="<?php echo esc_attr(isset($settings['bg_color']) ? $settings['bg_color'] : '#667eea'); ?>"
+                           placeholder="#667eea"
+                           class="vt-text-input guest-view-bg-color"
+                           style="max-width: 150px; font-family: monospace;" />
                 </div>
-                
-                <script>
-                jQuery(document).ready(function($) {
-                    // Function to validate hex color
-                    function isValidHex(hex) {
-                        return /^#[0-9A-Fa-f]{6}$/.test(hex);
-                    }
-                    
-                    // Function to update preview
-                    function updatePreview() {
-                        var bgColor = $('.guest-view-bg-color').val();
-                        var textColor = $('.guest-view-text-color').val();
-                        var $previewBtn = $('#guest-view-button-preview button');
-                        
-                        // Update background color
-                        if (isValidHex(bgColor)) {
-                            $previewBtn.css('background', bgColor);
-                        }
-                        
-                        // Update text color
-                        if (isValidHex(textColor)) {
-                            $previewBtn.css('color', textColor);
-                        }
-                    }
-                    
-                    // Bind events to color inputs
-                    $('.guest-view-bg-color, .guest-view-text-color').on('input keyup paste', function() {
-                        setTimeout(updatePreview, 50);
-                    });
-                    
-                    // Add hover effect to preview button
-                    $('#guest-view-button-preview button').hover(
-                        function() {
-                            $(this).css('transform', 'translateY(-2px)');
-                        },
-                        function() {
-                            $(this).css('transform', 'translateY(0)');
-                        }
-                    );
-                });
-                </script>
-            </td>
-        </tr>
+                <div class="vt-field-group">
+                    <label class="vt-field-label"><?php _e('Text Color', 'voxel-toolkit'); ?></label>
+                    <input type="text"
+                           name="voxel_toolkit_options[guest_view][text_color]"
+                           value="<?php echo esc_attr(isset($settings['text_color']) ? $settings['text_color'] : '#ffffff'); ?>"
+                           placeholder="#ffffff"
+                           class="vt-text-input guest-view-text-color"
+                           style="max-width: 150px; font-family: monospace;" />
+                </div>
+            </div>
+
+            <div style="background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 20px; text-align: center;">
+                <p style="margin: 0 0 15px 0; font-weight: 500; color: #1e293b;"><?php _e('Live Preview:', 'voxel-toolkit'); ?></p>
+                <div id="guest-view-button-preview">
+                    <button type="button" style="background: <?php echo esc_attr(isset($settings['bg_color']) ? $settings['bg_color'] : '#667eea'); ?>; color: <?php echo esc_attr(isset($settings['text_color']) ? $settings['text_color'] : '#ffffff'); ?>; border: none; padding: 12px 20px; border-radius: 25px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">
+                        <?php _e('Exit Guest View', 'voxel-toolkit'); ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        jQuery(document).ready(function($) {
+            function isValidHex(hex) { return /^#[0-9A-Fa-f]{6}$/.test(hex); }
+            function updatePreview() {
+                var bgColor = $('.guest-view-bg-color').val();
+                var textColor = $('.guest-view-text-color').val();
+                var $btn = $('#guest-view-button-preview button');
+                if (isValidHex(bgColor)) $btn.css('background', bgColor);
+                if (isValidHex(textColor)) $btn.css('color', textColor);
+            }
+            $('.guest-view-bg-color, .guest-view-text-color').on('input keyup paste', function() { setTimeout(updatePreview, 50); });
+        });
+        </script>
         <?php
     }
     
@@ -1982,240 +1846,125 @@ class Voxel_Toolkit_Functions {
      * @param array $settings Current settings
      */
     public function render_ai_review_summary_settings($settings) {
-        // Check if cache was refreshed
         $cache_refreshed = isset($_GET['ai_cache_refreshed']) ? intval($_GET['ai_cache_refreshed']) : 0;
+        $api_key = isset($settings['api_key']) ? $settings['api_key'] : '';
+        $has_api_key = !empty($api_key) && strlen($api_key) > 10;
+        $current_language = isset($settings['language']) ? $settings['language'] : 'en';
+
+        $languages = array(
+            'en' => __('English', 'voxel-toolkit'), 'it' => __('Italian', 'voxel-toolkit'),
+            'es' => __('Spanish', 'voxel-toolkit'), 'fr' => __('French', 'voxel-toolkit'),
+            'de' => __('German', 'voxel-toolkit'), 'pt' => __('Portuguese', 'voxel-toolkit'),
+            'nl' => __('Dutch', 'voxel-toolkit'), 'ru' => __('Russian', 'voxel-toolkit'),
+            'zh' => __('Chinese', 'voxel-toolkit'), 'ja' => __('Japanese', 'voxel-toolkit'),
+            'ko' => __('Korean', 'voxel-toolkit'), 'ar' => __('Arabic', 'voxel-toolkit'),
+            'hi' => __('Hindi', 'voxel-toolkit'), 'tr' => __('Turkish', 'voxel-toolkit'),
+            'pl' => __('Polish', 'voxel-toolkit'), 'sv' => __('Swedish', 'voxel-toolkit'),
+            'da' => __('Danish', 'voxel-toolkit'), 'no' => __('Norwegian', 'voxel-toolkit'),
+            'fi' => __('Finnish', 'voxel-toolkit'), 'cs' => __('Czech', 'voxel-toolkit'),
+            'hu' => __('Hungarian', 'voxel-toolkit'), 'ro' => __('Romanian', 'voxel-toolkit'),
+            'bg' => __('Bulgarian', 'voxel-toolkit'), 'hr' => __('Croatian', 'voxel-toolkit'),
+            'sk' => __('Slovak', 'voxel-toolkit'), 'sl' => __('Slovenian', 'voxel-toolkit'),
+            'et' => __('Estonian', 'voxel-toolkit'), 'lv' => __('Latvian', 'voxel-toolkit'),
+            'lt' => __('Lithuanian', 'voxel-toolkit'), 'el' => __('Greek', 'voxel-toolkit'),
+            'he' => __('Hebrew', 'voxel-toolkit'), 'th' => __('Thai', 'voxel-toolkit'),
+            'vi' => __('Vietnamese', 'voxel-toolkit'), 'id' => __('Indonesian', 'voxel-toolkit'),
+            'ms' => __('Malay', 'voxel-toolkit'), 'uk' => __('Ukrainian', 'voxel-toolkit'),
+        );
         ?>
-        <tr>
-            <th scope="row">
-                <label><?php _e('AI Review Summary Settings', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 800px;">
-                    <!-- API Settings -->
-                    <div style="margin-bottom: 30px;">
-                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;"><?php _e('ChatGPT API Configuration', 'voxel-toolkit'); ?></h3>
-                        
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; font-weight: 500; margin-bottom: 8px;"><?php _e('OpenAI API Key', 'voxel-toolkit'); ?></label>
-                            
-                            <?php
-                            $api_key = isset($settings['api_key']) ? $settings['api_key'] : '';
-                            $has_api_key = !empty($api_key) && strlen($api_key) > 10;
-                            ?>
-                            
-                            <?php if ($has_api_key): ?>
-                                <!-- Show existing key status -->
-                                <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin-bottom: 15px;">
-                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                                        <span style="font-family: monospace; color: #666; font-size: 14px;">
-                                            <?php echo esc_html(substr($api_key, 0, 7) . str_repeat('*', 20)); ?>
-                                        </span>
-                                        <span style="background: #d4edda; color: #155724; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase;">
-                                            <?php _e('Active', 'voxel-toolkit'); ?>
-                                        </span>
-                                    </div>
-                                    <p style="margin: 0; font-size: 12px; color: #6c757d;">
-                                        <?php _e('API key is configured and ready to use. Enter a new key below to replace it.', 'voxel-toolkit'); ?>
-                                    </p>
-                                </div>
-                            <?php endif; ?>
-                            
-                            <input type="text" 
-                                   name="ai_api_key" 
-                                   value=""
-                                   placeholder="<?php echo $has_api_key ? 'Enter new API key to replace existing one' : 'sk-proj-...'; ?>"
-                                   autocomplete="off"
-                                   spellcheck="false"
-                                   style="width: 100%; max-width: 500px; padding: 12px; border: 2px solid <?php echo $has_api_key ? '#28a745' : '#ddd'; ?>; border-radius: 6px; font-family: monospace; font-size: 14px; background: <?php echo $has_api_key ? '#f8fff9' : 'white'; ?>;" />
-                            
-                            <p style="margin: 10px 0 0 0; font-size: 13px; color: #666;">
-                                <?php _e('Get your OpenAI API key from ', 'voxel-toolkit'); ?>
-                                <a href="https://platform.openai.com/api-keys" target="_blank" style="color: #0073aa;"><?php _e('OpenAI Platform', 'voxel-toolkit'); ?></a>
-                                <?php _e(' (API usage costs apply)', 'voxel-toolkit'); ?>
-                            </p>
-                        </div>
+        <div class="vt-warning-box">
+            <strong><?php _e('Important:', 'voxel-toolkit'); ?></strong>
+            <?php _e('Summaries are cached until new reviews are added. API calls are only made when cache is empty or outdated. OpenAI API usage costs apply.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('ChatGPT API Configuration', 'voxel-toolkit'); ?></h4>
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('OpenAI API Key', 'voxel-toolkit'); ?></label>
+                <?php if ($has_api_key): ?>
+                    <div class="vt-tip-box" style="margin-bottom: 12px;">
+                        <span style="font-family: monospace;"><?php echo esc_html(substr($api_key, 0, 7) . str_repeat('*', 20)); ?></span>
+                        <span style="background: #065f46; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 10px;"><?php _e('Active', 'voxel-toolkit'); ?></span>
                     </div>
-                    
-                    <!-- Language Settings -->
-                    <div style="margin-bottom: 30px;">
-                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;"><?php _e('Language Settings', 'voxel-toolkit'); ?></h3>
-                        
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; font-weight: 500; margin-bottom: 8px;"><?php _e('AI Output Language', 'voxel-toolkit'); ?></label>
-                            
-                            <?php 
-                            $current_language = isset($settings['language']) ? $settings['language'] : 'en';
-                            $languages = array(
-                                'en' => __('English', 'voxel-toolkit'),
-                                'it' => __('Italian', 'voxel-toolkit'),
-                                'es' => __('Spanish', 'voxel-toolkit'),
-                                'fr' => __('French', 'voxel-toolkit'),
-                                'de' => __('German', 'voxel-toolkit'),
-                                'pt' => __('Portuguese', 'voxel-toolkit'),
-                                'nl' => __('Dutch', 'voxel-toolkit'),
-                                'ru' => __('Russian', 'voxel-toolkit'),
-                                'zh' => __('Chinese', 'voxel-toolkit'),
-                                'ja' => __('Japanese', 'voxel-toolkit'),
-                                'ko' => __('Korean', 'voxel-toolkit'),
-                                'ar' => __('Arabic', 'voxel-toolkit'),
-                                'hi' => __('Hindi', 'voxel-toolkit'),
-                                'tr' => __('Turkish', 'voxel-toolkit'),
-                                'pl' => __('Polish', 'voxel-toolkit'),
-                                'sv' => __('Swedish', 'voxel-toolkit'),
-                                'da' => __('Danish', 'voxel-toolkit'),
-                                'no' => __('Norwegian', 'voxel-toolkit'),
-                                'fi' => __('Finnish', 'voxel-toolkit'),
-                                'cs' => __('Czech', 'voxel-toolkit'),
-                                'hu' => __('Hungarian', 'voxel-toolkit'),
-                                'ro' => __('Romanian', 'voxel-toolkit'),
-                                'bg' => __('Bulgarian', 'voxel-toolkit'),
-                                'hr' => __('Croatian', 'voxel-toolkit'),
-                                'sk' => __('Slovak', 'voxel-toolkit'),
-                                'sl' => __('Slovenian', 'voxel-toolkit'),
-                                'et' => __('Estonian', 'voxel-toolkit'),
-                                'lv' => __('Latvian', 'voxel-toolkit'),
-                                'lt' => __('Lithuanian', 'voxel-toolkit'),
-                                'el' => __('Greek', 'voxel-toolkit'),
-                                'he' => __('Hebrew', 'voxel-toolkit'),
-                                'th' => __('Thai', 'voxel-toolkit'),
-                                'vi' => __('Vietnamese', 'voxel-toolkit'),
-                                'id' => __('Indonesian', 'voxel-toolkit'),
-                                'ms' => __('Malay', 'voxel-toolkit'),
-                                'uk' => __('Ukrainian', 'voxel-toolkit'),
-                            );
-                            ?>
-                            
-                            <select name="voxel_toolkit_options[ai_review_summary][language]" 
-                                    style="width: 100%; max-width: 300px; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; background: white;">
-                                <?php foreach ($languages as $code => $name): ?>
-                                    <option value="<?php echo esc_attr($code); ?>" <?php selected($current_language, $code); ?>>
-                                        <?php echo esc_html($name); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            
-                            <p style="margin: 10px 0 0 0; font-size: 13px; color: #666;">
-                                <?php _e('Select the language for AI-generated summaries and opinions. The AI will respond in the selected language.', 'voxel-toolkit'); ?>
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <!-- Cache Management -->
-                    <div style="margin-bottom: 30px;">
-                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;"><?php _e('Cache Management', 'voxel-toolkit'); ?></h3>
-                        
-                        <?php if ($cache_refreshed): ?>
-                            <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
-                                <strong><?php _e('Success:', 'voxel-toolkit'); ?></strong> <?php _e('AI cached summaries have been refreshed.', 'voxel-toolkit'); ?>
-                            </div>
-                        <?php endif; ?>
-                        
-                        <p style="margin-bottom: 15px; color: #666;">
-                            <?php _e('Clear all cached AI-generated summaries and category opinions. New summaries will be generated on the next page load.', 'voxel-toolkit'); ?>
-                        </p>
-                        
-                        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="display: inline-block;">
-                            <?php wp_nonce_field('voxel_toolkit_refresh_ai_cache', 'voxel_toolkit_refresh_ai_cache_nonce'); ?>
-                            <input type="hidden" name="action" value="voxel_toolkit_refresh_ai_cache">
-                            <button type="submit" class="button button-secondary" onclick="return confirm('Are you sure you want to refresh all cached AI summaries? This will trigger new API calls when users next view pages with review summaries.');">
-                                <?php _e('Refresh All Cached Summaries', 'voxel-toolkit'); ?>
-                            </button>
-                        </form>
-                    </div>
-                    
-                    <!-- Shortcode Documentation -->
-                    <div style="margin-bottom: 20px;">
-                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;"><?php _e('Available Shortcodes', 'voxel-toolkit'); ?></h3>
-                        
-                        <!-- Review Summary Shortcode -->
-                        <div style="background: #f8f9fa; border: 1px solid #e1e5e9; border-radius: 6px; padding: 20px; margin-bottom: 20px;">
-                            <h4 style="margin: 0 0 10px 0; color: #1e1e1e; display: flex; align-items: center; gap: 10px;">
-                                <?php _e('Review Summary', 'voxel-toolkit'); ?>
-                                <button type="button" class="button button-small copy-shortcode-btn" data-shortcode='[review_summary]'>
-                                    <?php _e('Copy', 'voxel-toolkit'); ?>
-                                </button>
-                            </h4>
-                            <p style="margin: 0 0 10px 0; color: #666; line-height: 1.5;">
-                                <?php _e('Generates an AI-powered summary of all reviews for a post, similar to TripAdvisor summaries. Focuses on main strengths and weaknesses mentioned by users.', 'voxel-toolkit'); ?>
-                            </p>
-                            <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 13px; margin-bottom: 10px;">
-                                <strong><?php _e('Basic usage:', 'voxel-toolkit'); ?></strong><br>
-                                <code style="color: #f39c12;">[review_summary]</code>
-                            </div>
-                            <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 13px;">
-                                <strong><?php _e('Specific post:', 'voxel-toolkit'); ?></strong><br>
-                                <code style="color: #f39c12;">[review_summary post_id="123"]</code>
-                            </div>
-                        </div>
-                        
-                        <!-- Category Opinions Shortcode -->
-                        <div style="background: #f8f9fa; border: 1px solid #e1e5e9; border-radius: 6px; padding: 20px;">
-                            <h4 style="margin: 0 0 10px 0; color: #1e1e1e; display: flex; align-items: center; gap: 10px;">
-                                <?php _e('Category Opinions', 'voxel-toolkit'); ?>
-                                <button type="button" class="button button-small copy-shortcode-btn" data-shortcode='[category_opinions]'>
-                                    <?php _e('Copy', 'voxel-toolkit'); ?>
-                                </button>
-                            </h4>
-                            <p style="margin: 0 0 10px 0; color: #666; line-height: 1.5;">
-                                <?php _e('Creates a grid of category opinion boxes with one-word AI summaries for different aspects of the listing (Food, Service, Atmosphere, etc.).', 'voxel-toolkit'); ?>
-                            </p>
-                            <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 13px; margin-bottom: 10px;">
-                                <strong><?php _e('Default categories:', 'voxel-toolkit'); ?></strong><br>
-                                <code style="color: #f39c12;">[category_opinions]</code><br>
-                                <small style="color: #95a5a6;"><?php _e('Uses: Food, Atmosphere, Service, Value', 'voxel-toolkit'); ?></small>
-                            </div>
-                            <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 13px; margin-bottom: 10px;">
-                                <strong><?php _e('Custom categories:', 'voxel-toolkit'); ?></strong><br>
-                                <code style="color: #f39c12;">[category_opinions categories="Quality, Price, Staff, Location"]</code>
-                            </div>
-                            <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 4px; font-family: monospace; font-size: 13px;">
-                                <strong><?php _e('Specific post with custom categories:', 'voxel-toolkit'); ?></strong><br>
-                                <code style="color: #f39c12;">[category_opinions post_id="123" categories="Food, Service, Ambiance"]</code>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="padding: 15px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; font-size: 14px;">
-                        <strong style="color: #856404;"><?php _e('Important:', 'voxel-toolkit'); ?></strong>
-                        <span style="color: #856404;">
-                            <?php _e('Summaries are cached until new reviews are added. API calls are only made when cache is empty or outdated. OpenAI API usage costs apply.', 'voxel-toolkit'); ?>
-                        </span>
-                    </div>
-                    
-                    <div style="margin-top: 20px; padding: 12px; background: #f8f9fa; border-radius: 4px; text-align: center; border-top: 1px solid #dee2e6;">
-                        <p style="margin: 0; font-size: 13px; color: #6c757d;">
-                            <?php _e('AI Review Summary developed by', 'voxel-toolkit'); ?> 
-                            <strong style="color: #495057;">Miguel Gomes</strong>
-                        </p>
-                    </div>
+                <?php endif; ?>
+                <input type="text"
+                       name="ai_api_key"
+                       value=""
+                       placeholder="<?php echo $has_api_key ? __('Enter new API key to replace existing one', 'voxel-toolkit') : 'sk-proj-...'; ?>"
+                       autocomplete="off"
+                       class="vt-text-input"
+                       style="max-width: 500px; font-family: monospace;" />
+                <p class="vt-field-description">
+                    <?php _e('Get your OpenAI API key from', 'voxel-toolkit'); ?>
+                    <a href="https://platform.openai.com/api-keys" target="_blank"><?php _e('OpenAI Platform', 'voxel-toolkit'); ?></a>
+                </p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Language Settings', 'voxel-toolkit'); ?></h4>
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('AI Output Language', 'voxel-toolkit'); ?></label>
+                <select name="voxel_toolkit_options[ai_review_summary][language]" class="vt-select" style="max-width: 300px;">
+                    <?php foreach ($languages as $code => $name): ?>
+                        <option value="<?php echo esc_attr($code); ?>" <?php selected($current_language, $code); ?>><?php echo esc_html($name); ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="vt-field-description"><?php _e('Select the language for AI-generated summaries and opinions.', 'voxel-toolkit'); ?></p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Cache Management', 'voxel-toolkit'); ?></h4>
+            <?php if ($cache_refreshed): ?>
+                <div class="vt-tip-box" style="margin-bottom: 16px;">
+                    <strong><?php _e('Success:', 'voxel-toolkit'); ?></strong> <?php _e('AI cached summaries have been refreshed.', 'voxel-toolkit'); ?>
                 </div>
-                
-                <script>
-                jQuery(document).ready(function($) {
-                    // Copy shortcode functionality
-                    $('.copy-shortcode-btn').on('click', function() {
-                        var shortcode = $(this).data('shortcode');
-                        var $btn = $(this);
-                        
-                        // Create temporary textarea to copy text
-                        var $temp = $('<textarea>');
-                        $('body').append($temp);
-                        $temp.val(shortcode).select();
-                        document.execCommand('copy');
-                        $temp.remove();
-                        
-                        // Show feedback
-                        var originalText = $btn.text();
-                        $btn.text('<?php _e('Copied!', 'voxel-toolkit'); ?>').prop('disabled', true);
-                        
-                        setTimeout(function() {
-                            $btn.text(originalText).prop('disabled', false);
-                        }, 2000);
-                    });
-                });
-                </script>
-            </td>
-        </tr>
+            <?php endif; ?>
+            <p class="vt-field-description" style="margin-bottom: 12px;"><?php _e('Clear all cached AI-generated summaries. New summaries will be generated on the next page load.', 'voxel-toolkit'); ?></p>
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+                <?php wp_nonce_field('voxel_toolkit_refresh_ai_cache', 'voxel_toolkit_refresh_ai_cache_nonce'); ?>
+                <input type="hidden" name="action" value="voxel_toolkit_refresh_ai_cache">
+                <button type="submit" class="button button-secondary" onclick="return confirm('<?php _e('Are you sure? This will trigger new API calls.', 'voxel-toolkit'); ?>');">
+                    <?php _e('Refresh All Cached Summaries', 'voxel-toolkit'); ?>
+                </button>
+            </form>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Available Shortcodes', 'voxel-toolkit'); ?></h4>
+            <div style="display: grid; gap: 16px;">
+                <div style="background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
+                    <strong><?php _e('Review Summary', 'voxel-toolkit'); ?></strong>
+                    <button type="button" class="button button-small copy-shortcode-btn" data-shortcode="[review_summary]" style="margin-left: 8px;"><?php _e('Copy', 'voxel-toolkit'); ?></button>
+                    <p class="vt-field-description" style="margin: 8px 0;"><?php _e('Generates an AI-powered summary of all reviews for a post.', 'voxel-toolkit'); ?></p>
+                    <code style="display: block; background: #1e293b; color: #f8fafc; padding: 10px; border-radius: 4px; font-size: 13px;">[review_summary]</code>
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
+                    <strong><?php _e('Category Opinions', 'voxel-toolkit'); ?></strong>
+                    <button type="button" class="button button-small copy-shortcode-btn" data-shortcode="[category_opinions]" style="margin-left: 8px;"><?php _e('Copy', 'voxel-toolkit'); ?></button>
+                    <p class="vt-field-description" style="margin: 8px 0;"><?php _e('Creates category opinion boxes with one-word AI summaries.', 'voxel-toolkit'); ?></p>
+                    <code style="display: block; background: #1e293b; color: #f8fafc; padding: 10px; border-radius: 4px; font-size: 13px;">[category_opinions categories="Food, Service, Value"]</code>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        jQuery(document).ready(function($) {
+            $('.copy-shortcode-btn').on('click', function() {
+                var shortcode = $(this).data('shortcode');
+                var $btn = $(this);
+                var $temp = $('<textarea>');
+                $('body').append($temp);
+                $temp.val(shortcode).select();
+                document.execCommand('copy');
+                $temp.remove();
+                var originalText = $btn.text();
+                $btn.text('<?php _e('Copied!', 'voxel-toolkit'); ?>').prop('disabled', true);
+                setTimeout(function() { $btn.text(originalText).prop('disabled', false); }, 2000);
+            });
+        });
+        </script>
         <?php
     }
     
@@ -2226,36 +1975,24 @@ class Voxel_Toolkit_Functions {
      */
     public function render_show_field_description_settings($settings) {
         ?>
-        <tr>
-            <th scope="row">
-                <label><?php _e('Show Field Description', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 700px;">
-                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px;">
-                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
-                        <?php _e('This function automatically converts Voxel form field tooltip icons into visible descriptions displayed below field labels.', 'voxel-toolkit'); ?>
-                    </div>
+        <div class="vt-info-box">
+            <?php _e('This function automatically converts Voxel form field tooltip icons into visible descriptions displayed below field labels.', 'voxel-toolkit'); ?>
+        </div>
 
-                    <div style="margin-top: 20px; background: #e7f3ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 15px; font-size: 14px;">
-                        <strong style="color: #004085;"><?php _e('Styling Controls:', 'voxel-toolkit'); ?></strong>
-                        <p style="margin: 10px 0 0 0; color: #004085;">
-                            <?php _e('Style the field descriptions directly in Elementor using the "Field Description Style (VT)" section in the Create Post widget\'s Style tab. This allows you to customize the appearance per-page.', 'voxel-toolkit'); ?>
-                        </p>
-                    </div>
+        <div class="vt-tip-box">
+            <strong><?php _e('Styling:', 'voxel-toolkit'); ?></strong>
+            <?php _e('Style the field descriptions directly in Elementor using the "Field Description Style (VT)" section in the Create Post widget\'s Style tab.', 'voxel-toolkit'); ?>
+        </div>
 
-                    <div style="margin-top: 20px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; font-size: 14px;">
-                        <strong style="color: #856404;"><?php _e('Features:', 'voxel-toolkit'); ?></strong>
-                        <ul style="margin: 10px 0 0 20px; color: #856404;">
-                            <li><?php _e('Tooltip icons are automatically hidden', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('Field descriptions appear as visible subtitles below labels', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('Works on frontend and in Elementor editor preview', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('Improves form accessibility and user experience', 'voxel-toolkit'); ?></li>
-                        </ul>
-                    </div>
-                </div>
-            </td>
-        </tr>
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Features', 'voxel-toolkit'); ?></h4>
+            <ul class="vt-feature-list">
+                <li><?php _e('Tooltip icons are automatically hidden', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Field descriptions appear as visible subtitles below labels', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Works on frontend and in Elementor editor preview', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Improves form accessibility and user experience', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
         <?php
     }
 
@@ -2266,30 +2003,20 @@ class Voxel_Toolkit_Functions {
      */
     public function render_suggest_edits_settings($settings) {
         ?>
-        <tr>
-            <th scope="row">
-                <label><?php _e('Suggest Edits', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 700px;">
-                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px;">
-                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
-                        <?php _e('This feature allows users to suggest edits to posts with a complete moderation workflow and notification system.', 'voxel-toolkit'); ?>
-                    </div>
+        <div class="vt-info-box">
+            <?php _e('This feature allows users to suggest edits to posts with a complete moderation workflow and notification system.', 'voxel-toolkit'); ?>
+        </div>
 
-                    <div style="margin-top: 20px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; font-size: 14px;">
-                        <strong style="color: #856404;"><?php _e('Features:', 'voxel-toolkit'); ?></strong>
-                        <ul style="margin: 10px 0 0 20px; color: #856404;">
-                            <li><?php _e('Users can suggest edits to posts via Suggest Edits widget', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('Post authors receive notifications when edits are suggested', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('Authors can approve, reject, or delete suggestions', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('Pending Suggestions widget shows all suggestions for review', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('Complete audit trail of all suggestion activity', 'voxel-toolkit'); ?></li>
-                        </ul>
-                    </div>
-                </div>
-            </td>
-        </tr>
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Features', 'voxel-toolkit'); ?></h4>
+            <ul class="vt-feature-list">
+                <li><?php _e('Users can suggest edits to posts via Suggest Edits widget', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Post authors receive notifications when edits are suggested', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Authors can approve, reject, or delete suggestions', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Pending Suggestions widget shows all suggestions for review', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Complete audit trail of all suggestion activity', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
         <?php
     }
 
@@ -2311,17 +2038,9 @@ class Voxel_Toolkit_Functions {
         global $wp_roles;
         $all_roles = $wp_roles->roles;
         ?>
-        <tr>
-            <th scope="row">
-                <label><?php _e('Duplicate Post Settings', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 600px;">
-                    <!-- How it works -->
-                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px; margin-bottom: 20px;">
-                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
-                        <?php _e('Adds a "Duplicate" option to quickly create copies of posts and pages. The duplicate will be created as a draft with "(Copy)" added to the title.', 'voxel-toolkit'); ?>
-                    </div>
+        <div class="vt-info-box">
+            <?php _e('Adds a "Duplicate" option to quickly create copies of posts and pages. The duplicate will be created as a draft with "(Copy)" added to the title.', 'voxel-toolkit'); ?>
+        </div>
                     
                     <!-- Post Types Selection -->
                     <div style="margin-bottom: 20px;">
@@ -2533,12 +2252,9 @@ class Voxel_Toolkit_Functions {
                             </div>
                         </div>
                     </div>
-                </div>
-            </td>
-        </tr>
         <?php
     }
-    
+
     /**
      * Render Media Paste settings
      */
@@ -2546,150 +2262,96 @@ class Voxel_Toolkit_Functions {
         $allowed_roles = isset($settings['allowed_roles']) ? $settings['allowed_roles'] : array('administrator', 'editor');
         $max_file_size = isset($settings['max_file_size']) ? $settings['max_file_size'] : '';
         $allowed_types = isset($settings['allowed_types']) ? $settings['allowed_types'] : array('image/jpeg', 'image/png', 'image/gif', 'image/webp');
-        
         $available_roles = wp_roles()->roles;
+        $image_types = array('image/jpeg' => 'JPEG', 'image/png' => 'PNG', 'image/gif' => 'GIF', 'image/webp' => 'WebP');
         ?>
-        <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            
-            <!-- User Roles -->
-            <div style="margin-bottom: 25px;">
-                <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
-                    <?php _e('User Permissions', 'voxel-toolkit'); ?>
-                </h3>
-                <p style="margin: 0 0 15px 0; color: #666; font-size: 13px;">
-                    <?php _e('Select which user roles can paste images from clipboard.', 'voxel-toolkit'); ?>
-                </p>
-                
-                <div class="role-options" style="display: flex; flex-wrap: wrap; gap: 15px;">
-                    <label style="display: flex; align-items: center; margin-bottom: 8px; padding: 8px 12px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; cursor: pointer;">
-                        <input type="checkbox" 
-                               name="voxel_toolkit_options[media_paste][allowed_roles][]" 
-                               value="all_roles"
-                               <?php checked(in_array('all_roles', $allowed_roles)); ?>
-                               style="margin-right: 8px;"
-                               onchange="toggleAllRoles(this)">
-                        <span><?php _e('All Roles (Including Subscribers)', 'voxel-toolkit'); ?></span>
+        <div class="vt-info-box">
+            <?php _e('Paste images directly from clipboard (Ctrl/Cmd+V) in WordPress Media Library, Elementor, and all media frames.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('User Permissions', 'voxel-toolkit'); ?></h4>
+            <p class="vt-field-description" style="margin-bottom: 12px;"><?php _e('Select which user roles can paste images from clipboard.', 'voxel-toolkit'); ?></p>
+            <div class="vt-checkbox-grid">
+                <label style="background: #ecfdf5; border-color: #059669;">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[media_paste][allowed_roles][]"
+                           value="all_roles"
+                           <?php checked(in_array('all_roles', $allowed_roles)); ?>
+                           onchange="toggleMediaPasteRoles(this)" />
+                    <?php _e('All Roles', 'voxel-toolkit'); ?>
+                </label>
+                <?php foreach ($available_roles as $role_key => $role_data): ?>
+                    <label class="media-paste-role">
+                        <input type="checkbox"
+                               name="voxel_toolkit_options[media_paste][allowed_roles][]"
+                               value="<?php echo esc_attr($role_key); ?>"
+                               <?php checked(in_array($role_key, $allowed_roles) || in_array('all_roles', $allowed_roles)); ?>
+                               <?php echo in_array('all_roles', $allowed_roles) ? 'disabled' : ''; ?> />
+                        <?php echo esc_html(translate_user_role($role_data['name'])); ?>
                     </label>
-                </div>
-                
-                <div class="role-options" style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
-                    <?php foreach ($available_roles as $role_key => $role_data): ?>
-                        <label class="role-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; padding: 8px 12px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; cursor: pointer;">
-                            <input type="checkbox" 
-                                   name="voxel_toolkit_options[media_paste][allowed_roles][]" 
-                                   value="<?php echo esc_attr($role_key); ?>"
-                                   <?php checked(in_array($role_key, $allowed_roles) || in_array('all_roles', $allowed_roles)); ?>
-                                   <?php echo in_array('all_roles', $allowed_roles) ? 'disabled' : ''; ?>
-                                   style="margin-right: 8px;">
-                            <span><?php echo esc_html(translate_user_role($role_data['name'])); ?></span>
-                        </label>
-                    <?php endforeach; ?>
-                </div>
-                
-                <script>
-                        function toggleAllRoles(checkbox) {
-                            const roleCheckboxes = document.querySelectorAll('.role-checkbox input[type="checkbox"]');
-                            roleCheckboxes.forEach(cb => {
-                                cb.disabled = checkbox.checked;
-                                if (checkbox.checked) {
-                                    cb.checked = true;
-                                }
-                            });
-                        }
-                        
-                        // Initialize on page load
-                        document.addEventListener('DOMContentLoaded', function() {
-                            const allRolesCheckbox = document.querySelector('input[value="all_roles"]');
-                            if (allRolesCheckbox && allRolesCheckbox.checked) {
-                                toggleAllRoles(allRolesCheckbox);
-                            }
-                        });
-                </script>
+                <?php endforeach; ?>
             </div>
-            
-            <!-- File Settings -->
-            <div style="margin-bottom: 25px;">
-                <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
-                    <?php _e('File Settings', 'voxel-toolkit'); ?>
-                </h3>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #333;">
-                        <?php _e('Maximum File Size (MB)', 'voxel-toolkit'); ?>
-                    </label>
-                    <input type="number" 
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('File Settings', 'voxel-toolkit'); ?></h4>
+            <div class="vt-checkbox-inline" style="gap: 32px; align-items: flex-start;">
+                <div class="vt-field-group">
+                    <label class="vt-field-label"><?php _e('Max File Size (MB)', 'voxel-toolkit'); ?></label>
+                    <input type="number"
                            name="voxel_toolkit_options[media_paste][max_file_size]"
                            value="<?php echo esc_attr($max_file_size); ?>"
                            placeholder="<?php echo esc_attr(wp_max_upload_size() / (1024 * 1024)); ?>"
                            min="1"
-                           max="<?php echo esc_attr(wp_max_upload_size() / (1024 * 1024)); ?>"
-                           style="width: 100px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
-                    <p style="margin: 5px 0 0 0; color: #666; font-size: 12px;">
-                        <?php printf(__('Leave empty for server default (%s MB)', 'voxel-toolkit'), number_format(wp_max_upload_size() / (1024 * 1024), 1)); ?>
-                    </p>
+                           class="vt-text-input"
+                           style="max-width: 100px;" />
+                    <p class="vt-field-description"><?php printf(__('Default: %s MB', 'voxel-toolkit'), number_format(wp_max_upload_size() / (1024 * 1024), 1)); ?></p>
                 </div>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 10px; font-weight: 500; color: #333;">
-                        <?php _e('Allowed Image Types', 'voxel-toolkit'); ?>
-                    </label>
-                    <div style="display: flex; flex-wrap: wrap; gap: 15px;">
-                        <?php 
-                        $image_types = array(
-                            'image/jpeg' => 'JPEG',
-                            'image/png' => 'PNG', 
-                            'image/gif' => 'GIF',
-                            'image/webp' => 'WebP'
-                        );
-                        foreach ($image_types as $type => $label): 
-                        ?>
-                            <label style="display: flex; align-items: center; cursor: pointer;">
-                                <input type="checkbox" 
+                <div class="vt-field-group">
+                    <label class="vt-field-label"><?php _e('Allowed Image Types', 'voxel-toolkit'); ?></label>
+                    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                        <?php foreach ($image_types as $type => $label): ?>
+                            <label style="display: flex; align-items: center; gap: 6px;">
+                                <input type="checkbox"
                                        name="voxel_toolkit_options[media_paste][allowed_types][]"
                                        value="<?php echo esc_attr($type); ?>"
-                                       <?php checked(in_array($type, $allowed_types)); ?>
-                                       style="margin-right: 8px;">
-                                <span><?php echo esc_html($label); ?></span>
+                                       <?php checked(in_array($type, $allowed_types)); ?> />
+                                <?php echo esc_html($label); ?>
                             </label>
                         <?php endforeach; ?>
                     </div>
                 </div>
             </div>
-            
-            <!-- Features -->
-            <div style="margin-bottom: 20px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; font-size: 14px;">
-                <strong style="color: #856404;"><?php _e('Features:', 'voxel-toolkit'); ?></strong>
-                <ul style="margin: 10px 0 0 20px; color: #856404;">
-                    <li><?php _e('Paste images directly from clipboard (Ctrl/Cmd+V)', 'voxel-toolkit'); ?></li>
-                    <li><?php _e('Works in WordPress media library', 'voxel-toolkit'); ?></li>
-                    <li><?php _e('Works in Elementor media picker', 'voxel-toolkit'); ?></li>
-                    <li><?php _e('Works in all WordPress media frames', 'voxel-toolkit'); ?></li>
-                    <li><?php _e('Automatic file naming with timestamps', 'voxel-toolkit'); ?></li>
-                    <li><?php _e('Visual feedback during upload', 'voxel-toolkit'); ?></li>
-                </ul>
-            </div>
-            
-            <!-- Usage Instructions -->
-            <div style="margin-bottom: 20px;">
-                <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
-                    <?php _e('How to Use', 'voxel-toolkit'); ?>
-                </h3>
-                <ol style="margin: 0; padding-left: 20px; color: #333;">
-                    <li style="margin-bottom: 8px;"><?php _e('Copy an image to your clipboard (Ctrl/Cmd+C)', 'voxel-toolkit'); ?></li>
-                    <li style="margin-bottom: 8px;"><?php _e('Go to WordPress Media Library or open Elementor media picker', 'voxel-toolkit'); ?></li>
-                    <li style="margin-bottom: 8px;"><?php _e('Press Ctrl/Cmd+V to paste the image', 'voxel-toolkit'); ?></li>
-                    <li style="margin-bottom: 8px;"><?php _e('Image will be automatically uploaded and added to media library', 'voxel-toolkit'); ?></li>
-                </ol>
-            </div>
-            
-            <!-- Browser Support -->
-            <div style="background: #e7f6ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 15px; font-size: 14px;">
-                <strong style="color: #0066cc;"><?php _e('Browser Support:', 'voxel-toolkit'); ?></strong>
-                <p style="margin: 10px 0 0 0; color: #0066cc;">
-                    <?php _e('Chrome, Firefox, Safari, and Edge. Works with images copied from other applications, screenshots, and image files.', 'voxel-toolkit'); ?>
-                </p>
-            </div>
         </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Features', 'voxel-toolkit'); ?></h4>
+            <ul class="vt-feature-list">
+                <li><?php _e('Paste images directly from clipboard (Ctrl/Cmd+V)', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Works in WordPress media library and Elementor', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Automatic file naming with timestamps', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Visual feedback during upload', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
+
+        <div class="vt-tip-box">
+            <strong><?php _e('Browser Support:', 'voxel-toolkit'); ?></strong>
+            <?php _e('Chrome, Firefox, Safari, and Edge. Works with screenshots and copied images.', 'voxel-toolkit'); ?>
+        </div>
+
+        <script>
+        function toggleMediaPasteRoles(checkbox) {
+            document.querySelectorAll('.media-paste-role input').forEach(cb => {
+                cb.disabled = checkbox.checked;
+                if (checkbox.checked) cb.checked = true;
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const allRoles = document.querySelector('input[value="all_roles"]');
+            if (allRoles && allRoles.checked) toggleMediaPasteRoles(allRoles);
+        });
+        </script>
         <?php
     }
     
@@ -2700,52 +2362,38 @@ class Voxel_Toolkit_Functions {
         $taxonomies = get_taxonomies(array('public' => true), 'objects');
         $selected_taxonomies = isset($settings['taxonomies']) ? $settings['taxonomies'] : array();
         ?>
-        <div class="voxel-settings-group">
-            <label class="voxel-settings-label">
-                <?php _e('Enable Search for Taxonomies', 'voxel-toolkit'); ?>
-            </label>
-            <div class="voxel-settings-description">
-                <?php _e('Select which taxonomies should have search functionality in their metaboxes on post edit pages.', 'voxel-toolkit'); ?>
-            </div>
-            
-            <div class="taxonomy-options" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
-                <?php foreach ($taxonomies as $taxonomy_key => $taxonomy): ?>
-                    <label style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border: 1px solid #e1e5e9; border-radius: 6px; cursor: pointer; transition: all 0.2s ease;">
-                        <input type="checkbox" 
-                               name="voxel_toolkit_options[admin_taxonomy_search][taxonomies][]" 
-                               value="<?php echo esc_attr($taxonomy_key); ?>"
-                               <?php checked(in_array($taxonomy_key, $selected_taxonomies)); ?>
-                               style="margin-right: 10px;">
-                        <div>
-                            <strong><?php echo esc_html($taxonomy->label); ?></strong>
-                            <div style="font-size: 12px; color: #666; margin-top: 2px;">
-                                <?php echo esc_html($taxonomy_key); ?>
-                            </div>
-                        </div>
-                    </label>
-                <?php endforeach; ?>
-            </div>
-            
-            <?php if (empty($taxonomies)): ?>
-                <p style="color: #666; font-style: italic;">
-                    <?php _e('No public taxonomies found.', 'voxel-toolkit'); ?>
-                </p>
+        <div class="vt-info-box">
+            <?php _e('Adds a search box to taxonomy metaboxes on post edit pages for quick term filtering.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Enable Search for Taxonomies', 'voxel-toolkit'); ?></h4>
+            <?php if (!empty($taxonomies)): ?>
+                <div class="vt-checkbox-grid-3col">
+                    <?php foreach ($taxonomies as $taxonomy_key => $taxonomy): ?>
+                        <label>
+                            <input type="checkbox"
+                                   name="voxel_toolkit_options[admin_taxonomy_search][taxonomies][]"
+                                   value="<?php echo esc_attr($taxonomy_key); ?>"
+                                   <?php checked(in_array($taxonomy_key, $selected_taxonomies)); ?> />
+                            <?php echo esc_html($taxonomy->label); ?>
+                            <span style="color: #64748b; font-size: 12px;">(<?php echo esc_html($taxonomy_key); ?>)</span>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p class="vt-field-description"><?php _e('No public taxonomies found.', 'voxel-toolkit'); ?></p>
             <?php endif; ?>
         </div>
-        
-        <div class="voxel-settings-group">
-            <label class="voxel-settings-label">
-                <?php _e('How it works', 'voxel-toolkit'); ?>
-            </label>
-            <div class="voxel-settings-description">
-                <ul style="margin: 10px 0; padding-left: 20px;">
-                    <li><?php _e('Adds a search box to the top of taxonomy metaboxes on post edit pages', 'voxel-toolkit'); ?></li>
-                    <li><?php _e('Search filters terms in real-time as you type', 'voxel-toolkit'); ?></li>
-                    <li><?php _e('Works with both hierarchical (categories) and non-hierarchical (tags) taxonomies', 'voxel-toolkit'); ?></li>
-                    <li><?php _e('Shows parent terms when child terms match the search', 'voxel-toolkit'); ?></li>
-                    <li><?php _e('Clear button (×) to quickly reset the search', 'voxel-toolkit'); ?></li>
-                </ul>
-            </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Features', 'voxel-toolkit'); ?></h4>
+            <ul class="vt-feature-list">
+                <li><?php _e('Real-time search filtering as you type', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Works with categories and tags', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Shows parent terms when child terms match', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Clear button to quickly reset search', 'voxel-toolkit'); ?></li>
+            </ul>
         </div>
         <?php
     }
@@ -2768,61 +2416,48 @@ class Voxel_Toolkit_Functions {
         $selected_types = isset($settings['post_types']) ? $settings['post_types'] : array();
         $background_color = isset($settings['background_color']) ? $settings['background_color'] : '#d63638';
         $text_color = isset($settings['text_color']) ? $settings['text_color'] : '#ffffff';
-        
-        ?>
-        <tr>
-            <th scope="row">
-                <label for="pending_posts_badge_post_types"><?php _e('Post Types to Show Badges', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <fieldset>
-                    <legend class="screen-reader-text">
-                        <span><?php _e('Select post types to show pending badges', 'voxel-toolkit'); ?></span>
-                    </legend>
-                    <?php foreach ($post_types as $post_type => $label): ?>
-                        <label>
-                            <input type="checkbox" 
-                                   name="voxel_toolkit_options[pending_posts_badge][post_types][]" 
-                                   value="<?php echo esc_attr($post_type); ?>"
-                                   <?php checked(in_array($post_type, $selected_types)); ?> />
-                            <?php echo esc_html($label); ?>
-                        </label><br>
-                    <?php endforeach; ?>
-                    <p class="description"><?php _e('Select which post types should display pending post count badges in the admin menu.', 'voxel-toolkit'); ?></p>
-                </fieldset>
-            </td>
-        </tr>
 
-        <tr>
-            <th scope="row">
-                <label for="pending_posts_badge_background_color"><?php _e('Background Color', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <input 
-                    type="color" 
-                    id="pending_posts_badge_background_color" 
-                    name="voxel_toolkit_options[pending_posts_badge][background_color]" 
-                    value="<?php echo esc_attr($background_color); ?>"
-                    class="color-picker"
-                />
-                <p class="description"><?php _e('Choose the background color for the badges.', 'voxel-toolkit'); ?></p>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">
-                <label for="pending_posts_badge_text_color"><?php _e('Text Color', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <input 
-                    type="color" 
-                    id="pending_posts_badge_text_color" 
-                    name="voxel_toolkit_options[pending_posts_badge][text_color]" 
-                    value="<?php echo esc_attr($text_color); ?>"
-                    class="color-picker"
-                />
-                <p class="description"><?php _e('Choose the text color for the badges.', 'voxel-toolkit'); ?></p>
-            </td>
-        </tr>
+        ?>
+        <div class="vt-info-box">
+            <?php _e('Display pending post count badges in the admin menu for selected post types.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Post Types', 'voxel-toolkit'); ?></h4>
+            <div class="vt-checkbox-grid">
+                <?php foreach ($post_types as $post_type => $label): ?>
+                    <label>
+                        <input type="checkbox"
+                               name="voxel_toolkit_options[pending_posts_badge][post_types][]"
+                               value="<?php echo esc_attr($post_type); ?>"
+                               <?php checked(in_array($post_type, $selected_types)); ?> />
+                        <?php echo esc_html($label); ?>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Badge Colors', 'voxel-toolkit'); ?></h4>
+            <div class="vt-checkbox-inline" style="gap: 32px;">
+                <div class="vt-field-group">
+                    <label class="vt-field-label"><?php _e('Background Color', 'voxel-toolkit'); ?></label>
+                    <input type="color"
+                           id="pending_posts_badge_background_color"
+                           name="voxel_toolkit_options[pending_posts_badge][background_color]"
+                           value="<?php echo esc_attr($background_color); ?>"
+                           class="color-picker" />
+                </div>
+                <div class="vt-field-group">
+                    <label class="vt-field-label"><?php _e('Text Color', 'voxel-toolkit'); ?></label>
+                    <input type="color"
+                           id="pending_posts_badge_text_color"
+                           name="voxel_toolkit_options[pending_posts_badge][text_color]"
+                           value="<?php echo esc_attr($text_color); ?>"
+                           class="color-picker" />
+                </div>
+            </div>
+        </div>
         <?php
     }
     
@@ -2833,72 +2468,55 @@ class Voxel_Toolkit_Functions {
         $show_column = isset($settings['show_column']) ? $settings['show_column'] : true;
         $approve_verified = isset($settings['approve_verified']) ? $settings['approve_verified'] : false;
         $approved_roles = isset($settings['approved_roles']) ? $settings['approved_roles'] : array();
+
         ?>
-        <tr>
-            <th>
-                <label for="pre_approve_posts_auto_approve_verified">
-                    <?php _e('Auto-Approve Verified Users', 'voxel-toolkit'); ?>
+        <div class="vt-info-box">
+            <?php _e('Configure which users should have their posts automatically approved without manual review.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Auto-Approve Options', 'voxel-toolkit'); ?></h4>
+            <div class="vt-checkbox-list">
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[pre_approve_posts][approve_verified]"
+                           value="1"
+                           <?php checked($approve_verified); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Auto-Approve Verified Users', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Users with verified Voxel profiles will have posts automatically approved.', 'voxel-toolkit'); ?></p>
+                    </div>
                 </label>
-            </th>
-            <td>
-                <label>
-                    <input type="checkbox" 
-                           name="voxel_toolkit_options[pre_approve_posts][approve_verified]" 
-                           id="pre_approve_posts_auto_approve_verified" 
-                           value="1" 
-                           <?php checked($approve_verified); ?>>
-                    <?php _e('Automatically approve posts from users with verified profiles', 'voxel-toolkit'); ?>
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[pre_approve_posts][show_column]"
+                           value="1"
+                           <?php checked($show_column); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Show Pre-Approved Column', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Display a "Pre-Approved?" column in the users list.', 'voxel-toolkit'); ?></p>
+                    </div>
                 </label>
-                <p class="description">
-                    <?php _e('When enabled, users with verified Voxel profiles will have posts automatically approved.', 'voxel-toolkit'); ?>
-                </p>
-            </td>
-        </tr>
-        
-        <tr>
-            <th>
-                <label for="pre_approve_posts_approved_roles">
-                    <?php _e('Auto-Approve Roles', 'voxel-toolkit'); ?>
-                </label>
-            </th>
-            <td>
-                <?php 
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Auto-Approve Roles', 'voxel-toolkit'); ?></h4>
+            <p class="vt-field-description" style="margin-bottom: 12px;"><?php _e('Select user roles that should have posts automatically approved.', 'voxel-toolkit'); ?></p>
+            <div class="vt-checkbox-grid">
+                <?php
                 $all_roles = wp_roles()->roles;
                 foreach($all_roles as $role_key => $role_info): ?>
-                    <label style="display: block; margin: 5px 0;">
-                        <input type="checkbox" 
-                               name="voxel_toolkit_options[pre_approve_posts][approved_roles][]" 
+                    <label>
+                        <input type="checkbox"
+                               name="voxel_toolkit_options[pre_approve_posts][approved_roles][]"
                                value="<?php echo esc_attr($role_key); ?>"
-                               <?php checked(in_array($role_key, $approved_roles)); ?>>
+                               <?php checked(in_array($role_key, $approved_roles)); ?> />
                         <?php echo esc_html($role_info['name']); ?>
                     </label>
                 <?php endforeach; ?>
-                <p class="description">
-                    <?php _e('Select user roles that should have posts automatically approved.', 'voxel-toolkit'); ?>
-                </p>
-            </td>
-        </tr>
-        
-        <tr>
-            <th>
-                <label for="pre_approve_posts_show_column">
-                    <?php _e('Show Pre-Approved Column', 'voxel-toolkit'); ?>
-                </label>
-            </th>
-            <td>
-                <label>
-                    <input type="checkbox" 
-                           name="voxel_toolkit_options[pre_approve_posts][show_column]" 
-                           id="pre_approve_posts_show_column" 
-                           value="1" 
-                           <?php checked($show_column); ?>>
-                    <?php _e('Display "Pre-Approved?" column in the users list', 'voxel-toolkit'); ?>
-                </label>
-                <p class="description">
-                    <?php _e('Shows a column in the users list indicating which users have pre-approval settings.', 'voxel-toolkit'); ?>
-                </p>
-            </td>
-        </tr>
+            </div>
+        </div>
         <?php
     }
     
@@ -2911,112 +2529,57 @@ class Voxel_Toolkit_Functions {
         $disable_plugin_updates = isset($settings['disable_plugin_updates']) ? $settings['disable_plugin_updates'] : false;
         $disable_theme_updates = isset($settings['disable_theme_updates']) ? $settings['disable_theme_updates'] : false;
         $disable_core_updates = isset($settings['disable_core_updates']) ? $settings['disable_core_updates'] : false;
+
         ?>
-        <tr>
-            <th scope="row">
-                <label><?php _e('Disable Auto Updates Settings', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 600px;">
-                    <!-- How it works -->
-                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px; margin-bottom: 20px;">
-                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
-                        <?php _e('Disables automatic updates for plugins, themes, and WordPress core. Choose which types of updates to disable with individual controls.', 'voxel-toolkit'); ?>
+        <div class="vt-info-box">
+            <?php _e('Disables automatic updates for plugins, themes, and WordPress core. Choose which types of updates to disable.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-warning-box">
+            <strong><?php _e('Security Notice:', 'voxel-toolkit'); ?></strong>
+            <?php _e('Disabling automatic updates means you\'ll need to manually update plugins, themes, and WordPress core. Make sure to regularly check for and install updates to maintain security.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Disable Updates For', 'voxel-toolkit'); ?></h4>
+            <div class="vt-checkbox-list">
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[disable_auto_updates][disable_plugin_updates]"
+                           value="1"
+                           <?php checked($disable_plugin_updates); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Plugin Updates', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Prevent plugins from updating automatically', 'voxel-toolkit'); ?></p>
                     </div>
-                    
-                    <!-- Update Types Selection -->
-                    <div style="margin-bottom: 20px;">
-                        <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
-                            <?php _e('Disable Updates For', 'voxel-toolkit'); ?>
-                        </h3>
-                        <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">
-                            <?php _e('Select which types of automatic updates to disable:', 'voxel-toolkit'); ?>
-                        </p>
-                        <div style="display: flex; flex-direction: column; gap: 15px;">
-                            <!-- Plugin Updates -->
-                            <label style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 4px; cursor: pointer; border: 2px solid #e1e5e9;">
-                                <input type="checkbox" 
-                                       name="voxel_toolkit_options[disable_auto_updates][disable_plugin_updates]" 
-                                       value="1"
-                                       <?php checked($disable_plugin_updates); ?>
-                                       style="margin-right: 12px; transform: scale(1.2);">
-                                <div>
-                                    <strong style="display: block; color: #1e1e1e; font-size: 14px;">
-                                        <?php _e('Plugin Updates', 'voxel-toolkit'); ?>
-                                    </strong>
-                                    <span style="color: #666; font-size: 13px;">
-                                        <?php _e('Prevent plugins from updating automatically', 'voxel-toolkit'); ?>
-                                    </span>
-                                </div>
-                            </label>
-                            
-                            <!-- Theme Updates -->
-                            <label style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 4px; cursor: pointer; border: 2px solid #e1e5e9;">
-                                <input type="checkbox" 
-                                       name="voxel_toolkit_options[disable_auto_updates][disable_theme_updates]" 
-                                       value="1"
-                                       <?php checked($disable_theme_updates); ?>
-                                       style="margin-right: 12px; transform: scale(1.2);">
-                                <div>
-                                    <strong style="display: block; color: #1e1e1e; font-size: 14px;">
-                                        <?php _e('Theme Updates', 'voxel-toolkit'); ?>
-                                    </strong>
-                                    <span style="color: #666; font-size: 13px;">
-                                        <?php _e('Prevent themes from updating automatically', 'voxel-toolkit'); ?>
-                                    </span>
-                                </div>
-                            </label>
-                            
-                            <!-- WordPress Core Updates -->
-                            <label style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 4px; cursor: pointer; border: 2px solid #e1e5e9;">
-                                <input type="checkbox" 
-                                       name="voxel_toolkit_options[disable_auto_updates][disable_core_updates]" 
-                                       value="1"
-                                       <?php checked($disable_core_updates); ?>
-                                       style="margin-right: 12px; transform: scale(1.2);">
-                                <div>
-                                    <strong style="display: block; color: #1e1e1e; font-size: 14px;">
-                                        <?php _e('WordPress Core Updates', 'voxel-toolkit'); ?>
-                                    </strong>
-                                    <span style="color: #666; font-size: 13px;">
-                                        <?php _e('Prevent WordPress core from updating automatically (includes major and minor updates)', 'voxel-toolkit'); ?>
-                                    </span>
-                                </div>
-                            </label>
-                        </div>
+                </label>
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[disable_auto_updates][disable_theme_updates]"
+                           value="1"
+                           <?php checked($disable_theme_updates); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Theme Updates', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Prevent themes from updating automatically', 'voxel-toolkit'); ?></p>
                     </div>
-                    
-                    <!-- Warning -->
-                    <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; font-size: 14px; margin-bottom: 20px;">
-                        <strong style="color: #856404;"><?php _e('⚠️ Important Security Notice:', 'voxel-toolkit'); ?></strong>
-                        <p style="margin: 8px 0 0 0; color: #856404;">
-                            <?php _e('Disabling automatic updates means you\'ll need to manually update plugins, themes, and WordPress core. Make sure to regularly check for and install updates to maintain security.', 'voxel-toolkit'); ?>
-                        </p>
+                </label>
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[disable_auto_updates][disable_core_updates]"
+                           value="1"
+                           <?php checked($disable_core_updates); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('WordPress Core Updates', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Prevent WordPress core from updating automatically (includes major and minor updates)', 'voxel-toolkit'); ?></p>
                     </div>
-                    
-                    <!-- What Gets Disabled -->
-                    <div style="background: #e7f6ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 15px; font-size: 14px; margin-bottom: 20px;">
-                        <strong style="color: #0066cc;"><?php _e('Technical Details:', 'voxel-toolkit'); ?></strong>
-                        <ul style="margin: 8px 0 0 20px; color: #0066cc;">
-                            <li><?php _e('Plugin Updates: Uses add_filter(\'auto_update_plugin\', \'__return_false\')', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('Theme Updates: Uses add_filter(\'auto_update_theme\', \'__return_false\')', 'voxel-toolkit'); ?></li>
-                            <li><?php _e('Core Updates: Uses multiple filters and WP_AUTO_UPDATE_CORE constant', 'voxel-toolkit'); ?></li>
-                        </ul>
-                    </div>
-                    
-                    <!-- Manual Updates Note -->
-                    <div style="background: #fff; border: 1px solid #e1e5e9; border-radius: 6px; padding: 15px;">
-                        <h4 style="margin: 0 0 10px 0; color: #1e1e1e; font-size: 14px;">
-                            <span class="dashicons dashicons-update" style="margin-right: 5px;"></span>
-                            <?php _e('Manual Updates', 'voxel-toolkit'); ?>
-                        </h4>
-                        <p style="margin: 0; color: #666; font-size: 13px;">
-                            <?php _e('You can still update manually from the WordPress admin dashboard. Go to Dashboard > Updates to see and install available updates when you\'re ready.', 'voxel-toolkit'); ?>
-                        </p>
-                    </div>
-                </div>
-            </td>
-        </tr>
+                </label>
+            </div>
+        </div>
+
+        <div class="vt-tip-box">
+            <strong><?php _e('Manual Updates:', 'voxel-toolkit'); ?></strong>
+            <?php _e('You can still update manually from the WordPress admin dashboard. Go to Dashboard → Updates to see and install available updates when you\'re ready.', 'voxel-toolkit'); ?>
+        </div>
         <?php
     }
     
@@ -3038,19 +2601,11 @@ class Voxel_Toolkit_Functions {
         // Get all post statuses
         $post_statuses = get_post_stati(array(), 'objects');
         ?>
-        <tr>
-            <th scope="row">
-                <label><?php _e('Redirect Posts Settings', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 700px;">
-                    <!-- How it works -->
-                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px; margin-bottom: 20px;">
-                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
-                        <?php _e('Automatically redirects visitors from posts with specific statuses to specified URLs. Also detects expiration using Voxel expiration dates and common meta fields.', 'voxel-toolkit'); ?>
-                    </div>
-                    
-                    <!-- Post Status Selection -->
+        <div class="vt-info-box">
+            <?php _e('Automatically redirects visitors from posts with specific statuses to specified URLs. Also detects expiration using Voxel expiration dates and common meta fields.', 'voxel-toolkit'); ?>
+        </div>
+
+        <!-- Post Status Selection -->
                     <div style="margin-bottom: 20px;">
                         <h3 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 16px; border-bottom: 2px solid #f0f0f1; padding-bottom: 8px;">
                             <?php _e('Post Statuses to Redirect', 'voxel-toolkit'); ?>
@@ -3148,12 +2703,9 @@ class Voxel_Toolkit_Functions {
                             <li><?php _e('Leave URL empty to disable redirects for that post type', 'voxel-toolkit'); ?></li>
                         </ul>
                     </div>
-                </div>
-            </td>
-        </tr>
         <?php
     }
-    
+
     /**
      * Render settings for Auto Promotion function
      * 
@@ -3168,17 +2720,9 @@ class Voxel_Toolkit_Functions {
             'show_ui' => true
         ), 'objects');
         ?>
-        <tr>
-            <th scope="row">
-                <label><?php _e('Auto Promotion Settings', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 800px;">
-                    <!-- How it works -->
-                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px; margin-bottom: 20px;">
-                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
-                        <?php _e('When a post is published, it automatically gets boosted with a higher priority ranking for the duration you specify. After that time expires, it returns to normal ranking. Perfect for giving new content initial visibility.', 'voxel-toolkit'); ?>
-                    </div>
+        <div class="vt-info-box">
+            <?php _e('When a post is published, it automatically gets boosted with a higher priority ranking for the duration you specify. After that time expires, it returns to normal ranking.', 'voxel-toolkit'); ?>
+        </div>
                     
                     <!-- Post Type Selection -->
                     <div style="margin-bottom: 20px;">
@@ -3334,12 +2878,9 @@ class Voxel_Toolkit_Functions {
                         });
                     });
                     </script>
-                </div>
-            </td>
-        </tr>
         <?php
     }
-    
+
     /**
      * Render Custom Submission Messages settings
      */
@@ -3353,19 +2894,11 @@ class Voxel_Toolkit_Functions {
         // Get available post types
         $post_types = get_post_types(array('public' => true), 'objects');
         ?>
-        <tr>
-            <th scope="row">
-                <label><?php _e('Custom Submission Messages Settings', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 800px;">
-                    <!-- How it works -->
-                    <div style="padding: 15px; background: #f8f9fa; border-left: 3px solid #2271b1; border-radius: 4px; font-size: 14px; margin-bottom: 20px;">
-                        <strong><?php _e('How it works:', 'voxel-toolkit'); ?></strong>
-                        <?php _e('Customize confirmation messages shown to users after submitting different post types. You can set different messages for pending review, published posts, and pre-approved users.', 'voxel-toolkit'); ?>
-                    </div>
-                    
-                    <?php foreach ($post_types as $post_type): ?>
+        <div class="vt-info-box">
+            <?php _e('Customize confirmation messages shown to users after submitting different post types. You can set different messages for pending review, published posts, and pre-approved users.', 'voxel-toolkit'); ?>
+        </div>
+
+        <?php foreach ($post_types as $post_type): ?>
                         <?php if (in_array($post_type->name, array('attachment', 'page'))) continue; ?>
                         <?php
                         $enabled = isset($post_type_settings[$post_type->name]['enabled']) ? $post_type_settings[$post_type->name]['enabled'] : false;
@@ -3445,27 +2978,18 @@ class Voxel_Toolkit_Functions {
                             </div>
                         </div>
                         
-                    <?php endforeach; ?>
-                    
-                </div>
-            </td>
-        </tr>
-        
+        <?php endforeach; ?>
+
         <script type="text/javascript">
         function toggleCustomMessageSection(postType) {
             var checkbox = document.getElementById('custom_msg_' + postType + '_enabled');
             var settings = document.getElementById('custom_msg_' + postType + '_settings');
-            
-            if (checkbox.checked) {
-                settings.style.display = 'block';
-            } else {
-                settings.style.display = 'none';
-            }
+            settings.style.display = checkbox.checked ? 'block' : 'none';
         }
         </script>
         <?php
     }
-    
+
     /**
      * Render Fluent Forms Post Author settings
      */
@@ -3507,92 +3031,57 @@ class Voxel_Toolkit_Functions {
         $post_types = get_post_types(array('public' => true), 'objects');
         unset($post_types['attachment']); // Remove attachments
         ?>
-                    <tr>
-                        <th scope="row">
-                            <label><?php _e('Enable for Post Types', 'voxel-toolkit'); ?></label>
-                        </th>
-                        <td>
-                            <fieldset>
-                                <?php foreach ($post_types as $post_type_key => $post_type_obj): ?>
-                                    <label style="display: block; margin-bottom: 8px;">
-                                        <input 
-                                            type="checkbox" 
-                                            name="voxel_toolkit_options[featured_posts][post_types][]" 
-                                            value="<?php echo esc_attr($post_type_key); ?>"
-                                            <?php checked(in_array($post_type_key, $enabled_post_types)); ?>
-                                            class="featured-post-type-toggle"
-                                            data-post-type="<?php echo esc_attr($post_type_key); ?>"
-                                        />
-                                        <span class="dashicons <?php echo esc_attr($this->get_post_type_icon($post_type_key)); ?>"></span>
-                                        <?php echo esc_html($post_type_obj->labels->name); ?>
-                                        <em>(<?php echo esc_html($post_type_key); ?>)</em>
-                                    </label>
-                                <?php endforeach; ?>
-                            </fieldset>
-                            <p class="description">
-                                <?php _e('Select which post types should have featured functionality enabled.', 'voxel-toolkit'); ?>
-                            </p>
-                        </td>
-                    </tr>
-                    
-                    <tr>
-                        <th scope="row">
-                            <label><?php _e('Priority Values', 'voxel-toolkit'); ?></label>
-                        </th>
-                        <td>
-                            <div id="priority-values-container">
-                                <?php foreach ($post_types as $post_type_key => $post_type_obj): ?>
-                                    <?php 
-                                    $is_enabled = in_array($post_type_key, $enabled_post_types);
-                                    $priority_value = isset($priority_values[$post_type_key]) ? $priority_values[$post_type_key] : 10;
-                                    ?>
-                                    <div class="priority-value-row priority-row-<?php echo esc_attr($post_type_key); ?>" 
-                                         style="<?php echo $is_enabled ? '' : 'display: none;'; ?> margin-bottom: 10px;">
-                                        <label style="display: inline-block; min-width: 150px;">
-                                            <span class="dashicons <?php echo esc_attr($this->get_post_type_icon($post_type_key)); ?>"></span>
-                                            <?php echo esc_html($post_type_obj->labels->name); ?>:
-                                        </label>
-                                        <input 
-                                            type="number" 
-                                            name="voxel_toolkit_options[featured_posts][priority_values][<?php echo esc_attr($post_type_key); ?>]" 
-                                            value="<?php echo esc_attr($priority_value); ?>"
-                                            min="1"
-                                            max="999"
-                                            style="width: 80px;"
-                                        />
-                                        <span class="description" style="margin-left: 10px;">
-                                            <?php _e('Voxel Priority value for featured posts', 'voxel-toolkit'); ?>
-                                        </span>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <p class="description">
-                                <?php _e('Set the Voxel Priority meta value that will be used when posts are marked as featured. Higher numbers typically mean higher priority in listings.', 'voxel-toolkit'); ?>
-                            </p>
-                        </td>
-                    </tr>
-                    
-                    <tr>
-                        <td colspan="2">
-                            <div class="voxel-instructions" style="margin-top: 20px;">
-                                <h4><?php _e('How to Use', 'voxel-toolkit'); ?></h4>
-                                <ul style="list-style-type: disc; margin-left: 20px;">
-                                    <li><?php _e('Enable featured functionality for desired post types above', 'voxel-toolkit'); ?></li>
-                                    <li><?php _e('Set the priority value that will be assigned to featured posts', 'voxel-toolkit'); ?></li>
-                                    <li><?php _e('Go to the post list page for any enabled post type', 'voxel-toolkit'); ?></li>
-                                    <li><?php _e('Click the star icon next to any post to make it featured', 'voxel-toolkit'); ?></li>
-                                    <li><?php _e('Use the "Featured" filter dropdown to show only featured or non-featured posts', 'voxel-toolkit'); ?></li>
-                                    <li><?php _e('Use bulk actions to make multiple posts featured or remove featured status', 'voxel-toolkit'); ?></li>
-                                </ul>
-                            </div>
-                            
-                            <div class="voxel-tip" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 10px; margin: 15px 0;">
-                                <span style="font-size: 18px;">💡</span>
-                                <strong><?php _e('Tip:', 'voxel-toolkit'); ?></strong>
-                                <?php _e('The priority values set the Voxel Priority meta field which is used by Voxel theme to determine post ranking in listings. Higher values typically appear first.', 'voxel-toolkit'); ?>
-                            </div>
-                        </td>
-                    </tr>
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Enable for Post Types', 'voxel-toolkit'); ?></h4>
+            <div class="vt-checkbox-grid">
+                <?php foreach ($post_types as $post_type_key => $post_type_obj): ?>
+                    <label>
+                        <input type="checkbox"
+                               name="voxel_toolkit_options[featured_posts][post_types][]"
+                               value="<?php echo esc_attr($post_type_key); ?>"
+                               <?php checked(in_array($post_type_key, $enabled_post_types)); ?>
+                               class="featured-post-type-toggle"
+                               data-post-type="<?php echo esc_attr($post_type_key); ?>" />
+                        <span class="dashicons <?php echo esc_attr($this->get_post_type_icon($post_type_key)); ?>"></span>
+                        <?php echo esc_html($post_type_obj->labels->name); ?>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+            <p class="vt-field-description"><?php _e('Select which post types should have featured functionality enabled.', 'voxel-toolkit'); ?></p>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Priority Values', 'voxel-toolkit'); ?></h4>
+            <div id="priority-values-container">
+                <?php foreach ($post_types as $post_type_key => $post_type_obj): ?>
+                    <?php
+                    $is_enabled = in_array($post_type_key, $enabled_post_types);
+                    $priority_value = isset($priority_values[$post_type_key]) ? $priority_values[$post_type_key] : 10;
+                    ?>
+                    <div class="priority-value-row priority-row-<?php echo esc_attr($post_type_key); ?>"
+                         style="<?php echo $is_enabled ? '' : 'display: none;'; ?> margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <label style="min-width: 150px;">
+                            <span class="dashicons <?php echo esc_attr($this->get_post_type_icon($post_type_key)); ?>"></span>
+                            <?php echo esc_html($post_type_obj->labels->name); ?>:
+                        </label>
+                        <input type="number"
+                               name="voxel_toolkit_options[featured_posts][priority_values][<?php echo esc_attr($post_type_key); ?>]"
+                               value="<?php echo esc_attr($priority_value); ?>"
+                               min="1" max="999" style="width: 80px;" />
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <p class="vt-field-description"><?php _e('Set the Voxel Priority meta value for featured posts. Higher numbers = higher priority.', 'voxel-toolkit'); ?></p>
+        </div>
+
+        <div class="vt-info-box">
+            <strong><?php _e('How to Use:', 'voxel-toolkit'); ?></strong>
+            <ul style="margin: 10px 0 0 20px; padding: 0;">
+                <li><?php _e('Enable featured functionality for desired post types above', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Go to the post list page and click the star icon to feature posts', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Use the "Featured" filter or bulk actions to manage featured posts', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
         
         <script type="text/javascript">
         jQuery(document).ready(function($) {
@@ -4880,64 +4369,54 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         $detection_mode = isset($settings['visitor_location_mode']) ? sanitize_text_field($settings['visitor_location_mode']) : 'ip';
 
         ?>
-        <tr>
-            <th scope="row">
-                <label><?php _e('Detection Mode', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
-                <fieldset>
-                    <label>
-                        <input type="radio"
-                               name="voxel_toolkit_options[visitor_location][visitor_location_mode]"
-                               value="ip"
-                               <?php checked($detection_mode, 'ip'); ?> />
-                        <strong><?php _e('IP Geolocation', 'voxel-toolkit'); ?></strong>
-                        <p class="description" style="margin-left: 25px;">
-                            <?php _e('Automatic detection using IP address. Queries multiple services (geojs.io, ipapi.co, ip-api.com) for best accuracy. No user interaction required. Accuracy: City-level (~50-100 mile radius).', 'voxel-toolkit'); ?>
-                        </p>
-                    </label>
-                    <br><br>
-                    <label>
-                        <input type="radio"
-                               name="voxel_toolkit_options[visitor_location][visitor_location_mode]"
-                               value="browser"
-                               <?php checked($detection_mode, 'browser'); ?> />
-                        <strong><?php _e('Browser Geolocation (More Accurate)', 'voxel-toolkit'); ?></strong>
-                        <p class="description" style="margin-left: 25px;">
-                            <?php _e('Uses browser geolocation API with GPS/WiFi/cell towers. Requires user permission. Falls back to IP geolocation if denied. Accuracy: GPS-level (meters to feet).', 'voxel-toolkit'); ?>
-                        </p>
-                    </label>
-                </fieldset>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">
-                <label for="visitor_location_cache_duration"><?php _e('Cache Duration (seconds)', 'voxel-toolkit'); ?></label>
-            </th>
-            <td>
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Detection Mode', 'voxel-toolkit'); ?></h4>
+            <div class="vt-checkbox-list">
+                <label class="vt-checkbox-item">
+                    <input type="radio"
+                           name="voxel_toolkit_options[visitor_location][visitor_location_mode]"
+                           value="ip"
+                           <?php checked($detection_mode, 'ip'); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('IP Geolocation', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Automatic detection using IP address. City-level accuracy (~50-100 mile radius).', 'voxel-toolkit'); ?></p>
+                    </div>
+                </label>
+                <label class="vt-checkbox-item">
+                    <input type="radio"
+                           name="voxel_toolkit_options[visitor_location][visitor_location_mode]"
+                           value="browser"
+                           <?php checked($detection_mode, 'browser'); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Browser Geolocation (More Accurate)', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Uses GPS/WiFi/cell towers. Requires user permission. GPS-level accuracy.', 'voxel-toolkit'); ?></p>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Cache Duration', 'voxel-toolkit'); ?></h4>
+            <div class="vt-field-group">
                 <input type="number"
-                       id="visitor_location_cache_duration"
                        name="voxel_toolkit_options[visitor_location][visitor_location_cache_duration]"
                        value="<?php echo esc_attr($cache_duration); ?>"
                        min="0"
-                       step="1"
-                       class="regular-text" />
-                <p class="description">
-                    <?php _e('How long to cache visitor location data in seconds. Default: 3600 (1 hour). Set to 0 to disable caching.', 'voxel-toolkit'); ?>
-                </p>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><?php _e('Available Dynamic Tags', 'voxel-toolkit'); ?></th>
-            <td>
-                <p class="description">
-                    <strong>@site(visitor.location)</strong> - <?php _e('Full location (City, State for US or City, Country for international)', 'voxel-toolkit'); ?><br>
-                    <strong>@site(visitor.city)</strong> - <?php _e('City name only', 'voxel-toolkit'); ?><br>
-                    <strong>@site(visitor.state)</strong> - <?php _e('State/region name only', 'voxel-toolkit'); ?><br>
-                    <strong>@site(visitor.country)</strong> - <?php _e('Country name only', 'voxel-toolkit'); ?>
-                </p>
-            </td>
-        </tr>
+                       class="vt-text-input"
+                       style="max-width: 150px;" />
+                <p class="vt-field-description"><?php _e('Seconds to cache location data. Default: 3600 (1 hour). Set to 0 to disable.', 'voxel-toolkit'); ?></p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Available Dynamic Tags', 'voxel-toolkit'); ?></h4>
+            <div style="background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px; font-family: monospace; font-size: 13px;">
+                <div style="margin-bottom: 8px;"><code>@site(visitor.location)</code> - <?php _e('Full location', 'voxel-toolkit'); ?></div>
+                <div style="margin-bottom: 8px;"><code>@site(visitor.city)</code> - <?php _e('City name', 'voxel-toolkit'); ?></div>
+                <div style="margin-bottom: 8px;"><code>@site(visitor.state)</code> - <?php _e('State/region', 'voxel-toolkit'); ?></div>
+                <div><code>@site(visitor.country)</code> - <?php _e('Country name', 'voxel-toolkit'); ?></div>
+            </div>
+        </div>
         <?php
     }
 }

@@ -48,6 +48,7 @@ class Voxel_Toolkit_Admin {
         add_action('wp_ajax_voxel_toolkit_reset_settings', array($this, 'ajax_reset_settings'));
         add_action('wp_ajax_vt_admin_notifications_user_search', array($this, 'ajax_admin_notifications_user_search'));
         add_action('wp_ajax_voxel_toolkit_reorder_fields', array($this, 'ajax_reorder_fields'));
+        add_action('wp_ajax_vt_save_function_settings', array($this, 'ajax_save_function_settings'));
     }
     
     /**
@@ -455,7 +456,7 @@ class Voxel_Toolkit_Admin {
         $is_enabled = $this->settings->is_function_enabled($function_key);
         $is_active = $this->functions_manager->is_function_active($function_key);
         $is_always_enabled = isset($function_data['always_enabled']) && $function_data['always_enabled'];
-        $settings_url = admin_url("admin.php?page=voxel-toolkit-settings#section-{$function_key}");
+        $settings_url = admin_url("admin.php?page=voxel-toolkit-settings#{$function_key}");
         
         // Always enabled functions should show as enabled
         $display_enabled = $is_enabled || $is_always_enabled;
@@ -510,39 +511,135 @@ class Voxel_Toolkit_Admin {
      * Render settings page
      */
     public function render_settings_page() {
-        // Handle form submission
-        if (isset($_POST['submit']) && check_admin_referer('voxel_toolkit_settings_nonce', 'voxel_toolkit_settings_nonce')) {
+        $available_functions = $this->functions_manager->get_available_functions();
 
-            $this->handle_settings_save($_POST);
-            echo '<div class="notice notice-success is-dismissible"><p>' . __('Settings saved successfully.', 'voxel-toolkit') . '</p></div>';
+        // Get only enabled functions that have settings
+        $enabled_functions = array();
+        foreach ($available_functions as $function_key => $function_data) {
+            // Skip hidden functions
+            if (!empty($function_data['hidden'])) {
+                continue;
+            }
+
+            $is_enabled = $this->settings->is_function_enabled($function_key);
+            $is_always_enabled = isset($function_data['always_enabled']) && $function_data['always_enabled'];
+
+            if ($is_enabled || $is_always_enabled) {
+                $enabled_functions[$function_key] = $function_data;
+            }
         }
 
-        $available_functions = $this->functions_manager->get_available_functions();
+        // Sort functions alphabetically by name
+        uasort($enabled_functions, function($a, $b) {
+            return strcasecmp($a['name'], $b['name']);
+        });
+
         ?>
         <div class="wrap">
-            <h1><?php _e('Voxel Toolkit - Settings', 'voxel-toolkit'); ?></h1>
+            <h1><?php _e('Voxel Toolkit Settings', 'voxel-toolkit'); ?></h1>
+            <p class="description"><?php _e('Configure your enabled functions. Each function saves independently.', 'voxel-toolkit'); ?></p>
 
-            <form method="post" action="">
-                <?php wp_nonce_field('voxel_toolkit_settings_nonce', 'voxel_toolkit_settings_nonce'); ?>
-
-                <div class="voxel-toolkit-settings">
-                    <?php foreach ($available_functions as $function_key => $function_data): ?>
-                        <?php
-                        // Skip hidden functions
-                        if (!empty($function_data['hidden'])) {
-                            continue;
-                        }
-                        $is_enabled = $this->settings->is_function_enabled($function_key);
-                        $is_always_enabled = isset($function_data['always_enabled']) && $function_data['always_enabled'];
-                        ?>
-                        <?php if ($is_enabled || $is_always_enabled): ?>
-                            <?php $this->render_function_settings_section($function_key, $function_data); ?>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
+            <?php if (empty($enabled_functions)): ?>
+                <!-- Empty State -->
+                <div class="vt-settings-container">
+                    <div class="vt-settings-empty">
+                        <span class="dashicons dashicons-admin-generic vt-settings-empty-icon"></span>
+                        <h3><?php _e('No Functions Enabled', 'voxel-toolkit'); ?></h3>
+                        <p><?php _e('Enable functions on the Functions page to configure them here.', 'voxel-toolkit'); ?></p>
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=voxel-toolkit')); ?>" class="button button-primary">
+                            <span class="dashicons dashicons-arrow-right-alt"></span>
+                            <?php _e('Go to Functions', 'voxel-toolkit'); ?>
+                        </a>
+                    </div>
                 </div>
+            <?php else: ?>
+                <div class="vt-settings-container">
+                    <!-- Tab Sidebar -->
+                    <div class="vt-settings-tabs">
+                        <div class="vt-settings-tabs-header">
+                            <div class="vt-settings-search">
+                                <input type="text"
+                                       class="vt-settings-search-input"
+                                       placeholder="<?php esc_attr_e('Search functions...', 'voxel-toolkit'); ?>"
+                                       id="vt-settings-search">
+                                <span class="dashicons dashicons-search"></span>
+                            </div>
+                        </div>
+                        <div class="vt-settings-tabs-list">
+                            <?php
+                            $first = true;
+                            foreach ($enabled_functions as $function_key => $function_data):
+                            ?>
+                                <button type="button"
+                                        class="vt-settings-tab <?php echo $first ? 'active' : ''; ?>"
+                                        data-tab="<?php echo esc_attr($function_key); ?>">
+                                    <?php echo esc_html($function_data['name']); ?>
+                                </button>
+                            <?php
+                                $first = false;
+                            endforeach;
+                            ?>
+                            <div class="vt-settings-no-results" style="display: none;">
+                                <span class="dashicons dashicons-search"></span>
+                                <?php _e('No functions found', 'voxel-toolkit'); ?>
+                            </div>
+                        </div>
+                    </div>
 
-                <?php submit_button(); ?>
-            </form>
+                    <!-- Content Panels -->
+                    <div class="vt-settings-content">
+                        <?php
+                        $first = true;
+                        foreach ($enabled_functions as $function_key => $function_data):
+                            $function_settings = $this->settings->get_function_settings($function_key, array());
+                        ?>
+                            <div class="vt-settings-panel <?php echo $first ? 'active' : ''; ?>"
+                                 data-panel="<?php echo esc_attr($function_key); ?>">
+
+                                <div class="vt-settings-panel-header">
+                                    <div class="vt-settings-panel-header-left">
+                                        <h2 class="vt-settings-panel-title"><?php echo esc_html($function_data['name']); ?></h2>
+                                        <p class="vt-settings-panel-description"><?php echo esc_html($function_data['description']); ?></p>
+                                    </div>
+                                    <div class="vt-settings-panel-header-right">
+                                        <button type="button"
+                                                class="button vt-settings-save-btn"
+                                                data-function="<?php echo esc_attr($function_key); ?>">
+                                            <span class="dashicons dashicons-saved"></span>
+                                            <span class="vt-save-text"><?php _e('Save Settings', 'voxel-toolkit'); ?></span>
+                                        </button>
+                                        <span class="vt-settings-save-status"></span>
+                                    </div>
+                                </div>
+
+                                <div class="vt-settings-panel-body">
+                                    <form class="vt-settings-form" data-function="<?php echo esc_attr($function_key); ?>">
+                                        <?php wp_nonce_field('vt_save_function_settings', 'vt_settings_nonce'); ?>
+                                        <input type="hidden" name="function_key" value="<?php echo esc_attr($function_key); ?>">
+
+                                        <?php
+                                        // Call custom settings callback if available
+                                        if (isset($function_data['settings_callback']) && is_callable($function_data['settings_callback'])) {
+                                            call_user_func($function_data['settings_callback'], $function_settings);
+                                        } else {
+                                            // If no custom settings, show a message
+                                            ?>
+                                            <div class="vt-info-box">
+                                                <?php _e('This function is enabled and active. No additional configuration is required.', 'voxel-toolkit'); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        ?>
+                                    </form>
+                                </div>
+                            </div>
+                        <?php
+                            $first = false;
+                        endforeach;
+                        ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
         <?php
     }
@@ -612,6 +709,94 @@ class Voxel_Toolkit_Admin {
             // Refresh the settings cache
             $this->settings->refresh_options();
         }
+    }
+
+    /**
+     * AJAX handler for saving individual function settings
+     */
+    public function ajax_save_function_settings() {
+        // Check nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'vt_save_function_settings')) {
+            wp_send_json_error(array('message' => __('Security check failed.', 'voxel-toolkit')));
+        }
+
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('You do not have permission to do this.', 'voxel-toolkit')));
+        }
+
+        // Get function key
+        $function_key = isset($_POST['function_key']) ? sanitize_key($_POST['function_key']) : '';
+        if (empty($function_key)) {
+            wp_send_json_error(array('message' => __('Invalid function key.', 'voxel-toolkit')));
+        }
+
+        // Verify function exists
+        $available_functions = $this->functions_manager->get_available_functions();
+        if (!isset($available_functions[$function_key])) {
+            wp_send_json_error(array('message' => __('Function not found.', 'voxel-toolkit')));
+        }
+
+        // Get current options
+        $current_options = get_option('voxel_toolkit_options', array());
+
+        // Initialize function settings if not exists
+        if (!isset($current_options[$function_key])) {
+            $current_options[$function_key] = array();
+        }
+
+        // Preserve the enabled status
+        $enabled_status = isset($current_options[$function_key]['enabled']) ? $current_options[$function_key]['enabled'] : false;
+
+        // Get the settings data from POST
+        $settings_data = isset($_POST['settings']) ? $_POST['settings'] : array();
+
+        // Handle AI Review Summary API key specifically
+        if ($function_key === 'ai_review_summary' && isset($_POST['ai_api_key'])) {
+            $api_key = sanitize_text_field(trim($_POST['ai_api_key']));
+            if (!empty($api_key)) {
+                $current_options[$function_key]['api_key'] = $api_key;
+            }
+        }
+
+        // Process settings - always run sanitization even if settings appear empty
+        // This ensures unchecked checkboxes (empty arrays) are properly saved
+        if (isset($settings_data[$function_key])) {
+            // Build input array for sanitization
+            $input = array($function_key => $settings_data[$function_key]);
+
+            // Sanitize the input
+            $sanitized = $this->sanitize_options($input);
+
+            if (isset($sanitized[$function_key])) {
+                // Special handling for options_page
+                if ($function_key === 'options_page') {
+                    $current_options[$function_key] = $this->handle_options_page_config(
+                        $settings_data[$function_key],
+                        $current_options[$function_key]
+                    );
+                } else {
+                    // Merge sanitized settings, ensuring arrays are replaced not merged
+                    foreach ($sanitized[$function_key] as $key => $value) {
+                        $current_options[$function_key][$key] = $value;
+                    }
+                }
+            }
+        }
+
+        // Restore enabled status
+        $current_options[$function_key]['enabled'] = $enabled_status;
+
+        // Save options
+        $result = update_option('voxel_toolkit_options', $current_options);
+
+        // Refresh settings cache
+        $this->settings->refresh_options();
+
+        wp_send_json_success(array(
+            'message' => __('Settings saved successfully.', 'voxel-toolkit'),
+            'function' => $function_key
+        ));
     }
 
     /**
@@ -747,7 +932,7 @@ class Voxel_Toolkit_Admin {
                     case 'admin_menu_hide':
                         if (isset($function_input['hidden_menus']) && is_array($function_input['hidden_menus'])) {
                             // Validate menu keys against allowed values
-                            $allowed_menus = array('structure', 'membership');
+                            $allowed_menus = array('voxel_settings', 'voxel_post_types', 'voxel_templates', 'voxel_users');
                             $sanitized_function['hidden_menus'] = array_intersect(
                                 array_map('sanitize_text_field', $function_input['hidden_menus']),
                                 $allowed_menus
@@ -987,7 +1172,14 @@ class Voxel_Toolkit_Admin {
                     case 'show_field_description':
                         // No settings needed - styling controlled via Elementor widget
                         break;
-                    
+
+                    case 'disable_auto_updates':
+                        // Single checkbox settings - check for "1" string or truthy value
+                        $sanitized_function['disable_plugin_updates'] = !empty($function_input['disable_plugin_updates']) && $function_input['disable_plugin_updates'] !== '0';
+                        $sanitized_function['disable_theme_updates'] = !empty($function_input['disable_theme_updates']) && $function_input['disable_theme_updates'] !== '0';
+                        $sanitized_function['disable_core_updates'] = !empty($function_input['disable_core_updates']) && $function_input['disable_core_updates'] !== '0';
+                        break;
+
                     case 'auto_promotion':
                         // Sanitize post types
                         if (isset($function_input['post_types']) && is_array($function_input['post_types'])) {
@@ -1060,6 +1252,154 @@ class Voxel_Toolkit_Admin {
                         if (isset($function_input['success_message']) && !empty(trim($function_input['success_message']))) {
                             $sanitized_function['success_message'] = sanitize_text_field($function_input['success_message']);
                         }
+                        break;
+
+                    case 'admin_taxonomy_search':
+                        if (isset($function_input['taxonomies']) && is_array($function_input['taxonomies'])) {
+                            $sanitized_function['taxonomies'] = array_map('sanitize_text_field', $function_input['taxonomies']);
+                        } else {
+                            $sanitized_function['taxonomies'] = array();
+                        }
+                        break;
+
+                    case 'pending_posts_badge':
+                        if (isset($function_input['post_types']) && is_array($function_input['post_types'])) {
+                            $sanitized_function['post_types'] = array_map('sanitize_text_field', $function_input['post_types']);
+                        } else {
+                            $sanitized_function['post_types'] = array();
+                        }
+                        $sanitized_function['background_color'] = isset($function_input['background_color']) && preg_match('/^#[0-9a-fA-F]{6}$/', $function_input['background_color'])
+                            ? sanitize_hex_color($function_input['background_color'])
+                            : '#d63638';
+                        $sanitized_function['text_color'] = isset($function_input['text_color']) && preg_match('/^#[0-9a-fA-F]{6}$/', $function_input['text_color'])
+                            ? sanitize_hex_color($function_input['text_color'])
+                            : '#ffffff';
+                        break;
+
+                    case 'redirect_posts':
+                        if (isset($function_input['post_types']) && is_array($function_input['post_types'])) {
+                            $sanitized_function['post_types'] = array_map('sanitize_text_field', $function_input['post_types']);
+                        } else {
+                            $sanitized_function['post_types'] = array();
+                        }
+                        if (isset($function_input['redirect_statuses']) && is_array($function_input['redirect_statuses'])) {
+                            $sanitized_function['redirect_statuses'] = array_map('sanitize_text_field', $function_input['redirect_statuses']);
+                        } else {
+                            $sanitized_function['redirect_statuses'] = array();
+                        }
+                        if (isset($function_input['redirect_urls']) && is_array($function_input['redirect_urls'])) {
+                            $sanitized_function['redirect_urls'] = array();
+                            foreach ($function_input['redirect_urls'] as $post_type => $url) {
+                                $sanitized_function['redirect_urls'][sanitize_text_field($post_type)] = esc_url_raw($url);
+                            }
+                        } else {
+                            $sanitized_function['redirect_urls'] = array();
+                        }
+                        break;
+
+                    case 'custom_submission_messages':
+                        if (isset($function_input['post_type_settings']) && is_array($function_input['post_type_settings'])) {
+                            $sanitized_function['post_type_settings'] = array();
+                            foreach ($function_input['post_type_settings'] as $post_type => $pt_settings) {
+                                $sanitized_pt = array();
+                                $sanitized_pt['enabled'] = !empty($pt_settings['enabled']);
+                                if (isset($pt_settings['messages']) && is_array($pt_settings['messages'])) {
+                                    $sanitized_pt['messages'] = array();
+                                    foreach ($pt_settings['messages'] as $msg_key => $msg_value) {
+                                        $sanitized_pt['messages'][sanitize_text_field($msg_key)] = wp_kses_post($msg_value);
+                                    }
+                                }
+                                $sanitized_function['post_type_settings'][sanitize_text_field($post_type)] = $sanitized_pt;
+                            }
+                        } else {
+                            $sanitized_function['post_type_settings'] = array();
+                        }
+                        break;
+
+                    case 'featured_posts':
+                        if (isset($function_input['post_types']) && is_array($function_input['post_types'])) {
+                            $sanitized_function['post_types'] = array_map('sanitize_text_field', $function_input['post_types']);
+                        } else {
+                            $sanitized_function['post_types'] = array();
+                        }
+                        if (isset($function_input['priority_values']) && is_array($function_input['priority_values'])) {
+                            $sanitized_function['priority_values'] = array();
+                            foreach ($function_input['priority_values'] as $post_type => $priority) {
+                                $sanitized_function['priority_values'][sanitize_text_field($post_type)] = absint($priority);
+                            }
+                        } else {
+                            $sanitized_function['priority_values'] = array();
+                        }
+                        break;
+
+                    case 'google_analytics':
+                        $sanitized_function['ga4_measurement_id'] = isset($function_input['ga4_measurement_id'])
+                            ? sanitize_text_field($function_input['ga4_measurement_id']) : '';
+                        $sanitized_function['ua_tracking_id'] = isset($function_input['ua_tracking_id'])
+                            ? sanitize_text_field($function_input['ua_tracking_id']) : '';
+                        $sanitized_function['gtm_container_id'] = isset($function_input['gtm_container_id'])
+                            ? sanitize_text_field($function_input['gtm_container_id']) : '';
+                        $sanitized_function['custom_head_tags'] = isset($function_input['custom_head_tags'])
+                            ? $function_input['custom_head_tags'] : '';
+                        $sanitized_function['custom_body_tags'] = isset($function_input['custom_body_tags'])
+                            ? $function_input['custom_body_tags'] : '';
+                        $sanitized_function['custom_footer_tags'] = isset($function_input['custom_footer_tags'])
+                            ? $function_input['custom_footer_tags'] : '';
+                        break;
+
+                    case 'media_paste':
+                        if (isset($function_input['allowed_roles']) && is_array($function_input['allowed_roles'])) {
+                            $sanitized_function['allowed_roles'] = array_map('sanitize_text_field', $function_input['allowed_roles']);
+                        } else {
+                            $sanitized_function['allowed_roles'] = array('administrator', 'editor', 'author');
+                        }
+                        $sanitized_function['max_file_size'] = isset($function_input['max_file_size'])
+                            ? absint($function_input['max_file_size']) : 5;
+                        if (isset($function_input['allowed_types']) && is_array($function_input['allowed_types'])) {
+                            $sanitized_function['allowed_types'] = array_map('sanitize_text_field', $function_input['allowed_types']);
+                        } else {
+                            $sanitized_function['allowed_types'] = array('image/jpeg', 'image/png', 'image/gif', 'image/webp');
+                        }
+                        break;
+
+                    case 'submission_reminder':
+                        if (isset($function_input['post_types']) && is_array($function_input['post_types'])) {
+                            $sanitized_function['post_types'] = array_map('sanitize_text_field', $function_input['post_types']);
+                        } else {
+                            $sanitized_function['post_types'] = array();
+                        }
+                        if (isset($function_input['notifications']) && is_array($function_input['notifications'])) {
+                            $sanitized_function['notifications'] = array();
+                            foreach ($function_input['notifications'] as $post_type => $pt_notifications) {
+                                if (is_array($pt_notifications)) {
+                                    $sanitized_function['notifications'][sanitize_text_field($post_type)] = array();
+                                    foreach ($pt_notifications as $notif_id => $notification) {
+                                        if (is_array($notification)) {
+                                            $sanitized_function['notifications'][$post_type][sanitize_text_field($notif_id)] = array(
+                                                'enabled' => isset($notification['enabled']) ? sanitize_text_field($notification['enabled']) : 'no',
+                                                'time_value' => isset($notification['time_value']) ? absint($notification['time_value']) : 7,
+                                                'time_unit' => isset($notification['time_unit']) ? sanitize_text_field($notification['time_unit']) : 'days',
+                                                'description' => isset($notification['description']) ? sanitize_text_field($notification['description']) : '',
+                                                'subject' => isset($notification['subject']) ? sanitize_text_field($notification['subject']) : '',
+                                                'message' => isset($notification['message']) ? wp_kses_post($notification['message']) : ''
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            $sanitized_function['notifications'] = array();
+                        }
+                        break;
+
+                    case 'visitor_location':
+                        $valid_modes = array('ip', 'browser', 'gps', 'both');
+                        $sanitized_function['visitor_location_mode'] = isset($function_input['visitor_location_mode']) && in_array($function_input['visitor_location_mode'], $valid_modes)
+                            ? sanitize_text_field($function_input['visitor_location_mode'])
+                            : 'ip';
+                        $sanitized_function['visitor_location_cache_duration'] = isset($function_input['visitor_location_cache_duration'])
+                            ? absint($function_input['visitor_location_cache_duration'])
+                            : 3600;
                         break;
 
                     default:

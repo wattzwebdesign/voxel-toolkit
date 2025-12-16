@@ -741,3 +741,338 @@ jQuery(document).ready(function($) {
         $body.html(html);
     }
 });
+
+// ===================================
+// Settings Page - Tab Navigation & AJAX Save
+// ===================================
+
+jQuery(document).ready(function($) {
+    'use strict';
+
+    // Check if we're on the settings page
+    if (!$('.vt-settings-container').length) {
+        return;
+    }
+
+    const VTSettings = {
+        init: function() {
+            this.bindEvents();
+            this.handleURLHash();
+        },
+
+        bindEvents: function() {
+            // Tab clicking
+            $(document).on('click', '.vt-settings-tab', this.handleTabClick.bind(this));
+
+            // Search filtering
+            $(document).on('input', '#vt-settings-search', this.handleSearch.bind(this));
+
+            // Save button click
+            $(document).on('click', '.vt-settings-save-btn', this.handleSave.bind(this));
+
+            // Form submit prevention (we use AJAX instead)
+            $(document).on('submit', '.vt-settings-form', function(e) {
+                e.preventDefault();
+            });
+        },
+
+        handleTabClick: function(e) {
+            const $tab = $(e.currentTarget);
+            const tabKey = $tab.data('tab');
+
+            // Update active tab
+            $('.vt-settings-tab').removeClass('active');
+            $tab.addClass('active');
+
+            // Update active panel
+            $('.vt-settings-panel').removeClass('active');
+            $(`.vt-settings-panel[data-panel="${tabKey}"]`).addClass('active');
+
+            // Update URL hash
+            window.history.replaceState(null, null, '#' + tabKey);
+        },
+
+        handleSearch: function(e) {
+            const searchTerm = $(e.target).val().toLowerCase().trim();
+            const $tabs = $('.vt-settings-tab');
+            const $noResults = $('.vt-settings-no-results');
+            let visibleCount = 0;
+            let firstVisibleTab = null;
+
+            $tabs.each(function() {
+                const $tab = $(this);
+                const tabText = $tab.text().toLowerCase();
+                const tabKey = $tab.data('tab');
+
+                if (searchTerm === '' || tabText.includes(searchTerm)) {
+                    $tab.removeClass('hidden');
+                    visibleCount++;
+                    if (!firstVisibleTab) {
+                        firstVisibleTab = $tab;
+                    }
+                } else {
+                    $tab.removeClass('active').addClass('hidden');
+                }
+            });
+
+            // Show/hide no results message
+            if (visibleCount === 0) {
+                $noResults.show();
+                $('.vt-settings-panel').removeClass('active');
+            } else {
+                $noResults.hide();
+
+                // If current active tab is hidden, switch to first visible
+                const $activeTab = $('.vt-settings-tab.active:not(.hidden)');
+                if ($activeTab.length === 0 && firstVisibleTab) {
+                    firstVisibleTab.click();
+                }
+            }
+        },
+
+        handleSave: function(e) {
+            const $button = $(e.currentTarget);
+            const functionKey = $button.data('function');
+            const $panel = $(`.vt-settings-panel[data-panel="${functionKey}"]`);
+            const $form = $panel.find('.vt-settings-form');
+            const $status = $panel.find('.vt-settings-save-status');
+            const $saveText = $button.find('.vt-save-text');
+            const $icon = $button.find('.dashicons');
+
+            // Prevent double-click
+            if ($button.prop('disabled')) {
+                return;
+            }
+
+            // Build settings object from form
+            const settings = {};
+            settings[functionKey] = {};
+
+            // First, find all checkboxes and initialize them
+            $form.find('input[type="checkbox"]').each(function() {
+                const $cb = $(this);
+                const name = $cb.attr('name');
+                if (!name) return;
+
+                // Handle array checkboxes (e.g., post_types[])
+                const matchArray = name.match(/^voxel_toolkit_options\[([^\]]+)\]\[([^\]]+)\]\[\]$/);
+                if (matchArray) {
+                    const fKey = matchArray[1];
+                    const settingKey = matchArray[2];
+
+                    if (!settings[fKey]) {
+                        settings[fKey] = {};
+                    }
+                    // Initialize as empty array
+                    if (!settings[fKey][settingKey]) {
+                        settings[fKey][settingKey] = [];
+                    }
+                    // Add value if checked
+                    if ($cb.is(':checked')) {
+                        settings[fKey][settingKey].push($cb.val());
+                    }
+                    return;
+                }
+
+                // Handle 5-level checkbox: voxel_toolkit_options[func][n1][n2][n3][key]
+                const match5LevelCb = name.match(/^voxel_toolkit_options\[([^\]]+)\]\[([^\]]+)\]\[([^\]]+)\]\[([^\]]+)\]\[([^\]]+)\]$/);
+                if (match5LevelCb) {
+                    const fKey = match5LevelCb[1];
+                    const n1 = match5LevelCb[2];
+                    const n2 = match5LevelCb[3];
+                    const n3 = match5LevelCb[4];
+                    const subKey = match5LevelCb[5];
+
+                    if (!settings[fKey]) settings[fKey] = {};
+                    if (!settings[fKey][n1]) settings[fKey][n1] = {};
+                    if (!settings[fKey][n1][n2]) settings[fKey][n1][n2] = {};
+                    if (!settings[fKey][n1][n2][n3]) settings[fKey][n1][n2][n3] = {};
+                    // Use actual value if checked, empty string if not (for 'yes' type checkboxes)
+                    settings[fKey][n1][n2][n3][subKey] = $cb.is(':checked') ? $cb.val() : '';
+                    return;
+                }
+
+                // Handle 4-level checkbox: voxel_toolkit_options[func][n1][n2][key]
+                const match4LevelCb = name.match(/^voxel_toolkit_options\[([^\]]+)\]\[([^\]]+)\]\[([^\]]+)\]\[([^\]]+)\]$/);
+                if (match4LevelCb) {
+                    const fKey = match4LevelCb[1];
+                    const n1 = match4LevelCb[2];
+                    const n2 = match4LevelCb[3];
+                    const subKey = match4LevelCb[4];
+
+                    if (!settings[fKey]) settings[fKey] = {};
+                    if (!settings[fKey][n1]) settings[fKey][n1] = {};
+                    if (!settings[fKey][n1][n2]) settings[fKey][n1][n2] = {};
+                    // Use '1' if checked, '0' if not (standard checkbox pattern)
+                    settings[fKey][n1][n2][subKey] = $cb.is(':checked') ? '1' : '0';
+                    return;
+                }
+
+                // Handle single checkboxes (e.g., disable_plugin_updates with value="1")
+                const matchSingle = name.match(/^voxel_toolkit_options\[([^\]]+)\]\[([^\]]+)\]$/);
+                if (matchSingle) {
+                    const fKey = matchSingle[1];
+                    const settingKey = matchSingle[2];
+
+                    if (!settings[fKey]) {
+                        settings[fKey] = {};
+                    }
+                    // Send "1" if checked, "0" if not
+                    settings[fKey][settingKey] = $cb.is(':checked') ? '1' : '0';
+                }
+            });
+
+            // Now collect all other form values (text inputs, selects, etc.)
+            const formData = new FormData($form[0]);
+
+            formData.forEach((value, key) => {
+                // Skip nonce, function_key, and checkbox fields (already handled above)
+                if (key === 'vt_settings_nonce' || key === '_wp_http_referer' || key === 'function_key') {
+                    return;
+                }
+
+                // Skip checkbox fields - already handled
+                const isCheckbox = $form.find(`input[type="checkbox"][name="${key}"]`).length > 0;
+                if (isCheckbox) {
+                    return;
+                }
+
+                // Handle 5-level nesting: voxel_toolkit_options[func][nested1][nested2][nested3][key]
+                const match5Level = key.match(/^voxel_toolkit_options\[([^\]]+)\]\[([^\]]+)\]\[([^\]]+)\]\[([^\]]+)\]\[([^\]]+)\]$/);
+                if (match5Level) {
+                    const fKey = match5Level[1];
+                    const nestedKey1 = match5Level[2];
+                    const nestedKey2 = match5Level[3];
+                    const nestedKey3 = match5Level[4];
+                    const subKey = match5Level[5];
+
+                    if (!settings[fKey]) settings[fKey] = {};
+                    if (!settings[fKey][nestedKey1]) settings[fKey][nestedKey1] = {};
+                    if (!settings[fKey][nestedKey1][nestedKey2]) settings[fKey][nestedKey1][nestedKey2] = {};
+                    if (!settings[fKey][nestedKey1][nestedKey2][nestedKey3]) settings[fKey][nestedKey1][nestedKey2][nestedKey3] = {};
+                    settings[fKey][nestedKey1][nestedKey2][nestedKey3][subKey] = value;
+                    return;
+                }
+
+                // Handle 4-level nesting: voxel_toolkit_options[func][nested1][nested2][key]
+                const match4Level = key.match(/^voxel_toolkit_options\[([^\]]+)\]\[([^\]]+)\]\[([^\]]+)\]\[([^\]]+)\]$/);
+                if (match4Level) {
+                    const fKey = match4Level[1];
+                    const nestedKey1 = match4Level[2];
+                    const nestedKey2 = match4Level[3];
+                    const subKey = match4Level[4];
+
+                    if (!settings[fKey]) settings[fKey] = {};
+                    if (!settings[fKey][nestedKey1]) settings[fKey][nestedKey1] = {};
+                    if (!settings[fKey][nestedKey1][nestedKey2]) settings[fKey][nestedKey1][nestedKey2] = {};
+                    settings[fKey][nestedKey1][nestedKey2][subKey] = value;
+                    return;
+                }
+
+                // Handle 3-level nesting: voxel_toolkit_options[func][nested][key]
+                const match3Level = key.match(/^voxel_toolkit_options\[([^\]]+)\]\[([^\]]+)\]\[([^\]]+)\]$/);
+                if (match3Level) {
+                    const fKey = match3Level[1];
+                    const nestedKey = match3Level[2];
+                    const subKey = match3Level[3];
+
+                    if (!settings[fKey]) settings[fKey] = {};
+                    if (!settings[fKey][nestedKey]) settings[fKey][nestedKey] = {};
+                    settings[fKey][nestedKey][subKey] = value;
+                    return;
+                }
+
+                // Handle 2-level nesting: voxel_toolkit_options[func][setting]
+                const matchSingle = key.match(/^voxel_toolkit_options\[([^\]]+)\]\[([^\]]+)\]$/);
+                if (matchSingle) {
+                    const fKey = matchSingle[1];
+                    const settingKey = matchSingle[2];
+
+                    if (!settings[fKey]) {
+                        settings[fKey] = {};
+                    }
+                    settings[fKey][settingKey] = value;
+                }
+            });
+
+            // Set loading state
+            $button.prop('disabled', true).addClass('saving');
+            $saveText.text('Saving...');
+            $icon.removeClass('dashicons-saved dashicons-yes dashicons-no').addClass('dashicons-update');
+            $status.removeClass('success error').empty();
+
+            // Make AJAX request
+            $.ajax({
+                url: voxelToolkit.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'vt_save_function_settings',
+                    nonce: $form.find('input[name="vt_settings_nonce"]').val(),
+                    function_key: functionKey,
+                    settings: settings,
+                    ai_api_key: $form.find('input[name="ai_api_key"]').val() || ''
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Success state
+                        $icon.removeClass('dashicons-update').addClass('dashicons-yes');
+                        $saveText.text('Saved!');
+                        $status.addClass('success').html('<span class="dashicons dashicons-yes-alt"></span> ' + response.data.message);
+
+                        // Reset after delay
+                        setTimeout(function() {
+                            $saveText.text('Save Settings');
+                            $icon.removeClass('dashicons-yes').addClass('dashicons-saved');
+                            $status.fadeOut(300, function() {
+                                $(this).empty().show();
+                            });
+                        }, 2000);
+                    } else {
+                        // Error state
+                        $icon.removeClass('dashicons-update').addClass('dashicons-no');
+                        $saveText.text('Error');
+                        $status.addClass('error').html('<span class="dashicons dashicons-warning"></span> ' + (response.data.message || 'Save failed'));
+
+                        // Reset after delay
+                        setTimeout(function() {
+                            $saveText.text('Save Settings');
+                            $icon.removeClass('dashicons-no').addClass('dashicons-saved');
+                        }, 3000);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Error state
+                    $icon.removeClass('dashicons-update').addClass('dashicons-no');
+                    $saveText.text('Error');
+                    $status.addClass('error').html('<span class="dashicons dashicons-warning"></span> Connection error');
+
+                    console.error('Settings save error:', error);
+
+                    // Reset after delay
+                    setTimeout(function() {
+                        $saveText.text('Save Settings');
+                        $icon.removeClass('dashicons-no').addClass('dashicons-saved');
+                    }, 3000);
+                },
+                complete: function() {
+                    $button.prop('disabled', false).removeClass('saving');
+                }
+            });
+        },
+
+        handleURLHash: function() {
+            // Check if there's a hash in the URL
+            const hash = window.location.hash.replace('#', '');
+
+            if (hash) {
+                const $tab = $(`.vt-settings-tab[data-tab="${hash}"]`);
+                if ($tab.length) {
+                    $tab.click();
+                }
+            }
+        }
+    };
+
+    // Initialize
+    VTSettings.init();
+});
