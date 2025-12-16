@@ -1246,3 +1246,596 @@ body.vx-dark-mode #wpwrap #wpbody i {
     }
 }
 
+/* ===================================
+   Settings Page - Tab Navigation
+   =================================== */
+
+.vt-settings-container {
+    display: flex;
+    gap: 0;
+    margin: 20px 0;
+    background: #fff;
+    border: 1px solid #e1e5e9;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    min-height: 500px;
+}
+
+/* Tab Sidebar */
+.vt-settings-tabs {
+    width: 240px;
+    flex-shrink: 0;
+    border-right: 1px solid #e1e5e9;
+    display: flex;
+    flex-direction: column;
+}
+
+.vt-settings-tabs-header {
+    padding: 20px;
+    border-bottom: 1px solid #e1e5e9;
+}
+
+.vt-settings-search {
+    position: relative;
+}
+
+.vt-settings-search-input {
+    width: 100% !important;
+    height: 40px !important;
+    padding: 0 36px 0 14px !important;
+    border: 1px solid #e1e5e9 !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    background: #f8fafc !important;
+    transition: all 0.2s ease !important;
+    margin: 0 !important;
+}
+
+.vt-settings-search-input:focus {
+    border-color: #1e3a5f !important;
+    background: #fff !important;
+    outline: none !important;
+}
+
+.vt-settings-search .dashicons {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+}
+
+.vt-settings-tabs-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+}
+
+.vt-settings-tab {
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    margin-bottom: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+}
+
+.vt-settings-tab:hover {
+    background: #f8faff;
+    color: #1e3a5f;
+}
+
+.vt-settings-tab.active {
+    background: #1e3a5f;
+    color: #fff;
+}
+
+.vt-settings-tab.hidden {
+    display: none;
+}
+
+/* Settings Content Panel */
+.vt-settings-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.vt-settings-panel {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+}
+
+.vt-settings-panel.active {
+    display: flex;
+}
+
+.vt-settings-panel-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid #e1e5e9;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    position: sticky;
+    top: 32px; /* Below WP admin bar */
+    z-index: 10;
+}
+
+.vt-settings-panel-header-left {
+    flex: 1;
+    min-width: 0;
+}
+
+.vt-settings-panel-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.vt-settings-panel-title {
+    margin: 0 0 4px 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: #1e1e1e;
+}
+
+.vt-settings-panel-description {
+    margin: 0;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.vt-settings-panel-body {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+/* Save Button */
+.vt-settings-save-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 10px 20px !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #374151 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    height: auto !important;
+    line-height: normal !important;
+}
+
+.vt-settings-save-btn:hover {
+    background: #1e3a5f !important;
+    border-color: #1e3a5f !important;
+    color: #fff !important;
+}
+
+.vt-settings-save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed !important;
+}
+
+.vt-settings-save-btn.saving {
+    background: #1e3a5f !important;
+    border-color: #1e3a5f !important;
+    color: #fff !important;
+}
+
+.vt-settings-save-btn .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Save Status Message */
+.vt-settings-save-status {
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.vt-settings-save-status.success {
+    color: #059669;
+}
+
+.vt-settings-save-status.error {
+    color: #dc2626;
+}
+
+.vt-settings-save-status .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Spinner for saving state */
+.vt-settings-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: vt-spin 0.8s linear infinite;
+}
+
+@keyframes vt-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Empty State */
+.vt-settings-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 30px;
+    text-align: center;
+    height: 100%;
+}
+
+.vt-settings-empty-icon {
+    font-size: 64px !important;
+    width: 64px !important;
+    height: 64px !important;
+    color: #cbd5e1;
+    margin-bottom: 20px;
+}
+
+.vt-settings-empty h3 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    color: #374151;
+}
+
+.vt-settings-empty p {
+    margin: 0 0 20px 0;
+    font-size: 14px;
+    color: #64748b;
+    max-width: 300px;
+}
+
+.vt-settings-empty .button {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+/* No results when searching */
+.vt-settings-no-results {
+    padding: 40px 20px;
+    text-align: center;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.vt-settings-no-results .dashicons {
+    display: block;
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 12px;
+    color: #cbd5e1;
+}
+
+/* ===================================
+   Settings Content Styles
+   =================================== */
+
+/* Info box - blue left border */
+.vt-info-box {
+    padding: 16px 20px;
+    background: #f8fafc;
+    border-left: 3px solid #1e3a5f;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 24px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #374151;
+}
+
+.vt-info-box strong {
+    color: #1e293b;
+}
+
+/* Warning box - yellow */
+.vt-warning-box {
+    padding: 16px 20px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #92400e;
+}
+
+.vt-warning-box strong {
+    color: #78350f;
+}
+
+/* Tip box - green */
+.vt-tip-box {
+    padding: 16px 20px;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #065f46;
+}
+
+/* Settings section */
+.vt-settings-section {
+    margin-bottom: 32px;
+}
+
+.vt-settings-section:last-child {
+    margin-bottom: 0;
+}
+
+.vt-settings-section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 16px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Checkbox list */
+.vt-checkbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.vt-checkbox-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.vt-checkbox-item:hover {
+    border-color: #1e3a5f;
+    background: #f8faff;
+}
+
+.vt-checkbox-item input[type="checkbox"] {
+    margin: 2px 0 0 0;
+    flex-shrink: 0;
+}
+
+.vt-checkbox-item-content {
+    flex: 1;
+}
+
+.vt-checkbox-item-label {
+    display: block;
+    font-weight: 500;
+    color: #1e293b;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.vt-checkbox-item-description {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+}
+
+/* Simple inline checkbox list */
+.vt-checkbox-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+}
+
+.vt-checkbox-inline label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+}
+
+.vt-checkbox-inline label:hover {
+    color: #1e3a5f;
+}
+
+/* Grid checkbox list */
+.vt-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.vt-checkbox-grid label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.vt-checkbox-grid label:hover {
+    border-color: #1e3a5f;
+    background: #f8faff;
+}
+
+/* Taxonomy grid - max 3 columns */
+.vt-checkbox-grid-3col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.vt-checkbox-grid-3col label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.vt-checkbox-grid-3col label:hover {
+    border-color: #1e3a5f;
+    background: #f8faff;
+}
+
+@media (max-width: 960px) {
+    .vt-checkbox-grid-3col {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .vt-checkbox-grid-3col {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Form field groups */
+.vt-field-group {
+    margin-bottom: 20px;
+}
+
+.vt-field-group:last-child {
+    margin-bottom: 0;
+}
+
+.vt-field-label {
+    display: block;
+    font-weight: 500;
+    color: #374151;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.vt-field-description {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 6px;
+}
+
+/* Text input styling */
+.vt-text-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.15s ease;
+}
+
+.vt-text-input:focus {
+    border-color: #1e3a5f;
+    outline: none;
+}
+
+/* Select styling */
+.vt-select {
+    padding: 10px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #fff;
+    min-width: 200px;
+}
+
+.vt-select:focus {
+    border-color: #1e3a5f;
+    outline: none;
+}
+
+/* Feature list */
+.vt-feature-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.vt-feature-list li {
+    position: relative;
+    padding-left: 24px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #374151;
+}
+
+.vt-feature-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #059669;
+    font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .vt-settings-container {
+        flex-direction: column;
+    }
+
+    .vt-settings-tabs {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e1e5e9;
+    }
+
+    .vt-settings-tabs-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 12px;
+    }
+
+    .vt-settings-tab {
+        flex: 0 0 auto;
+        margin-bottom: 0;
+    }
+}
+
