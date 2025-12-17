@@ -1,0 +1,61 @@
+/**
+ * Enhanced TinyMCE Editor - Frontend Styles
+ *
+ * Supports WordPress/TinyMCE alignment classes and media elements
+ *
+ * @package Voxel_Toolkit
+ */
+
+/* Image alignment classes (WordPress standard) */
+.alignleft {
+    float: left;
+    margin: 0.5em 1em 0.5em 0;
+}
+
+.alignright {
+    float: right;
+    margin: 0.5em 0 0.5em 1em;
+}
+
+.aligncenter {
+    display: block;
+    margin: 0.5em auto;
+}
+
+.alignnone {
+    margin: 0.5em 0;
+}
+
+/* Clear floats after aligned content */
+.alignleft + *,
+.alignright + * {
+    clear: none;
+}
+
+/* Responsive images */
+img.alignleft,
+img.alignright,
+img.aligncenter,
+img.alignnone {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Video and audio elements */
+video {
+    max-width: 100%;
+    height: auto;
+}
+
+audio {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Clearfix for containers with floated content */
+.ts-form-group::after,
+.elementor-widget-container::after {
+    content: "";
+    display: table;
+    clear: both;
+}

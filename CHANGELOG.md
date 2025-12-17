@@ -16,6 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Customizable position (4 corners), colors, animations, and avatar settings
   - Per-event type configuration with message templates using {user}, {post}, {time} placeholders
   - Live preview in settings panel
+- **RSVP System**: Complete event RSVP functionality with two widgets
+  - RSVP Form widget for submitting/cancelling RSVPs
+  - Attendee List widget for displaying RSVPs with admin actions
+  - Guest RSVP support with configurable fields (name, email, comment, custom)
+  - Approval workflow with pending/approved/rejected statuses
+  - Max attendee limits with automatic closure
+  - CSV export for attendee data
+  - Full Elementor styling controls
 - **Compare Posts**: New feature to compare 2-4 posts of the same type side-by-side
   - Compare Button widget for single post templates
   - Comparison Table widget for dedicated comparison page
@@ -24,6 +32,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Supports all Voxel field types with full detail rendering
   - Work hours and time fields use WordPress time format setting
   - localStorage-based state with cross-tab sync
+- **Enhanced TinyMCE Editor**: Adds extra features to Voxel's WP Editor Advanced mode
+  - Add Media button to upload/insert images, videos, and audio files
+  - Text color and background color pickers
+  - Character map for special symbols
+  - Frontend CSS for image alignment with text wrap
+  - Secure: only available to logged-in users, content sanitized via wp_kses_post()
 - **Settings Page Overhaul**: Redesigned settings page with tab-based navigation for better organization
 
 ### Changed

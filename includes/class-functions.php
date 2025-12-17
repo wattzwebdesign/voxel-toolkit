@@ -444,6 +444,14 @@ class Voxel_Toolkit_Functions {
                 'settings_callback' => array($this, 'render_social_proof_settings'),
                 'beta' => true,
             ),
+            'enhanced_editor' => array(
+                'name' => __('Enhanced TinyMCE Editor', 'voxel-toolkit'),
+                'description' => __('Adds media upload, text color, background color, and character map to WP Editor Advanced mode.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Enhanced_Editor',
+                'file' => 'functions/class-enhanced-editor.php',
+                'icon' => 'dashicons-editor-kitchensink',
+                'settings_callback' => array($this, 'render_enhanced_editor_settings'),
+            ),
         );
 
         // Allow other plugins/themes to register functions
@@ -5448,6 +5456,50 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
                 </div>
             </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render Enhanced TinyMCE Editor settings
+     *
+     * @param array $settings Current settings
+     */
+    public function render_enhanced_editor_settings($settings) {
+        ?>
+        <div class="vt-info-box">
+            <?php _e('Enhances Voxel\'s "WP Editor Advanced" mode with additional formatting options. These features are automatically added to any texteditor field set to use Advanced controls.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Features Added', 'voxel-toolkit'); ?></h4>
+            <div style="background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
+                <ul style="margin: 0; padding-left: 20px; color: #374151;">
+                    <li style="margin-bottom: 8px;"><strong><?php _e('Add Media', 'voxel-toolkit'); ?></strong> - <?php _e('Upload and insert images, videos, audio, and files from the WordPress media library', 'voxel-toolkit'); ?></li>
+                    <li style="margin-bottom: 8px;"><strong><?php _e('Text Color', 'voxel-toolkit'); ?></strong> - <?php _e('Change the color of selected text', 'voxel-toolkit'); ?></li>
+                    <li style="margin-bottom: 8px;"><strong><?php _e('Background Color', 'voxel-toolkit'); ?></strong> - <?php _e('Add background color/highlight to text', 'voxel-toolkit'); ?></li>
+                    <li><strong><?php _e('Character Map', 'voxel-toolkit'); ?></strong> - <?php _e('Insert special characters and symbols', 'voxel-toolkit'); ?></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('How It Works', 'voxel-toolkit'); ?></h4>
+            <div style="background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
+                <ol style="margin: 0; padding-left: 20px; color: #374151;">
+                    <li style="margin-bottom: 8px;"><?php _e('Go to your Post Type settings in Voxel', 'voxel-toolkit'); ?></li>
+                    <li style="margin-bottom: 8px;"><?php _e('Edit a texteditor field (like Description)', 'voxel-toolkit'); ?></li>
+                    <li style="margin-bottom: 8px;"><?php _e('Set "Editor type" to "WP Editor — Advanced controls"', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('The enhanced toolbar will automatically appear in the Create Post form', 'voxel-toolkit'); ?></li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Note', 'voxel-toolkit'); ?></h4>
+            <p style="color: #6b7280; margin: 0;">
+                <?php _e('This enhancement only affects fields set to "WP Editor — Advanced controls". Fields using "Plain text" or "Basic controls" remain unchanged.', 'voxel-toolkit'); ?>
+            </p>
         </div>
         <?php
     }
