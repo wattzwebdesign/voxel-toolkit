@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.8] - 2025-12-12
 
+### Added
+- **Compare Posts**: New feature to compare 2-4 posts of the same type side-by-side
+  - Compare Button widget for single post templates
+  - Comparison Table widget for dedicated comparison page
+  - Floating comparison bar (bottom or side position)
+  - Configurable fields per post type with custom labels and drag reordering
+  - Supports all Voxel field types with full detail rendering
+  - Work hours and time fields use WordPress time format setting
+  - localStorage-based state with cross-tab sync
+
 ### Fixed
 - **Suggest Edits Widget**: Fixed modal appearing behind other page elements (cards, carousels, etc.)
 - Modal now moves to body element when opened to escape parent stacking contexts
