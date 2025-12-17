@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.6.0] - 2025-12-16
 
 ### Added
+- **Social Proof (Beta)**: Display toast notifications showing recent Voxel app events
+  - Real-time event capture for bookings, orders, signups, reviews, posts, and more
+  - Auto-rotation through recent events with configurable timing
+  - Polling for new events with instant display
+  - Activity Boost mode to generate simulated notifications during slow periods
+  - Customizable position (4 corners), colors, animations, and avatar settings
+  - Per-event type configuration with message templates using {user}, {post}, {time} placeholders
+  - Live preview in settings panel
 - **Compare Posts**: New feature to compare 2-4 posts of the same type side-by-side
   - Compare Button widget for single post templates
   - Comparison Table widget for dedicated comparison page
