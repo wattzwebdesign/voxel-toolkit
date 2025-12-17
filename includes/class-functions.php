@@ -435,6 +435,15 @@ class Voxel_Toolkit_Functions {
                 'icon' => 'eicon-table',
                 'settings_callback' => array($this, 'render_compare_posts_settings'),
             ),
+            'social_proof' => array(
+                'name' => __('Social Proof', 'voxel-toolkit'),
+                'description' => __('Display toast notifications showing recent activity like new bookings, posts, and orders to create social proof.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Social_Proof',
+                'file' => 'functions/class-social-proof.php',
+                'icon' => 'dashicons-megaphone',
+                'settings_callback' => array($this, 'render_social_proof_settings'),
+                'beta' => true,
+            ),
         );
 
         // Allow other plugins/themes to register functions
@@ -4533,6 +4542,597 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <li style="margin-bottom: 8px;"><?php _e('Add the <strong>Compare Button (VT)</strong> widget to your post cards or single post templates.', 'voxel-toolkit'); ?></li>
                     <li><?php _e('When users add posts to compare, a floating bar will appear. Clicking "View Comparison" redirects to the appropriate comparison page.', 'voxel-toolkit'); ?></li>
                 </ol>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render Social Proof settings
+     *
+     * @param array $settings Current settings
+     */
+    public function render_social_proof_settings($settings) {
+        $enabled = !empty($settings['enabled']);
+        $position = isset($settings['position']) ? sanitize_text_field($settings['position']) : 'bottom-left';
+        $display_duration = isset($settings['display_duration']) ? absint($settings['display_duration']) : 5;
+        $delay_between = isset($settings['delay_between']) ? absint($settings['delay_between']) : 3;
+        $max_events = isset($settings['max_events']) ? absint($settings['max_events']) : 10;
+        $poll_interval = isset($settings['poll_interval']) ? absint($settings['poll_interval']) : 30;
+        $hide_on_mobile = !empty($settings['hide_on_mobile']);
+        $show_close_button = !empty($settings['show_close_button']);
+        $animation = isset($settings['animation']) ? sanitize_text_field($settings['animation']) : 'slide';
+        $bg_color = isset($settings['background_color']) ? sanitize_hex_color($settings['background_color']) : '#ffffff';
+        $text_color = isset($settings['text_color']) ? sanitize_hex_color($settings['text_color']) : '#1a1a1a';
+        $border_radius = isset($settings['border_radius']) ? absint($settings['border_radius']) : 10;
+        $avatar_size = isset($settings['avatar_size']) ? absint($settings['avatar_size']) : 48;
+        $default_avatar = isset($settings['default_avatar']) ? esc_url($settings['default_avatar']) : '';
+        $events_settings = isset($settings['events']) ? (array) $settings['events'] : array();
+
+        // Activity Boost settings
+        $boost_enabled = !empty($settings['boost_enabled']);
+        $boost_mode = isset($settings['boost_mode']) ? sanitize_text_field($settings['boost_mode']) : 'fill_gaps';
+        $boost_names = isset($settings['boost_names']) ? $settings['boost_names'] : "Emma\nJames\nSofia\nOliver\nMia\nLucas\nAva\nNoah\nIsabella\nLiam";
+        $boost_listings = isset($settings['boost_listings']) ? $settings['boost_listings'] : "Beach House\nMountain Cabin\nCity Apartment\nLake Cottage\nCozy Studio";
+        $boost_messages = isset($settings['boost_messages']) ? (array) $settings['boost_messages'] : array(
+            'booking' => '{name} just booked {listing}',
+            'signup' => '{name} just joined',
+            'review' => '{name} left a review on {listing}',
+        );
+
+        // Get available events
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/class-social-proof.php';
+        $available_events = Voxel_Toolkit_Social_Proof::get_available_events();
+        ?>
+        <div class="vt-info-box">
+            <?php _e('Display toast notifications showing recent activity like new bookings, listings, and orders to create social proof and urgency.', 'voxel-toolkit'); ?>
+        </div>
+
+        <!-- Global Enable -->
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Enable Social Proof', 'voxel-toolkit'); ?></h4>
+            <div class="vt-field-group">
+                <label class="vt-toggle">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[social_proof][enabled]"
+                           value="1"
+                           <?php checked($enabled); ?>>
+                    <span class="vt-toggle-slider"></span>
+                </label>
+                <span style="margin-left: 10px;"><?php _e('Show social proof notifications on the frontend', 'voxel-toolkit'); ?></span>
+            </div>
+        </div>
+
+        <!-- General Settings -->
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Display Settings', 'voxel-toolkit'); ?></h4>
+
+            <div class="vt-field-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Position', 'voxel-toolkit'); ?></label>
+                <select name="voxel_toolkit_options[social_proof][position]" style="width: 200px;">
+                    <option value="bottom-left" <?php selected($position, 'bottom-left'); ?>><?php _e('Bottom Left', 'voxel-toolkit'); ?></option>
+                    <option value="bottom-right" <?php selected($position, 'bottom-right'); ?>><?php _e('Bottom Right', 'voxel-toolkit'); ?></option>
+                    <option value="top-left" <?php selected($position, 'top-left'); ?>><?php _e('Top Left', 'voxel-toolkit'); ?></option>
+                    <option value="top-right" <?php selected($position, 'top-right'); ?>><?php _e('Top Right', 'voxel-toolkit'); ?></option>
+                </select>
+            </div>
+
+            <div class="vt-field-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Display Duration (seconds)', 'voxel-toolkit'); ?></label>
+                <input type="number"
+                       name="voxel_toolkit_options[social_proof][display_duration]"
+                       value="<?php echo esc_attr($display_duration); ?>"
+                       min="2"
+                       max="30"
+                       style="width: 100px;">
+                <p class="vt-field-description"><?php _e('How long each notification stays visible.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <div class="vt-field-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Delay Between Toasts (seconds)', 'voxel-toolkit'); ?></label>
+                <input type="number"
+                       name="voxel_toolkit_options[social_proof][delay_between]"
+                       value="<?php echo esc_attr($delay_between); ?>"
+                       min="1"
+                       max="60"
+                       style="width: 100px;">
+                <p class="vt-field-description"><?php _e('Pause between consecutive notifications.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <div class="vt-field-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Max Events to Rotate', 'voxel-toolkit'); ?></label>
+                <input type="number"
+                       name="voxel_toolkit_options[social_proof][max_events]"
+                       value="<?php echo esc_attr($max_events); ?>"
+                       min="5"
+                       max="50"
+                       style="width: 100px;">
+                <p class="vt-field-description"><?php _e('Number of recent events to cycle through.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <div class="vt-field-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Polling Interval (seconds)', 'voxel-toolkit'); ?></label>
+                <input type="number"
+                       name="voxel_toolkit_options[social_proof][poll_interval]"
+                       value="<?php echo esc_attr($poll_interval); ?>"
+                       min="10"
+                       max="300"
+                       style="width: 100px;">
+                <p class="vt-field-description"><?php _e('How often to check for new events. Set higher to reduce server load.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <div class="vt-field-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Animation', 'voxel-toolkit'); ?></label>
+                <select name="voxel_toolkit_options[social_proof][animation]" style="width: 150px;">
+                    <option value="slide" <?php selected($animation, 'slide'); ?>><?php _e('Slide', 'voxel-toolkit'); ?></option>
+                    <option value="fade" <?php selected($animation, 'fade'); ?>><?php _e('Fade', 'voxel-toolkit'); ?></option>
+                </select>
+            </div>
+
+            <div class="vt-field-group" style="margin-bottom: 15px;">
+                <label class="vt-toggle">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[social_proof][hide_on_mobile]"
+                           value="1"
+                           <?php checked($hide_on_mobile); ?>>
+                    <span class="vt-toggle-slider"></span>
+                </label>
+                <span style="margin-left: 10px;"><?php _e('Hide on mobile devices', 'voxel-toolkit'); ?></span>
+            </div>
+
+            <div class="vt-field-group">
+                <label class="vt-toggle">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[social_proof][show_close_button]"
+                           value="1"
+                           <?php checked($show_close_button); ?>>
+                    <span class="vt-toggle-slider"></span>
+                </label>
+                <span style="margin-left: 10px;"><?php _e('Show close button on notifications', 'voxel-toolkit'); ?></span>
+            </div>
+        </div>
+
+        <!-- Style Settings -->
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Style Settings', 'voxel-toolkit'); ?></h4>
+
+            <div style="display: flex; gap: 40px; align-items: flex-start;">
+                <!-- Style Fields -->
+                <div style="flex: 1; min-width: 280px;">
+                    <div class="vt-field-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Background Color', 'voxel-toolkit'); ?></label>
+                        <input type="color"
+                               name="voxel_toolkit_options[social_proof][background_color]"
+                               value="<?php echo esc_attr($bg_color); ?>"
+                               style="width: 60px; height: 36px; padding: 2px;"
+                               id="vt-sp-bg-color">
+                    </div>
+
+                    <div class="vt-field-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Text Color', 'voxel-toolkit'); ?></label>
+                        <input type="color"
+                               name="voxel_toolkit_options[social_proof][text_color]"
+                               value="<?php echo esc_attr($text_color); ?>"
+                               style="width: 60px; height: 36px; padding: 2px;"
+                               id="vt-sp-text-color">
+                    </div>
+
+                    <div class="vt-field-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Border Radius (px)', 'voxel-toolkit'); ?></label>
+                        <input type="number"
+                               name="voxel_toolkit_options[social_proof][border_radius]"
+                               value="<?php echo esc_attr($border_radius); ?>"
+                               min="0"
+                               max="50"
+                               style="width: 100px;"
+                               id="vt-sp-border-radius">
+                    </div>
+
+                    <div class="vt-field-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Avatar Size (px)', 'voxel-toolkit'); ?></label>
+                        <input type="number"
+                               name="voxel_toolkit_options[social_proof][avatar_size]"
+                               value="<?php echo esc_attr($avatar_size); ?>"
+                               min="24"
+                               max="80"
+                               style="width: 100px;"
+                               id="vt-sp-avatar-size">
+                    </div>
+
+                    <div class="vt-field-group">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Default Avatar', 'voxel-toolkit'); ?></label>
+                        <p class="vt-field-description" style="margin-bottom: 10px;"><?php _e('Used when a user has no avatar or for Activity Boost notifications.', 'voxel-toolkit'); ?></p>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <?php if ($default_avatar): ?>
+                                <img id="vt-sp-default-avatar-preview" src="<?php echo esc_url($default_avatar); ?>" alt="" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+                            <?php endif; ?>
+                            <div>
+                                <input type="hidden"
+                                       name="voxel_toolkit_options[social_proof][default_avatar]"
+                                       id="vt-sp-default-avatar"
+                                       value="<?php echo esc_url($default_avatar); ?>">
+                                <button type="button" class="button" id="vt-sp-upload-avatar">
+                                    <?php echo $default_avatar ? __('Change Image', 'voxel-toolkit') : __('Upload Image', 'voxel-toolkit'); ?>
+                                </button>
+                                <?php if ($default_avatar): ?>
+                                    <button type="button" class="button" id="vt-sp-remove-avatar">
+                                        <?php _e('Remove', 'voxel-toolkit'); ?>
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Preview -->
+                <div style="width: 360px; flex-shrink: 0;">
+                    <label style="display: block; margin-bottom: 10px; font-weight: 500;"><?php _e('Live Preview', 'voxel-toolkit'); ?></label>
+                    <div id="vt-sp-preview-container" style="background: #f0f0f1; border-radius: 8px; padding: 20px; min-height: 100px;">
+                        <div id="vt-sp-preview-toast" style="
+                            display: flex;
+                            align-items: center;
+                            gap: 12px;
+                            padding: 14px 16px;
+                            background-color: <?php echo esc_attr($bg_color); ?>;
+                            border-radius: <?php echo esc_attr($border_radius); ?>px;
+                            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                            max-width: 100%;
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                            position: relative;
+                        ">
+                            <div id="vt-sp-preview-avatar" style="
+                                flex-shrink: 0;
+                                width: <?php echo esc_attr($avatar_size); ?>px;
+                                height: <?php echo esc_attr($avatar_size); ?>px;
+                            ">
+                                <img src="<?php echo esc_url(get_avatar_url(get_current_user_id(), array('size' => 96))); ?>"
+                                     alt=""
+                                     style="
+                                        width: <?php echo esc_attr($avatar_size); ?>px;
+                                        height: <?php echo esc_attr($avatar_size); ?>px;
+                                        border-radius: 50%;
+                                        object-fit: cover;
+                                     ">
+                            </div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div id="vt-sp-preview-message" style="
+                                    font-size: 14px;
+                                    font-weight: 500;
+                                    color: <?php echo esc_attr($text_color); ?>;
+                                    line-height: 1.4;
+                                    margin-bottom: 4px;
+                                "><?php echo esc_html(wp_get_current_user()->display_name); ?> <?php _e('just booked a service', 'voxel-toolkit'); ?></div>
+                                <div id="vt-sp-preview-time" style="
+                                    font-size: 12px;
+                                    color: <?php echo esc_attr($text_color); ?>;
+                                    opacity: 0.7;
+                                    line-height: 1.3;
+                                "><?php _e('2 minutes ago', 'voxel-toolkit'); ?></div>
+                            </div>
+                            <button type="button" id="vt-sp-preview-close" style="
+                                position: absolute;
+                                top: 8px;
+                                right: 8px;
+                                width: 20px;
+                                height: 20px;
+                                padding: 0;
+                                background: none;
+                                border: none;
+                                cursor: pointer;
+                                opacity: 0.5;
+                                display: <?php echo $show_close_button ? 'flex' : 'none'; ?>;
+                                align-items: center;
+                                justify-content: center;
+                                color: <?php echo esc_attr($text_color); ?>;
+                            ">
+                                <span class="dashicons dashicons-no-alt" style="font-size: 16px; width: 16px; height: 16px;"></span>
+                            </button>
+                        </div>
+
+                        <div style="margin-top: 15px; text-align: center;">
+                            <button type="button" id="vt-sp-preview-animation" class="button button-secondary">
+                                <span class="dashicons dashicons-controls-play" style="margin-top: 3px;"></span>
+                                <?php _e('Preview Animation', 'voxel-toolkit'); ?>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        jQuery(document).ready(function($) {
+            // Media uploader for default avatar
+            var mediaUploader;
+
+            $('#vt-sp-upload-avatar').on('click', function(e) {
+                e.preventDefault();
+
+                if (mediaUploader) {
+                    mediaUploader.open();
+                    return;
+                }
+
+                mediaUploader = wp.media({
+                    title: '<?php echo esc_js(__('Select Default Avatar', 'voxel-toolkit')); ?>',
+                    button: { text: '<?php echo esc_js(__('Use as Avatar', 'voxel-toolkit')); ?>' },
+                    multiple: false,
+                    library: { type: 'image' }
+                });
+
+                mediaUploader.on('select', function() {
+                    var attachment = mediaUploader.state().get('selection').first().toJSON();
+                    var url = attachment.sizes && attachment.sizes.thumbnail ? attachment.sizes.thumbnail.url : attachment.url;
+
+                    $('#vt-sp-default-avatar').val(url);
+
+                    // Update or create preview image
+                    if ($('#vt-sp-default-avatar-preview').length) {
+                        $('#vt-sp-default-avatar-preview').attr('src', url);
+                    } else {
+                        $('<img id="vt-sp-default-avatar-preview" src="' + url + '" alt="" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">').insertBefore($('#vt-sp-upload-avatar').parent());
+                    }
+
+                    // Show remove button or create it
+                    if ($('#vt-sp-remove-avatar').length) {
+                        $('#vt-sp-remove-avatar').show();
+                    } else {
+                        $('<button type="button" class="button" id="vt-sp-remove-avatar"><?php echo esc_js(__('Remove', 'voxel-toolkit')); ?></button>').insertAfter($('#vt-sp-upload-avatar'));
+                    }
+
+                    $('#vt-sp-upload-avatar').text('<?php echo esc_js(__('Change Image', 'voxel-toolkit')); ?>');
+
+                    // Update live preview
+                    $('#vt-sp-preview-avatar img').attr('src', url);
+                });
+
+                mediaUploader.open();
+            });
+
+            $(document).on('click', '#vt-sp-remove-avatar', function(e) {
+                e.preventDefault();
+                $('#vt-sp-default-avatar').val('');
+                $('#vt-sp-default-avatar-preview').remove();
+                $(this).remove();
+                $('#vt-sp-upload-avatar').text('<?php echo esc_js(__('Upload Image', 'voxel-toolkit')); ?>');
+
+                // Reset live preview to current user avatar
+                var currentUserAvatar = '<?php echo esc_url(get_avatar_url(get_current_user_id(), array('size' => 96))); ?>';
+                $('#vt-sp-preview-avatar img').attr('src', currentUserAvatar);
+            });
+
+            // Live Preview Updates
+            var $toast = $('#vt-sp-preview-toast');
+            var $avatar = $('#vt-sp-preview-avatar');
+            var $avatarImg = $avatar.find('img');
+            var $message = $('#vt-sp-preview-message');
+            var $time = $('#vt-sp-preview-time');
+            var $close = $('#vt-sp-preview-close');
+
+            // Background color
+            $('#vt-sp-bg-color').on('input', function() {
+                $toast.css('background-color', $(this).val());
+            });
+
+            // Text color
+            $('#vt-sp-text-color').on('input', function() {
+                var color = $(this).val();
+                $message.css('color', color);
+                $time.css('color', color);
+                $close.css('color', color);
+            });
+
+            // Border radius
+            $('#vt-sp-border-radius').on('input', function() {
+                $toast.css('border-radius', $(this).val() + 'px');
+            });
+
+            // Avatar size
+            $('#vt-sp-avatar-size').on('input', function() {
+                var size = $(this).val() + 'px';
+                $avatar.css({ width: size, height: size });
+                $avatarImg.css({ width: size, height: size });
+            });
+
+            // Show close button
+            $('input[name="voxel_toolkit_options[social_proof][show_close_button]"]').on('change', function() {
+                $close.css('display', $(this).is(':checked') ? 'flex' : 'none');
+            });
+
+            // Animation preview
+            $('#vt-sp-preview-animation').on('click', function() {
+                var animation = $('select[name="voxel_toolkit_options[social_proof][animation]"]').val();
+
+                if (animation === 'slide') {
+                    $toast.css({ transform: 'translateY(50px)', opacity: 0 });
+                    setTimeout(function() {
+                        $toast.css({ transition: 'all 0.4s ease', transform: 'translateY(0)', opacity: 1 });
+                    }, 50);
+                } else {
+                    $toast.css({ transform: 'scale(0.9)', opacity: 0 });
+                    setTimeout(function() {
+                        $toast.css({ transition: 'all 0.4s ease', transform: 'scale(1)', opacity: 1 });
+                    }, 50);
+                }
+
+                // Reset after animation
+                setTimeout(function() {
+                    $toast.css({ transition: '', transform: '', opacity: '' });
+                }, 500);
+            });
+        });
+        </script>
+
+        <!-- Event Settings -->
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Event Types', 'voxel-toolkit'); ?></h4>
+            <p class="vt-field-description" style="margin-bottom: 15px;">
+                <?php _e('Enable the event types you want to display as social proof notifications. Configure the message template and display options for each.', 'voxel-toolkit'); ?>
+            </p>
+
+            <?php
+            // Group events by category
+            $categories = array(
+                'membership' => __('Membership', 'voxel-toolkit'),
+                'posts' => __('Posts & Listings', 'voxel-toolkit'),
+                'bookings' => __('Bookings', 'voxel-toolkit'),
+                'orders' => __('Orders', 'voxel-toolkit'),
+                'reviews' => __('Reviews', 'voxel-toolkit'),
+                'social' => __('Social', 'voxel-toolkit'),
+                'promotions' => __('Promotions', 'voxel-toolkit'),
+            );
+
+            foreach ($categories as $cat_key => $cat_label):
+                $cat_events = array_filter($available_events, function($e) use ($cat_key) {
+                    return isset($e['category']) && $e['category'] === $cat_key;
+                });
+
+                if (empty($cat_events)) continue;
+            ?>
+            <div class="vt-event-category" style="margin-bottom: 20px;">
+                <h5 style="margin: 0 0 10px 0; font-size: 14px; color: #374151; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px;">
+                    <?php echo esc_html($cat_label); ?>
+                </h5>
+
+                <?php foreach ($cat_events as $event_key => $event_config):
+                    $event_settings = isset($events_settings[$event_key]) ? $events_settings[$event_key] : array();
+                    $event_enabled = !empty($event_settings['enabled']);
+                    $event_message = isset($event_settings['message_template']) ? $event_settings['message_template'] : $event_config['default_message'];
+                    $event_show_avatar = isset($event_settings['show_avatar']) ? $event_settings['show_avatar'] : true;
+                    $event_show_link = isset($event_settings['show_link']) ? $event_settings['show_link'] : true;
+                    $event_show_time = isset($event_settings['show_time']) ? $event_settings['show_time'] : true;
+                    $safe_key = esc_attr(str_replace(array('/', ':'), '_', $event_key));
+                ?>
+                <div class="vt-event-item" style="background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <label class="vt-toggle">
+                            <input type="checkbox"
+                                   name="voxel_toolkit_options[social_proof][events][<?php echo esc_attr($event_key); ?>][enabled]"
+                                   value="1"
+                                   <?php checked($event_enabled); ?>>
+                            <span class="vt-toggle-slider"></span>
+                        </label>
+                        <strong style="font-size: 13px;"><?php echo esc_html($event_config['label']); ?></strong>
+                        <code style="font-size: 11px; color: #666; background: #e5e7eb; padding: 2px 6px; border-radius: 3px;"><?php echo esc_html($event_key); ?></code>
+                    </div>
+
+                    <div style="margin-left: 50px;">
+                        <div class="vt-field-group" style="margin-bottom: 8px;">
+                            <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #666;"><?php _e('Message Template', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[social_proof][events][<?php echo esc_attr($event_key); ?>][message_template]"
+                                   value="<?php echo esc_attr($event_message); ?>"
+                                   placeholder="<?php echo esc_attr($event_config['default_message']); ?>"
+                                   style="width: 100%; max-width: 400px; font-size: 13px;">
+                            <p style="margin: 4px 0 0; font-size: 11px; color: #666;"><?php _e('Use: {user}, {post}, {time}', 'voxel-toolkit'); ?></p>
+                        </div>
+
+                        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                            <label style="font-size: 12px; cursor: pointer;">
+                                <input type="checkbox"
+                                       name="voxel_toolkit_options[social_proof][events][<?php echo esc_attr($event_key); ?>][show_avatar]"
+                                       value="1"
+                                       <?php checked($event_show_avatar); ?>
+                                       style="margin-right: 4px;">
+                                <?php _e('Show avatar', 'voxel-toolkit'); ?>
+                            </label>
+                            <label style="font-size: 12px; cursor: pointer;">
+                                <input type="checkbox"
+                                       name="voxel_toolkit_options[social_proof][events][<?php echo esc_attr($event_key); ?>][show_link]"
+                                       value="1"
+                                       <?php checked($event_show_link); ?>
+                                       style="margin-right: 4px;">
+                                <?php _e('Clickable link', 'voxel-toolkit'); ?>
+                            </label>
+                            <label style="font-size: 12px; cursor: pointer;">
+                                <input type="checkbox"
+                                       name="voxel_toolkit_options[social_proof][events][<?php echo esc_attr($event_key); ?>][show_time]"
+                                       value="1"
+                                       <?php checked($event_show_time); ?>
+                                       style="margin-right: 4px;">
+                                <?php _e('Show time ago', 'voxel-toolkit'); ?>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Activity Boost -->
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Activity Boost', 'voxel-toolkit'); ?></h4>
+            <p class="vt-field-description" style="margin-bottom: 15px;">
+                <?php _e('Generate additional notifications to boost activity appearance. Useful for new sites or during slow periods.', 'voxel-toolkit'); ?>
+            </p>
+
+            <div class="vt-field-group" style="margin-bottom: 15px;">
+                <label class="vt-toggle">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[social_proof][boost_enabled]"
+                           value="1"
+                           <?php checked($boost_enabled); ?>>
+                    <span class="vt-toggle-slider"></span>
+                </label>
+                <span style="margin-left: 10px;"><?php _e('Enable Activity Boost', 'voxel-toolkit'); ?></span>
+            </div>
+
+            <div class="vt-field-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Mode', 'voxel-toolkit'); ?></label>
+                <select name="voxel_toolkit_options[social_proof][boost_mode]" style="width: 250px;">
+                    <option value="fill_gaps" <?php selected($boost_mode, 'fill_gaps'); ?>><?php _e('Fill gaps (when no real events)', 'voxel-toolkit'); ?></option>
+                    <option value="mixed" <?php selected($boost_mode, 'mixed'); ?>><?php _e('Mixed with real events', 'voxel-toolkit'); ?></option>
+                    <option value="boost_only" <?php selected($boost_mode, 'boost_only'); ?>><?php _e('Boost only (ignore real events)', 'voxel-toolkit'); ?></option>
+                </select>
+                <p class="vt-field-description"><?php _e('Choose when to show boosted notifications.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <div class="vt-field-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Names Pool', 'voxel-toolkit'); ?></label>
+                <textarea name="voxel_toolkit_options[social_proof][boost_names]"
+                          rows="5"
+                          style="width: 100%; max-width: 400px; font-size: 13px;"
+                          placeholder="<?php esc_attr_e('One name per line', 'voxel-toolkit'); ?>"><?php echo esc_textarea($boost_names); ?></textarea>
+                <p class="vt-field-description"><?php _e('Enter names to use in boosted notifications, one per line.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <div class="vt-field-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Listings Pool', 'voxel-toolkit'); ?></label>
+                <textarea name="voxel_toolkit_options[social_proof][boost_listings]"
+                          rows="5"
+                          style="width: 100%; max-width: 400px; font-size: 13px;"
+                          placeholder="<?php esc_attr_e('One listing name per line', 'voxel-toolkit'); ?>"><?php echo esc_textarea($boost_listings); ?></textarea>
+                <p class="vt-field-description"><?php _e('Enter listing/post names to use in boosted notifications, one per line.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <div class="vt-field-group">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Message Templates', 'voxel-toolkit'); ?></label>
+                <p class="vt-field-description" style="margin-bottom: 10px;"><?php _e('Use {name} and {listing} placeholders.', 'voxel-toolkit'); ?></p>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; max-width: 400px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #666;"><?php _e('Booking message', 'voxel-toolkit'); ?></label>
+                        <input type="text"
+                               name="voxel_toolkit_options[social_proof][boost_messages][booking]"
+                               value="<?php echo esc_attr($boost_messages['booking'] ?? '{name} just booked {listing}'); ?>"
+                               style="width: 100%; font-size: 13px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #666;"><?php _e('Signup message', 'voxel-toolkit'); ?></label>
+                        <input type="text"
+                               name="voxel_toolkit_options[social_proof][boost_messages][signup]"
+                               value="<?php echo esc_attr($boost_messages['signup'] ?? '{name} just joined'); ?>"
+                               style="width: 100%; font-size: 13px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 4px; font-size: 12px; color: #666;"><?php _e('Review message', 'voxel-toolkit'); ?></label>
+                        <input type="text"
+                               name="voxel_toolkit_options[social_proof][boost_messages][review]"
+                               value="<?php echo esc_attr($boost_messages['review'] ?? '{name} left a review on {listing}'); ?>"
+                               style="width: 100%; font-size: 13px;">
+                    </div>
+                </div>
             </div>
         </div>
         <?php

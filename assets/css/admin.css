@@ -776,6 +776,22 @@ body.vx-dark-mode #wpwrap #wpbody i {
     color: #065f46;
 }
 
+.voxel-toolkit-badge-beta,
+.vt-badge-beta {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #fef3c7;
+    color: #92400e;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
 /* Widget Footer */
 .voxel-toolkit-widget-footer {
     display: flex;

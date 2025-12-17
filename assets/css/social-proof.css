@@ -1,0 +1,361 @@
+/**
+ * Social Proof Notifications Styles
+ *
+ * @package Voxel_Toolkit
+ */
+
+/* ========================================
+   Container Positioning
+   ======================================== */
+#vt-social-proof-container {
+    position: fixed;
+    z-index: 99999;
+    pointer-events: none;
+}
+
+#vt-social-proof-container.vt-sp-position-bottom-left {
+    bottom: 20px;
+    left: 20px;
+}
+
+#vt-social-proof-container.vt-sp-position-bottom-right {
+    bottom: 20px;
+    right: 20px;
+}
+
+#vt-social-proof-container.vt-sp-position-top-left {
+    top: 20px;
+    left: 20px;
+}
+
+#vt-social-proof-container.vt-sp-position-top-right {
+    top: 20px;
+    right: 20px;
+}
+
+/* ========================================
+   Toast Base Styles
+   ======================================== */
+.vt-social-proof-toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    max-width: 340px;
+    min-width: 280px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    pointer-events: auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.vt-social-proof-toast.vt-sp-clickable {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vt-social-proof-toast.vt-sp-clickable:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* ========================================
+   Avatar
+   ======================================== */
+.vt-social-proof-toast .vt-sp-avatar {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+}
+
+.vt-social-proof-toast .vt-sp-avatar img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ========================================
+   Content
+   ======================================== */
+.vt-social-proof-toast .vt-sp-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.vt-social-proof-toast .vt-sp-message {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a1a;
+    line-height: 1.4;
+    margin-bottom: 4px;
+    word-wrap: break-word;
+}
+
+.vt-social-proof-toast .vt-sp-time {
+    font-size: 12px;
+    color: #666666;
+    line-height: 1.3;
+}
+
+/* ========================================
+   Close Button
+   ======================================== */
+.vt-social-proof-toast .vt-sp-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vt-social-proof-toast .vt-sp-close:hover {
+    opacity: 1;
+}
+
+.vt-social-proof-toast .vt-sp-close .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #666;
+}
+
+/* ========================================
+   Visibility States
+   ======================================== */
+.vt-social-proof-toast.vt-sp-hidden {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.vt-social-proof-toast.vt-sp-visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* ========================================
+   Slide Animation
+   ======================================== */
+/* Bottom positions - slide up */
+.vt-sp-position-bottom-left .vt-social-proof-toast,
+.vt-sp-position-bottom-right .vt-social-proof-toast {
+    transform: translateY(100px);
+}
+
+.vt-sp-position-bottom-left .vt-social-proof-toast.vt-sp-slide-in,
+.vt-sp-position-bottom-right .vt-social-proof-toast.vt-sp-slide-in {
+    animation: vtSpSlideUpIn 0.4s ease forwards;
+}
+
+.vt-sp-position-bottom-left .vt-social-proof-toast.vt-sp-slide-out,
+.vt-sp-position-bottom-right .vt-social-proof-toast.vt-sp-slide-out {
+    animation: vtSpSlideDownOut 0.3s ease forwards;
+}
+
+/* Top positions - slide down */
+.vt-sp-position-top-left .vt-social-proof-toast,
+.vt-sp-position-top-right .vt-social-proof-toast {
+    transform: translateY(-100px);
+}
+
+.vt-sp-position-top-left .vt-social-proof-toast.vt-sp-slide-in,
+.vt-sp-position-top-right .vt-social-proof-toast.vt-sp-slide-in {
+    animation: vtSpSlideDownIn 0.4s ease forwards;
+}
+
+.vt-sp-position-top-left .vt-social-proof-toast.vt-sp-slide-out,
+.vt-sp-position-top-right .vt-social-proof-toast.vt-sp-slide-out {
+    animation: vtSpSlideUpOut 0.3s ease forwards;
+}
+
+/* ========================================
+   Fade Animation
+   ======================================== */
+.vt-social-proof-toast.vt-sp-fade-in {
+    animation: vtSpFadeIn 0.4s ease forwards;
+}
+
+.vt-social-proof-toast.vt-sp-fade-out {
+    animation: vtSpFadeOut 0.3s ease forwards;
+}
+
+/* ========================================
+   Keyframes
+   ======================================== */
+@keyframes vtSpSlideUpIn {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes vtSpSlideDownOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+}
+
+@keyframes vtSpSlideDownIn {
+    from {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes vtSpSlideUpOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+}
+
+@keyframes vtSpFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes vtSpFadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+/* ========================================
+   Verified Badge (optional)
+   ======================================== */
+.vt-social-proof-toast .vt-sp-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    font-size: 11px;
+    color: #27ae60;
+}
+
+.vt-social-proof-toast .vt-sp-verified svg {
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+}
+
+/* ========================================
+   Progress Bar (optional - shows time remaining)
+   ======================================== */
+.vt-social-proof-toast .vt-sp-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background-color: rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+.vt-social-proof-toast .vt-sp-progress-bar {
+    height: 100%;
+    background-color: #2271b1;
+    width: 0;
+    transition: width linear;
+}
+
+/* ========================================
+   Responsive Styles
+   ======================================== */
+@media (max-width: 480px) {
+    #vt-social-proof-container.vt-sp-position-bottom-left,
+    #vt-social-proof-container.vt-sp-position-bottom-right {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+    }
+
+    #vt-social-proof-container.vt-sp-position-top-left,
+    #vt-social-proof-container.vt-sp-position-top-right {
+        left: 10px;
+        right: 10px;
+        top: 10px;
+    }
+
+    .vt-social-proof-toast {
+        max-width: none;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .vt-social-proof-toast .vt-sp-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .vt-social-proof-toast .vt-sp-avatar img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .vt-social-proof-toast .vt-sp-message {
+        font-size: 13px;
+    }
+}
+
+/* ========================================
+   Dark Mode Support
+   ======================================== */
+@media (prefers-color-scheme: dark) {
+    .vt-social-proof-toast {
+        background-color: #2d2d2d;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .vt-social-proof-toast .vt-sp-message {
+        color: #f0f0f0;
+    }
+
+    .vt-social-proof-toast .vt-sp-time {
+        color: #999;
+    }
+
+    .vt-social-proof-toast .vt-sp-close .dashicons {
+        color: #999;
+    }
+}

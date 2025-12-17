@@ -467,7 +467,7 @@ class Voxel_Toolkit_Admin {
              data-function-description="<?php echo esc_attr(strtolower($function_data['description'])); ?>">
             <div class="function-header">
                 <div class="function-title-row">
-                    <h3><?php echo esc_html($function_data['name']); ?></h3>
+                    <h3><?php echo esc_html($function_data['name']); ?><?php if (!empty($function_data['beta'])): ?> <span class="voxel-toolkit-badge-beta"><?php _e('Beta', 'voxel-toolkit'); ?></span><?php endif; ?></h3>
                     <?php if ($is_always_enabled): ?>
                         <span class="voxel-toolkit-function-badge voxel-toolkit-badge-always-enabled"><?php _e('Always Enabled', 'voxel-toolkit'); ?></span>
                     <?php elseif ($is_enabled): ?>
@@ -573,7 +573,7 @@ class Voxel_Toolkit_Admin {
                                 <button type="button"
                                         class="vt-settings-tab <?php echo $first ? 'active' : ''; ?>"
                                         data-tab="<?php echo esc_attr($function_key); ?>">
-                                    <?php echo esc_html($function_data['name']); ?>
+                                    <?php echo esc_html($function_data['name']); ?><?php if (!empty($function_data['beta'])): ?> <span class="vt-badge-beta"><?php _e('Beta', 'voxel-toolkit'); ?></span><?php endif; ?>
                                 </button>
                             <?php
                                 $first = false;
@@ -598,7 +598,7 @@ class Voxel_Toolkit_Admin {
 
                                 <div class="vt-settings-panel-header">
                                     <div class="vt-settings-panel-header-left">
-                                        <h2 class="vt-settings-panel-title"><?php echo esc_html($function_data['name']); ?></h2>
+                                        <h2 class="vt-settings-panel-title"><?php echo esc_html($function_data['name']); ?><?php if (!empty($function_data['beta'])): ?> <span class="vt-badge-beta"><?php _e('Beta', 'voxel-toolkit'); ?></span><?php endif; ?></h2>
                                         <p class="vt-settings-panel-description"><?php echo esc_html($function_data['description']); ?></p>
                                     </div>
                                     <div class="vt-settings-panel-header-right">
@@ -1419,6 +1419,108 @@ class Voxel_Toolkit_Admin {
                         // Max posts (2-4)
                         $max = isset($function_input['max_posts']) ? absint($function_input['max_posts']) : 4;
                         $sanitized_function['max_posts'] = ($max >= 2 && $max <= 4) ? $max : 4;
+                        break;
+
+                    case 'social_proof':
+                        // Display settings
+                        $valid_positions = array('bottom-left', 'bottom-right', 'top-left', 'top-right');
+                        $sanitized_function['position'] = isset($function_input['position']) && in_array($function_input['position'], $valid_positions)
+                            ? sanitize_text_field($function_input['position'])
+                            : 'bottom-left';
+
+                        $sanitized_function['display_duration'] = isset($function_input['display_duration'])
+                            ? max(1, min(60, absint($function_input['display_duration'])))
+                            : 5;
+
+                        $sanitized_function['delay_between'] = isset($function_input['delay_between'])
+                            ? max(1, min(60, absint($function_input['delay_between'])))
+                            : 10;
+
+                        $sanitized_function['max_events'] = isset($function_input['max_events'])
+                            ? max(1, min(50, absint($function_input['max_events'])))
+                            : 10;
+
+                        $sanitized_function['poll_interval'] = isset($function_input['poll_interval'])
+                            ? max(10, min(300, absint($function_input['poll_interval'])))
+                            : 30;
+
+                        $valid_animations = array('slide', 'fade');
+                        $sanitized_function['animation'] = isset($function_input['animation']) && in_array($function_input['animation'], $valid_animations)
+                            ? sanitize_text_field($function_input['animation'])
+                            : 'slide';
+
+                        $sanitized_function['hide_on_mobile'] = !empty($function_input['hide_on_mobile']);
+                        $sanitized_function['show_close_button'] = !empty($function_input['show_close_button']);
+
+                        // Style settings
+                        $sanitized_function['background_color'] = isset($function_input['background_color']) && preg_match('/^#[0-9a-fA-F]{6}$/', $function_input['background_color'])
+                            ? sanitize_hex_color($function_input['background_color'])
+                            : '#ffffff';
+
+                        $sanitized_function['text_color'] = isset($function_input['text_color']) && preg_match('/^#[0-9a-fA-F]{6}$/', $function_input['text_color'])
+                            ? sanitize_hex_color($function_input['text_color'])
+                            : '#1a1a1a';
+
+                        $sanitized_function['border_radius'] = isset($function_input['border_radius'])
+                            ? max(0, min(50, absint($function_input['border_radius'])))
+                            : 10;
+
+                        $sanitized_function['avatar_size'] = isset($function_input['avatar_size'])
+                            ? max(20, min(100, absint($function_input['avatar_size'])))
+                            : 48;
+
+                        $sanitized_function['default_avatar'] = isset($function_input['default_avatar'])
+                            ? esc_url_raw($function_input['default_avatar'])
+                            : '';
+
+                        // Events settings
+                        if (isset($function_input['events']) && is_array($function_input['events'])) {
+                            $sanitized_function['events'] = array();
+                            foreach ($function_input['events'] as $event_key => $event_settings) {
+                                $sanitized_event_key = sanitize_text_field($event_key);
+                                $sanitized_function['events'][$sanitized_event_key] = array(
+                                    'enabled' => !empty($event_settings['enabled']),
+                                    'message_template' => isset($event_settings['message_template'])
+                                        ? sanitize_text_field($event_settings['message_template'])
+                                        : '',
+                                    'show_avatar' => !empty($event_settings['show_avatar']),
+                                    'show_link' => !empty($event_settings['show_link']),
+                                    'show_time' => !empty($event_settings['show_time']),
+                                );
+                            }
+                        } else {
+                            $sanitized_function['events'] = array();
+                        }
+
+                        // Activity Boost settings
+                        $sanitized_function['boost_enabled'] = !empty($function_input['boost_enabled']);
+
+                        $valid_boost_modes = array('fill_gaps', 'mixed', 'boost_only');
+                        $sanitized_function['boost_mode'] = isset($function_input['boost_mode']) && in_array($function_input['boost_mode'], $valid_boost_modes)
+                            ? sanitize_text_field($function_input['boost_mode'])
+                            : 'fill_gaps';
+
+                        $sanitized_function['boost_names'] = isset($function_input['boost_names'])
+                            ? sanitize_textarea_field($function_input['boost_names'])
+                            : '';
+
+                        $sanitized_function['boost_listings'] = isset($function_input['boost_listings'])
+                            ? sanitize_textarea_field($function_input['boost_listings'])
+                            : '';
+
+                        // Boost messages
+                        if (isset($function_input['boost_messages']) && is_array($function_input['boost_messages'])) {
+                            $sanitized_function['boost_messages'] = array();
+                            foreach ($function_input['boost_messages'] as $msg_key => $msg_template) {
+                                $sanitized_function['boost_messages'][sanitize_key($msg_key)] = sanitize_text_field($msg_template);
+                            }
+                        } else {
+                            $sanitized_function['boost_messages'] = array(
+                                'booking' => '{name} just booked {listing}',
+                                'signup' => '{name} just joined',
+                                'review' => '{name} left a review on {listing}',
+                            );
+                        }
                         break;
 
                     default:
