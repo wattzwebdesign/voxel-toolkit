@@ -43,6 +43,35 @@ class Voxel_Toolkit_Functions {
         // AJAX handlers
         add_action('wp_ajax_voxel_toolkit_sync_submissions', array($this, 'ajax_sync_submissions'));
         add_action('wp_ajax_vt_send_test_sms', array($this, 'ajax_send_test_sms'));
+
+        // Add post type groups to exporter early on settings page
+        add_action('admin_init', array($this, 'add_post_type_groups_to_exporter'), 5);
+    }
+
+    /**
+     * Add all post type groups to the global exporter (for Enhanced Post Relation settings page)
+     * This needs to run early before Voxel's dynamic data template exports the groups
+     */
+    public function add_post_type_groups_to_exporter() {
+        // Only run on our settings page
+        if (!isset($_GET['page']) || $_GET['page'] !== 'voxel-toolkit') {
+            return;
+        }
+
+        // Only if Voxel classes are available
+        if (!class_exists('\Voxel\Post_Type') || !class_exists('\Voxel\Dynamic_Data\Exporter')) {
+            return;
+        }
+
+        $voxel_post_types = \Voxel\Post_Type::get_voxel_types();
+        $exporter = \Voxel\Dynamic_Data\Exporter::get();
+
+        foreach ($voxel_post_types as $pt) {
+            $exporter->add_group_by_key('post', $pt->get_key());
+        }
+
+        // Ensure site group is available
+        $exporter->add_group_by_key('site');
     }
     
     /**
@@ -451,6 +480,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-enhanced-editor.php',
                 'icon' => 'dashicons-editor-kitchensink',
                 'settings_callback' => array($this, 'render_enhanced_editor_settings'),
+            ),
+            'enhanced_post_relation' => array(
+                'name' => __('Enhanced Post Relation', 'voxel-toolkit'),
+                'description' => __('Customize post display in Post Relation field selectors using dynamic tag templates. Configure different display formats per post type.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Enhanced_Post_Relation',
+                'file' => 'functions/class-enhanced-post-relation.php',
+                'icon' => 'dashicons-networking',
+                'settings_callback' => array($this, 'render_enhanced_post_relation_settings'),
             ),
         );
 
@@ -5501,6 +5538,209 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <?php _e('This enhancement only affects fields set to "WP Editor — Advanced controls". Fields using "Plain text" or "Basic controls" remain unchanged.', 'voxel-toolkit'); ?>
             </p>
         </div>
+        <?php
+    }
+
+    /**
+     * Render Enhanced Post Relation settings
+     *
+     * @param array $settings Current settings
+     */
+    public function render_enhanced_post_relation_settings($settings) {
+        $post_type_settings = isset($settings['post_type_settings']) ? $settings['post_type_settings'] : array();
+
+        // Get Voxel post types (only show Voxel-managed post types)
+        $voxel_post_types = array();
+        if (class_exists('\Voxel\Post_Type')) {
+            $voxel_post_types = \Voxel\Post_Type::get_voxel_types();
+        }
+
+        // Export each post type's dynamic data groups separately
+        // We'll inject these into JavaScript since the global exporter may have already run
+        $post_type_groups = array();
+        $post_type_export_keys = array();
+
+        if (class_exists('\Voxel\Dynamic_Data\Exporter')) {
+            foreach ($voxel_post_types as $pt) {
+                $pt_key = $pt->get_key();
+                $export_key = 'post_type:' . $pt_key;
+                $post_type_export_keys[$pt_key] = $export_key;
+
+                // Create a fresh exporter for each post type to get its specific groups
+                $exporter = new \Voxel\Dynamic_Data\Exporter();
+                $exporter->add_group_by_key('post', $pt_key);
+                $exports = $exporter->export();
+
+                // Store the exported group data
+                if (isset($exports['groups'][$export_key])) {
+                    $post_type_groups[$export_key] = $exports['groups'][$export_key];
+                }
+            }
+        }
+        ?>
+        <div class="vt-info-box">
+            <?php _e('Customize how posts are displayed in Post Relation field dropdown selectors. Use Voxel dynamic tags to show additional information like location, category, or custom fields. The template will be rendered in the context of each related post.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-tip-box" style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+            <strong style="display: block; margin-bottom: 8px; color: #166534;"><?php _e('Example Templates:', 'voxel-toolkit'); ?></strong>
+            <ul style="margin: 0 0 0 16px; list-style: disc; color: #15803d;">
+                <li><code style="background: #dcfce7; padding: 2px 6px; border-radius: 4px;">@post(:title) - @post(location.address)</code> - <?php _e('Title with address', 'voxel-toolkit'); ?></li>
+                <li><code style="background: #dcfce7; padding: 2px 6px; border-radius: 4px;">@post(:title) (@post(category))</code> - <?php _e('Title with category', 'voxel-toolkit'); ?></li>
+                <li><code style="background: #dcfce7; padding: 2px 6px; border-radius: 4px;">@post(:title) - @post(price)</code> - <?php _e('Title with price', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
+
+        <?php if (empty($voxel_post_types)): ?>
+            <div class="notice notice-warning" style="margin: 0 0 20px;">
+                <p><?php _e('No Voxel post types found. Please make sure you have created post types in Voxel.', 'voxel-toolkit'); ?></p>
+            </div>
+        <?php endif; ?>
+
+        <?php foreach ($voxel_post_types as $post_type): ?>
+            <?php
+            $pt_key = $post_type->get_key();
+            $enabled = isset($post_type_settings[$pt_key]['enabled']) ? $post_type_settings[$pt_key]['enabled'] : false;
+            $template = isset($post_type_settings[$pt_key]['display_template']) ? $post_type_settings[$pt_key]['display_template'] : '';
+            ?>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 16px;">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox"
+                               name="voxel_toolkit_options[enhanced_post_relation][post_type_settings][<?php echo esc_attr($pt_key); ?>][enabled]"
+                               id="epr_<?php echo esc_attr($pt_key); ?>_enabled"
+                               value="1"
+                               <?php checked($enabled); ?>
+                               onchange="toggleEprSection('<?php echo esc_js($pt_key); ?>')"
+                               style="margin-right: 12px; transform: scale(1.2);">
+                        <div>
+                            <strong style="display: block; color: #1e1e1e; font-size: 15px;">
+                                <?php echo esc_html($post_type->get_label()); ?>
+                            </strong>
+                            <span style="color: #64748b; font-size: 12px;">
+                                (<?php echo esc_html($pt_key); ?>)
+                            </span>
+                        </div>
+                    </label>
+                </div>
+
+                <div id="epr_<?php echo esc_attr($pt_key); ?>_settings" style="margin-left: 28px; <?php echo $enabled ? '' : 'display: none;'; ?>">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">
+                        <?php _e('Display Template', 'voxel-toolkit'); ?>
+                    </label>
+                    <div class="vt-dtag-field" onclick="VT_openDtagPicker(this, '<?php echo esc_js($pt_key); ?>')" style="cursor: pointer;">
+                        <input type="text"
+                               name="voxel_toolkit_options[enhanced_post_relation][post_type_settings][<?php echo esc_attr($pt_key); ?>][display_template]"
+                               value="<?php echo esc_attr($template); ?>"
+                               placeholder="<?php esc_attr_e('Click to open dynamic tag picker...', 'voxel-toolkit'); ?>"
+                               readonly
+                               style="width: 100%; max-width: 500px; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; cursor: pointer;" />
+                    </div>
+                    <p style="margin: 8px 0 0; color: #6b7280; font-size: 12px;">
+                        <?php _e('Click the field to open the dynamic tag picker with all fields for this post type.', 'voxel-toolkit'); ?>
+                    </p>
+                </div>
+            </div>
+        <?php endforeach; ?>
+
+        <script type="text/javascript">
+        // Map post type keys to their export keys (post_type:key format)
+        window.VT_PostTypeExportKeys = <?php echo wp_json_encode($post_type_export_keys); ?>;
+
+        // Post type specific group data exported from PHP
+        window.VT_PostTypeGroups = <?php echo wp_json_encode($post_type_groups); ?>;
+
+        // Inject our post type groups into Dynamic_Data_Store when it's available
+        (function() {
+            function injectGroups() {
+                if (window.Dynamic_Data_Store && window.Dynamic_Data_Store.groups && window.VT_PostTypeGroups) {
+                    for (var key in window.VT_PostTypeGroups) {
+                        if (window.VT_PostTypeGroups.hasOwnProperty(key)) {
+                            window.Dynamic_Data_Store.groups[key] = window.VT_PostTypeGroups[key];
+                        }
+                    }
+                }
+            }
+
+            // Try immediately
+            injectGroups();
+
+            // Also try after DOM is ready (in case Dynamic_Data_Store is set up later)
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', injectGroups);
+            }
+
+            // And after window load as final fallback
+            window.addEventListener('load', injectGroups);
+        })();
+
+        function toggleEprSection(postType) {
+            var checkbox = document.getElementById('epr_' + postType + '_enabled');
+            var settings = document.getElementById('epr_' + postType + '_settings');
+            if (settings) {
+                settings.style.display = checkbox.checked ? 'block' : 'none';
+            }
+        }
+
+        function VT_openDtagPicker(container, postTypeKey) {
+            // Check if Voxel_Dynamic is available
+            if (typeof Voxel_Dynamic === 'undefined') {
+                alert('<?php echo esc_js(__('Voxel dynamic tag picker is not available. Please make sure Voxel theme is active.', 'voxel-toolkit')); ?>');
+                return;
+            }
+
+            var input = container.querySelector('input');
+            if (!input) return;
+
+            // Get the export key for this post type (format: post_type:key)
+            var groupKey = window.VT_PostTypeExportKeys && window.VT_PostTypeExportKeys[postTypeKey]
+                ? window.VT_PostTypeExportKeys[postTypeKey]
+                : 'post_type:' + postTypeKey;
+
+            // Ensure groups are injected before opening picker
+            if (window.Dynamic_Data_Store && window.Dynamic_Data_Store.groups && window.VT_PostTypeGroups) {
+                for (var key in window.VT_PostTypeGroups) {
+                    if (window.VT_PostTypeGroups.hasOwnProperty(key)) {
+                        window.Dynamic_Data_Store.groups[key] = window.VT_PostTypeGroups[key];
+                    }
+                }
+            }
+
+            // Build groups object with labels (required format for Voxel_Dynamic.edit)
+            // The 'type' property must match the key in Dynamic_Data_Store.groups
+            var groups = {};
+
+            if (window.Dynamic_Data_Store && window.Dynamic_Data_Store.groups && window.Dynamic_Data_Store.groups[groupKey]) {
+                // Get a nice label from the post type key
+                var postTypeLabel = postTypeKey.charAt(0).toUpperCase() + postTypeKey.slice(1);
+                groups['post'] = {
+                    label: postTypeLabel,
+                    type: groupKey  // e.g., 'post_type:place' - must match key in Dynamic_Data_Store.groups
+                };
+                groups['site'] = {
+                    label: 'Site',
+                    type: 'site'
+                };
+            } else {
+                // Fallback to default groups
+                groups = Voxel_Dynamic.getDefaultGroups ? Voxel_Dynamic.getDefaultGroups() : {
+                    'post': { label: 'Post', type: 'simple-post' },
+                    'site': { label: 'Site', type: 'site' },
+                    'user': { label: 'User', type: 'user' }
+                };
+                console.warn('VT: Post type group not found for', postTypeKey, '- using defaults');
+            }
+
+            // Open Voxel's dynamic tag editor
+            Voxel_Dynamic.edit(input.value, {
+                groups: groups,
+                onSave: function(newValue) {
+                    input.value = newValue;
+                }
+            });
+        }
+        </script>
         <?php
     }
 }

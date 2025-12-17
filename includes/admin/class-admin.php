@@ -1317,6 +1317,22 @@ class Voxel_Toolkit_Admin {
                         }
                         break;
 
+                    case 'enhanced_post_relation':
+                        if (isset($function_input['post_type_settings']) && is_array($function_input['post_type_settings'])) {
+                            $sanitized_function['post_type_settings'] = array();
+                            foreach ($function_input['post_type_settings'] as $post_type => $pt_settings) {
+                                $sanitized_pt = array();
+                                $sanitized_pt['enabled'] = !empty($pt_settings['enabled']);
+                                $sanitized_pt['display_template'] = isset($pt_settings['display_template'])
+                                    ? sanitize_text_field($pt_settings['display_template'])
+                                    : '';
+                                $sanitized_function['post_type_settings'][sanitize_text_field($post_type)] = $sanitized_pt;
+                            }
+                        } else {
+                            $sanitized_function['post_type_settings'] = array();
+                        }
+                        break;
+
                     case 'featured_posts':
                         if (isset($function_input['post_types']) && is_array($function_input['post_types'])) {
                             $sanitized_function['post_types'] = array_map('sanitize_text_field', $function_input['post_types']);
