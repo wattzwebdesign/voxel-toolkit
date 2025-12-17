@@ -1,0 +1,848 @@
+/**
+ * Compare Posts Styles
+ *
+ * Styles for compare button, floating bar, and comparison table
+ *
+ * @package Voxel_Toolkit
+ */
+
+/* ========================================
+   Compare Button Widget
+   ======================================== */
+.vt-compare-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    line-height: 1.4;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.vt-compare-button:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+}
+
+.vt-compare-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.3);
+}
+
+.vt-compare-button.is-added {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+    color: #fff;
+}
+
+.vt-compare-button.is-added:hover {
+    background-color: #45a049;
+    border-color: #45a049;
+}
+
+.vt-compare-button .vt-compare-icon {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+}
+
+.vt-compare-button .vt-compare-icon svg {
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
+}
+
+/* ========================================
+   Floating Comparison Bar - Common
+   ======================================== */
+.vt-compare-floating-bar {
+    position: fixed;
+    z-index: 9999;
+    background-color: #fff;
+    box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.vt-compare-bar-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.vt-compare-bar-posts {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.vt-compare-bar-post {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    position: relative;
+    max-width: 200px;
+}
+
+.vt-compare-bar-post img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.vt-compare-bar-post .vt-compare-no-thumb {
+    width: 40px;
+    height: 40px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.vt-compare-bar-post .vt-compare-no-thumb .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #999;
+}
+
+.vt-compare-post-title {
+    font-size: 13px;
+    font-weight: 500;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #333;
+}
+
+.vt-compare-remove-post {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.vt-compare-remove-post:hover {
+    color: #e74c3c;
+}
+
+.vt-compare-remove-post .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.vt-compare-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.vt-compare-count {
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
+}
+
+.vt-compare-view-btn {
+    padding: 10px 20px;
+    background-color: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.vt-compare-view-btn:hover:not([disabled]) {
+    background-color: #135e96;
+}
+
+.vt-compare-view-btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.vt-compare-clear-btn {
+    padding: 10px 16px;
+    background-color: transparent;
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.vt-compare-clear-btn:hover {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+/* ========================================
+   Floating Bar - Bottom Position
+   ======================================== */
+.vt-compare-bar-bottom {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 24px;
+    border-top: 1px solid #eee;
+}
+
+.vt-compare-bar-bottom .vt-compare-bar-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ========================================
+   Floating Bar - Side Position
+   ======================================== */
+.vt-compare-bar-side {
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    padding: 16px;
+    border-left: 1px solid #eee;
+    border-radius: 8px 0 0 8px;
+    max-width: 280px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.vt-compare-bar-side .vt-compare-bar-content {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.vt-compare-bar-side .vt-compare-bar-posts {
+    flex-direction: column;
+}
+
+.vt-compare-bar-side .vt-compare-bar-post {
+    max-width: none;
+}
+
+.vt-compare-bar-side .vt-compare-bar-actions {
+    flex-direction: column;
+    margin-left: 0;
+    margin-top: 16px;
+}
+
+.vt-compare-bar-side .vt-compare-view-btn,
+.vt-compare-bar-side .vt-compare-clear-btn {
+    width: 100%;
+    text-align: center;
+}
+
+.vt-compare-bar-side .vt-compare-count {
+    text-align: center;
+}
+
+/* ========================================
+   Comparison Table Widget
+   ======================================== */
+.vt-compare-table-wrapper {
+    width: 100%;
+}
+
+.vt-compare-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.vt-compare-empty,
+.vt-compare-min-posts {
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    color: #666;
+    font-size: 15px;
+}
+
+.vt-compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.vt-compare-table th,
+.vt-compare-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.vt-compare-table thead th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.vt-compare-table .vt-compare-field-header {
+    width: 200px;
+    min-width: 150px;
+}
+
+.vt-compare-table .vt-compare-post-header {
+    min-width: 180px;
+}
+
+.vt-compare-header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+}
+
+.vt-compare-header-content img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.vt-compare-no-thumb-table {
+    width: 60px;
+    height: 60px;
+    background-color: #e0e0e0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vt-compare-no-thumb-table .dashicons {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #999;
+}
+
+.vt-compare-header-title {
+    font-weight: 600;
+    text-align: center;
+    color: inherit;
+    text-decoration: none;
+}
+
+.vt-compare-header-title:hover {
+    text-decoration: underline;
+}
+
+.vt-compare-remove-btn {
+    font-size: 12px;
+    color: #e74c3c;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: opacity 0.2s ease;
+}
+
+.vt-compare-remove-btn:hover {
+    opacity: 0.7;
+}
+
+.vt-compare-table tbody th {
+    background-color: #fafafa;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.vt-compare-table tbody td {
+    font-size: 14px;
+}
+
+.vt-compare-table tbody tr:nth-child(even) td,
+.vt-compare-table tbody tr:nth-child(even) th {
+    background-color: #fafafa;
+}
+
+.vt-compare-field-label {
+    white-space: nowrap;
+}
+
+/* ========================================
+   Field Value Styles
+   ======================================== */
+.vt-compare-empty-value {
+    color: #999;
+    font-style: italic;
+}
+
+.vt-compare-yes {
+    color: #4CAF50;
+    font-weight: 500;
+}
+
+.vt-compare-no {
+    color: #999;
+}
+
+/* Location */
+.vt-compare-location {
+    line-height: 1.5;
+}
+
+.vt-compare-location .vt-loc-address {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.vt-compare-location .vt-loc-address .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #e74c3c;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.vt-compare-location .vt-loc-coords {
+    color: #999;
+    margin-top: 4px;
+}
+
+/* Work Hours */
+.vt-compare-work-hours {
+    line-height: 1.6;
+}
+
+.vt-compare-work-hours .vt-wh-day {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 4px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.vt-compare-work-hours .vt-wh-day:last-child {
+    border-bottom: none;
+}
+
+.vt-compare-work-hours .vt-wh-day-name {
+    font-weight: 500;
+    min-width: 80px;
+}
+
+.vt-compare-work-hours .vt-wh-day-hours {
+    text-align: right;
+}
+
+/* Images */
+.vt-compare-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.vt-compare-images img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Files */
+.vt-compare-files {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.vt-compare-files .vt-compare-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #2271b1;
+    text-decoration: none;
+}
+
+.vt-compare-files .vt-compare-file:hover {
+    text-decoration: underline;
+}
+
+.vt-compare-files .vt-compare-file .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Repeater */
+.vt-compare-repeater {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.vt-compare-repeater .vt-rep-item {
+    padding: 10px 12px;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.vt-compare-repeater .vt-rep-item-header {
+    font-weight: 600;
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.vt-compare-repeater .vt-rep-item-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.vt-compare-repeater .vt-rep-field {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.vt-compare-repeater .vt-rep-field-label {
+    font-weight: 500;
+    color: #555;
+}
+
+.vt-compare-repeater .vt-rep-field-value {
+    color: #333;
+}
+
+/* Recurring/Event Date */
+.vt-compare-recurring-date {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.vt-compare-recurring-date .vt-rd-event {
+    padding: 10px 12px;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    margin-bottom: 4px;
+}
+
+.vt-compare-recurring-date .vt-rd-event:last-child {
+    margin-bottom: 0;
+}
+
+.vt-compare-recurring-date .vt-rd-event-header {
+    font-weight: 600;
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.vt-compare-recurring-date .vt-rd-start,
+.vt-compare-recurring-date .vt-rd-end,
+.vt-compare-recurring-date .vt-rd-freq,
+.vt-compare-recurring-date .vt-rd-until,
+.vt-compare-recurring-date .vt-rd-multiday,
+.vt-compare-recurring-date .vt-rd-allday {
+    line-height: 1.6;
+    font-size: 13px;
+}
+
+.vt-compare-recurring-date strong {
+    color: #555;
+}
+
+/* Product */
+.vt-compare-product {
+    line-height: 1.6;
+}
+
+.vt-compare-product > div {
+    margin-bottom: 4px;
+}
+
+.vt-compare-product > div:last-child {
+    margin-bottom: 0;
+}
+
+/* Color */
+.vt-compare-color {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px 4px 4px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+}
+
+.vt-compare-color::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    background-color: inherit;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================
+   Toast Notifications
+   ======================================== */
+.vt-compare-toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    padding: 12px 24px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 14px;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.vt-compare-toast-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.vt-compare-toast-warning {
+    background-color: #f39c12;
+}
+
+.vt-compare-toast-error {
+    background-color: #e74c3c;
+}
+
+.vt-compare-toast-success {
+    background-color: #27ae60;
+}
+
+/* ========================================
+   Responsive Styles
+   ======================================== */
+@media (max-width: 768px) {
+    .vt-compare-bar-bottom .vt-compare-bar-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .vt-compare-bar-bottom .vt-compare-bar-posts {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 8px;
+    }
+
+    .vt-compare-bar-bottom .vt-compare-bar-post {
+        flex-shrink: 0;
+    }
+
+    .vt-compare-bar-bottom .vt-compare-bar-actions {
+        margin-left: 0;
+        justify-content: space-between;
+        margin-top: 12px;
+    }
+
+    .vt-compare-bar-side {
+        display: none; /* Hide side bar on mobile */
+    }
+
+    .vt-compare-post-title {
+        max-width: 80px;
+    }
+
+    .vt-compare-table .vt-compare-field-header {
+        min-width: 120px;
+        width: 120px;
+    }
+
+    .vt-compare-header-content img {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .vt-compare-bar-bottom {
+        padding: 12px 16px;
+    }
+
+    .vt-compare-bar-post {
+        padding: 6px 8px;
+    }
+
+    .vt-compare-bar-post img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .vt-compare-post-title {
+        display: none;
+    }
+
+    .vt-compare-view-btn,
+    .vt-compare-clear-btn {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .vt-compare-count {
+        font-size: 12px;
+    }
+
+    .vt-compare-header-content img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .vt-compare-table th,
+    .vt-compare-table td {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+}
+
+/* ========================================
+   Preview Bar (Elementor Editor)
+   Inline preview for styling - mirrors floating bar appearance
+   ======================================== */
+.vt-compare-bar-preview {
+    position: relative;
+    background-color: #fff;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.vt-compare-bar-preview .vt-compare-bar-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+}
+
+.vt-compare-bar-preview .vt-compare-bar-posts {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.vt-compare-bar-preview .vt-compare-bar-post {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    position: relative;
+}
+
+.vt-compare-bar-preview .vt-compare-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+}
+
+/* Side position preview layout */
+.vt-compare-bar-preview.vt-compare-bar-side {
+    max-width: 300px;
+}
+
+.vt-compare-bar-preview.vt-compare-bar-side .vt-compare-bar-content {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.vt-compare-bar-preview.vt-compare-bar-side .vt-compare-bar-posts {
+    flex-direction: column;
+}
+
+.vt-compare-bar-preview.vt-compare-bar-side .vt-compare-bar-post {
+    width: 100%;
+}
+
+.vt-compare-bar-preview.vt-compare-bar-side .vt-compare-bar-actions {
+    flex-direction: column;
+    margin-left: 0;
+    margin-top: 12px;
+}
+
+.vt-compare-bar-preview.vt-compare-bar-side .vt-compare-view-btn,
+.vt-compare-bar-preview.vt-compare-bar-side .vt-compare-clear-btn {
+    width: 100%;
+    text-align: center;
+}
+
+.vt-compare-bar-preview.vt-compare-bar-side .vt-compare-count {
+    text-align: center;
+}
+
+/* ========================================
+   Dark Mode Support (if applicable)
+   ======================================== */
+@media (prefers-color-scheme: dark) {
+    .vt-compare-floating-bar {
+        background-color: #1e1e1e;
+        border-color: #333;
+    }
+
+    .vt-compare-bar-post {
+        background-color: #2d2d2d;
+    }
+
+    .vt-compare-post-title {
+        color: #e0e0e0;
+    }
+
+    .vt-compare-count {
+        color: #999;
+    }
+}

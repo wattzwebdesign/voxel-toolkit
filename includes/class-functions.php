@@ -427,6 +427,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-share-count.php',
                 'icon' => 'dashicons-share',
             ),
+            'compare_posts' => array(
+                'name' => __('Compare Posts', 'voxel-toolkit'),
+                'description' => __('Allow users to compare 2-4 posts of the same type side-by-side with a floating comparison bar and comparison table.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Compare_Posts_Widget_Manager',
+                'file' => 'widgets/class-compare-posts-widget-manager.php',
+                'icon' => 'eicon-table',
+                'settings_callback' => array($this, 'render_compare_posts_settings'),
+            ),
         );
 
         // Allow other plugins/themes to register functions
@@ -559,7 +567,7 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-media-gallery-widget-manager.php',
                 'icon' => 'eicon-gallery-justified',
                 'widget_name' => 'vt-media-gallery',
-            )
+            ),
         );
 
         // Allow other plugins/themes to register widgets
@@ -4415,6 +4423,116 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div style="margin-bottom: 8px;"><code>@site(visitor.city)</code> - <?php _e('City name', 'voxel-toolkit'); ?></div>
                 <div style="margin-bottom: 8px;"><code>@site(visitor.state)</code> - <?php _e('State/region', 'voxel-toolkit'); ?></div>
                 <div><code>@site(visitor.country)</code> - <?php _e('Country name', 'voxel-toolkit'); ?></div>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render settings for Compare Posts widget
+     *
+     * @param array $settings Current settings
+     */
+    public function render_compare_posts_settings($settings) {
+        $bar_position = isset($settings['bar_position']) ? sanitize_text_field($settings['bar_position']) : 'bottom';
+        $max_posts = isset($settings['max_posts']) ? absint($settings['max_posts']) : 4;
+        $comparison_pages = isset($settings['comparison_pages']) ? (array) $settings['comparison_pages'] : array();
+
+        // Get all published pages for dropdown
+        $pages = get_pages(array(
+            'post_status' => 'publish',
+            'sort_column' => 'post_title',
+            'sort_order' => 'ASC'
+        ));
+
+        // Get Voxel post types
+        $voxel_post_types = array();
+        $post_types_option = get_option('voxel:post_types', '[]');
+        $post_types_data = json_decode($post_types_option, true);
+        if (is_array($post_types_data)) {
+            foreach ($post_types_data as $pt) {
+                if (isset($pt['settings']['key']) && isset($pt['settings']['singular'])) {
+                    $voxel_post_types[$pt['settings']['key']] = $pt['settings']['singular'];
+                }
+            }
+        }
+        ?>
+        <div class="vt-info-box">
+            <?php _e('Allow users to compare 2-4 posts of the same type side-by-side. Place the Compare Button widget on post cards/single pages and the Comparison Table widget on a dedicated comparison page.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Comparison Pages', 'voxel-toolkit'); ?></h4>
+            <p class="vt-field-description" style="margin-bottom: 15px;">
+                <?php _e('Select the comparison page for each post type. When users click "View Comparison", they will be redirected to the appropriate page based on the post type being compared.', 'voxel-toolkit'); ?>
+            </p>
+            <?php foreach ($voxel_post_types as $pt_key => $pt_label):
+                $selected_page = isset($comparison_pages[$pt_key]) ? absint($comparison_pages[$pt_key]) : 0;
+            ?>
+            <div class="vt-field-group" style="margin-bottom: 12px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;">
+                    <?php echo esc_html($pt_label); ?>
+                </label>
+                <select name="voxel_toolkit_options[compare_posts][comparison_pages][<?php echo esc_attr($pt_key); ?>]" style="width: 100%; max-width: 400px;">
+                    <option value=""><?php _e('— Select a page —', 'voxel-toolkit'); ?></option>
+                    <?php foreach ($pages as $page): ?>
+                        <option value="<?php echo esc_attr($page->ID); ?>" <?php selected($selected_page, $page->ID); ?>>
+                            <?php echo esc_html($page->post_title); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Floating Bar Position', 'voxel-toolkit'); ?></h4>
+            <div class="vt-field-group">
+                <label style="display: block; margin-bottom: 10px; cursor: pointer;">
+                    <input type="radio"
+                           name="voxel_toolkit_options[compare_posts][bar_position]"
+                           value="bottom"
+                           <?php checked($bar_position, 'bottom'); ?>
+                           style="margin-right: 8px;">
+                    <strong><?php _e('Bottom (Horizontal)', 'voxel-toolkit'); ?></strong>
+                    <span style="color: #666; margin-left: 8px;">— <?php _e('Full-width bar at the bottom of the screen', 'voxel-toolkit'); ?></span>
+                </label>
+                <label style="display: block; cursor: pointer;">
+                    <input type="radio"
+                           name="voxel_toolkit_options[compare_posts][bar_position]"
+                           value="side"
+                           <?php checked($bar_position, 'side'); ?>
+                           style="margin-right: 8px;">
+                    <strong><?php _e('Side (Vertical)', 'voxel-toolkit'); ?></strong>
+                    <span style="color: #666; margin-left: 8px;">— <?php _e('Compact bar on the right side of the screen', 'voxel-toolkit'); ?></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Maximum Posts to Compare', 'voxel-toolkit'); ?></h4>
+            <div class="vt-field-group">
+                <select name="voxel_toolkit_options[compare_posts][max_posts]" style="width: 100px;">
+                    <?php for ($i = 2; $i <= 4; $i++): ?>
+                        <option value="<?php echo $i; ?>" <?php selected($max_posts, $i); ?>><?php echo $i; ?></option>
+                    <?php endfor; ?>
+                </select>
+                <p class="vt-field-description">
+                    <?php _e('Maximum number of posts that can be compared at once. Minimum is always 2.', 'voxel-toolkit'); ?>
+                </p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('How to Use', 'voxel-toolkit'); ?></h4>
+            <div style="background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
+                <ol style="margin: 0; padding-left: 20px; color: #374151;">
+                    <li style="margin-bottom: 8px;"><?php _e('Create a comparison page for each post type you want to enable comparisons for.', 'voxel-toolkit'); ?></li>
+                    <li style="margin-bottom: 8px;"><?php _e('Add the <strong>Comparison Table (VT)</strong> widget to each page and configure which fields to display.', 'voxel-toolkit'); ?></li>
+                    <li style="margin-bottom: 8px;"><?php _e('Select the appropriate page for each post type in the "Comparison Pages" settings above.', 'voxel-toolkit'); ?></li>
+                    <li style="margin-bottom: 8px;"><?php _e('Add the <strong>Compare Button (VT)</strong> widget to your post cards or single post templates.', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('When users add posts to compare, a floating bar will appear. Clicking "View Comparison" redirects to the appropriate comparison page.', 'voxel-toolkit'); ?></li>
+                </ol>
             </div>
         </div>
         <?php

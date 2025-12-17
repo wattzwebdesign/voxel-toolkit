@@ -1403,6 +1403,24 @@ class Voxel_Toolkit_Admin {
                             : 3600;
                         break;
 
+                    case 'compare_posts':
+                        // Comparison pages per post type
+                        $sanitized_function['comparison_pages'] = array();
+                        if (isset($function_input['comparison_pages']) && is_array($function_input['comparison_pages'])) {
+                            foreach ($function_input['comparison_pages'] as $pt_key => $page_id) {
+                                $sanitized_key = sanitize_key($pt_key);
+                                $sanitized_function['comparison_pages'][$sanitized_key] = absint($page_id);
+                            }
+                        }
+                        // Bar position
+                        $sanitized_function['bar_position'] = isset($function_input['bar_position']) && in_array($function_input['bar_position'], array('bottom', 'side'))
+                            ? sanitize_text_field($function_input['bar_position'])
+                            : 'bottom';
+                        // Max posts (2-4)
+                        $max = isset($function_input['max_posts']) ? absint($function_input['max_posts']) : 4;
+                        $sanitized_function['max_posts'] = ($max >= 2 && $max <= 4) ? $max : 4;
+                        break;
+
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(
