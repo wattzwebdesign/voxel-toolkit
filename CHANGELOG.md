@@ -38,6 +38,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Character map for special symbols
   - Frontend CSS for image alignment with text wrap
   - Secure: only available to logged-in users, content sanitized via wp_kses_post()
+- **Enhanced Post Relation**: Customize post display in Post Relation field dropdowns
+  - Configure display templates per post type using dynamic tags
+  - Example: Show "Title - City" for places, "Name (Membership)" for profiles
+  - Supports all dynamic tags and modifiers including toolkit's custom ones
+  - Native dynamic tag picker with post-type-specific fields
 - **Settings Page Overhaul**: Redesigned settings page with tab-based navigation for better organization
 
 ### Changed
