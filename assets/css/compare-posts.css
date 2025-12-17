@@ -1,273 +1,257 @@
 /**
  * Compare Posts Styles
  *
- * Styles for compare button, floating bar, and comparison table
+ * Styles for compare badge, popup, and comparison table
  *
  * @package Voxel_Toolkit
  */
 
 /* ========================================
-   Compare Button Widget
+   Compare Badge (Vertical Side Badge)
    ======================================== */
-.vt-compare-button {
-    display: inline-flex;
+.vt-compare-badge {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    background: var(--ts-accent-1, #3b82f6);
+    color: #fff;
+    padding: 15px 10px;
+    border-radius: 8px 0 0 8px;
+    cursor: pointer;
+    z-index: 9998;
+    display: flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
-    padding: 10px 20px;
-    border: 1px solid #ddd;
-    background-color: #fff;
-    color: #333;
     font-size: 14px;
     font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border-radius: 4px;
-    line-height: 1.4;
-    text-decoration: none;
-    box-sizing: border-box;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease;
 }
 
-.vt-compare-button:hover {
-    background-color: #f5f5f5;
-    border-color: #ccc;
+.vt-compare-badge:hover {
+    transform: translateY(-50%) translateX(-2px);
 }
 
-.vt-compare-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.3);
-}
-
-.vt-compare-button.is-added {
-    background-color: #4CAF50;
-    border-color: #4CAF50;
-    color: #fff;
-}
-
-.vt-compare-button.is-added:hover {
-    background-color: #45a049;
-    border-color: #45a049;
-}
-
-.vt-compare-button .vt-compare-icon {
-    display: inline-flex;
+.vt-badge-count {
+    writing-mode: horizontal-tb;
+    background: #fff;
+    color: var(--ts-accent-1, #3b82f6);
+    border-radius: 50%;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
     align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
     line-height: 1;
 }
 
-.vt-compare-button .vt-compare-icon svg {
-    width: 1em;
-    height: 1em;
-    fill: currentColor;
-}
-
 /* ========================================
-   Floating Comparison Bar - Common
+   Compare Popup - Desktop (Slide from right)
    ======================================== */
-.vt-compare-floating-bar {
+.vt-compare-popup-overlay {
     position: fixed;
-    z-index: 9999;
-    background-color: #fff;
-    box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.15);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-}
-
-.vt-compare-bar-content {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.vt-compare-bar-posts {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
-.vt-compare-bar-post {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background-color: #f5f5f5;
-    border-radius: 6px;
-    position: relative;
-    max-width: 200px;
-}
-
-.vt-compare-bar-post img {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 4px;
-    flex-shrink: 0;
-}
-
-.vt-compare-bar-post .vt-compare-no-thumb {
-    width: 40px;
-    height: 40px;
-    background-color: #e0e0e0;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.vt-compare-bar-post .vt-compare-no-thumb .dashicons {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-    color: #999;
-}
-
-.vt-compare-post-title {
-    font-size: 13px;
-    font-weight: 500;
-    max-width: 120px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: #333;
-}
-
-.vt-compare-remove-post {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    color: #999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s ease;
-    flex-shrink: 0;
-    margin-left: auto;
-}
-
-.vt-compare-remove-post:hover {
-    color: #e74c3c;
-}
-
-.vt-compare-remove-post .dashicons {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-}
-
-.vt-compare-bar-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-left: auto;
-    flex-shrink: 0;
-}
-
-.vt-compare-count {
-    font-size: 13px;
-    color: #666;
-    white-space: nowrap;
-}
-
-.vt-compare-view-btn {
-    padding: 10px 20px;
-    background-color: #2271b1;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    white-space: nowrap;
-}
-
-.vt-compare-view-btn:hover:not([disabled]) {
-    background-color: #135e96;
-}
-
-.vt-compare-view-btn[disabled] {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.vt-compare-clear-btn {
-    padding: 10px 16px;
-    background-color: transparent;
-    color: #e74c3c;
-    border: 1px solid #e74c3c;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-}
-
-.vt-compare-clear-btn:hover {
-    background-color: #e74c3c;
-    color: #fff;
-}
-
-/* ========================================
-   Floating Bar - Bottom Position
-   ======================================== */
-.vt-compare-bar-bottom {
+    top: 0;
+    right: 0;
     bottom: 0;
     left: 0;
-    right: 0;
-    padding: 16px 24px;
-    border-top: 1px solid #eee;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 500000;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
-.vt-compare-bar-bottom .vt-compare-bar-content {
-    max-width: 1200px;
-    margin: 0 auto;
+.vt-compare-popup,
+.vt-compare-popup.ts-field-popup {
+    width: 320px !important;
+    max-width: 320px !important;
+    min-width: 320px !important;
+    max-height: 70vh;
+    background: #fff;
+    border-radius: 12px 0 0 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+.vt-compare-popup-overlay.is-open .vt-compare-popup {
+    transform: translateX(0);
+}
+
+/* Constrain the container wrapper */
+.vt-compare-popup-overlay .ts-field-popup-container {
+    width: auto !important;
+    max-width: 320px !important;
+}
+
+.vt-compare-popup .ts-popup-head {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--ts-shade-5, #e5e7eb);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.vt-compare-popup .ts-popup-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ts-shade-1, #111827);
+}
+
+.vt-compare-popup .vt-compare-popup-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    color: var(--ts-shade-3, #6b7280);
+    transition: background 0.2s ease, color 0.2s ease;
+    text-decoration: none;
+}
+
+.vt-compare-popup .vt-compare-popup-close:hover {
+    background: var(--ts-shade-5, #f3f4f6);
+    color: var(--ts-shade-1, #111827);
+}
+
+.vt-compare-popup .ts-popup-content-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.vt-compare-popup-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.vt-compare-popup-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--ts-shade-5, #e5e7eb);
+}
+
+.vt-compare-popup-item:last-child {
+    border-bottom: none;
+}
+
+.vt-popup-post-title {
+    font-size: 14px;
+    color: var(--ts-shade-1, #111827);
+    flex: 1;
+    padding-right: 10px;
+}
+
+.vt-popup-remove-post {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    color: var(--ts-shade-3, #6b7280);
+    transition: background 0.2s ease, color 0.2s ease;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.vt-popup-remove-post:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.vt-compare-popup-empty {
+    padding: 30px 20px;
+    text-align: center;
+    color: var(--ts-shade-3, #6b7280);
+    font-size: 14px;
+}
+
+.vt-compare-popup .ts-popup-controller {
+    padding: 15px 20px;
+    border-top: 1px solid var(--ts-shade-5, #e5e7eb);
+}
+
+.vt-compare-popup .ts-popup-controller ul {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.vt-compare-popup .ts-popup-controller li {
+    flex: 1;
+}
+
+.vt-compare-popup .ts-popup-controller .ts-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.vt-compare-popup .ts-btn-1 {
+    background: var(--ts-accent-1, #3b82f6);
+    color: #fff;
+}
+
+.vt-compare-popup .ts-btn-1:hover {
+    background: var(--ts-accent-2, #2563eb);
+}
+
+.vt-compare-popup .ts-btn-1.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.vt-compare-popup .ts-btn-4 {
+    background: var(--ts-shade-5, #f3f4f6);
+    color: var(--ts-shade-1, #111827);
+}
+
+.vt-compare-popup .ts-btn-4:hover {
+    background: var(--ts-shade-4, #e5e7eb);
+}
+
+/* Body overflow when popup open */
+body.vt-compare-popup-open {
+    overflow: hidden;
 }
 
 /* ========================================
-   Floating Bar - Side Position
+   Action Widget Integration
    ======================================== */
-.vt-compare-bar-side {
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    padding: 16px;
-    border-left: 1px solid #eee;
-    border-radius: 8px 0 0 8px;
-    max-width: 280px;
-    max-height: 80vh;
-    overflow-y: auto;
+.vt-compare-action-btn.active .ts-initial {
+    display: none;
 }
 
-.vt-compare-bar-side .vt-compare-bar-content {
-    flex-direction: column;
-    align-items: stretch;
+.vt-compare-action-btn .ts-reveal {
+    display: none;
 }
 
-.vt-compare-bar-side .vt-compare-bar-posts {
-    flex-direction: column;
-}
-
-.vt-compare-bar-side .vt-compare-bar-post {
-    max-width: none;
-}
-
-.vt-compare-bar-side .vt-compare-bar-actions {
-    flex-direction: column;
-    margin-left: 0;
-    margin-top: 16px;
-}
-
-.vt-compare-bar-side .vt-compare-view-btn,
-.vt-compare-bar-side .vt-compare-clear-btn {
-    width: 100%;
-    text-align: center;
-}
-
-.vt-compare-bar-side .vt-compare-count {
-    text-align: center;
+.vt-compare-action-btn.active .ts-reveal {
+    display: flex;
 }
 
 /* ========================================
@@ -666,35 +650,39 @@
 /* ========================================
    Responsive Styles
    ======================================== */
+
+/* Mobile: Full width bottom sheet style */
 @media (max-width: 768px) {
-    .vt-compare-bar-bottom .vt-compare-bar-content {
-        flex-direction: column;
-        align-items: stretch;
+    .vt-compare-popup-overlay {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 0;
+        background: rgba(0, 0, 0, 0.5);
     }
 
-    .vt-compare-bar-bottom .vt-compare-bar-posts {
-        justify-content: flex-start;
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        padding-bottom: 8px;
+    .vt-compare-popup-overlay .ts-field-popup-container {
+        width: 100% !important;
+        max-width: 100% !important;
     }
 
-    .vt-compare-bar-bottom .vt-compare-bar-post {
-        flex-shrink: 0;
+    .vt-compare-popup,
+    .vt-compare-popup.ts-field-popup {
+        position: relative;
+        top: auto;
+        right: auto;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: auto !important;
+        max-height: 80vh;
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        transform: translateY(100%);
+        opacity: 1;
     }
 
-    .vt-compare-bar-bottom .vt-compare-bar-actions {
-        margin-left: 0;
-        justify-content: space-between;
-        margin-top: 12px;
-    }
-
-    .vt-compare-bar-side {
-        display: none; /* Hide side bar on mobile */
-    }
-
-    .vt-compare-post-title {
-        max-width: 80px;
+    .vt-compare-popup-overlay.is-open .vt-compare-popup {
+        transform: translateY(0);
     }
 
     .vt-compare-table .vt-compare-field-header {
@@ -709,33 +697,6 @@
 }
 
 @media (max-width: 480px) {
-    .vt-compare-bar-bottom {
-        padding: 12px 16px;
-    }
-
-    .vt-compare-bar-post {
-        padding: 6px 8px;
-    }
-
-    .vt-compare-bar-post img {
-        width: 32px;
-        height: 32px;
-    }
-
-    .vt-compare-post-title {
-        display: none;
-    }
-
-    .vt-compare-view-btn,
-    .vt-compare-clear-btn {
-        padding: 8px 12px;
-        font-size: 13px;
-    }
-
-    .vt-compare-count {
-        font-size: 12px;
-    }
-
     .vt-compare-header-content img {
         width: 40px;
         height: 40px;
@@ -745,104 +706,5 @@
     .vt-compare-table td {
         padding: 8px 10px;
         font-size: 13px;
-    }
-}
-
-/* ========================================
-   Preview Bar (Elementor Editor)
-   Inline preview for styling - mirrors floating bar appearance
-   ======================================== */
-.vt-compare-bar-preview {
-    position: relative;
-    background-color: #fff;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
-    border-radius: 8px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-}
-
-.vt-compare-bar-preview .vt-compare-bar-content {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 16px 20px;
-}
-
-.vt-compare-bar-preview .vt-compare-bar-posts {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
-.vt-compare-bar-preview .vt-compare-bar-post {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background-color: #f5f5f5;
-    border-radius: 6px;
-    position: relative;
-}
-
-.vt-compare-bar-preview .vt-compare-bar-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-left: auto;
-}
-
-/* Side position preview layout */
-.vt-compare-bar-preview.vt-compare-bar-side {
-    max-width: 300px;
-}
-
-.vt-compare-bar-preview.vt-compare-bar-side .vt-compare-bar-content {
-    flex-direction: column;
-    align-items: stretch;
-}
-
-.vt-compare-bar-preview.vt-compare-bar-side .vt-compare-bar-posts {
-    flex-direction: column;
-}
-
-.vt-compare-bar-preview.vt-compare-bar-side .vt-compare-bar-post {
-    width: 100%;
-}
-
-.vt-compare-bar-preview.vt-compare-bar-side .vt-compare-bar-actions {
-    flex-direction: column;
-    margin-left: 0;
-    margin-top: 12px;
-}
-
-.vt-compare-bar-preview.vt-compare-bar-side .vt-compare-view-btn,
-.vt-compare-bar-preview.vt-compare-bar-side .vt-compare-clear-btn {
-    width: 100%;
-    text-align: center;
-}
-
-.vt-compare-bar-preview.vt-compare-bar-side .vt-compare-count {
-    text-align: center;
-}
-
-/* ========================================
-   Dark Mode Support (if applicable)
-   ======================================== */
-@media (prefers-color-scheme: dark) {
-    .vt-compare-floating-bar {
-        background-color: #1e1e1e;
-        border-color: #333;
-    }
-
-    .vt-compare-bar-post {
-        background-color: #2d2d2d;
-    }
-
-    .vt-compare-post-title {
-        color: #e0e0e0;
-    }
-
-    .vt-compare-count {
-        color: #999;
     }
 }

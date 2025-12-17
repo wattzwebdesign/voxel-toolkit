@@ -1,7 +1,7 @@
 /**
  * Voxel Toolkit Compare Posts
  *
- * Handles localStorage state management, floating bar, and comparison table
+ * Handles localStorage state management, compare badge with popup, and comparison table
  *
  * @package Voxel_Toolkit
  */
@@ -131,83 +131,106 @@
      * Update all UI elements
      */
     function updateUI() {
-        updateButtons();
-        updateFloatingBar();
+        updateActionButtons();
+        updateBadge();
         updateComparisonTable();
     }
 
     /**
-     * Update compare button states
+     * Update Action (VX) widget button states
      */
-    function updateButtons() {
-        $('.vt-compare-button').each(function() {
+    function updateActionButtons() {
+        $('.vt-compare-action-btn').each(function() {
             var $btn = $(this);
             var postId = $btn.data('post-id');
             var isAdded = isPostInComparison(postId);
 
-            $btn.toggleClass('is-added', isAdded);
-            $btn.find('.vt-compare-button-text').text(
-                isAdded ? $btn.data('text-added') : $btn.data('text-normal')
-            );
-
-            // Toggle icons
-            $btn.find('.vt-compare-icon-normal').toggle(!isAdded);
-            $btn.find('.vt-compare-icon-added').toggle(isAdded);
+            $btn.toggleClass('active', isAdded);
         });
     }
 
     /**
-     * Update floating bar
+     * Update compare badge visibility and count
      */
-    function updateFloatingBar() {
-        var $bar = $('#vt-compare-floating-bar');
+    function updateBadge() {
+        var $badge = $('#vt-compare-badge');
         var data = getComparisonData();
 
-        // Hide floating bar on comparison page
+        // Hide on comparison page
         if ($('.vt-compare-table-wrapper').length > 0) {
-            $bar.hide();
+            $badge.hide();
             return;
         }
 
         if (data.posts.length === 0) {
-            $bar.hide();
+            $badge.hide();
             return;
         }
 
-        var isBottom = $bar.hasClass('vt-compare-bar-bottom');
-        var html = '<div class="vt-compare-bar-content">';
+        $badge.find('.vt-badge-count').text(data.posts.length);
+        $badge.show();
+    }
 
-        // Posts thumbnails
-        html += '<div class="vt-compare-bar-posts">';
-        data.posts.forEach(function(post) {
-            html += '<div class="vt-compare-bar-post" data-post-id="' + post.id + '">';
-            if (post.thumbnail) {
-                html += '<img src="' + post.thumbnail + '" alt="' + escapeHtml(post.title) + '">';
-            } else {
-                html += '<span class="vt-compare-no-thumb"><span class="dashicons dashicons-format-image"></span></span>';
-            }
-            html += '<span class="vt-compare-post-title">' + escapeHtml(post.title) + '</span>';
-            html += '<button class="vt-compare-remove-post" data-post-id="' + post.id + '" title="' + voxelCompare.i18n.remove + '">';
-            html += '<span class="dashicons dashicons-no-alt"></span>';
-            html += '</button>';
-            html += '</div>';
-        });
-        html += '</div>';
+    /**
+     * Open the compare popup
+     */
+    function openComparePopup() {
+        var $overlay = $('#vt-compare-popup-overlay');
+        var data = getComparisonData();
 
-        // Actions
-        html += '<div class="vt-compare-bar-actions">';
-        html += '<span class="vt-compare-count">' + data.posts.length + ' ' + voxelCompare.i18n.postsSelected + '</span>';
+        // Build popup list
+        buildPopupList(data.posts);
 
+        // Update view button state
         var canCompare = data.posts.length >= 2;
-        html += '<button class="vt-compare-view-btn" ' + (!canCompare ? 'disabled' : '') + '>';
-        html += voxelCompare.i18n.viewComparison;
-        html += '</button>';
-        html += '<button class="vt-compare-clear-btn">' + voxelCompare.i18n.clearAll + '</button>';
-        html += '</div>';
+        $overlay.find('.vt-compare-popup-view').toggleClass('disabled', !canCompare);
 
-        html += '</div>';
+        $overlay.show();
+        $('body').addClass('vt-compare-popup-open');
 
-        $bar.html(html).show();
+        // Trigger animation after display
+        setTimeout(function() {
+            $overlay.addClass('is-open');
+        }, 10);
+    }
+
+    /**
+     * Close the compare popup
+     */
+    function closeComparePopup() {
+        var $overlay = $('#vt-compare-popup-overlay');
+        $overlay.removeClass('is-open');
+        $('body').removeClass('vt-compare-popup-open');
+
+        // Hide after animation completes
+        setTimeout(function() {
+            $overlay.hide();
+        }, 300);
+    }
+
+    /**
+     * Build popup list HTML
+     *
+     * @param {Array} posts Posts array
+     */
+    function buildPopupList(posts) {
+        var $list = $('.vt-compare-popup-list');
+        var html = '';
+
+        if (posts.length === 0) {
+            html = '<li class="vt-compare-popup-empty">' + (voxelCompare.i18n.minPosts || 'No posts selected') + '</li>';
+        } else {
+            posts.forEach(function(post) {
+                html += '<li class="ts-term-dropdown-item vt-compare-popup-item" data-post-id="' + post.id + '">';
+                html += '<span class="vt-popup-post-title">' + escapeHtml(post.title) + '</span>';
+                html += '<a href="#" class="vt-popup-remove-post" data-post-id="' + post.id + '" title="' + voxelCompare.i18n.remove + '">';
+                html += '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                html += '</a>';
+                html += '</li>';
+            });
+        }
+
+        $list.html(html);
     }
 
     /**
@@ -223,7 +246,6 @@
         var fieldLabels = $wrapper.data('field-labels') || {};
         var removeText = $wrapper.data('remove-text');
         var featureLabel = $wrapper.data('feature-label');
-        var minPostsMsg = $wrapper.data('min-posts-msg');
 
         // Check if posts match widget post type
         var matchingPosts = (data.postType === widgetPostType) ? data.posts : [];
@@ -394,8 +416,8 @@
         // Initial UI update
         updateUI();
 
-        // Handle compare button clicks
-        $(document).on('click', '.vt-compare-button', function(e) {
+        // Handle Action (VX) widget button clicks
+        $(document).on('click', '.vt-compare-action-btn', function(e) {
             e.preventDefault();
             e.stopPropagation();
 
@@ -412,15 +434,51 @@
             }
         });
 
-        // Handle remove from floating bar
-        $(document).on('click', '.vt-compare-remove-post', function(e) {
+        // Handle badge click
+        $(document).on('click', '#vt-compare-badge', function(e) {
             e.preventDefault();
-            e.stopPropagation();
-            removePost($(this).data('post-id'));
+            openComparePopup();
         });
 
-        // Handle view comparison button
-        $(document).on('click', '.vt-compare-view-btn:not([disabled])', function(e) {
+        // Handle popup close button
+        $(document).on('click', '.vt-compare-popup-close', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeComparePopup();
+        });
+
+        // Handle popup overlay click (close when clicking outside)
+        $(document).on('click', '#vt-compare-popup-overlay', function(e) {
+            // Only close if clicking the overlay itself, not the popup content
+            if ($(e.target).is('#vt-compare-popup-overlay')) {
+                e.preventDefault();
+                closeComparePopup();
+            }
+        });
+
+        // Handle popup remove button
+        $(document).on('click', '.vt-popup-remove-post', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var postId = $(this).data('post-id');
+            removePost(postId);
+
+            // Update popup list
+            var data = getComparisonData();
+            buildPopupList(data.posts);
+
+            // Update view button state
+            var canCompare = data.posts.length >= 2;
+            $('#vt-compare-popup-overlay').find('.vt-compare-popup-view').toggleClass('disabled', !canCompare);
+
+            // Close popup if empty
+            if (data.posts.length === 0) {
+                closeComparePopup();
+            }
+        });
+
+        // Handle popup view comparison button
+        $(document).on('click', '.vt-compare-popup-view:not(.disabled)', function(e) {
             e.preventDefault();
             var data = getComparisonData();
             var postType = data.postType;
@@ -432,10 +490,11 @@
             }
         });
 
-        // Handle clear all button
-        $(document).on('click', '.vt-compare-clear-btn', function(e) {
+        // Handle popup clear all button
+        $(document).on('click', '.vt-compare-popup-clear', function(e) {
             e.preventDefault();
             clearAll();
+            closeComparePopup();
         });
 
         // Handle remove from table

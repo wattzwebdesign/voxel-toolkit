@@ -1412,13 +1412,64 @@ class Voxel_Toolkit_Admin {
                                 $sanitized_function['comparison_pages'][$sanitized_key] = absint($page_id);
                             }
                         }
-                        // Bar position
-                        $sanitized_function['bar_position'] = isset($function_input['bar_position']) && in_array($function_input['bar_position'], array('bottom', 'side'))
-                            ? sanitize_text_field($function_input['bar_position'])
-                            : 'bottom';
                         // Max posts (2-4)
                         $max = isset($function_input['max_posts']) ? absint($function_input['max_posts']) : 4;
                         $sanitized_function['max_posts'] = ($max >= 2 && $max <= 4) ? $max : 4;
+
+                        // Badge styling
+                        $sanitized_function['badge_bg_color'] = isset($function_input['badge_bg_color'])
+                            ? sanitize_hex_color($function_input['badge_bg_color'])
+                            : '#3b82f6';
+                        $sanitized_function['badge_text_color'] = isset($function_input['badge_text_color'])
+                            ? sanitize_hex_color($function_input['badge_text_color'])
+                            : '#ffffff';
+                        $sanitized_function['badge_border_radius'] = isset($function_input['badge_border_radius'])
+                            ? max(0, min(50, absint($function_input['badge_border_radius'])))
+                            : 8;
+
+                        // Popup styling
+                        $sanitized_function['popup_bg_color'] = isset($function_input['popup_bg_color'])
+                            ? sanitize_hex_color($function_input['popup_bg_color'])
+                            : '#ffffff';
+                        $sanitized_function['popup_text_color'] = isset($function_input['popup_text_color'])
+                            ? sanitize_hex_color($function_input['popup_text_color'])
+                            : '#111827';
+                        $sanitized_function['popup_border_radius'] = isset($function_input['popup_border_radius'])
+                            ? max(0, min(50, absint($function_input['popup_border_radius'])))
+                            : 12;
+
+                        // Button styling
+                        $sanitized_function['button_bg_color'] = isset($function_input['button_bg_color'])
+                            ? sanitize_hex_color($function_input['button_bg_color'])
+                            : '#3b82f6';
+                        $sanitized_function['button_text_color'] = isset($function_input['button_text_color'])
+                            ? sanitize_hex_color($function_input['button_text_color'])
+                            : '#ffffff';
+                        $sanitized_function['button_border_radius'] = isset($function_input['button_border_radius'])
+                            ? max(0, min(30, absint($function_input['button_border_radius'])))
+                            : 6;
+
+                        // Secondary button styling
+                        $sanitized_function['secondary_bg_color'] = isset($function_input['secondary_bg_color'])
+                            ? sanitize_hex_color($function_input['secondary_bg_color'])
+                            : '#f3f4f6';
+                        $sanitized_function['secondary_text_color'] = isset($function_input['secondary_text_color'])
+                            ? sanitize_hex_color($function_input['secondary_text_color'])
+                            : '#374151';
+
+                        // Text labels
+                        $sanitized_function['badge_text'] = isset($function_input['badge_text'])
+                            ? sanitize_text_field($function_input['badge_text'])
+                            : __('Compare', 'voxel-toolkit');
+                        $sanitized_function['popup_title'] = isset($function_input['popup_title'])
+                            ? sanitize_text_field($function_input['popup_title'])
+                            : __('Compare Posts', 'voxel-toolkit');
+                        $sanitized_function['view_button_text'] = isset($function_input['view_button_text'])
+                            ? sanitize_text_field($function_input['view_button_text'])
+                            : __('View Comparison', 'voxel-toolkit');
+                        $sanitized_function['clear_button_text'] = isset($function_input['clear_button_text'])
+                            ? sanitize_text_field($function_input['clear_button_text'])
+                            : __('Clear All', 'voxel-toolkit');
                         break;
 
                     case 'social_proof':

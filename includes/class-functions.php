@@ -577,6 +577,24 @@ class Voxel_Toolkit_Functions {
                 'icon' => 'eicon-gallery-justified',
                 'widget_name' => 'vt-media-gallery',
             ),
+            'rsvp_form' => array(
+                'name' => __('RSVP Form', 'voxel-toolkit'),
+                'description' => __('Allow users to RSVP to posts/events with guest support, approval workflow, and attendee limits.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_RSVP',
+                'file' => 'functions/class-rsvp.php',
+                'icon' => 'eicon-form-horizontal',
+                'widget_name' => 'voxel-rsvp-form',
+                'required_widgets' => array('rsvp_attendee_list'),
+            ),
+            'rsvp_attendee_list' => array(
+                'name' => __('RSVP Attendee List', 'voxel-toolkit'),
+                'description' => __('Display list of RSVPs with admin approval, rejection, and CSV export functionality.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_RSVP_Attendee_List_Widget',
+                'file' => 'widgets/class-attendee-list-widget.php',
+                'icon' => 'eicon-person',
+                'widget_name' => 'voxel-rsvp-attendee-list',
+                'hidden' => true,
+            ),
         );
 
         // Allow other plugins/themes to register widgets
@@ -4443,9 +4461,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
      * @param array $settings Current settings
      */
     public function render_compare_posts_settings($settings) {
-        $bar_position = isset($settings['bar_position']) ? sanitize_text_field($settings['bar_position']) : 'bottom';
         $max_posts = isset($settings['max_posts']) ? absint($settings['max_posts']) : 4;
         $comparison_pages = isset($settings['comparison_pages']) ? (array) $settings['comparison_pages'] : array();
+
+        // Styling options
+        $badge_bg_color = isset($settings['badge_bg_color']) ? sanitize_hex_color($settings['badge_bg_color']) : '#3b82f6';
+        $badge_text_color = isset($settings['badge_text_color']) ? sanitize_hex_color($settings['badge_text_color']) : '#ffffff';
+        $badge_border_radius = isset($settings['badge_border_radius']) ? absint($settings['badge_border_radius']) : 8;
+        $popup_bg_color = isset($settings['popup_bg_color']) ? sanitize_hex_color($settings['popup_bg_color']) : '#ffffff';
+        $popup_text_color = isset($settings['popup_text_color']) ? sanitize_hex_color($settings['popup_text_color']) : '#111827';
+        $popup_border_radius = isset($settings['popup_border_radius']) ? absint($settings['popup_border_radius']) : 12;
+        $button_bg_color = isset($settings['button_bg_color']) ? sanitize_hex_color($settings['button_bg_color']) : '#3b82f6';
+        $button_text_color = isset($settings['button_text_color']) ? sanitize_hex_color($settings['button_text_color']) : '#ffffff';
+        $button_border_radius = isset($settings['button_border_radius']) ? absint($settings['button_border_radius']) : 6;
+        $secondary_bg_color = isset($settings['secondary_bg_color']) ? sanitize_hex_color($settings['secondary_bg_color']) : '#f3f4f6';
+        $secondary_text_color = isset($settings['secondary_text_color']) ? sanitize_hex_color($settings['secondary_text_color']) : '#374151';
+
+        // Text/Labels
+        $badge_text = isset($settings['badge_text']) ? sanitize_text_field($settings['badge_text']) : __('Compare', 'voxel-toolkit');
+        $popup_title = isset($settings['popup_title']) ? sanitize_text_field($settings['popup_title']) : __('Compare Posts', 'voxel-toolkit');
+        $view_button_text = isset($settings['view_button_text']) ? sanitize_text_field($settings['view_button_text']) : __('View Comparison', 'voxel-toolkit');
+        $clear_button_text = isset($settings['clear_button_text']) ? sanitize_text_field($settings['clear_button_text']) : __('Clear All', 'voxel-toolkit');
 
         // Get all published pages for dropdown
         $pages = get_pages(array(
@@ -4467,13 +4503,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
         ?>
         <div class="vt-info-box">
-            <?php _e('Allow users to compare 2-4 posts of the same type side-by-side. Place the Compare Button widget on post cards/single pages and the Comparison Table widget on a dedicated comparison page.', 'voxel-toolkit'); ?>
+            <?php _e('Allow users to compare posts of the same type side-by-side. Use the "Add to Compare" action in the Action (VX) widget, and place the Comparison Table widget on a dedicated comparison page.', 'voxel-toolkit'); ?>
         </div>
 
         <div class="vt-settings-section">
             <h4 class="vt-settings-section-title"><?php _e('Comparison Pages', 'voxel-toolkit'); ?></h4>
             <p class="vt-field-description" style="margin-bottom: 15px;">
-                <?php _e('Select the comparison page for each post type. When users click "View Comparison", they will be redirected to the appropriate page based on the post type being compared.', 'voxel-toolkit'); ?>
+                <?php _e('Select the comparison page for each post type. When users click "View Comparison", they will be redirected to the appropriate page.', 'voxel-toolkit'); ?>
             </p>
             <?php foreach ($voxel_post_types as $pt_key => $pt_label):
                 $selected_page = isset($comparison_pages[$pt_key]) ? absint($comparison_pages[$pt_key]) : 0;
@@ -4495,30 +4531,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
 
         <div class="vt-settings-section">
-            <h4 class="vt-settings-section-title"><?php _e('Floating Bar Position', 'voxel-toolkit'); ?></h4>
-            <div class="vt-field-group">
-                <label style="display: block; margin-bottom: 10px; cursor: pointer;">
-                    <input type="radio"
-                           name="voxel_toolkit_options[compare_posts][bar_position]"
-                           value="bottom"
-                           <?php checked($bar_position, 'bottom'); ?>
-                           style="margin-right: 8px;">
-                    <strong><?php _e('Bottom (Horizontal)', 'voxel-toolkit'); ?></strong>
-                    <span style="color: #666; margin-left: 8px;">— <?php _e('Full-width bar at the bottom of the screen', 'voxel-toolkit'); ?></span>
-                </label>
-                <label style="display: block; cursor: pointer;">
-                    <input type="radio"
-                           name="voxel_toolkit_options[compare_posts][bar_position]"
-                           value="side"
-                           <?php checked($bar_position, 'side'); ?>
-                           style="margin-right: 8px;">
-                    <strong><?php _e('Side (Vertical)', 'voxel-toolkit'); ?></strong>
-                    <span style="color: #666; margin-left: 8px;">— <?php _e('Compact bar on the right side of the screen', 'voxel-toolkit'); ?></span>
-                </label>
-            </div>
-        </div>
-
-        <div class="vt-settings-section">
             <h4 class="vt-settings-section-title"><?php _e('Maximum Posts to Compare', 'voxel-toolkit'); ?></h4>
             <div class="vt-field-group">
                 <select name="voxel_toolkit_options[compare_posts][max_posts]" style="width: 100px;">
@@ -4533,17 +4545,319 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
 
         <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Badge & Popup Styling', 'voxel-toolkit'); ?></h4>
+
+            <div style="display: grid; grid-template-columns: 1fr 320px; gap: 30px; align-items: start;">
+                <!-- Settings Column -->
+                <div>
+                    <h5 style="margin: 0 0 15px; font-size: 13px; font-weight: 600; color: #374151;"><?php _e('Compare Badge', 'voxel-toolkit'); ?></h5>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Background', 'voxel-toolkit'); ?></label>
+                            <input type="color"
+                                   name="voxel_toolkit_options[compare_posts][badge_bg_color]"
+                                   value="<?php echo esc_attr($badge_bg_color); ?>"
+                                   class="vt-compare-badge-bg"
+                                   style="width: 100%; height: 36px; padding: 2px; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">
+                        </div>
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Text Color', 'voxel-toolkit'); ?></label>
+                            <input type="color"
+                                   name="voxel_toolkit_options[compare_posts][badge_text_color]"
+                                   value="<?php echo esc_attr($badge_text_color); ?>"
+                                   class="vt-compare-badge-text"
+                                   style="width: 100%; height: 36px; padding: 2px; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">
+                        </div>
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Border Radius', 'voxel-toolkit'); ?></label>
+                            <input type="number"
+                                   name="voxel_toolkit_options[compare_posts][badge_border_radius]"
+                                   value="<?php echo esc_attr($badge_border_radius); ?>"
+                                   min="0"
+                                   max="30"
+                                   class="vt-compare-badge-radius"
+                                   style="width: 100%; height: 36px; padding: 0 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
+                    </div>
+
+                    <h5 style="margin: 0 0 15px; font-size: 13px; font-weight: 600; color: #374151;"><?php _e('Popup Panel', 'voxel-toolkit'); ?></h5>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Background', 'voxel-toolkit'); ?></label>
+                            <input type="color"
+                                   name="voxel_toolkit_options[compare_posts][popup_bg_color]"
+                                   value="<?php echo esc_attr($popup_bg_color); ?>"
+                                   class="vt-compare-popup-bg"
+                                   style="width: 100%; height: 36px; padding: 2px; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">
+                        </div>
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Text Color', 'voxel-toolkit'); ?></label>
+                            <input type="color"
+                                   name="voxel_toolkit_options[compare_posts][popup_text_color]"
+                                   value="<?php echo esc_attr($popup_text_color); ?>"
+                                   class="vt-compare-popup-text"
+                                   style="width: 100%; height: 36px; padding: 2px; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">
+                        </div>
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Border Radius', 'voxel-toolkit'); ?></label>
+                            <input type="number"
+                                   name="voxel_toolkit_options[compare_posts][popup_border_radius]"
+                                   value="<?php echo esc_attr($popup_border_radius); ?>"
+                                   min="0"
+                                   max="30"
+                                   class="vt-compare-popup-radius"
+                                   style="width: 100%; height: 36px; padding: 0 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
+                    </div>
+
+                    <h5 style="margin: 0 0 15px; font-size: 13px; font-weight: 600; color: #374151;"><?php _e('Primary Button', 'voxel-toolkit'); ?></h5>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Background', 'voxel-toolkit'); ?></label>
+                            <input type="color"
+                                   name="voxel_toolkit_options[compare_posts][button_bg_color]"
+                                   value="<?php echo esc_attr($button_bg_color); ?>"
+                                   class="vt-compare-btn-bg"
+                                   style="width: 100%; height: 36px; padding: 2px; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">
+                        </div>
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Text Color', 'voxel-toolkit'); ?></label>
+                            <input type="color"
+                                   name="voxel_toolkit_options[compare_posts][button_text_color]"
+                                   value="<?php echo esc_attr($button_text_color); ?>"
+                                   class="vt-compare-btn-text"
+                                   style="width: 100%; height: 36px; padding: 2px; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">
+                        </div>
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Border Radius', 'voxel-toolkit'); ?></label>
+                            <input type="number"
+                                   name="voxel_toolkit_options[compare_posts][button_border_radius]"
+                                   value="<?php echo esc_attr($button_border_radius); ?>"
+                                   min="0"
+                                   max="30"
+                                   class="vt-compare-btn-radius"
+                                   style="width: 100%; height: 36px; padding: 0 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
+                    </div>
+
+                    <h5 style="margin: 0 0 15px; font-size: 13px; font-weight: 600; color: #374151;"><?php _e('Secondary Button', 'voxel-toolkit'); ?></h5>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Background', 'voxel-toolkit'); ?></label>
+                            <input type="color"
+                                   name="voxel_toolkit_options[compare_posts][secondary_bg_color]"
+                                   value="<?php echo esc_attr($secondary_bg_color); ?>"
+                                   class="vt-compare-secondary-bg"
+                                   style="width: 100%; height: 36px; padding: 2px; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">
+                        </div>
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Text Color', 'voxel-toolkit'); ?></label>
+                            <input type="color"
+                                   name="voxel_toolkit_options[compare_posts][secondary_text_color]"
+                                   value="<?php echo esc_attr($secondary_text_color); ?>"
+                                   class="vt-compare-secondary-text"
+                                   style="width: 100%; height: 36px; padding: 2px; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">
+                        </div>
+                    </div>
+
+                    <h5 style="margin: 0 0 15px; font-size: 13px; font-weight: 600; color: #374151;"><?php _e('Labels', 'voxel-toolkit'); ?></h5>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Badge Text', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[compare_posts][badge_text]"
+                                   value="<?php echo esc_attr($badge_text); ?>"
+                                   class="vt-compare-badge-label"
+                                   placeholder="<?php esc_attr_e('Compare', 'voxel-toolkit'); ?>"
+                                   style="width: 100%; height: 36px; padding: 0 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Popup Title', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[compare_posts][popup_title]"
+                                   value="<?php echo esc_attr($popup_title); ?>"
+                                   class="vt-compare-popup-title"
+                                   placeholder="<?php esc_attr_e('Compare Posts', 'voxel-toolkit'); ?>"
+                                   style="width: 100%; height: 36px; padding: 0 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('View Button', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[compare_posts][view_button_text]"
+                                   value="<?php echo esc_attr($view_button_text); ?>"
+                                   class="vt-compare-view-btn-text"
+                                   placeholder="<?php esc_attr_e('View Comparison', 'voxel-toolkit'); ?>"
+                                   style="width: 100%; height: 36px; padding: 0 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Clear Button', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[compare_posts][clear_button_text]"
+                                   value="<?php echo esc_attr($clear_button_text); ?>"
+                                   class="vt-compare-clear-btn-text"
+                                   placeholder="<?php esc_attr_e('Clear All', 'voxel-toolkit'); ?>"
+                                   style="width: 100%; height: 36px; padding: 0 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Column -->
+                <div>
+                    <h5 style="margin: 0 0 15px; font-size: 13px; font-weight: 600; color: #374151;"><?php _e('Preview', 'voxel-toolkit'); ?></h5>
+                    <div style="background: #f3f4f6; border-radius: 8px; padding: 20px; position: relative; min-height: 280px;">
+                        <!-- Badge Preview -->
+                        <div class="vt-preview-badge" style="
+                            position: absolute;
+                            right: 0;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            writing-mode: vertical-rl;
+                            text-orientation: mixed;
+                            background: <?php echo esc_attr($badge_bg_color); ?>;
+                            color: <?php echo esc_attr($badge_text_color); ?>;
+                            padding: 12px 8px;
+                            border-radius: <?php echo esc_attr($badge_border_radius); ?>px 0 0 <?php echo esc_attr($badge_border_radius); ?>px;
+                            font-size: 12px;
+                            font-weight: 500;
+                            display: flex;
+                            align-items: center;
+                            gap: 6px;
+                        ">
+                            <span class="vt-preview-badge-text"><?php echo esc_html($badge_text); ?></span>
+                            <span class="vt-preview-badge-count" style="
+                                writing-mode: horizontal-tb;
+                                background: <?php echo esc_attr($badge_text_color); ?>;
+                                color: <?php echo esc_attr($badge_bg_color); ?>;
+                                border-radius: 50%;
+                                min-width: 18px;
+                                height: 18px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 11px;
+                                font-weight: 600;
+                            ">2</span>
+                        </div>
+
+                        <!-- Popup Preview -->
+                        <div class="vt-preview-popup" style="
+                            background: <?php echo esc_attr($popup_bg_color); ?>;
+                            border-radius: <?php echo esc_attr($popup_border_radius); ?>px;
+                            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                            width: 240px;
+                            overflow: hidden;
+                        ">
+                            <div style="padding: 12px 15px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+                                <span class="vt-preview-popup-title" style="font-weight: 600; font-size: 13px; color: <?php echo esc_attr($popup_text_color); ?>;"><?php echo esc_html($popup_title); ?></span>
+                                <span style="color: #9ca3af; font-size: 16px;">×</span>
+                            </div>
+                            <div style="padding: 8px 0;">
+                                <div style="padding: 10px 15px; color: <?php echo esc_attr($popup_text_color); ?>; font-size: 12px; border-bottom: 1px solid #f3f4f6;">Beach House</div>
+                                <div style="padding: 10px 15px; color: <?php echo esc_attr($popup_text_color); ?>; font-size: 12px;">Mountain Cabin</div>
+                            </div>
+                            <div style="padding: 12px 15px; border-top: 1px solid #e5e7eb; display: flex; gap: 8px;">
+                                <button type="button" class="vt-preview-btn-primary" style="
+                                    flex: 1;
+                                    padding: 8px 12px;
+                                    background: <?php echo esc_attr($button_bg_color); ?>;
+                                    color: <?php echo esc_attr($button_text_color); ?>;
+                                    border: none;
+                                    border-radius: <?php echo esc_attr($button_border_radius); ?>px;
+                                    font-size: 11px;
+                                    font-weight: 500;
+                                    cursor: default;
+                                "><?php echo esc_html($view_button_text); ?></button>
+                                <button type="button" class="vt-preview-btn-secondary" style="
+                                    flex: 1;
+                                    padding: 8px 12px;
+                                    background: <?php echo esc_attr($secondary_bg_color); ?>;
+                                    color: <?php echo esc_attr($secondary_text_color); ?>;
+                                    border: none;
+                                    border-radius: <?php echo esc_attr($button_border_radius); ?>px;
+                                    font-size: 11px;
+                                    font-weight: 500;
+                                    cursor: default;
+                                "><?php echo esc_html($clear_button_text); ?></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
             <h4 class="vt-settings-section-title"><?php _e('How to Use', 'voxel-toolkit'); ?></h4>
             <div style="background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
                 <ol style="margin: 0; padding-left: 20px; color: #374151;">
                     <li style="margin-bottom: 8px;"><?php _e('Create a comparison page for each post type you want to enable comparisons for.', 'voxel-toolkit'); ?></li>
                     <li style="margin-bottom: 8px;"><?php _e('Add the <strong>Comparison Table (VT)</strong> widget to each page and configure which fields to display.', 'voxel-toolkit'); ?></li>
                     <li style="margin-bottom: 8px;"><?php _e('Select the appropriate page for each post type in the "Comparison Pages" settings above.', 'voxel-toolkit'); ?></li>
-                    <li style="margin-bottom: 8px;"><?php _e('Add the <strong>Compare Button (VT)</strong> widget to your post cards or single post templates.', 'voxel-toolkit'); ?></li>
-                    <li><?php _e('When users add posts to compare, a floating bar will appear. Clicking "View Comparison" redirects to the appropriate comparison page.', 'voxel-toolkit'); ?></li>
+                    <li style="margin-bottom: 8px;"><?php _e('Add the <strong>Action (VX)</strong> widget to your post cards and select "Add to Compare" as the action.', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('When users add posts to compare, a floating badge appears on the right side. Clicking it opens the compare panel.', 'voxel-toolkit'); ?></li>
                 </ol>
             </div>
         </div>
+
+        <script>
+        jQuery(function($) {
+            // Live preview updates
+            function updatePreview() {
+                // Colors and styling
+                var badgeBg = $('.vt-compare-badge-bg').val();
+                var badgeTextColor = $('.vt-compare-badge-text').val();
+                var badgeRadius = $('.vt-compare-badge-radius').val();
+                var popupBg = $('.vt-compare-popup-bg').val();
+                var popupTextColor = $('.vt-compare-popup-text').val();
+                var popupRadius = $('.vt-compare-popup-radius').val();
+                var btnBg = $('.vt-compare-btn-bg').val();
+                var btnTextColor = $('.vt-compare-btn-text').val();
+                var btnRadius = $('.vt-compare-btn-radius').val();
+                var secondaryBg = $('.vt-compare-secondary-bg').val();
+                var secondaryTextColor = $('.vt-compare-secondary-text').val();
+
+                // Labels
+                var badgeLabel = $('.vt-compare-badge-label').val() || 'Compare';
+                var popupTitle = $('.vt-compare-popup-title').val() || 'Compare Posts';
+                var viewBtnText = $('.vt-compare-view-btn-text').val() || 'View Comparison';
+                var clearBtnText = $('.vt-compare-clear-btn-text').val() || 'Clear All';
+
+                // Apply colors
+                $('.vt-preview-badge').css({
+                    'background': badgeBg,
+                    'color': badgeTextColor,
+                    'border-radius': badgeRadius + 'px 0 0 ' + badgeRadius + 'px'
+                });
+                $('.vt-preview-badge-count').css({
+                    'background': badgeTextColor,
+                    'color': badgeBg
+                });
+                $('.vt-preview-popup').css({
+                    'background': popupBg,
+                    'border-radius': popupRadius + 'px'
+                });
+                $('.vt-preview-popup-title').css('color', popupTextColor);
+                $('.vt-preview-popup').find('[style*="font-size: 12px"]').css('color', popupTextColor);
+                $('.vt-preview-btn-primary').css({
+                    'background': btnBg,
+                    'color': btnTextColor,
+                    'border-radius': btnRadius + 'px'
+                });
+                $('.vt-preview-btn-secondary').css({
+                    'background': secondaryBg,
+                    'color': secondaryTextColor,
+                    'border-radius': btnRadius + 'px'
+                });
+
+                // Apply labels
+                $('.vt-preview-badge-text').text(badgeLabel);
+                $('.vt-preview-popup-title').text(popupTitle);
+                $('.vt-preview-btn-primary').text(viewBtnText);
+                $('.vt-preview-btn-secondary').text(clearBtnText);
+            }
+
+            $('.vt-compare-badge-bg, .vt-compare-badge-text, .vt-compare-badge-radius, .vt-compare-popup-bg, .vt-compare-popup-text, .vt-compare-popup-radius, .vt-compare-btn-bg, .vt-compare-btn-text, .vt-compare-btn-radius, .vt-compare-secondary-bg, .vt-compare-secondary-text, .vt-compare-badge-label, .vt-compare-popup-title, .vt-compare-view-btn-text, .vt-compare-clear-btn-text').on('input change', updatePreview);
+        });
+        </script>
         <?php
     }
 

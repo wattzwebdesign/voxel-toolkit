@@ -3,9 +3,9 @@
  * Compare Posts Widget Manager
  *
  * Manages the Compare Posts functionality including:
- * - Compare Button widget registration
  * - Comparison Table widget registration
- * - Floating comparison bar
+ * - Floating compare badge with popup
+ * - Action (VX) widget integration
  * - AJAX handlers for comparison data
  *
  * @package Voxel_Toolkit
@@ -40,6 +40,10 @@ class Voxel_Toolkit_Compare_Posts_Widget_Manager {
         // AJAX handlers for getting comparison data
         add_action('wp_ajax_vt_get_comparison_posts', array($this, 'ajax_get_comparison_posts'));
         add_action('wp_ajax_nopriv_vt_get_comparison_posts', array($this, 'ajax_get_comparison_posts'));
+
+        // Voxel Action (VX) widget integration
+        add_filter('voxel/advanced-list/actions', array($this, 'register_compare_action'));
+        add_action('voxel/advanced-list/action:add_to_compare', array($this, 'render_compare_action'), 10, 2);
     }
 
     /**
@@ -48,10 +52,8 @@ class Voxel_Toolkit_Compare_Posts_Widget_Manager {
      * @param \Elementor\Widgets_Manager $widgets_manager Elementor widgets manager
      */
     public function register_elementor_widgets($widgets_manager) {
-        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/widgets/class-compare-posts-button-widget.php';
         require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/widgets/class-compare-posts-table-widget.php';
 
-        $widgets_manager->register(new \Voxel_Toolkit_Compare_Posts_Button_Widget());
         $widgets_manager->register(new \Voxel_Toolkit_Compare_Posts_Table_Widget());
     }
 
@@ -81,8 +83,21 @@ class Voxel_Toolkit_Compare_Posts_Widget_Manager {
         $compare_settings = $settings->get_function_settings('compare_posts', array());
 
         $comparison_pages = isset($compare_settings['comparison_pages']) ? (array) $compare_settings['comparison_pages'] : array();
-        $bar_position = isset($compare_settings['bar_position']) ? $compare_settings['bar_position'] : 'bottom';
         $max_posts = isset($compare_settings['max_posts']) ? intval($compare_settings['max_posts']) : 4;
+
+        // Get custom text labels
+        $badge_text = isset($compare_settings['badge_text']) && !empty($compare_settings['badge_text'])
+            ? $compare_settings['badge_text']
+            : __('Compare', 'voxel-toolkit');
+        $popup_title = isset($compare_settings['popup_title']) && !empty($compare_settings['popup_title'])
+            ? $compare_settings['popup_title']
+            : __('Compare Posts', 'voxel-toolkit');
+        $view_button_text = isset($compare_settings['view_button_text']) && !empty($compare_settings['view_button_text'])
+            ? $compare_settings['view_button_text']
+            : __('View Comparison', 'voxel-toolkit');
+        $clear_button_text = isset($compare_settings['clear_button_text']) && !empty($compare_settings['clear_button_text'])
+            ? $compare_settings['clear_button_text']
+            : __('Clear All', 'voxel-toolkit');
 
         // Build comparison page URLs per post type
         $comparison_page_urls = array();
@@ -97,13 +112,18 @@ class Voxel_Toolkit_Compare_Posts_Widget_Manager {
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('vt_compare_posts'),
             'comparisonPageUrls' => $comparison_page_urls,
-            'barPosition' => $bar_position,
             'maxPosts' => $max_posts,
+            'labels' => array(
+                'badge' => $badge_text,
+                'popupTitle' => $popup_title,
+                'viewButton' => $view_button_text,
+                'clearButton' => $clear_button_text,
+            ),
             'i18n' => array(
-                'compare' => __('Compare', 'voxel-toolkit'),
+                'compare' => $badge_text,
                 'addedToComparison' => __('Added to Comparison', 'voxel-toolkit'),
-                'viewComparison' => __('View Comparison', 'voxel-toolkit'),
-                'clearAll' => __('Clear All', 'voxel-toolkit'),
+                'viewComparison' => $view_button_text,
+                'clearAll' => $clear_button_text,
                 'remove' => __('Remove', 'voxel-toolkit'),
                 'postsSelected' => __('posts selected', 'voxel-toolkit'),
                 'maxReached' => __('Maximum posts reached', 'voxel-toolkit'),
@@ -112,10 +132,82 @@ class Voxel_Toolkit_Compare_Posts_Widget_Manager {
                 'noComparisonPage' => __('Comparison page not configured for this post type', 'voxel-toolkit'),
             ),
         ));
+
+        // Add dynamic styles based on settings
+        $this->add_dynamic_styles($compare_settings);
     }
 
     /**
-     * Render floating bar container in footer
+     * Add dynamic CSS styles based on settings
+     *
+     * @param array $settings Compare posts settings
+     */
+    private function add_dynamic_styles($settings) {
+        // Get style settings with defaults
+        $badge_bg = isset($settings['badge_bg_color']) ? $settings['badge_bg_color'] : '#3b82f6';
+        $badge_text = isset($settings['badge_text_color']) ? $settings['badge_text_color'] : '#ffffff';
+        $badge_radius = isset($settings['badge_border_radius']) ? intval($settings['badge_border_radius']) : 8;
+
+        $popup_bg = isset($settings['popup_bg_color']) ? $settings['popup_bg_color'] : '#ffffff';
+        $popup_text = isset($settings['popup_text_color']) ? $settings['popup_text_color'] : '#111827';
+        $popup_radius = isset($settings['popup_border_radius']) ? intval($settings['popup_border_radius']) : 12;
+
+        $button_bg = isset($settings['button_bg_color']) ? $settings['button_bg_color'] : '#3b82f6';
+        $button_text = isset($settings['button_text_color']) ? $settings['button_text_color'] : '#ffffff';
+        $button_radius = isset($settings['button_border_radius']) ? intval($settings['button_border_radius']) : 6;
+
+        $secondary_bg = isset($settings['secondary_bg_color']) ? $settings['secondary_bg_color'] : '#f3f4f6';
+        $secondary_text = isset($settings['secondary_text_color']) ? $settings['secondary_text_color'] : '#374151';
+
+        $custom_css = "
+            /* Compare Posts Dynamic Styles */
+            .vt-compare-badge {
+                background: {$badge_bg} !important;
+                color: {$badge_text} !important;
+                border-radius: {$badge_radius}px 0 0 {$badge_radius}px !important;
+            }
+            .vt-badge-count {
+                background: {$badge_text} !important;
+                color: {$badge_bg} !important;
+            }
+            .vt-compare-popup,
+            .vt-compare-popup.ts-field-popup {
+                background: {$popup_bg} !important;
+                color: {$popup_text} !important;
+                border-radius: {$popup_radius}px 0 0 {$popup_radius}px !important;
+            }
+            .vt-compare-popup .ts-popup-head,
+            .vt-compare-popup .ts-popup-name {
+                color: {$popup_text} !important;
+            }
+            .vt-compare-popup .vt-popup-post-title {
+                color: {$popup_text} !important;
+            }
+            .vt-compare-popup .ts-popup-controller .ts-btn-1,
+            .vt-compare-popup .vt-compare-popup-view {
+                background: {$button_bg} !important;
+                color: {$button_text} !important;
+                border-radius: {$button_radius}px !important;
+            }
+            .vt-compare-popup .ts-popup-controller .ts-btn-4,
+            .vt-compare-popup .vt-compare-popup-clear {
+                background: {$secondary_bg} !important;
+                color: {$secondary_text} !important;
+                border-radius: {$button_radius}px !important;
+            }
+            @media (max-width: 768px) {
+                .vt-compare-popup,
+                .vt-compare-popup.ts-field-popup {
+                    border-radius: {$popup_radius}px {$popup_radius}px 0 0 !important;
+                }
+            }
+        ";
+
+        wp_add_inline_style('voxel-toolkit-compare-posts', $custom_css);
+    }
+
+    /**
+     * Render compare badge and popup in footer
      */
     public function render_floating_bar() {
         // Don't render in Elementor editor
@@ -123,15 +215,112 @@ class Voxel_Toolkit_Compare_Posts_Widget_Manager {
             return;
         }
 
+        // Get custom text labels from settings
         $settings = Voxel_Toolkit_Settings::instance();
         $compare_settings = $settings->get_function_settings('compare_posts', array());
-        $bar_position = isset($compare_settings['bar_position']) ? $compare_settings['bar_position'] : 'bottom';
+
+        $badge_text = isset($compare_settings['badge_text']) && !empty($compare_settings['badge_text'])
+            ? $compare_settings['badge_text']
+            : __('Compare', 'voxel-toolkit');
+        $popup_title = isset($compare_settings['popup_title']) && !empty($compare_settings['popup_title'])
+            ? $compare_settings['popup_title']
+            : __('Compare Posts', 'voxel-toolkit');
+        $view_button_text = isset($compare_settings['view_button_text']) && !empty($compare_settings['view_button_text'])
+            ? $compare_settings['view_button_text']
+            : __('View Comparison', 'voxel-toolkit');
+        $clear_button_text = isset($compare_settings['clear_button_text']) && !empty($compare_settings['clear_button_text'])
+            ? $compare_settings['clear_button_text']
+            : __('Clear All', 'voxel-toolkit');
         ?>
-        <div id="vt-compare-floating-bar"
-             class="vt-compare-floating-bar vt-compare-bar-<?php echo esc_attr($bar_position); ?>"
-             style="display: none;">
-            <!-- Content populated by JavaScript -->
+        <!-- Compare Badge (Vertical Side Badge) -->
+        <div id="vt-compare-badge" class="vt-compare-badge" style="display: none;">
+            <span class="vt-badge-text"><?php echo esc_html($badge_text); ?></span>
+            <span class="vt-badge-count">0</span>
         </div>
+
+        <!-- Compare Popup -->
+        <div id="vt-compare-popup-overlay" class="vt-compare-popup-overlay" style="display: none;">
+            <div class="ts-field-popup-container">
+                <div class="ts-field-popup vt-compare-popup">
+                    <div class="ts-popup-head flexify">
+                        <div class="ts-popup-name flexify"><?php echo esc_html($popup_title); ?></div>
+                        <a href="#" class="ts-icon-btn vt-compare-popup-close" aria-label="<?php esc_attr_e('Close', 'voxel-toolkit'); ?>">
+                            <?php \Voxel\svg('close.svg'); ?>
+                        </a>
+                    </div>
+                    <div class="ts-popup-content-wrapper min-scroll">
+                        <ul class="vt-compare-popup-list simplify-ul ts-term-dropdown-list">
+                            <!-- Content populated by JavaScript -->
+                        </ul>
+                    </div>
+                    <div class="ts-popup-controller">
+                        <ul class="flexify simplify-ul">
+                            <li class="flexify">
+                                <a href="#" class="ts-btn ts-btn-1 vt-compare-popup-view"><?php echo esc_html($view_button_text); ?></a>
+                            </li>
+                            <li class="flexify">
+                                <a href="#" class="ts-btn ts-btn-4 vt-compare-popup-clear"><?php echo esc_html($clear_button_text); ?></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Register "Add to Compare" action for Voxel Action (VX) widget
+     *
+     * @param array $actions Available actions
+     * @return array Modified actions array
+     */
+    public function register_compare_action($actions) {
+        $actions['add_to_compare'] = __('Add to Compare', 'voxel-toolkit');
+        return $actions;
+    }
+
+    /**
+     * Render "Add to Compare" action in Voxel Action (VX) widget
+     *
+     * @param object $widget Widget instance
+     * @param array $action Action settings
+     */
+    public function render_compare_action($widget, $action) {
+        $post = \Voxel\get_current_post();
+        if (!$post) {
+            return;
+        }
+
+        $post_id = $post->get_id();
+        $post_type = $post->post_type->get_key();
+        $post_title = $post->get_title();
+        $post_thumbnail = get_the_post_thumbnail_url($post_id, 'thumbnail') ?: '';
+
+        // Get icon settings from action config
+        $initial_icon = !empty($action['ts_acw_initial_icon']['value']) ? $action['ts_acw_initial_icon'] : ['library' => 'fa-solid', 'value' => 'fas fa-exchange-alt'];
+        $reveal_icon = !empty($action['ts_acw_reveal_icon']['value']) ? $action['ts_acw_reveal_icon'] : ['library' => 'fa-solid', 'value' => 'fas fa-check'];
+        $initial_text = !empty($action['ts_acw_initial_text']) ? $action['ts_acw_initial_text'] : __('Compare', 'voxel-toolkit');
+        $reveal_text = !empty($action['ts_acw_reveal_text']) ? $action['ts_acw_reveal_text'] : __('Added', 'voxel-toolkit');
+        ?>
+        <li class="elementor-repeater-item-<?php echo esc_attr($action['_id']); ?> flexify ts-action">
+            <a href="#"
+               class="ts-action-con vt-compare-action-btn"
+               role="button"
+               data-post-id="<?php echo esc_attr($post_id); ?>"
+               data-post-type="<?php echo esc_attr($post_type); ?>"
+               data-post-title="<?php echo esc_attr($post_title); ?>"
+               data-post-thumbnail="<?php echo esc_attr($post_thumbnail); ?>">
+                <span class="ts-initial">
+                    <div class="ts-action-icon"><?php \Voxel\render_icon($initial_icon); ?></div>
+                    <?php echo esc_html($initial_text); ?>
+                </span>
+                <span class="ts-reveal">
+                    <div class="ts-action-icon"><?php \Voxel\render_icon($reveal_icon); ?></div>
+                    <?php echo esc_html($reveal_text); ?>
+                </span>
+            </a>
+        </li>
         <?php
     }
 
