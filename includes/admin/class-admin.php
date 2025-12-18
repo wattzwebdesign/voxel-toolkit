@@ -2347,10 +2347,22 @@ class Voxel_Toolkit_Admin {
                                 <td><code>@post(article_helpful_percentage)</code></td>
                                 <td><em>84</em></td>
                             </tr>
+                            <tr>
+                                <td><code>article_helpful_latest_yes</code></td>
+                                <td><?php _e('Date of last "Yes" vote (for visibility rules)', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(article_helpful_latest_yes)</code></td>
+                                <td><em>2025-01-15 14:30:00</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>article_helpful_latest_no</code></td>
+                                <td><?php _e('Date of last "No" vote (for visibility rules)', 'voxel-toolkit'); ?></td>
+                                <td><code>@post(article_helpful_latest_no)</code></td>
+                                <td><em>2025-01-10 09:15:00</em></td>
+                            </tr>
                         </tbody>
                     </table>
                     <p style="margin-top: 15px;">
-                        <em><?php _e('Note: These tags return 0 if no votes have been recorded for the post.', 'voxel-toolkit'); ?></em>
+                        <em><?php _e('Note: Count tags return 0 if no votes have been recorded. Date tags return empty until a vote is cast.', 'voxel-toolkit'); ?></em>
                     </p>
                 </div>
             <?php endif; ?>
