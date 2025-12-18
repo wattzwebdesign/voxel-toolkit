@@ -2875,6 +2875,19 @@ class Voxel_Toolkit_Admin {
                                 <em><?php _e('QR code image with optional logo and download button', 'voxel-toolkit'); ?></em>
                             </td>
                         </tr>
+                        <tr>
+                            <td><code>initial</code></td>
+                            <td><?php _e('Get first letter of text with period (multibyte safe)', 'voxel-toolkit'); ?></td>
+                            <td><?php _e('None', 'voxel-toolkit'); ?></td>
+                            <td>
+                                <code>@user(display_name).initial()</code><br>
+                                <code>@post(title).initial()</code>
+                            </td>
+                            <td>
+                                <em>J.</em><br>
+                                <em>M.</em>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
                 <p style="margin-top: 10px; font-size: 12px; color: #666;">

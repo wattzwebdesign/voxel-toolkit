@@ -93,6 +93,10 @@ class Voxel_Toolkit_Dynamic_Tags {
         if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-see-more-modifier.php')) {
             require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-see-more-modifier.php';
         }
+        // Load initial modifier (always enabled)
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-initial-modifier.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-initial-modifier.php';
+        }
     }
 
     /**
@@ -117,6 +121,7 @@ class Voxel_Toolkit_Dynamic_Tags {
         $modifiers['sold'] = \Voxel_Toolkit_Sold_Modifier::class;
         $modifiers['generate_qr_code'] = \Voxel_Toolkit_QR_Code_Modifier::class;
         $modifiers['see_more'] = \Voxel_Toolkit_See_More_Modifier::class;
+        $modifiers['initial'] = \Voxel_Toolkit_Initial_Modifier::class;
 
         return $modifiers;
     }
