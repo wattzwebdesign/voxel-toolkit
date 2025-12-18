@@ -61,6 +61,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Required key suffix prevents naming conflicts
     - Singleton field detection (title, description, location, etc.) with warnings
     - Handles nested repeater fields automatically
+- **Initial Modifier**: New dynamic tag modifier that returns first letter with period
+  - Usage: `@user(display_name).initial()` → "J."
+  - Multibyte safe for international characters
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options
