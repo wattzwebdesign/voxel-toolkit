@@ -44,6 +44,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Supports all dynamic tags and modifiers including toolkit's custom ones
   - Native dynamic tag picker with post-type-specific fields
 - **Settings Page Overhaul**: Redesigned settings page with tab-based navigation for better organization
+- **Helpful Votes Sorting**: New order-by option for Voxel search to sort posts by Article Helpful widget votes
+  - Most Helpful (Yes votes)
+  - Most Disputed (No votes)
+  - Total Votes (Yes + No combined)
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options
