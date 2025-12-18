@@ -168,6 +168,13 @@ class Voxel_Toolkit_Article_Helpful_Widget_Manager {
         update_post_meta($post_id, '_article_helpful_yes', $yes_count);
         update_post_meta($post_id, '_article_helpful_no', $no_count);
 
+        // Update timestamp for the vote type
+        if ($vote_type === 'yes') {
+            update_post_meta($post_id, '_article_helpful_last_yes_vote', time());
+        } else {
+            update_post_meta($post_id, '_article_helpful_last_no_vote', time());
+        }
+
         // Save the vote
         if ($user_id) {
             // Save to user meta

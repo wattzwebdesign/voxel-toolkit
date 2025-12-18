@@ -341,6 +341,38 @@ class Voxel_Toolkit_Dynamic_Tags {
                 $percentage = ($yes_count / $total) * 100;
                 return round($percentage);
             } );
+
+            // Add article helpful latest yes vote timestamp property
+            $properties['article_helpful_latest_yes'] = \Voxel\Dynamic_Data\Tag::Date('Article Helpful Latest Yes')
+                ->render( function() use ( $group ) {
+                    if (!$group->post || !$group->post->get_id()) {
+                        return null;
+                    }
+
+                    $timestamp = get_post_meta($group->post->get_id(), '_article_helpful_last_yes_vote', true);
+
+                    if (empty($timestamp)) {
+                        return null;
+                    }
+
+                    return date('Y-m-d H:i:s', intval($timestamp));
+                } );
+
+            // Add article helpful latest no vote timestamp property
+            $properties['article_helpful_latest_no'] = \Voxel\Dynamic_Data\Tag::Date('Article Helpful Latest No')
+                ->render( function() use ( $group ) {
+                    if (!$group->post || !$group->post->get_id()) {
+                        return null;
+                    }
+
+                    $timestamp = get_post_meta($group->post->get_id(), '_article_helpful_last_no_vote', true);
+
+                    if (empty($timestamp)) {
+                        return null;
+                    }
+
+                    return date('Y-m-d H:i:s', intval($timestamp));
+                } );
         }
 
         // Add feed position property (absolute position across all pages)
