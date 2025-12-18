@@ -49,7 +49,7 @@ class Voxel_Toolkit_Order_By_Manager {
     }
 
     /**
-     * Inject JavaScript to add view count preset to Post_Type_Options
+     * Inject JavaScript to add order by presets to Post_Type_Options
      */
     public function inject_view_count_preset_js() {
         // Only run on admin pages
@@ -71,6 +71,17 @@ class Voxel_Toolkit_Order_By_Manager {
                         period: 'all'
                     }]
                 };
+
+                // Add "Helpful Votes" preset
+                window.Post_Type_Options.orderby_presets['helpful-votes-preset'] = {
+                    key: 'helpful-votes-preset',
+                    label: 'Helpful Votes',
+                    clauses: [{
+                        type: 'helpful-votes',
+                        order: 'DESC',
+                        sort_type: 'helpful'
+                    }]
+                };
             }
         })();
         </script>
@@ -79,14 +90,19 @@ class Voxel_Toolkit_Order_By_Manager {
 }
 
 // Register filter at the top level (before any theme hooks)
-// Load the class file INSIDE the filter callback to ensure Voxel classes exist first
+// Load the class files INSIDE the filter callback to ensure Voxel classes exist first
 add_filter('voxel/orderby-types', function($orderby_types) {
-    // Load view count order class NOW (when filter is called, Voxel classes exist)
+    // Load view count order class
     if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/order-by/class-view-count-order.php')) {
         require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/order-by/class-view-count-order.php';
     }
-
     $orderby_types['view-count'] = \Voxel_Toolkit\Order_By\View_Count_Order::class;
+
+    // Load helpful votes order class
+    if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/order-by/class-helpful-votes-order.php')) {
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/order-by/class-helpful-votes-order.php';
+    }
+    $orderby_types['helpful-votes'] = \Voxel_Toolkit\Order_By\Helpful_Votes_Order::class;
 
     return $orderby_types;
 });

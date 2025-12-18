@@ -123,10 +123,11 @@ class Voxel_Toolkit_See_More_Modifier extends \Voxel\Dynamic_Data\Modifiers\Base
         $link_escaped = esc_html($link_text);
         $collapse_escaped = esc_html($collapse_text);
 
+        // Use CSS classes instead of inline styles for better Elementor compatibility
         return sprintf(
             '<div class="vt-see-more-wrapper" id="%s" data-expand-text="%s" data-collapse-text="%s">
-                <div class="vt-see-more-truncated">%s<span class="vt-see-more-ellipsis">... </span><span class="vt-see-more-link" role="button" tabindex="0"><strong>%s</strong></span></div>
-                <div class="vt-see-more-full" style="display: none;">%s<span class="vt-see-more-ellipsis"> </span><span class="vt-see-more-link vt-see-more-collapse" role="button" tabindex="0"><strong>%s</strong></span></div>
+                <div class="vt-see-more-truncated vt-see-more-visible">%s<span class="vt-see-more-ellipsis">... </span><span class="vt-see-more-link" role="button" tabindex="0"><strong>%s</strong></span></div>
+                <div class="vt-see-more-full vt-see-more-hidden">%s<span class="vt-see-more-ellipsis"> </span><span class="vt-see-more-link vt-see-more-collapse" role="button" tabindex="0"><strong>%s</strong></span></div>
             </div>',
             esc_attr($id),
             esc_attr($link_escaped),
@@ -149,7 +150,13 @@ class Voxel_Toolkit_See_More_Modifier extends \Voxel\Dynamic_Data\Modifiers\Base
     public function output_inline_styles_scripts() {
         ?>
         <style>
-        .vt-see-more-wrapper { }
+        /* Use !important to override Elementor's aggressive styling */
+        .vt-see-more-wrapper .vt-see-more-hidden {
+            display: none !important;
+        }
+        .vt-see-more-wrapper .vt-see-more-visible {
+            display: block !important;
+        }
         .vt-see-more-link {
             color: inherit;
             cursor: pointer;
@@ -183,25 +190,17 @@ class Voxel_Toolkit_See_More_Modifier extends \Voxel\Dynamic_Data\Modifiers\Base
                 if (isExpanded) {
                     // Collapse: show truncated, hide full
                     wrapper.classList.remove('vt-see-more-expanded');
-                    full.style.display = 'none';
-                    truncated.style.display = 'block';
+                    full.classList.add('vt-see-more-hidden');
+                    full.classList.remove('vt-see-more-visible');
+                    truncated.classList.add('vt-see-more-visible');
+                    truncated.classList.remove('vt-see-more-hidden');
                 } else {
-                    // Expand: hide truncated, show full with slide animation
+                    // Expand: hide truncated, show full
                     wrapper.classList.add('vt-see-more-expanded');
-                    truncated.style.display = 'none';
-                    full.style.display = 'block';
-                    full.style.maxHeight = '0';
-                    full.style.transition = 'max-height 0.3s ease-out';
-
-                    // Trigger reflow then animate
-                    full.offsetHeight;
-                    full.style.maxHeight = full.scrollHeight + 'px';
-
-                    // Clean up after animation
-                    setTimeout(function() {
-                        full.style.maxHeight = '';
-                        full.style.transition = '';
-                    }, 300);
+                    truncated.classList.add('vt-see-more-hidden');
+                    truncated.classList.remove('vt-see-more-visible');
+                    full.classList.add('vt-see-more-visible');
+                    full.classList.remove('vt-see-more-hidden');
                 }
             });
 
