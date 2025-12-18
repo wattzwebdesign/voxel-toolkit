@@ -52,6 +52,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `@post(article_helpful_latest_yes)` - Date of last yes vote
   - `@post(article_helpful_latest_no)` - Date of last no vote
   - Use with visibility rules to show/hide badges based on vote recency
+- **Tools Page**: New Tools submenu with utility tools for site management
+  - **Duplicate Post Fields**: Copy fields between Voxel post types
+    - Select source and destination post types
+    - Choose specific fields via checkbox list
+    - Required key suffix prevents naming conflicts
+    - Singleton field detection (title, description, location, etc.) with warnings
+    - Handles nested repeater fields automatically
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options
