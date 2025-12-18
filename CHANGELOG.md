@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Max attendee limits with automatic closure
   - CSV export for attendee data
   - Full Elementor styling controls
+  - **App Events**: RSVP Submitted, Approved, Rejected events per post type
+  - **Per-post-type custom fields**: Define different RSVP fields for each post type, dynamic tags show only relevant fields
 - **Compare Posts**: New feature to compare 2-4 posts of the same type side-by-side
   - Compare Button widget for single post templates
   - Comparison Table widget for dedicated comparison page
