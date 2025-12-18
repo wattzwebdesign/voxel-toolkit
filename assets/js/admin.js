@@ -1078,3 +1078,255 @@ jQuery(document).ready(function($) {
     // Initialize
     VTSettings.init();
 });
+
+/**
+ * Tools Page - Duplicate Post Fields functionality
+ */
+(function($) {
+    'use strict';
+
+    var VTTools = {
+        init: function() {
+            // Only initialize on Tools page
+            if ($('#vt-duplicate-fields-form').length === 0) {
+                return;
+            }
+
+            this.bindEvents();
+            this.updateButtonState();
+        },
+
+        bindEvents: function() {
+            var self = this;
+
+            // Source post type change - load fields
+            $('#vt-source-post-type').on('change', function() {
+                self.loadFields($(this).val());
+            });
+
+            // Destination post type change - update button state
+            $('#vt-dest-post-type').on('change', function() {
+                self.updateButtonState();
+            });
+
+            // Key suffix change - update button state
+            $('#vt-key-suffix').on('input', function() {
+                self.updateButtonState();
+            });
+
+            // Field checkbox change - update button state
+            $(document).on('change', 'input[name="vt_fields[]"]', function() {
+                self.updateButtonState();
+            });
+
+            // Select all fields
+            $('#vt-select-all-fields').on('click', function() {
+                $('#vt-fields-list input[type="checkbox"]').prop('checked', true);
+                self.updateButtonState();
+            });
+
+            // Deselect all fields
+            $('#vt-deselect-all-fields').on('click', function() {
+                $('#vt-fields-list input[type="checkbox"]').prop('checked', false);
+                self.updateButtonState();
+            });
+
+            // Form submit
+            $('#vt-duplicate-fields-form').on('submit', function(e) {
+                e.preventDefault();
+                self.duplicateFields();
+            });
+
+            // Tab switching (reuse existing settings page logic)
+            $('.vt-settings-tab').on('click', function() {
+                var tabKey = $(this).data('tab');
+
+                // Update active states
+                $('.vt-settings-tab').removeClass('active');
+                $(this).addClass('active');
+
+                $('.vt-settings-panel').removeClass('active');
+                $('.vt-settings-panel[data-panel="' + tabKey + '"]').addClass('active');
+
+                // Update URL hash
+                if (history.replaceState) {
+                    history.replaceState(null, null, '#' + tabKey);
+                }
+            });
+        },
+
+        loadFields: function(postType) {
+            var self = this;
+            var $fieldsRow = $('#vt-fields-row');
+            var $fieldsList = $('#vt-fields-list');
+            var $result = $('#vt-duplicate-result');
+
+            // Hide result
+            $result.hide().removeClass('success warning error').empty();
+
+            if (!postType) {
+                $fieldsRow.hide();
+                $fieldsList.empty();
+                self.updateButtonState();
+                return;
+            }
+
+            // Show loading state
+            $fieldsList.html('<p class="description" style="padding: 15px;">Loading fields...</p>');
+            $fieldsRow.show();
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'GET',
+                data: {
+                    action: 'vt_get_post_type_fields',
+                    post_type: postType,
+                    nonce: $('#vt_duplicate_fields_nonce').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $fieldsList.html(response.data.html);
+                        self.updateButtonState();
+                    } else {
+                        $fieldsList.html('<p class="description" style="padding: 15px; color: #dc2626;">' + (response.data.message || 'Error loading fields.') + '</p>');
+                    }
+                },
+                error: function() {
+                    $fieldsList.html('<p class="description" style="padding: 15px; color: #dc2626;">Failed to load fields. Please try again.</p>');
+                }
+            });
+        },
+
+        updateButtonState: function() {
+            var source = $('#vt-source-post-type').val();
+            var dest = $('#vt-dest-post-type').val();
+            var suffix = $('#vt-key-suffix').val().trim();
+            var selectedFields = $('input[name="vt_fields[]"]:checked').length;
+
+            var isValid = source && dest && source !== dest && suffix && selectedFields > 0;
+
+            $('#vt-duplicate-btn').prop('disabled', !isValid);
+        },
+
+        duplicateFields: function() {
+            var self = this;
+            var $form = $('#vt-duplicate-fields-form');
+            var $button = $('#vt-duplicate-btn');
+            var $spinner = $('#vt-duplicate-spinner');
+            var $result = $('#vt-duplicate-result');
+
+            var source = $('#vt-source-post-type').val();
+            var dest = $('#vt-dest-post-type').val();
+            var suffix = $('#vt-key-suffix').val().trim();
+            var fields = [];
+
+            $('input[name="vt_fields[]"]:checked').each(function() {
+                fields.push($(this).val());
+            });
+
+            // Validation
+            if (!source || !dest) {
+                self.showResult('error', 'Please select both source and destination post types.');
+                return;
+            }
+
+            if (source === dest) {
+                self.showResult('error', 'Source and destination post types cannot be the same.');
+                return;
+            }
+
+            if (!suffix) {
+                self.showResult('error', 'Key suffix is required.');
+                return;
+            }
+
+            if (fields.length === 0) {
+                self.showResult('error', 'Please select at least one field to copy.');
+                return;
+            }
+
+            // Check for singleton fields
+            var singletonFields = [];
+            $('input[name="vt_fields[]"]:checked').each(function() {
+                if ($(this).data('singleton') === 1) {
+                    var label = $(this).closest('label').find('.vt-field-label').text();
+                    var type = $(this).data('type');
+                    singletonFields.push(label + ' (' + type + ')');
+                }
+            });
+
+            // Confirmation
+            var sourceLabel = $('#vt-source-post-type option:selected').text().trim();
+            var destLabel = $('#vt-dest-post-type option:selected').text().trim();
+
+            var confirmMsg = 'Copy ' + fields.length + ' field(s) from ' + sourceLabel + ' to ' + destLabel + '?\n\nKey suffix: ' + suffix;
+
+            if (singletonFields.length > 0) {
+                confirmMsg += '\n\nWarning: You selected ' + singletonFields.length + ' singleton field(s):\n• ' + singletonFields.join('\n• ') + '\n\nThese will be skipped if the destination already has this field type.';
+            }
+
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+
+            // Disable button and show spinner
+            $button.prop('disabled', true);
+            $spinner.addClass('is-active');
+            $result.hide();
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'vt_duplicate_post_fields',
+                    nonce: $('#vt_duplicate_fields_nonce').val(),
+                    source: source,
+                    destination: dest,
+                    suffix: suffix,
+                    fields: fields
+                },
+                success: function(response) {
+                    if (response.success) {
+                        var status = response.data.status || 'success';
+                        self.showResult(status, response.data.message);
+
+                        // If successful, clear field selection
+                        if (status === 'success') {
+                            $('input[name="vt_fields[]"]').prop('checked', false);
+                            self.updateButtonState();
+                        }
+                    } else {
+                        self.showResult('error', response.data.message || 'An error occurred.');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Duplicate fields error:', error);
+                    self.showResult('error', 'Connection error. Please try again.');
+                },
+                complete: function() {
+                    $spinner.removeClass('is-active');
+                    self.updateButtonState();
+                }
+            });
+        },
+
+        showResult: function(status, message) {
+            var $result = $('#vt-duplicate-result');
+            $result
+                .removeClass('success warning error')
+                .addClass(status)
+                .html(message)
+                .show();
+
+            // Scroll to result
+            $('html, body').animate({
+                scrollTop: $result.offset().top - 100
+            }, 300);
+        }
+    };
+
+    // Initialize when document is ready
+    $(document).ready(function() {
+        VTTools.init();
+    });
+})(jQuery);

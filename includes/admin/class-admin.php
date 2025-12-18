@@ -49,6 +49,10 @@ class Voxel_Toolkit_Admin {
         add_action('wp_ajax_vt_admin_notifications_user_search', array($this, 'ajax_admin_notifications_user_search'));
         add_action('wp_ajax_voxel_toolkit_reorder_fields', array($this, 'ajax_reorder_fields'));
         add_action('wp_ajax_vt_save_function_settings', array($this, 'ajax_save_function_settings'));
+
+        // Tools page AJAX handlers
+        add_action('wp_ajax_vt_get_post_type_fields', array($this, 'ajax_get_post_type_fields'));
+        add_action('wp_ajax_vt_duplicate_post_fields', array($this, 'ajax_duplicate_post_fields'));
     }
     
     /**
@@ -140,6 +144,15 @@ class Voxel_Toolkit_Admin {
             'manage_options',
             'voxel-toolkit-settings',
             array($this, 'render_settings_page')
+        );
+
+        add_submenu_page(
+            'voxel-toolkit',
+            __('Tools', 'voxel-toolkit'),
+            __('Tools', 'voxel-toolkit'),
+            'manage_options',
+            'voxel-toolkit-tools',
+            array($this, 'render_tools_page')
         );
 
         // Docs - External link
@@ -643,7 +656,137 @@ class Voxel_Toolkit_Admin {
         </div>
         <?php
     }
-    
+
+    /**
+     * Render tools page
+     */
+    public function render_tools_page() {
+        // Get Voxel post types
+        $post_types_json = get_option('voxel:post_types', '{}');
+        $post_types = json_decode($post_types_json, true);
+
+        if (!is_array($post_types)) {
+            $post_types = array();
+        }
+
+        ?>
+        <div class="wrap voxel-toolkit-admin">
+            <h1><?php _e('Voxel Toolkit Tools', 'voxel-toolkit'); ?></h1>
+            <p class="description"><?php _e('Utility tools for managing your Voxel site.', 'voxel-toolkit'); ?></p>
+
+            <div class="vt-settings-container">
+                <!-- Tab Sidebar -->
+                <div class="vt-settings-tabs">
+                    <div class="vt-settings-tabs-list">
+                        <button type="button" class="vt-settings-tab active" data-tab="duplicate-fields">
+                            <?php _e('Duplicate Post Fields', 'voxel-toolkit'); ?>
+                        </button>
+                        <!-- Future tools will be added here -->
+                    </div>
+                </div>
+
+                <!-- Content Panels -->
+                <div class="vt-settings-content">
+                    <!-- Duplicate Post Fields Panel -->
+                    <div class="vt-settings-panel active" data-panel="duplicate-fields">
+                        <div class="vt-settings-panel-header">
+                            <div class="vt-settings-panel-header-left">
+                                <h2 class="vt-settings-panel-title"><?php _e('Duplicate Post Fields', 'voxel-toolkit'); ?></h2>
+                                <p class="vt-settings-panel-description"><?php _e('Copy fields from one post type to another with customizable key suffixes.', 'voxel-toolkit'); ?></p>
+                            </div>
+                        </div>
+
+                        <div class="vt-settings-panel-body">
+                            <form id="vt-duplicate-fields-form">
+                                <?php wp_nonce_field('vt_duplicate_fields', 'vt_duplicate_fields_nonce'); ?>
+
+                                <table class="form-table">
+                                    <tr>
+                                        <th scope="row">
+                                            <label for="vt-source-post-type"><?php _e('Source Post Type', 'voxel-toolkit'); ?></label>
+                                        </th>
+                                        <td>
+                                            <select id="vt-source-post-type" class="regular-text">
+                                                <option value=""><?php _e('Select a post type...', 'voxel-toolkit'); ?></option>
+                                                <?php foreach ($post_types as $key => $data): ?>
+                                                    <?php
+                                                    $label = isset($data['settings']['singular']) ? $data['settings']['singular'] : $key;
+                                                    ?>
+                                                    <option value="<?php echo esc_attr($key); ?>">
+                                                        <?php echo esc_html($label . ' (' . $key . ')'); ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            <p class="description"><?php _e('Select the post type to copy fields from.', 'voxel-toolkit'); ?></p>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th scope="row">
+                                            <label for="vt-dest-post-type"><?php _e('Destination Post Type', 'voxel-toolkit'); ?></label>
+                                        </th>
+                                        <td>
+                                            <select id="vt-dest-post-type" class="regular-text">
+                                                <option value=""><?php _e('Select a post type...', 'voxel-toolkit'); ?></option>
+                                                <?php foreach ($post_types as $key => $data): ?>
+                                                    <?php
+                                                    $label = isset($data['settings']['singular']) ? $data['settings']['singular'] : $key;
+                                                    ?>
+                                                    <option value="<?php echo esc_attr($key); ?>">
+                                                        <?php echo esc_html($label . ' (' . $key . ')'); ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            <p class="description"><?php _e('Select the post type to copy fields to.', 'voxel-toolkit'); ?></p>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th scope="row">
+                                            <label for="vt-key-suffix"><?php _e('Key Suffix', 'voxel-toolkit'); ?> <span class="required">*</span></label>
+                                        </th>
+                                        <td>
+                                            <input type="text" id="vt-key-suffix" class="regular-text" placeholder="_copy" required>
+                                            <p class="description"><?php _e('Required. Appended to all field keys (e.g., "title" becomes "title_copy").', 'voxel-toolkit'); ?></p>
+                                        </td>
+                                    </tr>
+
+                                    <tr id="vt-fields-row" style="display: none;">
+                                        <th scope="row">
+                                            <label><?php _e('Fields to Copy', 'voxel-toolkit'); ?></label>
+                                        </th>
+                                        <td>
+                                            <div class="vt-tools-field-actions">
+                                                <button type="button" class="button button-small" id="vt-select-all-fields"><?php _e('Select All', 'voxel-toolkit'); ?></button>
+                                                <button type="button" class="button button-small" id="vt-deselect-all-fields"><?php _e('Deselect All', 'voxel-toolkit'); ?></button>
+                                            </div>
+                                            <div id="vt-fields-list" class="vt-tools-field-list">
+                                                <!-- Fields populated via JavaScript -->
+                                            </div>
+                                            <p class="description"><?php _e('Select the fields you want to copy to the destination post type.', 'voxel-toolkit'); ?></p>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <p class="submit">
+                                    <button type="submit" class="button button-primary" id="vt-duplicate-btn" disabled>
+                                        <span class="dashicons dashicons-admin-page" style="margin-top: 4px;"></span>
+                                        <?php _e('Duplicate Selected Fields', 'voxel-toolkit'); ?>
+                                    </button>
+                                    <span class="spinner" id="vt-duplicate-spinner"></span>
+                                </p>
+
+                                <div id="vt-duplicate-result" class="vt-tools-result" style="display: none;"></div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- End Duplicate Post Fields Panel -->
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
     /**
      * Handle settings save
      */
@@ -3989,6 +4132,259 @@ class Voxel_Toolkit_Admin {
             'provider' => isset($sms_settings['provider']) ? $sms_settings['provider'] : 'twilio',
             'events' => isset($sms_settings['events']) ? $sms_settings['events'] : array(),
             'settings_url' => admin_url('admin.php?page=voxel-toolkit'),
+        ));
+    }
+
+    /**
+     * Get singleton field types (only one allowed per post type)
+     */
+    private function get_singleton_field_types() {
+        return array(
+            'title',
+            'description',
+            'timezone',
+            'location',
+            'email',
+            'phone',
+            'work-hours',
+            'product',
+            'profile-name',
+            'profile-avatar',
+        );
+    }
+
+    /**
+     * AJAX handler: Get fields for a post type
+     */
+    public function ajax_get_post_type_fields() {
+        check_ajax_referer('vt_duplicate_fields', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Permission denied.', 'voxel-toolkit')));
+        }
+
+        $post_type = isset($_GET['post_type']) ? sanitize_key($_GET['post_type']) : '';
+
+        if (empty($post_type)) {
+            wp_send_json_error(array('message' => __('Post type not specified.', 'voxel-toolkit')));
+        }
+
+        $post_types_json = get_option('voxel:post_types', '{}');
+        $post_types = json_decode($post_types_json, true);
+
+        if (!is_array($post_types) || !isset($post_types[$post_type]['fields'])) {
+            wp_send_json_error(array('message' => __('Post type not found.', 'voxel-toolkit')));
+        }
+
+        $fields = $post_types[$post_type]['fields'];
+        $singleton_types = $this->get_singleton_field_types();
+        $html = '';
+
+        foreach ($fields as $field) {
+            if (!isset($field['key']) || !isset($field['type'])) {
+                continue;
+            }
+
+            $label = !empty($field['label']) ? $field['label'] : $field['key'];
+            $type_label = ucfirst(str_replace(array('-', '_'), ' ', $field['type']));
+            $is_singleton = in_array($field['type'], $singleton_types);
+
+            $html .= sprintf(
+                '<label class="vt-field-item"><input type="checkbox" name="vt_fields[]" value="%s" data-type="%s" data-singleton="%s"> <span class="vt-field-label">%s</span> <span class="vt-field-type">(%s)</span>%s <code class="vt-field-key">%s</code></label>',
+                esc_attr($field['key']),
+                esc_attr($field['type']),
+                $is_singleton ? '1' : '0',
+                esc_html($label),
+                esc_html($type_label),
+                $is_singleton ? ' <span class="vt-singleton-badge">singleton</span>' : '',
+                esc_html($field['key'])
+            );
+        }
+
+        if (empty($html)) {
+            $html = '<p class="description">' . __('No fields found for this post type.', 'voxel-toolkit') . '</p>';
+        }
+
+        wp_send_json_success(array(
+            'html' => $html,
+            'count' => count($fields),
+            'singleton_types' => $singleton_types
+        ));
+    }
+
+    /**
+     * AJAX handler: Duplicate post fields
+     */
+    public function ajax_duplicate_post_fields() {
+        check_ajax_referer('vt_duplicate_fields', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Permission denied.', 'voxel-toolkit')));
+        }
+
+        $source = isset($_POST['source']) ? sanitize_key($_POST['source']) : '';
+        $dest = isset($_POST['destination']) ? sanitize_key($_POST['destination']) : '';
+        $suffix = isset($_POST['suffix']) ? sanitize_text_field($_POST['suffix']) : '';
+        $field_keys = isset($_POST['fields']) && is_array($_POST['fields']) ? array_map('sanitize_key', $_POST['fields']) : array();
+
+        // Validation
+        if (empty($source)) {
+            wp_send_json_error(array('message' => __('Please select a source post type.', 'voxel-toolkit')));
+        }
+
+        if (empty($dest)) {
+            wp_send_json_error(array('message' => __('Please select a destination post type.', 'voxel-toolkit')));
+        }
+
+        if ($source === $dest) {
+            wp_send_json_error(array('message' => __('Source and destination post types cannot be the same.', 'voxel-toolkit')));
+        }
+
+        if (empty($suffix)) {
+            wp_send_json_error(array('message' => __('Key suffix is required.', 'voxel-toolkit')));
+        }
+
+        if (empty($field_keys)) {
+            wp_send_json_error(array('message' => __('Please select at least one field to copy.', 'voxel-toolkit')));
+        }
+
+        // Get post types data
+        $post_types_json = get_option('voxel:post_types', '{}');
+        $post_types = json_decode($post_types_json, true);
+
+        if (!is_array($post_types)) {
+            wp_send_json_error(array('message' => __('Could not read post types data.', 'voxel-toolkit')));
+        }
+
+        if (!isset($post_types[$source]['fields'])) {
+            wp_send_json_error(array('message' => __('Source post type not found.', 'voxel-toolkit')));
+        }
+
+        if (!isset($post_types[$dest]['fields'])) {
+            wp_send_json_error(array('message' => __('Destination post type not found.', 'voxel-toolkit')));
+        }
+
+        // Get existing destination field keys and types
+        $existing_keys = array();
+        $existing_types = array();
+        foreach ($post_types[$dest]['fields'] as $field) {
+            if (isset($field['key'])) {
+                $existing_keys[] = $field['key'];
+            }
+            if (isset($field['type'])) {
+                $existing_types[] = $field['type'];
+            }
+        }
+
+        $singleton_types = $this->get_singleton_field_types();
+        $copied = array();
+        $skipped = array();
+
+        foreach ($post_types[$source]['fields'] as $field) {
+            if (!isset($field['key']) || !in_array($field['key'], $field_keys)) {
+                continue;
+            }
+
+            $new_key = $field['key'] . $suffix;
+            $field_type = isset($field['type']) ? $field['type'] : '';
+
+            // Skip if key already exists in destination
+            if (in_array($new_key, $existing_keys)) {
+                $skipped[] = array(
+                    'original' => $field['key'],
+                    'new_key' => $new_key,
+                    'type' => $field_type,
+                    'reason' => __('Key already exists', 'voxel-toolkit')
+                );
+                continue;
+            }
+
+            // Skip singleton field types if destination already has one
+            if (in_array($field_type, $singleton_types) && in_array($field_type, $existing_types)) {
+                $skipped[] = array(
+                    'original' => $field['key'],
+                    'new_key' => $new_key,
+                    'type' => $field_type,
+                    'reason' => sprintf(__('Singleton field type "%s" already exists in destination', 'voxel-toolkit'), $field_type)
+                );
+                continue;
+            }
+
+            // Clone the field and update the key
+            $new_field = $field;
+            $new_field['key'] = $new_key;
+
+            // Update label to indicate it's a copy (optional)
+            if (!empty($new_field['label'])) {
+                $new_field['label'] = $new_field['label'];
+            }
+
+            // Handle nested fields for repeater type
+            if ($field['type'] === 'repeater' && isset($field['fields']) && is_array($field['fields'])) {
+                $new_field['fields'] = array();
+                foreach ($field['fields'] as $nested_field) {
+                    $nested_copy = $nested_field;
+                    if (isset($nested_field['key'])) {
+                        $nested_copy['key'] = $nested_field['key'] . $suffix;
+                    }
+                    $new_field['fields'][] = $nested_copy;
+                }
+            }
+
+            // Add to destination post type
+            $post_types[$dest]['fields'][] = $new_field;
+            $existing_keys[] = $new_key; // Track for subsequent duplicate checks
+
+            $copied[] = array(
+                'original' => $field['key'],
+                'new_key' => $new_key,
+                'type' => $field['type']
+            );
+        }
+
+        if (empty($copied) && empty($skipped)) {
+            wp_send_json_error(array('message' => __('No fields were selected or found.', 'voxel-toolkit')));
+        }
+
+        // Save updated post types
+        $save_result = update_option('voxel:post_types', wp_json_encode($post_types));
+
+        if ($save_result === false && !empty($copied)) {
+            // Check if nothing changed (returns false if value is the same)
+            $verify = get_option('voxel:post_types');
+            if ($verify !== wp_json_encode($post_types)) {
+                wp_send_json_error(array('message' => __('Failed to save changes to the database.', 'voxel-toolkit')));
+            }
+        }
+
+        // Build response message
+        $message_parts = array();
+
+        if (!empty($copied)) {
+            $message_parts[] = sprintf(
+                _n('%d field copied successfully.', '%d fields copied successfully.', count($copied), 'voxel-toolkit'),
+                count($copied)
+            );
+        }
+
+        if (!empty($skipped)) {
+            $skipped_keys = array_map(function($s) { return $s['original']; }, $skipped);
+            $message_parts[] = sprintf(
+                _n('%d field skipped due to key conflict: %s', '%d fields skipped due to key conflicts: %s', count($skipped), 'voxel-toolkit'),
+                count($skipped),
+                implode(', ', $skipped_keys)
+            );
+        }
+
+        $status = empty($skipped) ? 'success' : (empty($copied) ? 'error' : 'warning');
+
+        wp_send_json_success(array(
+            'message' => implode(' ', $message_parts),
+            'status' => $status,
+            'copied' => $copied,
+            'skipped' => $skipped,
+            'copied_count' => count($copied),
+            'skipped_count' => count($skipped)
         ));
     }
 
