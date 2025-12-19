@@ -255,6 +255,43 @@ body.vt-compare-popup-open {
 }
 
 /* ========================================
+   Print Button
+   ======================================== */
+.vt-compare-print-wrapper {
+    margin-bottom: 15px;
+}
+
+.vt-compare-print-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: var(--ts-accent-1, #3b82f6);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.vt-compare-print-btn:hover {
+    background-color: var(--ts-accent-2, #2563eb);
+}
+
+.vt-compare-print-btn:active {
+    transform: scale(0.98);
+}
+
+.vt-compare-print-btn i,
+.vt-compare-print-btn svg {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* ========================================
    Comparison Table Widget
    ======================================== */
 .vt-compare-table-wrapper {
@@ -706,5 +743,18 @@ body.vt-compare-popup-open {
     .vt-compare-table td {
         padding: 8px 10px;
         font-size: 13px;
+    }
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+@media print {
+    .vt-compare-print-wrapper {
+        display: none !important;
+    }
+
+    .vt-compare-remove-btn {
+        display: none !important;
     }
 }

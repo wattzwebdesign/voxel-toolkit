@@ -199,6 +199,85 @@ class Voxel_Toolkit_Compare_Posts_Table_Widget extends \Elementor\Widget_Base {
         );
 
         $this->end_controls_section();
+
+        // Print Button Section
+        $this->start_controls_section(
+            'section_print_button',
+            array(
+                'label' => __('Print Button', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+            )
+        );
+
+        $this->add_control(
+            'show_print_button',
+            array(
+                'label' => __('Show Print Button', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => '',
+            )
+        );
+
+        $this->add_control(
+            'print_button_text',
+            array(
+                'label' => __('Button Text', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Print Comparison', 'voxel-toolkit'),
+                'condition' => array(
+                    'show_print_button' => 'yes',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'print_button_icon',
+            array(
+                'label' => __('Icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => array(
+                    'value' => 'fas fa-print',
+                    'library' => 'fa-solid',
+                ),
+                'condition' => array(
+                    'show_print_button' => 'yes',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'print_button_alignment',
+            array(
+                'label' => __('Alignment', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => array(
+                    'left' => array(
+                        'title' => __('Left', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-left',
+                    ),
+                    'center' => array(
+                        'title' => __('Center', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-center',
+                    ),
+                    'right' => array(
+                        'title' => __('Right', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-right',
+                    ),
+                ),
+                'default' => 'right',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-compare-print-wrapper' => 'text-align: {{VALUE}};',
+                ),
+                'condition' => array(
+                    'show_print_button' => 'yes',
+                ),
+            )
+        );
+
+        $this->end_controls_section();
     }
 
     /**
@@ -628,6 +707,184 @@ class Voxel_Toolkit_Compare_Posts_Table_Widget extends \Elementor\Widget_Base {
         );
 
         $this->end_controls_section();
+
+        // Print Button Style
+        $this->start_controls_section(
+            'section_print_button_style',
+            array(
+                'label' => __('Print Button', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+                'condition' => array(
+                    'show_print_button' => 'yes',
+                ),
+            )
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            array(
+                'name' => 'print_btn_typography',
+                'selector' => '{{WRAPPER}} .vt-compare-print-btn',
+            )
+        );
+
+        $this->start_controls_tabs('print_btn_tabs');
+
+        $this->start_controls_tab(
+            'print_btn_normal',
+            array(
+                'label' => __('Normal', 'voxel-toolkit'),
+            )
+        );
+
+        $this->add_control(
+            'print_btn_color',
+            array(
+                'label' => __('Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-compare-print-btn' => 'color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'print_btn_icon_color',
+            array(
+                'label' => __('Icon Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-compare-print-btn i' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .vt-compare-print-btn svg' => 'fill: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'print_btn_bg_color',
+            array(
+                'label' => __('Background Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-compare-print-btn' => 'background-color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->end_controls_tab();
+
+        $this->start_controls_tab(
+            'print_btn_hover',
+            array(
+                'label' => __('Hover', 'voxel-toolkit'),
+            )
+        );
+
+        $this->add_control(
+            'print_btn_hover_color',
+            array(
+                'label' => __('Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-compare-print-btn:hover' => 'color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'print_btn_hover_icon_color',
+            array(
+                'label' => __('Icon Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-compare-print-btn:hover i' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .vt-compare-print-btn:hover svg' => 'fill: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'print_btn_hover_bg_color',
+            array(
+                'label' => __('Background Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-compare-print-btn:hover' => 'background-color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->end_controls_tab();
+
+        $this->end_controls_tabs();
+
+        $this->add_responsive_control(
+            'print_btn_padding',
+            array(
+                'label' => __('Padding', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => array('px', 'em'),
+                'separator' => 'before',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-compare-print-btn' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'print_btn_border_radius',
+            array(
+                'label' => __('Border Radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => array('px', '%'),
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-compare-print-btn' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ),
+            )
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Border::get_type(),
+            array(
+                'name' => 'print_btn_border',
+                'selector' => '{{WRAPPER}} .vt-compare-print-btn',
+            )
+        );
+
+        $this->add_responsive_control(
+            'print_btn_icon_spacing',
+            array(
+                'label' => __('Icon Spacing', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'range' => array(
+                    'px' => array(
+                        'min' => 0,
+                        'max' => 30,
+                    ),
+                ),
+                'default' => array(
+                    'size' => 8,
+                    'unit' => 'px',
+                ),
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-compare-print-btn i, {{WRAPPER}} .vt-compare-print-btn svg' => 'margin-right: {{SIZE}}{{UNIT}};',
+                ),
+            )
+        );
+
+        $this->add_responsive_control(
+            'print_btn_margin',
+            array(
+                'label' => __('Margin', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => array('px', 'em'),
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-compare-print-wrapper' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ),
+            )
+        );
+
+        $this->end_controls_section();
     }
 
     /**
@@ -682,6 +939,20 @@ class Voxel_Toolkit_Compare_Posts_Table_Widget extends \Elementor\Widget_Base {
                     <?php echo esc_html($settings['min_posts_message']); ?>
                 </div>
 
+                <!-- Print button (shown when table is visible) -->
+                <?php if ($settings['show_print_button'] === 'yes'): ?>
+                <div class="vt-compare-print-wrapper" style="display: none;">
+                    <button type="button" class="vt-compare-print-btn">
+                        <?php
+                        if (!empty($settings['print_button_icon']['value'])) {
+                            \Elementor\Icons_Manager::render_icon($settings['print_button_icon'], array('aria-hidden' => 'true'));
+                        }
+                        ?>
+                        <span><?php echo esc_html($settings['print_button_text']); ?></span>
+                    </button>
+                </div>
+                <?php endif; ?>
+
                 <!-- Table container (populated by JavaScript) -->
                 <div class="vt-compare-table-container" style="display: none;">
                     <table class="vt-compare-table">
@@ -735,6 +1006,18 @@ class Voxel_Toolkit_Compare_Posts_Table_Widget extends \Elementor\Widget_Base {
             '2,500 sq ft',
         );
         ?>
+        <?php if ($settings['show_print_button'] === 'yes'): ?>
+        <div class="vt-compare-print-wrapper">
+            <button type="button" class="vt-compare-print-btn">
+                <?php
+                if (!empty($settings['print_button_icon']['value'])) {
+                    \Elementor\Icons_Manager::render_icon($settings['print_button_icon'], array('aria-hidden' => 'true'));
+                }
+                ?>
+                <span><?php echo esc_html($settings['print_button_text']); ?></span>
+            </button>
+        </div>
+        <?php endif; ?>
         <div class="vt-compare-table-container">
             <table class="vt-compare-table">
                 <thead>

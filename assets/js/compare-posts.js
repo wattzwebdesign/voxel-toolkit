@@ -255,6 +255,7 @@
             $wrapper.find('.vt-compare-empty').show();
             $wrapper.find('.vt-compare-min-posts').hide();
             $wrapper.find('.vt-compare-table-container').hide();
+            $wrapper.find('.vt-compare-print-wrapper').hide();
             return;
         }
 
@@ -263,12 +264,14 @@
             $wrapper.find('.vt-compare-empty').hide();
             $wrapper.find('.vt-compare-min-posts').show();
             $wrapper.find('.vt-compare-table-container').hide();
+            $wrapper.find('.vt-compare-print-wrapper').hide();
             return;
         }
 
-        // Hide empty/min states
+        // Hide empty/min states, show print button
         $wrapper.find('.vt-compare-empty').hide();
         $wrapper.find('.vt-compare-min-posts').hide();
+        $wrapper.find('.vt-compare-print-wrapper').show();
 
         // Fetch post data via AJAX and build table
         fetchPostsData(matchingPosts.map(function(p) { return p.id; }), selectedFields, function(postsData) {
@@ -405,6 +408,151 @@
     }
 
     /**
+     * Print the comparison table
+     * Opens print dialog with only the table content, portrait orientation
+     */
+    function printComparisonTable() {
+        var $wrapper = $('.vt-compare-table-wrapper');
+        var $table = $wrapper.find('.vt-compare-table');
+
+        if ($table.length === 0) {
+            return;
+        }
+
+        // Clone the table for printing
+        var tableHtml = $table.clone().wrap('<div>').parent().html();
+
+        // Create print window
+        var printWindow = window.open('', '_blank', 'width=800,height=600');
+
+        if (!printWindow) {
+            showNotification('Please allow popups to print the comparison table.', 'warning');
+            return;
+        }
+
+        // Get computed styles for the table
+        var printStyles = `
+            <style>
+                @page {
+                    size: portrait;
+                    margin: 0.5in;
+                }
+                * {
+                    box-sizing: border-box;
+                }
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+                    font-size: 12px;
+                    line-height: 1.4;
+                    color: #333;
+                    margin: 0;
+                    padding: 20px;
+                }
+                .vt-compare-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 11px;
+                }
+                .vt-compare-table th,
+                .vt-compare-table td {
+                    padding: 8px 10px;
+                    text-align: left;
+                    border: 1px solid #ddd;
+                    vertical-align: top;
+                }
+                .vt-compare-table thead th {
+                    background-color: #f5f5f5;
+                    font-weight: 600;
+                }
+                .vt-compare-table tbody th {
+                    background-color: #fafafa;
+                    font-weight: 500;
+                }
+                .vt-compare-table tbody tr:nth-child(even) td,
+                .vt-compare-table tbody tr:nth-child(even) th {
+                    background-color: #fafafa;
+                }
+                .vt-compare-header-content {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 5px;
+                    text-align: center;
+                }
+                .vt-compare-header-content img {
+                    width: 50px;
+                    height: 50px;
+                    object-fit: cover;
+                    border-radius: 4px;
+                }
+                .vt-compare-header-title {
+                    font-weight: 600;
+                    text-decoration: none;
+                    color: inherit;
+                }
+                .vt-compare-remove-btn {
+                    display: none !important;
+                }
+                .vt-compare-empty-value {
+                    color: #999;
+                }
+                .vt-compare-work-hours .vt-wh-day {
+                    display: flex;
+                    justify-content: space-between;
+                    gap: 10px;
+                    padding: 2px 0;
+                    border-bottom: 1px solid #eee;
+                }
+                .vt-compare-work-hours .vt-wh-day:last-child {
+                    border-bottom: none;
+                }
+                .vt-compare-work-hours .vt-wh-day-name {
+                    font-weight: 500;
+                }
+                .vt-compare-location .vt-loc-address {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 4px;
+                }
+                .vt-compare-images img {
+                    width: 40px;
+                    height: 40px;
+                    object-fit: cover;
+                    border-radius: 3px;
+                    margin: 2px;
+                }
+                a {
+                    color: inherit;
+                    text-decoration: none;
+                }
+                @media print {
+                    body {
+                        padding: 0;
+                    }
+                }
+            </style>
+        `;
+
+        // Write the print document
+        printWindow.document.write('<!DOCTYPE html><html><head><title>Comparison</title>' + printStyles + '</head><body>');
+        printWindow.document.write(tableHtml);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+
+        // Wait for content to render, then trigger print dialog
+        setTimeout(function() {
+            printWindow.focus();
+            printWindow.print();
+            // Close window after print dialog closes
+            if (printWindow.onafterprint !== undefined) {
+                printWindow.onafterprint = function() {
+                    printWindow.close();
+                };
+            }
+        }, 250);
+    }
+
+    /**
      * Initialize
      */
     $(document).ready(function() {
@@ -501,6 +649,12 @@
         $(document).on('click', '.vt-compare-remove-btn', function(e) {
             e.preventDefault();
             removePost($(this).data('post-id'));
+        });
+
+        // Handle print button click
+        $(document).on('click', '.vt-compare-print-btn', function(e) {
+            e.preventDefault();
+            printComparisonTable();
         });
 
         // Listen for storage changes (cross-tab sync)
