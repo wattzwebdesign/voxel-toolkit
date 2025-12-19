@@ -73,6 +73,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - "User is team member of current post" visibility rule for Elementor
   - Extended Author filter to include posts where user is a team member
   - Delete protection: only post author can delete (team members can edit only)
+- **Anonymous Timeline**: Allow users to post anonymously on timelines, walls, and reviews
+  - Users can check "Post Anonymously" on any timeline post or comment
+  - Each user gets a unique persistent Anonymous Member ID (5-digit number)
+  - Replaces name, avatar, and profile link with anonymous placeholders
+  - Works on all timeline feeds: post_reviews, post_wall, post_timeline, user_timeline
+  - Site administrators can always see real identity for moderation
+  - Anonymous likes are also anonymized
+  - Reposting and quoting anonymous posts is disabled
+  - Anonymous ID column added to WordPress Users table
+  - Deactivation warning updated to mention anonymous posts becoming public
+- **Timeline & Reviews Dynamic Tags**: Access latest and oldest entries from post timelines, walls, and reviews
+  - `@post(vt_reviews.latest/oldest.content)` - Review content text
+  - `@post(vt_reviews.latest/oldest.author)` - Reviewer display name
+  - `@post(vt_reviews.latest/oldest.score)` - Review score (1-5 scale)
+  - `@post(vt_reviews.latest/oldest.date)` - Review date (supports date modifiers)
+  - `@post(vt_reviews.latest/oldest.link)` - Direct link to review
+  - `@post(vt_timeline.latest/oldest.*)` - Same properties for timeline posts (no score)
+  - `@post(vt_wall.latest/oldest.*)` - Same properties for wall posts (no score)
+  - Results cached per request for performance
+  - Returns empty string when no entries exist
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options
