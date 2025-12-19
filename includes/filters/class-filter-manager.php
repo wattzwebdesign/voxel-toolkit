@@ -59,6 +59,7 @@ class Voxel_Toolkit_Filter_Manager {
         if (file_exists($listing_plan_template)) {
             require $listing_plan_template;
         }
+
     }
 
     /**
@@ -374,6 +375,7 @@ class Voxel_Toolkit_Filter_Manager {
                     }
                 }
             });
+
         });
         </script>
         <?php
@@ -412,6 +414,17 @@ add_filter('voxel/filter-types', function($filter_types) {
     $filter_types['membership-plan'] = \Voxel_Toolkit\Filters\Membership_Plan_Filter::class;
     $filter_types['user-role'] = \Voxel_Toolkit\Filters\User_Role_Filter::class;
     $filter_types['listing-plan'] = \Voxel_Toolkit\Filters\Listing_Plan_Filter::class;
+
+    // Override Voxel's Author filter to include team membership when team_members is enabled
+    if (class_exists('Voxel_Toolkit_Settings')) {
+        $settings = \Voxel_Toolkit_Settings::instance();
+        if ($settings->is_function_enabled('team_members')) {
+            if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/filters/class-author-extended-filter.php')) {
+                require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/filters/class-author-extended-filter.php';
+            }
+            $filter_types['user'] = \Voxel_Toolkit\Filters\Author_Extended_Filter::class;
+        }
+    }
 
     return $filter_types;
 });

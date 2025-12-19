@@ -392,6 +392,32 @@ class Voxel_Toolkit_Dynamic_Tags {
                 });
         }
 
+        // Add is_team_member property if team members function is enabled
+        if ($settings->is_function_enabled('team_members')) {
+            $properties['is_team_member'] = \Voxel\Dynamic_Data\Tag::String('Is Team Member')
+                ->render(function() use ($group) {
+                    if (!$group->post || !$group->post->get_id()) {
+                        return '';
+                    }
+
+                    if (!is_user_logged_in()) {
+                        return '';
+                    }
+
+                    // Check if Voxel_Toolkit_Team_Members class exists
+                    if (!class_exists('Voxel_Toolkit_Team_Members')) {
+                        return '';
+                    }
+
+                    $team_members = Voxel_Toolkit_Team_Members::instance();
+                    if (!$team_members) {
+                        return '';
+                    }
+
+                    return $team_members->is_team_member($group->post->get_id()) ? '1' : '';
+                });
+        }
+
         return $properties;
     }
 

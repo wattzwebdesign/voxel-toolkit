@@ -489,6 +489,14 @@ class Voxel_Toolkit_Functions {
                 'icon' => 'dashicons-networking',
                 'settings_callback' => array($this, 'render_enhanced_post_relation_settings'),
             ),
+            'team_members' => array(
+                'name' => __('Team Members', 'voxel-toolkit'),
+                'description' => __('Allow post authors to invite team members by email who can then edit the post. Includes custom field, invite system, and email notifications.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Team_Members',
+                'file' => 'functions/class-team-members.php',
+                'icon' => 'dashicons-groups',
+                'settings_callback' => array($this, 'render_team_members_settings'),
+            ),
         );
 
         // Allow other plugins/themes to register functions
@@ -5741,6 +5749,64 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             });
         }
         </script>
+        <?php
+    }
+
+    /**
+     * Render Team Members settings
+     */
+    public function render_team_members_settings($settings) {
+        $login_page_id = isset($settings['login_page_id']) ? absint($settings['login_page_id']) : 0;
+
+        // Get all published pages for dropdown
+        $pages = get_pages(array(
+            'post_status' => 'publish',
+            'sort_column' => 'post_title',
+            'sort_order' => 'ASC'
+        ));
+        ?>
+        <div class="vt-info-box">
+            <?php _e('Allow post authors to invite team members by email who can then edit the post. Add the "Team Members (VT)" field to your post types to enable this feature.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Login/Register Page', 'voxel-toolkit'); ?></h4>
+            <p class="vt-field-description" style="margin-bottom: 15px;">
+                <?php _e('Select the page where users should be redirected to log in or register when accepting an invite. This should be your Voxel login/register template page.', 'voxel-toolkit'); ?>
+            </p>
+            <div class="vt-field-group">
+                <select name="voxel_toolkit_options[team_members][login_page_id]" style="width: 100%; max-width: 400px;">
+                    <option value=""><?php _e('— Use WordPress default login —', 'voxel-toolkit'); ?></option>
+                    <?php foreach ($pages as $page): ?>
+                        <option value="<?php echo esc_attr($page->ID); ?>" <?php selected($login_page_id, $page->ID); ?>>
+                            <?php echo esc_html($page->post_title); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+
+        <div class="vt-settings-section" style="margin-top: 20px;">
+            <h4 class="vt-settings-section-title"><?php _e('Tips', 'voxel-toolkit'); ?></h4>
+            <ul style="list-style: disc; margin-left: 20px; margin-top: 10px;">
+                <li style="margin-bottom: 8px;">
+                    <strong><?php _e('Post Field:', 'voxel-toolkit'); ?></strong>
+                    <?php _e('Add the "Team Members (VT)" field to your post type in Voxel > Post Types > [Your Post Type] > Fields.', 'voxel-toolkit'); ?>
+                </li>
+                <li style="margin-bottom: 8px;">
+                    <strong><?php _e('Visibility Condition:', 'voxel-toolkit'); ?></strong>
+                    <?php _e('Use "User is team member of current post" in Elementor visibility conditions to show/hide elements for team members such as delete post, or specific fields you want them to be able to edit.', 'voxel-toolkit'); ?>
+                </li>
+                <li style="margin-bottom: 8px;">
+                    <strong><?php _e('App Events:', 'voxel-toolkit'); ?></strong>
+                    <?php _e('Three app events are available under "Voxel Toolkit" category: Team Member Invited, Accepted, and Declined.', 'voxel-toolkit'); ?>
+                </li>
+                <li style="margin-bottom: 8px;">
+                    <strong><?php _e('Author Filter:', 'voxel-toolkit'); ?></strong>
+                    <?php _e('The Author filter is automatically extended to include posts where a user is a team member.', 'voxel-toolkit'); ?>
+                </li>
+            </ul>
+        </div>
         <?php
     }
 }

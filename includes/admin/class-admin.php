@@ -1476,6 +1476,15 @@ class Voxel_Toolkit_Admin {
                         }
                         break;
 
+                    case 'team_members':
+                        // Login page ID
+                        if (isset($function_input['login_page_id'])) {
+                            $sanitized_function['login_page_id'] = absint($function_input['login_page_id']);
+                        } else {
+                            $sanitized_function['login_page_id'] = 0;
+                        }
+                        break;
+
                     case 'featured_posts':
                         if (isset($function_input['post_types']) && is_array($function_input['post_types'])) {
                             $sanitized_function['post_types'] = array_map('sanitize_text_field', $function_input['post_types']);

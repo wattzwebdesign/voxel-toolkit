@@ -1,0 +1,250 @@
+/**
+ * Team Members Field Styles
+ */
+
+/* Field Container */
+.vt-team-members-field {
+    width: 100%;
+}
+
+/* Add Member Section */
+.vt-team-add-member {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.vt-team-add-member input {
+    flex: 1;
+}
+
+.vt-team-add-member button {
+    white-space: nowrap;
+    min-width: 80px;
+    width: auto !important;
+    flex-shrink: 0;
+}
+
+/* Message Display */
+.vt-team-message {
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.vt-team-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.vt-team-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Members List */
+.vt-team-members-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.vt-team-member {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.vt-team-member-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.vt-team-member-email {
+    font-weight: 500;
+    color: #212529;
+}
+
+.vt-team-member-status {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-block;
+    width: fit-content;
+}
+
+.vt-team-member-status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.vt-team-member-status.accepted {
+    background: #d4edda;
+    color: #155724;
+}
+
+.vt-team-member-status.expired {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Member Actions */
+.vt-team-member-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.vt-team-action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.vt-team-action-btn.resend {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.vt-team-action-btn.resend:hover {
+    background: #007bff;
+    color: #fff;
+}
+
+.vt-team-action-btn.remove {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.vt-team-action-btn.remove:hover {
+    background: #dc3545;
+    color: #fff;
+}
+
+.vt-team-action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* No Members State */
+.vt-team-no-members {
+    color: #6c757d;
+    font-style: italic;
+    padding: 15px;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+/* Readonly Notice */
+.vt-team-member-notice {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Accept Modal */
+.vt-team-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vt-team-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.vt-team-modal-content {
+    position: relative;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.vt-team-modal-content h3 {
+    margin: 0 0 15px 0;
+    font-size: 22px;
+    color: var(--ts-heading-color, #212529);
+}
+
+.vt-team-modal-content p {
+    margin: 0 0 25px 0;
+    color: var(--ts-body-color, #495057);
+    line-height: 1.6;
+}
+
+.vt-team-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.vt-team-modal-actions button {
+    min-width: 120px;
+    padding: 12px 24px;
+}
+
+#vt-team-modal-message {
+    margin-top: 20px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .vt-team-add-member {
+        flex-direction: column;
+    }
+
+    .vt-team-add-member button {
+        width: 100%;
+    }
+
+    .vt-team-member {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .vt-team-member-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .vt-team-modal-actions {
+        flex-direction: column;
+    }
+
+    .vt-team-modal-actions button {
+        width: 100%;
+    }
+}

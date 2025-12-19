@@ -94,6 +94,9 @@ class Voxel_Toolkit {
         // Register auto-reply field type filter early (before Voxel calls it)
         add_filter('voxel/field-types', array($this, 'register_auto_reply_field_if_enabled'), 10);
 
+        // Register team members field type filter early (before Voxel calls it)
+        add_filter('voxel/field-types', array($this, 'register_team_members_field_if_enabled'), 10);
+
         // Load the actual field class later when Voxel classes are available
         add_action('after_setup_theme', array($this, 'init_post_fields'), 10);
     }
@@ -155,6 +158,40 @@ class Voxel_Toolkit {
         }
 
         $fields['auto-reply-vt'] = '\Voxel_Toolkit_Auto_Reply_Field_Type';
+        return $fields;
+    }
+
+    /**
+     * Register team members field type if enabled (called early via filter)
+     */
+    public function register_team_members_field_if_enabled($fields) {
+        // Load settings class if not loaded
+        if (!class_exists('Voxel_Toolkit_Settings')) {
+            if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-settings.php')) {
+                require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-settings.php';
+            } else {
+                return $fields;
+            }
+        }
+
+        $settings = Voxel_Toolkit_Settings::instance();
+        // Check if Team Members function is enabled
+        if (!$settings->is_function_enabled('team_members')) {
+            return $fields;
+        }
+
+        // Check if the field type class will be available
+        if (!class_exists('\Voxel\Post_Types\Fields\Base_Post_Field')) {
+            return $fields;
+        }
+
+        // Load the field file to ensure the class is available
+        $field_file = VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/class-team-members.php';
+        if (file_exists($field_file) && !class_exists('Voxel_Toolkit_Team_Members_Field_Type')) {
+            require_once $field_file;
+        }
+
+        $fields['team-members-vt'] = '\Voxel_Toolkit_Team_Members_Field_Type';
         return $fields;
     }
 
