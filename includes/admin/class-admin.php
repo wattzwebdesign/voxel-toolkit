@@ -2417,6 +2417,134 @@ class Voxel_Toolkit_Admin {
                 </table>
             </div>
 
+            <!-- Timeline Tags -->
+            <div class="settings-section" style="margin-top: 30px;">
+                <h2><?php _e('Timeline & Reviews Tags', 'voxel-toolkit'); ?></h2>
+                <p class="description"><?php _e('Access latest and oldest entries from post reviews, timeline, and wall. Use with @post() syntax.', 'voxel-toolkit'); ?></p>
+
+                <h3 style="margin-top: 20px;"><?php _e('Reviews', 'voxel-toolkit'); ?></h3>
+                <table class="widefat striped">
+                    <thead>
+                        <tr>
+                            <th><?php _e('Property', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>vt_reviews.latest.content</code></td>
+                            <td><?php _e('Content/text of the latest review', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_reviews.latest.content)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>vt_reviews.latest.author</code></td>
+                            <td><?php _e('Display name of the latest review author', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_reviews.latest.author)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>vt_reviews.latest.score</code></td>
+                            <td><?php _e('Rating score (1-5 scale)', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_reviews.latest.score)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>vt_reviews.latest.date</code></td>
+                            <td><?php _e('Date the review was posted', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_reviews.latest.date)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>vt_reviews.latest.link</code></td>
+                            <td><?php _e('Direct link to the review', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_reviews.latest.link)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>vt_reviews.oldest.*</code></td>
+                            <td><?php _e('Same properties available for the oldest/first review', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_reviews.oldest.content)</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 style="margin-top: 20px;"><?php _e('Timeline', 'voxel-toolkit'); ?></h3>
+                <table class="widefat striped">
+                    <thead>
+                        <tr>
+                            <th><?php _e('Property', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>vt_timeline.latest.content</code></td>
+                            <td><?php _e('Content of the latest timeline post', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_timeline.latest.content)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>vt_timeline.latest.author</code></td>
+                            <td><?php _e('Display name of the post author', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_timeline.latest.author)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>vt_timeline.latest.date</code></td>
+                            <td><?php _e('Date the post was created', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_timeline.latest.date)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>vt_timeline.latest.link</code></td>
+                            <td><?php _e('Direct link to the timeline post', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_timeline.latest.link)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>vt_timeline.oldest.*</code></td>
+                            <td><?php _e('Same properties available for the oldest/first post', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_timeline.oldest.content)</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 style="margin-top: 20px;"><?php _e('Wall', 'voxel-toolkit'); ?></h3>
+                <table class="widefat striped">
+                    <thead>
+                        <tr>
+                            <th><?php _e('Property', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>vt_wall.latest.content</code></td>
+                            <td><?php _e('Content of the latest wall post', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_wall.latest.content)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>vt_wall.latest.author</code></td>
+                            <td><?php _e('Display name of the wall post author', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_wall.latest.author)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>vt_wall.latest.date</code></td>
+                            <td><?php _e('Date the wall post was created', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_wall.latest.date)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>vt_wall.latest.link</code></td>
+                            <td><?php _e('Direct link to the wall post', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_wall.latest.link)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>vt_wall.oldest.*</code></td>
+                            <td><?php _e('Same properties available for the oldest/first wall post', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(vt_wall.oldest.content)</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 15px;">
+                    <em><?php _e('Note: All tags return empty string if no entries exist. The score property is only available for reviews.', 'voxel-toolkit'); ?></em>
+                </p>
+            </div>
+
             <!-- Campaign Progress -->
             <?php if ($this->settings->is_function_enabled('widget_campaign_progress')): ?>
                 <div class="settings-section" style="margin-top: 30px;">

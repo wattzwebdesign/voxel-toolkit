@@ -97,6 +97,14 @@ class Voxel_Toolkit_Dynamic_Tags {
         if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-initial-modifier.php')) {
             require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-initial-modifier.php';
         }
+
+        // Load timeline tags (always enabled)
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-timeline-tags.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/dynamic-tags/class-timeline-tags.php';
+            if (class_exists('Voxel_Toolkit_Timeline_Tags')) {
+                Voxel_Toolkit_Timeline_Tags::instance();
+            }
+        }
     }
 
     /**
