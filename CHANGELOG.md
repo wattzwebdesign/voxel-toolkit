@@ -64,6 +64,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Initial Modifier**: New dynamic tag modifier that returns first letter with period
   - Usage: `@user(display_name).initial()` → "J."
   - Multibyte safe for international characters
+- **Team Members**: Allow post authors to invite collaborators who can edit their posts
+  - Team Members post field for managing invites by email
+  - Invite system with configurable expiration (default 7 days)
+  - Accept/decline flow with email notifications
+  - App Events: Team member invited, accepted, declined
+  - "User is team member of current post" visibility rule for Elementor
+  - Extended Author filter to include posts where user is a team member
+  - Delete protection: only post author can delete (team members can edit only)
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options
