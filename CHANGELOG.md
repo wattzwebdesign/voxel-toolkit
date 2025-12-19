@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Supports all Voxel field types with full detail rendering
   - Work hours and time fields use WordPress time format setting
   - localStorage-based state with cross-tab sync
+  - Print button to print comparison table (portrait format, clean layout)
 - **Enhanced TinyMCE Editor**: Adds extra features to Voxel's WP Editor Advanced mode
   - Add Media button to upload/insert images, videos, and audio files
   - Text color and background color pickers
