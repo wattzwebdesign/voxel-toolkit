@@ -476,6 +476,49 @@
 }
 
 /* ============================================
+   Export Buttons
+   ============================================ */
+
+.vt-route-export-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.vt-route-export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vt-route-export-btn:hover {
+    background: #2563eb;
+}
+
+.vt-route-export-btn:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+.vt-route-export-btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* ============================================
    Responsive Styles
    ============================================ */
 
@@ -515,6 +558,15 @@
     .vt-route-summary {
         justify-content: center;
     }
+
+    .vt-route-export-buttons {
+        justify-content: center;
+    }
+
+    .vt-route-export-btn {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
 }
 
 /* ============================================
@@ -522,7 +574,8 @@
    ============================================ */
 
 @media print {
-    .vt-route-travel-modes {
+    .vt-route-travel-modes,
+    .vt-route-export-buttons {
         display: none;
     }
 

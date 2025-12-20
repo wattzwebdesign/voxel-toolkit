@@ -486,6 +486,91 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
         );
 
         $this->end_controls_section();
+
+        // Export Options Section
+        $this->start_controls_section(
+            'section_export_options',
+            array(
+                'label' => __('Export Options', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+            )
+        );
+
+        $this->add_control(
+            'show_google_maps_btn',
+            array(
+                'label' => __('Show Google Maps Button', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'default' => 'yes',
+            )
+        );
+
+        $this->add_control(
+            'google_maps_label',
+            array(
+                'label' => __('Google Maps Button Label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Open in Google Maps', 'voxel-toolkit'),
+                'condition' => array('show_google_maps_btn' => 'yes'),
+            )
+        );
+
+        $this->add_control(
+            'show_apple_maps_btn',
+            array(
+                'label' => __('Show Apple Maps Button', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'default' => 'yes',
+            )
+        );
+
+        $this->add_control(
+            'apple_maps_label',
+            array(
+                'label' => __('Apple Maps Button Label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Open in Apple Maps', 'voxel-toolkit'),
+                'condition' => array('show_apple_maps_btn' => 'yes'),
+            )
+        );
+
+        $this->add_control(
+            'show_gpx_btn',
+            array(
+                'label' => __('Show Download GPX Button', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'default' => 'yes',
+            )
+        );
+
+        $this->add_control(
+            'gpx_label',
+            array(
+                'label' => __('GPX Button Label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Download GPX', 'voxel-toolkit'),
+                'condition' => array('show_gpx_btn' => 'yes'),
+            )
+        );
+
+        $this->add_control(
+            'gpx_filename',
+            array(
+                'label' => __('GPX Filename', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => 'route',
+                'description' => __('Filename without .gpx extension', 'voxel-toolkit'),
+                'condition' => array('show_gpx_btn' => 'yes'),
+            )
+        );
+
+        $this->end_controls_section();
     }
 
     /**
@@ -1256,6 +1341,200 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
         );
 
         $this->end_controls_section();
+
+        // Export Buttons Style
+        $this->start_controls_section(
+            'section_export_buttons_style',
+            array(
+                'label' => __('Export Buttons', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            )
+        );
+
+        $this->add_responsive_control(
+            'export_btn_alignment',
+            array(
+                'label' => __('Alignment', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => array(
+                    'flex-start' => array(
+                        'title' => __('Left', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-left',
+                    ),
+                    'center' => array(
+                        'title' => __('Center', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-center',
+                    ),
+                    'flex-end' => array(
+                        'title' => __('Right', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-right',
+                    ),
+                ),
+                'default' => 'flex-start',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-route-export-buttons' => 'justify-content: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'export_btn_gap',
+            array(
+                'label' => __('Button Gap', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'range' => array('px' => array('min' => 0, 'max' => 30, 'step' => 1)),
+                'default' => array('size' => 10),
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-route-export-buttons' => 'gap: {{SIZE}}{{UNIT}};',
+                ),
+            )
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            array(
+                'name' => 'export_btn_typography',
+                'label' => __('Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt-route-export-btn',
+            )
+        );
+
+        $this->add_control(
+            'export_btn_icon_size',
+            array(
+                'label' => __('Icon Size', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'range' => array('px' => array('min' => 12, 'max' => 32, 'step' => 1)),
+                'default' => array('size' => 18),
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-route-export-btn svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'export_btn_bg_color',
+            array(
+                'label' => __('Background Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#3b82f6',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-route-export-btn' => 'background-color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'export_btn_text_color',
+            array(
+                'label' => __('Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#ffffff',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-route-export-btn' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .vt-route-export-btn svg' => 'stroke: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'export_btn_border_color',
+            array(
+                'label' => __('Border Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#3b82f6',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-route-export-btn' => 'border-color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'export_btn_border_width',
+            array(
+                'label' => __('Border Width', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'range' => array('px' => array('min' => 0, 'max' => 5, 'step' => 1)),
+                'default' => array('size' => 0),
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-route-export-btn' => 'border-width: {{SIZE}}{{UNIT}}; border-style: solid;',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'export_btn_border_radius',
+            array(
+                'label' => __('Border Radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => array('px'),
+                'default' => array('top' => 6, 'right' => 6, 'bottom' => 6, 'left' => 6, 'unit' => 'px'),
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-route-export-btn' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'export_btn_padding',
+            array(
+                'label' => __('Padding', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => array('px'),
+                'default' => array('top' => 10, 'right' => 16, 'bottom' => 10, 'left' => 16, 'unit' => 'px'),
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-route-export-btn' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'export_btn_hover_heading',
+            array(
+                'label' => __('Hover State', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            )
+        );
+
+        $this->add_control(
+            'export_btn_hover_bg',
+            array(
+                'label' => __('Hover Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#2563eb',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-route-export-btn:hover' => 'background-color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'export_btn_hover_text',
+            array(
+                'label' => __('Hover Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#ffffff',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-route-export-btn:hover' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .vt-route-export-btn:hover svg' => 'stroke: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'export_btn_hover_border',
+            array(
+                'label' => __('Hover Border Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#2563eb',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-route-export-btn:hover' => 'border-color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->end_controls_section();
     }
 
     /**
@@ -1309,6 +1588,11 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
             'waypointMarkerColor' => $settings['waypoint_marker_color'] ?? '#3b82f6',
             'endMarkerColor' => $settings['end_marker_color'] ?? '#ef4444',
             'postId' => $post->get_id(),
+            // Export options
+            'showGoogleMapsBtn' => $settings['show_google_maps_btn'] === 'yes',
+            'showAppleMapsBtn' => $settings['show_apple_maps_btn'] === 'yes',
+            'showGpxBtn' => $settings['show_gpx_btn'] === 'yes',
+            'gpxFilename' => $settings['gpx_filename'] ?? 'route',
         );
 
         // Add field keys based on data source
@@ -1381,6 +1665,31 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                 </div>
                 <?php endif; ?>
             </div>
+
+            <?php
+            $show_export_buttons = ($settings['show_google_maps_btn'] === 'yes' || $settings['show_apple_maps_btn'] === 'yes' || $settings['show_gpx_btn'] === 'yes');
+            if ($show_export_buttons): ?>
+            <div class="vt-route-export-buttons">
+                <?php if ($settings['show_google_maps_btn'] === 'yes'): ?>
+                <button type="button" class="vt-route-export-btn vt-export-google-maps">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span><?php echo esc_html($settings['google_maps_label'] ?: __('Open in Google Maps', 'voxel-toolkit')); ?></span>
+                </button>
+                <?php endif; ?>
+                <?php if ($settings['show_apple_maps_btn'] === 'yes'): ?>
+                <button type="button" class="vt-route-export-btn vt-export-apple-maps">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span><?php echo esc_html($settings['apple_maps_label'] ?: __('Open in Apple Maps', 'voxel-toolkit')); ?></span>
+                </button>
+                <?php endif; ?>
+                <?php if ($settings['show_gpx_btn'] === 'yes'): ?>
+                <button type="button" class="vt-route-export-btn vt-export-gpx">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span><?php echo esc_html($settings['gpx_label'] ?: __('Download GPX', 'voxel-toolkit')); ?></span>
+                </button>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
 
             <div class="vt-route-loading" style="display: none;">
                 <span class="vt-route-spinner"></span>

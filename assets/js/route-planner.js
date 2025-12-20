@@ -1083,6 +1083,26 @@
                     this.map.setZoom(15);
                 }
             });
+
+            // Export button: Google Maps
+            this.$wrapper.on('click', '.vt-export-google-maps', (e) => {
+                e.preventDefault();
+                const url = this.generateGoogleMapsUrl();
+                this.openExternalUrl(url);
+            });
+
+            // Export button: Apple Maps
+            this.$wrapper.on('click', '.vt-export-apple-maps', (e) => {
+                e.preventDefault();
+                const url = this.generateAppleMapsUrl();
+                this.openExternalUrl(url);
+            });
+
+            // Export button: Download GPX
+            this.$wrapper.on('click', '.vt-export-gpx', (e) => {
+                e.preventDefault();
+                this.downloadGPX();
+            });
         }
 
         /**
@@ -1117,6 +1137,125 @@
             const div = document.createElement('div');
             div.textContent = text || '';
             return div.innerHTML;
+        }
+
+        /**
+         * Generate Google Maps directions URL
+         */
+        generateGoogleMapsUrl() {
+            if (this.waypoints.length < 2) return null;
+
+            const origin = `${this.waypoints[0].lat},${this.waypoints[0].lng}`;
+            const destination = `${this.waypoints[this.waypoints.length - 1].lat},${this.waypoints[this.waypoints.length - 1].lng}`;
+
+            // Google Maps travel mode mapping
+            const travelModeMap = {
+                driving: 'driving',
+                walking: 'walking',
+                cycling: 'bicycling',
+                transit: 'transit',
+            };
+            const mode = travelModeMap[this.currentTravelMode] || 'driving';
+
+            let url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=${mode}`;
+
+            // Add intermediate waypoints if any
+            if (this.waypoints.length > 2) {
+                const intermediate = this.waypoints
+                    .slice(1, -1)
+                    .map(wp => `${wp.lat},${wp.lng}`)
+                    .join('|');
+                url += `&waypoints=${encodeURIComponent(intermediate)}`;
+            }
+
+            return url;
+        }
+
+        /**
+         * Generate Apple Maps directions URL
+         */
+        generateAppleMapsUrl() {
+            if (this.waypoints.length < 2) return null;
+
+            const start = `${this.waypoints[0].lat},${this.waypoints[0].lng}`;
+            const end = `${this.waypoints[this.waypoints.length - 1].lat},${this.waypoints[this.waypoints.length - 1].lng}`;
+
+            // Apple Maps direction flag: d=driving, w=walking, r=transit
+            const dirFlagMap = {
+                driving: 'd',
+                walking: 'w',
+                cycling: 'w', // Apple Maps doesn't have cycling, use walking
+                transit: 'r',
+            };
+            const dirFlag = dirFlagMap[this.currentTravelMode] || 'd';
+
+            return `https://maps.apple.com/?saddr=${encodeURIComponent(start)}&daddr=${encodeURIComponent(end)}&dirflg=${dirFlag}`;
+        }
+
+        /**
+         * Generate GPX file content
+         */
+        generateGPX() {
+            const now = new Date().toISOString();
+            const filename = this.config.gpxFilename || 'route';
+
+            let gpx = `<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Voxel Toolkit" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>${this.escapeXml(filename)}</name>
+    <time>${now}</time>
+  </metadata>
+`;
+
+            this.waypoints.forEach((wp, i) => {
+                const label = wp.label || wp.address || `Waypoint ${i + 1}`;
+                gpx += `  <wpt lat="${wp.lat}" lon="${wp.lng}">
+    <name>${this.escapeXml(label)}</name>
+  </wpt>
+`;
+            });
+
+            gpx += `</gpx>`;
+            return gpx;
+        }
+
+        /**
+         * Download GPX file
+         */
+        downloadGPX() {
+            const gpx = this.generateGPX();
+            const blob = new Blob([gpx], { type: 'application/gpx+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const filename = (this.config.gpxFilename || 'route') + '.gpx';
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        /**
+         * Escape XML special characters
+         */
+        escapeXml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&apos;');
+        }
+
+        /**
+         * Open URL in new tab
+         */
+        openExternalUrl(url) {
+            if (url) {
+                window.open(url, '_blank', 'noopener,noreferrer');
+            }
         }
     }
 
