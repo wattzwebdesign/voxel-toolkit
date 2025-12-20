@@ -85,7 +85,7 @@ class Voxel_Toolkit_Poll_Field {
                                 <input
                                     type="text"
                                     v-model="option.label"
-                                    :placeholder="'Option ' + (index + 1)"
+                                    :placeholder="'<?php echo esc_js(__('Option', 'voxel-toolkit')); ?> ' + (index + 1)"
                                     class="ts-filter"
                                 >
                                 <button
@@ -111,7 +111,7 @@ class Voxel_Toolkit_Poll_Field {
                             class="ts-btn ts-btn-2 ts-btn-small"
                             style="margin-top: 10px;"
                         >
-                            <i class="las la-plus"></i> Add Option
+                            <i class="las la-plus"></i> <?php echo esc_js(__('Add Option', 'voxel-toolkit')); ?>
                         </button>
 
                         <div class="vt-poll-settings" style="margin-top: 15px;">
@@ -127,7 +127,7 @@ class Voxel_Toolkit_Poll_Field {
                                         <label class="onoffswitch-label" :for="'poll-user-options-' + field.id"></label>
                                     </div>
                                 </div>
-                                <span>Allow users to add their own options</span>
+                                <span><?php echo esc_js(__('Allow users to add their own options', 'voxel-toolkit')); ?></span>
                             </label>
 
                             <label class="ts-form-group switcher-label" style="display: flex; align-items: center; margin-bottom: 10px;">
@@ -142,7 +142,7 @@ class Voxel_Toolkit_Poll_Field {
                                         <label class="onoffswitch-label" :for="'poll-multiple-' + field.id"></label>
                                     </div>
                                 </div>
-                                <span>Allow users to choose multiple options</span>
+                                <span><?php echo esc_js(__('Allow users to choose multiple options', 'voxel-toolkit')); ?></span>
                             </label>
                         </div>
                     </div>
@@ -810,12 +810,12 @@ class Voxel_Toolkit_Poll_Field_Type extends \Voxel\Post_Types\Fields\Base_Post_F
 
             <?php if ($allow_user_options && $user_id): ?>
                 <div class="vt-poll-add-option">
-                    <input type="text" class="vt-poll-new-option" placeholder="Add your own option..." />
-                    <button type="button" class="vt-poll-submit-option">Add Option</button>
+                    <input type="text" class="vt-poll-new-option" placeholder="<?php esc_attr_e('Add your own option...', 'voxel-toolkit'); ?>" />
+                    <button type="button" class="vt-poll-submit-option"><?php esc_html_e('Add Option', 'voxel-toolkit'); ?></button>
                 </div>
             <?php endif; ?>
 
-            <div class="vt-poll-total">Total votes: <?php echo $total_votes; ?></div>
+            <div class="vt-poll-total"><?php esc_html_e('Total votes:', 'voxel-toolkit'); ?> <?php echo $total_votes; ?></div>
         </div>
         <?php
         return ob_get_clean();
