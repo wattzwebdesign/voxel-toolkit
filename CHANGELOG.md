@@ -113,6 +113,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options
+- **Poll Field**: Added translation support for all user-facing strings
 
 
 ## [1.5.7] - 2025-12-07
