@@ -93,6 +93,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `@post(vt_wall.latest/oldest.*)` - Same properties for wall posts (no score)
   - Results cached per request for performance
   - Returns empty string when no entries exist
+- **Route Planner Widget**: Display interactive routes with turn-by-turn directions
+  - Data sources: Repeater fields (with location sub-field) or Post relation fields
+  - Map providers: Google Maps, Mapbox, OpenStreetMap (OSRM)
+  - Travel modes: Driving, walking, cycling, transit (user-switchable)
+  - Starting point options: First waypoint, user GPS location, or custom address
+  - Drag-to-reorder waypoints with automatic route recalculation
+  - Route optimization using nearest neighbor algorithm
+  - Directions panel with step-by-step instructions and step highlighting
+  - Click markers to view stop details with popup
+  - Full Elementor styling controls for route line, markers, and panel
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options
