@@ -194,8 +194,10 @@
                 if (this.config.dataSource === 'repeater') {
                     requestData.repeater_key = this.config.repeaterKey;
                     requestData.label_key = this.config.labelKey || '';
-                } else {
+                } else if (this.config.dataSource === 'post_relation') {
                     requestData.relation_key = this.config.relationKey;
+                } else if (this.config.dataSource === 'post_fields') {
+                    requestData.post_fields_list = this.config.postFieldsList || [];
                 }
 
                 const response = await $.ajax({

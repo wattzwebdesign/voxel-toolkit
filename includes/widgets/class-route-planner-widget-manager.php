@@ -156,6 +156,10 @@ class Voxel_Toolkit_Route_Planner_Widget_Manager {
             $location_key = isset($_POST['location_key']) ? sanitize_text_field($_POST['location_key']) : '';
 
             $waypoints = $this->get_waypoints_from_relations($post, $relation_key, $location_key);
+        } elseif ($data_source === 'post_fields') {
+            $post_fields_list = isset($_POST['post_fields_list']) ? $_POST['post_fields_list'] : array();
+
+            $waypoints = $this->get_waypoints_from_post_fields($post, $post_fields_list);
         }
 
         wp_send_json_success(array('waypoints' => $waypoints));
@@ -295,6 +299,74 @@ class Voxel_Toolkit_Route_Planner_Widget_Manager {
                 'label' => $related_post->get_title(),
                 'post_id' => $related_id,
                 'permalink' => $related_post->get_link(),
+                'index' => $index,
+            );
+        }
+
+        return $waypoints;
+    }
+
+    /**
+     * Extract waypoints from individual post fields
+     *
+     * @param \Voxel\Post $post Voxel post object
+     * @param array $fields_list Array of field definitions with field_key and optional label
+     * @return array Array of waypoint data
+     */
+    private function get_waypoints_from_post_fields($post, $fields_list) {
+        if (!is_array($fields_list) || empty($fields_list)) {
+            return array();
+        }
+
+        $waypoints = array();
+
+        foreach ($fields_list as $index => $field_def) {
+            // Sanitize field definition
+            $field_key = isset($field_def['field_key']) ? sanitize_text_field($field_def['field_key']) : '';
+            $custom_label = isset($field_def['label']) ? sanitize_text_field($field_def['label']) : '';
+
+            if (empty($field_key)) {
+                continue;
+            }
+
+            $field = $post->get_field($field_key);
+            if (!$field) {
+                continue;
+            }
+
+            $loc = $field->get_value();
+            if (!is_array($loc)) {
+                continue;
+            }
+
+            // Validate coordinates
+            if (empty($loc['latitude']) || empty($loc['longitude'])) {
+                continue;
+            }
+
+            $lat = floatval($loc['latitude']);
+            $lng = floatval($loc['longitude']);
+
+            // Skip invalid coordinates
+            if ($lat < -90 || $lat > 90 || $lng < -180 || $lng > 180) {
+                continue;
+            }
+
+            // Determine label: custom label > address > field key
+            $label = '';
+            if (!empty($custom_label)) {
+                $label = $custom_label;
+            } elseif (!empty($loc['address'])) {
+                $label = $loc['address'];
+            } else {
+                $label = sprintf(__('Waypoint %d', 'voxel-toolkit'), $index + 1);
+            }
+
+            $waypoints[] = array(
+                'lat' => $lat,
+                'lng' => $lng,
+                'address' => isset($loc['address']) ? $loc['address'] : '',
+                'label' => $label,
                 'index' => $index,
             );
         }
