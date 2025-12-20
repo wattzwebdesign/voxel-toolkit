@@ -101,7 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Results cached per request for performance
   - Returns empty string when no entries exist
 - **Route Planner Widget**: Display interactive routes with turn-by-turn directions
-  - Data sources: Repeater fields (with location sub-field) or Post relation fields
+  - Data sources: Repeater fields, Post relation fields, or Post fields (individual location fields)
   - Map providers: Google Maps, Mapbox, OpenStreetMap (OSRM)
   - Travel modes: Driving, walking, cycling, transit (user-switchable)
   - Starting point options: First waypoint, user GPS location, or custom address
@@ -111,6 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Click markers to view stop details with popup
   - Full Elementor styling controls for route line, markers, and panel
   - Export options: Open in Google Maps, Open in Apple Maps, Download GPX
+  - Custom icon uploads for travel mode, export, and summary icons
 - **Advanced Phone Input**: Enhanced phone fields with international support
   - Country selector dropdown with flag and dial code (+X)
   - Per-field default country setting
