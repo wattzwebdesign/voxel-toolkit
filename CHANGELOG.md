@@ -103,6 +103,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Directions panel with step-by-step instructions and step highlighting
   - Click markers to view stop details with popup
   - Full Elementor styling controls for route line, markers, and panel
+- **Advanced Phone Input**: Enhanced phone fields with international support
+  - Country selector dropdown with flag and dial code (+X)
+  - Per-field default country setting
+  - Per-field country restrictions (only show specific countries)
+  - Toggle for country selector dropdown visibility
+  - Stores country code separately for E.164 formatting
+  - Settings appear in Post Type editor under each phone field
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options
