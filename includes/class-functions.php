@@ -258,6 +258,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-sms-notifications.php',
                 'settings_callback' => array($this, 'render_sms_notifications_settings'),
             ),
+            'advanced_phone_input' => array(
+                'name' => __('Advanced Phone Input', 'voxel-toolkit'),
+                'description' => __('Enhanced phone fields with country selection, default country, and country restrictions using intl-tel-input library.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Advanced_Phone_Input',
+                'file' => 'functions/class-advanced-phone-input.php',
+                'settings_callback' => array($this, 'render_advanced_phone_input_settings'),
+                'icon' => 'dashicons-phone',
+            ),
             'membership_notifications' => array(
                 'name' => __('Membership Notifications', 'voxel-toolkit'),
                 'description' => __('Send email notifications to users based on membership expiration dates.', 'voxel-toolkit'),
@@ -1506,6 +1514,50 @@ class Voxel_Toolkit_Functions {
                     });
                 });
                 </script>
+            </td>
+        </tr>
+        <?php
+    }
+
+    /**
+     * Render settings for advanced phone input function
+     *
+     * @param array $settings Current settings
+     */
+    public function render_advanced_phone_input_settings($settings) {
+        ?>
+        <tr>
+            <th scope="row">
+                <label><?php _e('Advanced Phone Input', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <div class="vt-info-box" style="background: #f0f6fc; border: 1px solid #0969da; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                    <strong style="display: block; margin-bottom: 10px; color: #0969da;">
+                        <span class="dashicons dashicons-info" style="margin-right: 5px;"></span>
+                        <?php _e('Per-Field Configuration', 'voxel-toolkit'); ?>
+                    </strong>
+                    <p style="margin: 0 0 10px 0; color: #1e1e1e;">
+                        <?php _e('This function adds international phone number input capabilities to Voxel phone fields. Configure each phone field individually in the Post Type editor.', 'voxel-toolkit'); ?>
+                    </p>
+                    <p style="margin: 0; color: #1e1e1e;">
+                        <strong><?php _e('New settings appear under each phone field:', 'voxel-toolkit'); ?></strong>
+                    </p>
+                    <ul style="list-style: disc; margin: 10px 0 0 20px; color: #1e1e1e;">
+                        <li><strong><?php _e('Default Country', 'voxel-toolkit'); ?></strong> - <?php _e('Set the initial country code (e.g., "us", "gb", "de")', 'voxel-toolkit'); ?></li>
+                        <li><strong><?php _e('Only Countries', 'voxel-toolkit'); ?></strong> - <?php _e('Restrict to specific countries', 'voxel-toolkit'); ?></li>
+                        <li><strong><?php _e('Country Selector Dropdown', 'voxel-toolkit'); ?></strong> - <?php _e('Toggle the country selection dropdown visibility', 'voxel-toolkit'); ?></li>
+                    </ul>
+                </div>
+
+                <div class="vt-info-box" style="background: #fff8e6; border: 1px solid #f0c36d; border-radius: 8px; padding: 15px;">
+                    <strong style="display: block; margin-bottom: 8px; color: #735c0f;">
+                        <span class="dashicons dashicons-warning" style="margin-right: 5px;"></span>
+                        <?php _e('Note', 'voxel-toolkit'); ?>
+                    </strong>
+                    <p style="margin: 0; color: #735c0f;">
+                        <?php _e('If you have SMS Notifications enabled, the international phone input from that function will be replaced by this enhanced version with per-field configuration.', 'voxel-toolkit'); ?>
+                    </p>
+                </div>
             </td>
         </tr>
         <?php

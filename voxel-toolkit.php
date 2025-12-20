@@ -97,6 +97,9 @@ class Voxel_Toolkit {
         // Register team members field type filter early (before Voxel calls it)
         add_filter('voxel/field-types', array($this, 'register_team_members_field_if_enabled'), 10);
 
+        // Register advanced phone field type filter (replaces native phone field)
+        add_filter('voxel/field-types', array($this, 'register_advanced_phone_field_if_enabled'), 15);
+
         // Load the actual field class later when Voxel classes are available
         add_action('after_setup_theme', array($this, 'init_post_fields'), 10);
     }
@@ -192,6 +195,40 @@ class Voxel_Toolkit {
         }
 
         $fields['team-members-vt'] = '\Voxel_Toolkit_Team_Members_Field_Type';
+        return $fields;
+    }
+
+    /**
+     * Register advanced phone field type if enabled (replaces native phone field)
+     */
+    public function register_advanced_phone_field_if_enabled($fields) {
+        // Load settings class if not loaded
+        if (!class_exists('Voxel_Toolkit_Settings')) {
+            if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-settings.php')) {
+                require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-settings.php';
+            } else {
+                return $fields;
+            }
+        }
+
+        $settings = Voxel_Toolkit_Settings::instance();
+        if (!$settings->is_function_enabled('advanced_phone_input')) {
+            return $fields;
+        }
+
+        // Check if Voxel's Phone_Field class exists (we extend it)
+        if (!class_exists('\Voxel\Post_Types\Fields\Phone_Field')) {
+            return $fields;
+        }
+
+        // Load the field file to ensure the class is available
+        $field_file = VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/class-advanced-phone-input.php';
+        if (file_exists($field_file) && !class_exists('Voxel_Toolkit_Extended_Phone_Field')) {
+            require_once $field_file;
+        }
+
+        // Replace native phone field with our extended version
+        $fields['phone'] = '\Voxel_Toolkit_Extended_Phone_Field';
         return $fields;
     }
 

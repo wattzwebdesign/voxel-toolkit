@@ -174,6 +174,14 @@ class Voxel_Toolkit_SMS_Notifications extends \Voxel\Controllers\Base_Controller
      * Initialize international phone input enhancement
      */
     private function init_intl_phone() {
+        // Skip if Advanced Phone Input is enabled (it replaces this functionality)
+        if (class_exists('Voxel_Toolkit_Settings')) {
+            $settings = Voxel_Toolkit_Settings::instance();
+            if ($settings->is_function_enabled('advanced_phone_input')) {
+                return;
+            }
+        }
+
         // Load the intl phone class
         require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/class-intl-phone.php';
 
