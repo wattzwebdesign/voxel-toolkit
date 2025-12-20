@@ -106,6 +106,7 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                 'options' => array(
                     'repeater' => __('Repeater Field', 'voxel-toolkit'),
                     'post_relation' => __('Post Relation Field', 'voxel-toolkit'),
+                    'post_fields' => __('Post Fields', 'voxel-toolkit'),
                 ),
             )
         );
@@ -164,6 +165,41 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                 'placeholder' => 'location',
                 'description' => __('The location field key in the related posts', 'voxel-toolkit'),
                 'condition' => array('data_source' => 'post_relation'),
+            )
+        );
+
+        // Post fields repeater control
+        $post_fields_repeater = new \Elementor\Repeater();
+
+        $post_fields_repeater->add_control(
+            'field_key',
+            array(
+                'label' => __('Location Field Key', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'placeholder' => 'location',
+                'label_block' => true,
+            )
+        );
+
+        $post_fields_repeater->add_control(
+            'label',
+            array(
+                'label' => __('Label (Optional)', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'placeholder' => __('e.g., Starting Point', 'voxel-toolkit'),
+                'label_block' => true,
+            )
+        );
+
+        $this->add_control(
+            'post_fields_list',
+            array(
+                'label' => __('Location Fields', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::REPEATER,
+                'fields' => $post_fields_repeater->get_controls(),
+                'default' => array(),
+                'title_field' => '{{{ field_key || "Field" }}}',
+                'condition' => array('data_source' => 'post_fields'),
             )
         );
 
@@ -275,11 +311,37 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'travel_icon_driving',
+            array(
+                'label' => __('Driving Icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => array(
+                    'value' => '',
+                    'library' => '',
+                ),
+                'condition' => array('allow_travel_mode_change' => 'yes'),
+            )
+        );
+
+        $this->add_control(
             'travel_label_walking',
             array(
                 'label' => __('Walking Label', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => __('Walk', 'voxel-toolkit'),
+                'condition' => array('allow_travel_mode_change' => 'yes'),
+            )
+        );
+
+        $this->add_control(
+            'travel_icon_walking',
+            array(
+                'label' => __('Walking Icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => array(
+                    'value' => '',
+                    'library' => '',
+                ),
                 'condition' => array('allow_travel_mode_change' => 'yes'),
             )
         );
@@ -295,11 +357,37 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'travel_icon_cycling',
+            array(
+                'label' => __('Cycling Icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => array(
+                    'value' => '',
+                    'library' => '',
+                ),
+                'condition' => array('allow_travel_mode_change' => 'yes'),
+            )
+        );
+
+        $this->add_control(
             'travel_label_transit',
             array(
                 'label' => __('Transit Label', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => __('Transit', 'voxel-toolkit'),
+                'condition' => array('allow_travel_mode_change' => 'yes'),
+            )
+        );
+
+        $this->add_control(
+            'travel_icon_transit',
+            array(
+                'label' => __('Transit Icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => array(
+                    'value' => '',
+                    'library' => '',
+                ),
                 'condition' => array('allow_travel_mode_change' => 'yes'),
             )
         );
@@ -421,6 +509,19 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'distance_icon',
+            array(
+                'label' => __('Distance Icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => array(
+                    'value' => '',
+                    'library' => '',
+                ),
+                'condition' => array('show_distance' => 'yes'),
+            )
+        );
+
+        $this->add_control(
             'show_duration',
             array(
                 'label' => __('Show Estimated Duration', 'voxel-toolkit'),
@@ -428,6 +529,19 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                 'label_on' => __('Yes', 'voxel-toolkit'),
                 'label_off' => __('No', 'voxel-toolkit'),
                 'default' => 'yes',
+            )
+        );
+
+        $this->add_control(
+            'duration_icon',
+            array(
+                'label' => __('Duration Icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => array(
+                    'value' => '',
+                    'library' => '',
+                ),
+                'condition' => array('show_duration' => 'yes'),
             )
         );
 
@@ -518,6 +632,19 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'google_maps_icon',
+            array(
+                'label' => __('Google Maps Icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => array(
+                    'value' => '',
+                    'library' => '',
+                ),
+                'condition' => array('show_google_maps_btn' => 'yes'),
+            )
+        );
+
+        $this->add_control(
             'show_apple_maps_btn',
             array(
                 'label' => __('Show Apple Maps Button', 'voxel-toolkit'),
@@ -539,6 +666,19 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'apple_maps_icon',
+            array(
+                'label' => __('Apple Maps Icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => array(
+                    'value' => '',
+                    'library' => '',
+                ),
+                'condition' => array('show_apple_maps_btn' => 'yes'),
+            )
+        );
+
+        $this->add_control(
             'show_gpx_btn',
             array(
                 'label' => __('Show Download GPX Button', 'voxel-toolkit'),
@@ -555,6 +695,19 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                 'label' => __('GPX Button Label', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => __('Download GPX', 'voxel-toolkit'),
+                'condition' => array('show_gpx_btn' => 'yes'),
+            )
+        );
+
+        $this->add_control(
+            'gpx_icon',
+            array(
+                'label' => __('GPX Icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => array(
+                    'value' => '',
+                    'library' => '',
+                ),
                 'condition' => array('show_gpx_btn' => 'yes'),
             )
         );
@@ -1538,6 +1691,26 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
     }
 
     /**
+     * Render icon - either custom icon from settings or default SVG
+     *
+     * @param array  $icon_setting The icon setting from Elementor
+     * @param string $default_svg  Default SVG markup to use if no custom icon
+     * @param array  $attrs        Additional attributes for the icon wrapper
+     * @return string
+     */
+    private function render_icon($icon_setting, $default_svg, $attrs = array()) {
+        // Check if custom icon is set
+        if (!empty($icon_setting['value'])) {
+            ob_start();
+            \Elementor\Icons_Manager::render_icon($icon_setting, array('aria-hidden' => 'true'));
+            return ob_get_clean();
+        }
+
+        // Return default SVG
+        return $default_svg;
+    }
+
+    /**
      * Render widget output on the frontend
      */
     protected function render() {
@@ -1600,9 +1773,11 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
             $config['repeaterKey'] = $settings['repeater_field_key'] ?? '';
             $config['locationKey'] = $settings['repeater_location_key'] ?? '';
             $config['labelKey'] = $settings['repeater_label_key'] ?? '';
-        } else {
+        } elseif ($settings['data_source'] === 'post_relation') {
             $config['relationKey'] = $settings['relation_field_key'] ?? '';
             $config['locationKey'] = $settings['relation_location_key'] ?? '';
+        } elseif ($settings['data_source'] === 'post_fields') {
+            $config['postFieldsList'] = $settings['post_fields_list'] ?? array();
         }
 
         // Custom start point
@@ -1623,19 +1798,31 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
             <?php if ($settings['allow_travel_mode_change'] === 'yes'): ?>
             <div class="vt-route-travel-modes">
                 <button type="button" class="vt-travel-mode-btn <?php echo $settings['travel_mode'] === 'driving' ? 'active' : ''; ?>" data-mode="driving">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                    <?php echo $this->render_icon(
+                        $settings['travel_icon_driving'] ?? array(),
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>'
+                    ); ?>
                     <span><?php echo esc_html($settings['travel_label_driving'] ?: __('Drive', 'voxel-toolkit')); ?></span>
                 </button>
                 <button type="button" class="vt-travel-mode-btn <?php echo $settings['travel_mode'] === 'walking' ? 'active' : ''; ?>" data-mode="walking">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 3 1 3-1 3 1 3-1"/><path d="M12 12v-2"/></svg>
+                    <?php echo $this->render_icon(
+                        $settings['travel_icon_walking'] ?? array(),
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 3 1 3-1 3 1 3-1"/><path d="M12 12v-2"/></svg>'
+                    ); ?>
                     <span><?php echo esc_html($settings['travel_label_walking'] ?: __('Walk', 'voxel-toolkit')); ?></span>
                 </button>
                 <button type="button" class="vt-travel-mode-btn <?php echo $settings['travel_mode'] === 'cycling' ? 'active' : ''; ?>" data-mode="cycling">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>
+                    <?php echo $this->render_icon(
+                        $settings['travel_icon_cycling'] ?? array(),
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>'
+                    ); ?>
                     <span><?php echo esc_html($settings['travel_label_cycling'] ?: __('Cycle', 'voxel-toolkit')); ?></span>
                 </button>
                 <button type="button" class="vt-travel-mode-btn <?php echo $settings['travel_mode'] === 'transit' ? 'active' : ''; ?>" data-mode="transit">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/><path d="M8 15h0"/><path d="M16 15h0"/></svg>
+                    <?php echo $this->render_icon(
+                        $settings['travel_icon_transit'] ?? array(),
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/><path d="M8 15h0"/><path d="M16 15h0"/></svg>'
+                    ); ?>
                     <span><?php echo esc_html($settings['travel_label_transit'] ?: __('Transit', 'voxel-toolkit')); ?></span>
                 </button>
             </div>
@@ -1649,13 +1836,19 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                     <div class="vt-route-summary">
                         <?php if ($settings['show_distance'] === 'yes'): ?>
                         <span class="vt-route-distance">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M8 6h10v10"/></svg>
+                            <?php echo $this->render_icon(
+                                $settings['distance_icon'] ?? array(),
+                                '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M8 6h10v10"/></svg>'
+                            ); ?>
                             <span class="vt-distance-value">--</span>
                         </span>
                         <?php endif; ?>
                         <?php if ($settings['show_duration'] === 'yes'): ?>
                         <span class="vt-route-duration">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <?php echo $this->render_icon(
+                                $settings['duration_icon'] ?? array(),
+                                '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
+                            ); ?>
                             <span class="vt-duration-value">--</span>
                         </span>
                         <?php endif; ?>
@@ -1672,19 +1865,28 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
             <div class="vt-route-export-buttons">
                 <?php if ($settings['show_google_maps_btn'] === 'yes'): ?>
                 <button type="button" class="vt-route-export-btn vt-export-google-maps">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <?php echo $this->render_icon(
+                        $settings['google_maps_icon'] ?? array(),
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>'
+                    ); ?>
                     <span><?php echo esc_html($settings['google_maps_label'] ?: __('Open in Google Maps', 'voxel-toolkit')); ?></span>
                 </button>
                 <?php endif; ?>
                 <?php if ($settings['show_apple_maps_btn'] === 'yes'): ?>
                 <button type="button" class="vt-route-export-btn vt-export-apple-maps">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <?php echo $this->render_icon(
+                        $settings['apple_maps_icon'] ?? array(),
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>'
+                    ); ?>
                     <span><?php echo esc_html($settings['apple_maps_label'] ?: __('Open in Apple Maps', 'voxel-toolkit')); ?></span>
                 </button>
                 <?php endif; ?>
                 <?php if ($settings['show_gpx_btn'] === 'yes'): ?>
                 <button type="button" class="vt-route-export-btn vt-export-gpx">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <?php echo $this->render_icon(
+                        $settings['gpx_icon'] ?? array(),
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>'
+                    ); ?>
                     <span><?php echo esc_html($settings['gpx_label'] ?: __('Download GPX', 'voxel-toolkit')); ?></span>
                 </button>
                 <?php endif; ?>
