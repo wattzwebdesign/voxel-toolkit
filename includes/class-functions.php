@@ -648,6 +648,14 @@ class Voxel_Toolkit_Functions {
                 'widget_name' => 'voxel-rsvp-attendee-list',
                 'hidden' => true,
             ),
+            'route_planner' => array(
+                'name' => __('Route Planner', 'voxel-toolkit'),
+                'description' => __('Display interactive routes with turn-by-turn directions using waypoints from repeater or post relation fields.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Route_Planner_Widget_Manager',
+                'file' => 'widgets/class-route-planner-widget-manager.php',
+                'icon' => 'eicon-google-maps',
+                'widget_name' => 'voxel-toolkit-route-planner',
+            ),
         );
 
         // Allow other plugins/themes to register widgets
