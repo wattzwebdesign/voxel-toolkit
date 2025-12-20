@@ -1742,6 +1742,53 @@ class Voxel_Toolkit_Admin {
                         }
                         break;
 
+                    case 'link_management':
+                        // Warning title
+                        $sanitized_function['title'] = isset($function_input['title'])
+                            ? sanitize_text_field($function_input['title'])
+                            : '';
+
+                        // Warning message
+                        $sanitized_function['message'] = isset($function_input['message'])
+                            ? sanitize_textarea_field($function_input['message'])
+                            : '';
+
+                        // Button text
+                        $sanitized_function['continue_text'] = isset($function_input['continue_text'])
+                            ? sanitize_text_field($function_input['continue_text'])
+                            : '';
+
+                        $sanitized_function['cancel_text'] = isset($function_input['cancel_text'])
+                            ? sanitize_text_field($function_input['cancel_text'])
+                            : '';
+
+                        // Show URL checkbox
+                        $sanitized_function['show_url'] = !empty($function_input['show_url']);
+
+                        // Whitelist domains (textarea, one per line)
+                        $sanitized_function['whitelist'] = isset($function_input['whitelist'])
+                            ? sanitize_textarea_field($function_input['whitelist'])
+                            : '';
+
+                        // Exclusion selectors (textarea, one per line)
+                        $sanitized_function['exclusion_selectors'] = isset($function_input['exclusion_selectors'])
+                            ? sanitize_textarea_field($function_input['exclusion_selectors'])
+                            : '';
+
+                        // Color settings
+                        $color_fields = array(
+                            'modal_bg', 'title_color', 'message_color',
+                            'icon_bg', 'icon_color',
+                            'continue_bg', 'continue_text_color',
+                            'cancel_bg', 'cancel_text_color'
+                        );
+                        foreach ($color_fields as $color_field) {
+                            if (isset($function_input[$color_field]) && !empty($function_input[$color_field])) {
+                                $sanitized_function[$color_field] = sanitize_text_field($function_input[$color_field]);
+                            }
+                        }
+                        break;
+
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(

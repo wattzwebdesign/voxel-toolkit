@@ -505,6 +505,14 @@ class Voxel_Toolkit_Functions {
                 'icon' => 'dashicons-groups',
                 'settings_callback' => array($this, 'render_team_members_settings'),
             ),
+            'link_management' => array(
+                'name' => __('External Link Warning', 'voxel-toolkit'),
+                'description' => __('Show warning modals when users click external links, with customizable messages and domain whitelisting.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Link_Management',
+                'file' => 'functions/class-link-management.php',
+                'icon' => 'dashicons-external',
+                'settings_callback' => array($this, 'render_link_management_settings'),
+            ),
         );
 
         // Allow other plugins/themes to register functions
@@ -5867,6 +5875,331 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </li>
             </ul>
         </div>
+        <?php
+    }
+
+    /**
+     * Render settings for Link Management function
+     *
+     * @param array $settings Current settings
+     */
+    public function render_link_management_settings($settings) {
+        $site_name = get_bloginfo('name');
+        $default_title = sprintf(__("You're leaving %s", 'voxel-toolkit'), $site_name);
+        $default_message = __('You are about to leave this website and visit an external site. We are not responsible for the content or privacy practices of external sites.', 'voxel-toolkit');
+
+        // Default colors
+        $defaults = array(
+            'overlay_color' => 'rgba(0,0,0,0.6)',
+            'modal_bg' => '#ffffff',
+            'title_color' => '#1e293b',
+            'message_color' => '#64748b',
+            'icon_bg' => '#fef3c7',
+            'icon_color' => '#d97706',
+            'continue_bg' => '#3b82f6',
+            'continue_text_color' => '#ffffff',
+            'cancel_bg' => '#f1f5f9',
+            'cancel_text_color' => '#475569',
+        );
+
+        // Get current values with defaults
+        $overlay_color = isset($settings['overlay_color']) ? $settings['overlay_color'] : $defaults['overlay_color'];
+        $modal_bg = isset($settings['modal_bg']) ? $settings['modal_bg'] : $defaults['modal_bg'];
+        $title_color = isset($settings['title_color']) ? $settings['title_color'] : $defaults['title_color'];
+        $message_color = isset($settings['message_color']) ? $settings['message_color'] : $defaults['message_color'];
+        $icon_bg = isset($settings['icon_bg']) ? $settings['icon_bg'] : $defaults['icon_bg'];
+        $icon_color = isset($settings['icon_color']) ? $settings['icon_color'] : $defaults['icon_color'];
+        $continue_bg = isset($settings['continue_bg']) ? $settings['continue_bg'] : $defaults['continue_bg'];
+        $continue_text_color = isset($settings['continue_text_color']) ? $settings['continue_text_color'] : $defaults['continue_text_color'];
+        $cancel_bg = isset($settings['cancel_bg']) ? $settings['cancel_bg'] : $defaults['cancel_bg'];
+        $cancel_text_color = isset($settings['cancel_text_color']) ? $settings['cancel_text_color'] : $defaults['cancel_text_color'];
+
+        $title_val = isset($settings['title']) && !empty($settings['title']) ? $settings['title'] : $default_title;
+        $message_val = isset($settings['message']) && !empty($settings['message']) ? $settings['message'] : $default_message;
+        $continue_text_val = isset($settings['continue_text']) && !empty($settings['continue_text']) ? $settings['continue_text'] : __('Continue', 'voxel-toolkit');
+        $cancel_text_val = isset($settings['cancel_text']) && !empty($settings['cancel_text']) ? $settings['cancel_text'] : __('Go Back', 'voxel-toolkit');
+        ?>
+        <div class="vt-info-box">
+            <?php _e('Show a warning modal when users click external links. Similar to government websites that warn users when leaving the site.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+            <!-- Left column: Settings -->
+            <div style="flex: 1; min-width: 400px;">
+
+                <div class="vt-settings-section">
+                    <h4 class="vt-settings-section-title"><?php _e('Modal Content', 'voxel-toolkit'); ?></h4>
+
+                    <div class="vt-field-group" style="margin-bottom: 20px;">
+                        <label class="vt-field-label"><?php _e('Warning Title', 'voxel-toolkit'); ?></label>
+                        <input type="text"
+                               name="voxel_toolkit_options[link_management][title]"
+                               id="lm-title"
+                               value="<?php echo esc_attr(isset($settings['title']) ? $settings['title'] : ''); ?>"
+                               placeholder="<?php echo esc_attr($default_title); ?>"
+                               class="vt-text-input"
+                               style="width: 100%; max-width: 500px;" />
+                    </div>
+
+                    <div class="vt-field-group" style="margin-bottom: 20px;">
+                        <label class="vt-field-label"><?php _e('Warning Message', 'voxel-toolkit'); ?></label>
+                        <textarea name="voxel_toolkit_options[link_management][message]"
+                                  id="lm-message"
+                                  rows="3"
+                                  placeholder="<?php echo esc_attr($default_message); ?>"
+                                  class="vt-textarea"
+                                  style="width: 100%; max-width: 600px;"><?php echo esc_textarea(isset($settings['message']) ? $settings['message'] : ''); ?></textarea>
+                    </div>
+
+                    <div class="vt-checkbox-inline" style="gap: 32px; margin-bottom: 20px;">
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Continue Button Text', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[link_management][continue_text]"
+                                   id="lm-continue-text"
+                                   value="<?php echo esc_attr(isset($settings['continue_text']) ? $settings['continue_text'] : ''); ?>"
+                                   placeholder="<?php esc_attr_e('Continue', 'voxel-toolkit'); ?>"
+                                   class="vt-text-input"
+                                   style="width: 180px;" />
+                        </div>
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Cancel Button Text', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[link_management][cancel_text]"
+                                   id="lm-cancel-text"
+                                   value="<?php echo esc_attr(isset($settings['cancel_text']) ? $settings['cancel_text'] : ''); ?>"
+                                   placeholder="<?php esc_attr_e('Go Back', 'voxel-toolkit'); ?>"
+                                   class="vt-text-input"
+                                   style="width: 180px;" />
+                        </div>
+                    </div>
+
+                    <div class="vt-checkbox-list">
+                        <label class="vt-checkbox-item">
+                            <input type="checkbox"
+                                   name="voxel_toolkit_options[link_management][show_url]"
+                                   id="lm-show-url"
+                                   value="1"
+                                   <?php checked(!empty($settings['show_url'])); ?> />
+                            <div class="vt-checkbox-item-content">
+                                <span class="vt-checkbox-item-label"><?php _e('Show external URL in modal', 'voxel-toolkit'); ?></span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="vt-settings-section">
+                    <h4 class="vt-settings-section-title"><?php _e('Modal Styling', 'voxel-toolkit'); ?></h4>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Modal Background', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[link_management][modal_bg]"
+                                   id="lm-modal-bg"
+                                   value="<?php echo esc_attr($modal_bg); ?>"
+                                   placeholder="#ffffff"
+                                   class="vt-text-input lm-color-input"
+                                   style="width: 120px; font-family: monospace;" />
+                        </div>
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Title Color', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[link_management][title_color]"
+                                   id="lm-title-color"
+                                   value="<?php echo esc_attr($title_color); ?>"
+                                   placeholder="#1e293b"
+                                   class="vt-text-input lm-color-input"
+                                   style="width: 120px; font-family: monospace;" />
+                        </div>
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Message Color', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[link_management][message_color]"
+                                   id="lm-message-color"
+                                   value="<?php echo esc_attr($message_color); ?>"
+                                   placeholder="#64748b"
+                                   class="vt-text-input lm-color-input"
+                                   style="width: 120px; font-family: monospace;" />
+                        </div>
+                    </div>
+
+                    <h5 style="margin: 20px 0 12px; font-size: 13px; color: #666;"><?php _e('Icon', 'voxel-toolkit'); ?></h5>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Icon Background', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[link_management][icon_bg]"
+                                   id="lm-icon-bg"
+                                   value="<?php echo esc_attr($icon_bg); ?>"
+                                   placeholder="#fef3c7"
+                                   class="vt-text-input lm-color-input"
+                                   style="width: 120px; font-family: monospace;" />
+                        </div>
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Icon Color', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[link_management][icon_color]"
+                                   id="lm-icon-color"
+                                   value="<?php echo esc_attr($icon_color); ?>"
+                                   placeholder="#d97706"
+                                   class="vt-text-input lm-color-input"
+                                   style="width: 120px; font-family: monospace;" />
+                        </div>
+                    </div>
+
+                    <h5 style="margin: 20px 0 12px; font-size: 13px; color: #666;"><?php _e('Continue Button', 'voxel-toolkit'); ?></h5>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Background', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[link_management][continue_bg]"
+                                   id="lm-continue-bg"
+                                   value="<?php echo esc_attr($continue_bg); ?>"
+                                   placeholder="#3b82f6"
+                                   class="vt-text-input lm-color-input"
+                                   style="width: 120px; font-family: monospace;" />
+                        </div>
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Text Color', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[link_management][continue_text_color]"
+                                   id="lm-continue-text-color"
+                                   value="<?php echo esc_attr($continue_text_color); ?>"
+                                   placeholder="#ffffff"
+                                   class="vt-text-input lm-color-input"
+                                   style="width: 120px; font-family: monospace;" />
+                        </div>
+                    </div>
+
+                    <h5 style="margin: 20px 0 12px; font-size: 13px; color: #666;"><?php _e('Cancel Button', 'voxel-toolkit'); ?></h5>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Background', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[link_management][cancel_bg]"
+                                   id="lm-cancel-bg"
+                                   value="<?php echo esc_attr($cancel_bg); ?>"
+                                   placeholder="#f1f5f9"
+                                   class="vt-text-input lm-color-input"
+                                   style="width: 120px; font-family: monospace;" />
+                        </div>
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Text Color', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[link_management][cancel_text_color]"
+                                   id="lm-cancel-text-color"
+                                   value="<?php echo esc_attr($cancel_text_color); ?>"
+                                   placeholder="#475569"
+                                   class="vt-text-input lm-color-input"
+                                   style="width: 120px; font-family: monospace;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vt-settings-section">
+                    <h4 class="vt-settings-section-title"><?php _e('Domain Whitelist', 'voxel-toolkit'); ?></h4>
+                    <p class="vt-field-description" style="margin-bottom: 10px;">
+                        <?php _e('External domains that should NOT trigger the warning modal.', 'voxel-toolkit'); ?>
+                    </p>
+                    <div class="vt-field-group">
+                        <textarea name="voxel_toolkit_options[link_management][whitelist]"
+                                  rows="4"
+                                  placeholder="google.com&#10;facebook.com&#10;twitter.com"
+                                  class="vt-textarea"
+                                  style="width: 100%; max-width: 400px; font-family: monospace;"><?php echo esc_textarea(isset($settings['whitelist']) ? $settings['whitelist'] : ''); ?></textarea>
+                        <p class="vt-field-description"><?php _e('One domain per line. Subdomains included automatically.', 'voxel-toolkit'); ?></p>
+                    </div>
+                </div>
+
+                <div class="vt-settings-section">
+                    <h4 class="vt-settings-section-title"><?php _e('Exclusion Selectors', 'voxel-toolkit'); ?></h4>
+                    <div class="vt-field-group">
+                        <textarea name="voxel_toolkit_options[link_management][exclusion_selectors]"
+                                  rows="3"
+                                  placeholder=".no-warning&#10;[data-external='safe']"
+                                  class="vt-textarea"
+                                  style="width: 100%; max-width: 400px; font-family: monospace;"><?php echo esc_textarea(isset($settings['exclusion_selectors']) ? $settings['exclusion_selectors'] : ''); ?></textarea>
+                        <p class="vt-field-description"><?php _e('CSS selectors for links to exclude. One per line.', 'voxel-toolkit'); ?></p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right column: Preview -->
+            <div style="flex: 0 0 420px;">
+                <div class="vt-settings-section" style="position: sticky; top: 50px;">
+                    <h4 class="vt-settings-section-title"><?php _e('Live Preview', 'voxel-toolkit'); ?></h4>
+                    <div id="lm-preview-container" style="background: #1a1a1a; border-radius: 8px; padding: 30px; min-height: 350px; display: flex; align-items: center; justify-content: center;">
+                        <div id="lm-preview-modal" style="background: <?php echo esc_attr($modal_bg); ?>; border-radius: 12px; padding: 32px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);">
+                            <div id="lm-preview-icon" style="width: 64px; height: 64px; background: <?php echo esc_attr($icon_bg); ?>; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: <?php echo esc_attr($icon_color); ?>;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                    <polyline points="15 3 21 3 21 9"></polyline>
+                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                </svg>
+                            </div>
+                            <h3 id="lm-preview-title" style="margin: 0 0 12px; font-size: 18px; font-weight: 600; color: <?php echo esc_attr($title_color); ?>; line-height: 1.3;"><?php echo esc_html($title_val); ?></h3>
+                            <p id="lm-preview-message" style="margin: 0 0 16px; font-size: 14px; color: <?php echo esc_attr($message_color); ?>; line-height: 1.5;"><?php echo esc_html($message_val); ?></p>
+                            <p id="lm-preview-url" style="margin: 0 0 20px; padding: 8px 12px; background: #f1f5f9; border-radius: 6px; font-size: 12px; color: #475569; font-family: monospace; display: <?php echo !empty($settings['show_url']) ? 'block' : 'none'; ?>;">https://example.com/page</p>
+                            <div style="display: flex; gap: 12px; justify-content: center;">
+                                <button type="button" id="lm-preview-cancel" style="padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; flex: 1; background: <?php echo esc_attr($cancel_bg); ?>; color: <?php echo esc_attr($cancel_text_color); ?>;"><?php echo esc_html($cancel_text_val); ?></button>
+                                <button type="button" id="lm-preview-continue" style="padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; flex: 1; background: <?php echo esc_attr($continue_bg); ?>; color: <?php echo esc_attr($continue_text_color); ?>;"><?php echo esc_html($continue_text_val); ?></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        jQuery(document).ready(function($) {
+            var defaultTitle = <?php echo json_encode($default_title); ?>;
+            var defaultMessage = <?php echo json_encode($default_message); ?>;
+            var defaultContinue = <?php echo json_encode(__('Continue', 'voxel-toolkit')); ?>;
+            var defaultCancel = <?php echo json_encode(__('Go Back', 'voxel-toolkit')); ?>;
+
+            function updatePreview() {
+                // Text content
+                var title = $('#lm-title').val() || defaultTitle;
+                var message = $('#lm-message').val() || defaultMessage;
+                var continueText = $('#lm-continue-text').val() || defaultContinue;
+                var cancelText = $('#lm-cancel-text').val() || defaultCancel;
+
+                $('#lm-preview-title').text(title);
+                $('#lm-preview-message').text(message);
+                $('#lm-preview-continue').text(continueText);
+                $('#lm-preview-cancel').text(cancelText);
+
+                // Show URL
+                $('#lm-preview-url').toggle($('#lm-show-url').is(':checked'));
+
+                // Colors
+                $('#lm-preview-modal').css('background', $('#lm-modal-bg').val() || '#ffffff');
+                $('#lm-preview-title').css('color', $('#lm-title-color').val() || '#1e293b');
+                $('#lm-preview-message').css('color', $('#lm-message-color').val() || '#64748b');
+                $('#lm-preview-icon').css({
+                    'background': $('#lm-icon-bg').val() || '#fef3c7',
+                    'color': $('#lm-icon-color').val() || '#d97706'
+                });
+                $('#lm-preview-continue').css({
+                    'background': $('#lm-continue-bg').val() || '#3b82f6',
+                    'color': $('#lm-continue-text-color').val() || '#ffffff'
+                });
+                $('#lm-preview-cancel').css({
+                    'background': $('#lm-cancel-bg').val() || '#f1f5f9',
+                    'color': $('#lm-cancel-text-color').val() || '#475569'
+                });
+            }
+
+            // Bind events
+            $('#lm-title, #lm-message, #lm-continue-text, #lm-cancel-text').on('input keyup', updatePreview);
+            $('#lm-show-url').on('change', updatePreview);
+            $('.lm-color-input').on('input keyup paste', function() {
+                setTimeout(updatePreview, 50);
+            });
+        });
+        </script>
         <?php
     }
 }
