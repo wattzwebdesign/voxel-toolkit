@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Customizable position (4 corners), colors, animations, and avatar settings
   - Per-event type configuration with message templates using {user}, {post}, {time} placeholders
   - Live preview in settings panel
+- **External Link Warning**: Show warning modal when users click external links
+  - Customizable warning title and message
+  - Domain whitelisting to bypass warnings for trusted sites
+  - CSS selector exclusions for specific links (e.g., `.no-warning`)
+  - Full color customization for modal, icon, and buttons
+  - Live preview in settings panel
+  - Option to display destination URL in the modal
 - **RSVP System**: Complete event RSVP functionality with two widgets
   - RSVP Form widget for submitting/cancelling RSVPs
   - Attendee List widget for displaying RSVPs with admin actions
