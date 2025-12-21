@@ -100,6 +100,9 @@ class Voxel_Toolkit {
         // Register advanced phone field type filter (replaces native phone field)
         add_filter('voxel/field-types', array($this, 'register_advanced_phone_field_if_enabled'), 15);
 
+        // Register extended taxonomy field type filter (adds Add Category functionality)
+        add_filter('voxel/field-types', array($this, 'register_extended_taxonomy_field_if_enabled'), 15);
+
         // Load the actual field class later when Voxel classes are available
         add_action('after_setup_theme', array($this, 'init_post_fields'), 10);
     }
@@ -229,6 +232,40 @@ class Voxel_Toolkit {
 
         // Replace native phone field with our extended version
         $fields['phone'] = '\Voxel_Toolkit_Extended_Phone_Field';
+        return $fields;
+    }
+
+    /**
+     * Register extended taxonomy field type if enabled (adds Add Category functionality)
+     */
+    public function register_extended_taxonomy_field_if_enabled($fields) {
+        // Load settings class if not loaded
+        if (!class_exists('Voxel_Toolkit_Settings')) {
+            if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-settings.php')) {
+                require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-settings.php';
+            } else {
+                return $fields;
+            }
+        }
+
+        $settings = Voxel_Toolkit_Settings::instance();
+        if (!$settings->is_function_enabled('add_category')) {
+            return $fields;
+        }
+
+        // Check if Voxel's Taxonomy_Field class exists (we extend it)
+        if (!class_exists('\Voxel\Post_Types\Fields\Taxonomy_Field')) {
+            return $fields;
+        }
+
+        // Load the field file to ensure the class is available
+        $field_file = VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/class-add-category.php';
+        if (file_exists($field_file) && !class_exists('Voxel_Toolkit_Extended_Taxonomy_Field')) {
+            require_once $field_file;
+        }
+
+        // Replace native taxonomy field with our extended version
+        $fields['taxonomy'] = '\Voxel_Toolkit_Extended_Taxonomy_Field';
         return $fields;
     }
 

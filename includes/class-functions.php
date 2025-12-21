@@ -513,6 +513,13 @@ class Voxel_Toolkit_Functions {
                 'icon' => 'dashicons-external',
                 'settings_callback' => array($this, 'render_link_management_settings'),
             ),
+            'add_category' => array(
+                'name' => __('Add Category', 'voxel-toolkit'),
+                'description' => __('Allow users to add new taxonomy terms from the frontend Create Post form. Supports approval workflow, overridable permissions, and app events.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Add_Category',
+                'file' => 'functions/class-add-category.php',
+                'icon' => 'dashicons-plus-alt',
+            ),
         );
 
         // Allow other plugins/themes to register functions
