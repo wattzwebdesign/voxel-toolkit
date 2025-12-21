@@ -119,6 +119,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Toggle for country selector dropdown visibility
   - Stores country code separately for E.164 formatting
   - Settings appear in Post Type editor under each phone field
+- **Add Category**: Allow users to add new taxonomy terms from frontend Create Post form
+  - Per-field toggle in Post Type editor under each taxonomy field
+  - Voxel override system for role-based visibility (e.g., only editors can add terms)
+  - Optional approval workflow with pending terms hidden until approved
+  - App Events integration for admin notifications (in-app and email)
+  - User instructions for pending term workflow
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options
