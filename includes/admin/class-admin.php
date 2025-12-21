@@ -1789,6 +1789,13 @@ class Voxel_Toolkit_Admin {
                         }
                         break;
 
+                    case 'saved_search':
+                        // Saved searches page
+                        if (isset($function_input['saved_searches_page'])) {
+                            $sanitized_function['saved_searches_page'] = absint($function_input['saved_searches_page']);
+                        }
+                        break;
+
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(

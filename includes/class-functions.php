@@ -520,6 +520,15 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-add-category.php',
                 'icon' => 'dashicons-plus-alt',
             ),
+            'saved_search' => array(
+                'name' => __('Saved Search', 'voxel-toolkit'),
+                'description' => __('Allow users to save search filters and receive notifications when new posts match their saved searches.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Saved_Search',
+                'file' => 'functions/class-saved-search.php',
+                'settings_callback' => array($this, 'render_saved_search_settings'),
+                'icon' => 'dashicons-search',
+                'required_widgets' => array('saved_search_widget'),
+            ),
         );
 
         // Allow other plugins/themes to register functions
@@ -679,6 +688,15 @@ class Voxel_Toolkit_Functions {
                 'icon' => 'eicon-google-maps',
                 'widget_name' => 'voxel-toolkit-route-planner',
             ),
+            'saved_search_widget' => array(
+                'name' => __('Saved Search (VT)', 'voxel-toolkit'),
+                'description' => __('Display and manage user saved searches.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Saved_Search_Widget_Manager',
+                'file' => 'widgets/class-saved-search-widget-manager.php',
+                'icon' => 'eicon-search',
+                'widget_name' => 'vt-saved-search',
+                'hidden' => true,
+            ),
         );
 
         // Allow other plugins/themes to register widgets
@@ -715,9 +733,20 @@ class Voxel_Toolkit_Functions {
             'file' => 'widgets/class-profile-progress-widget.php',
         ));
 
+        // Collect widgets required by enabled functions
+        $required_by_functions = array();
+        foreach ($this->available_functions as $function_key => $function_data) {
+            if ($settings->is_function_enabled($function_key) && !empty($function_data['required_widgets'])) {
+                foreach ($function_data['required_widgets'] as $req_widget) {
+                    $required_by_functions[$req_widget] = true;
+                }
+            }
+        }
+
         foreach ($this->available_widgets as $widget_key => $widget_data) {
             $widget_key_full = 'widget_' . $widget_key;
-            if ($settings->is_function_enabled($widget_key_full)) {
+            // Initialize if explicitly enabled OR required by an enabled function
+            if ($settings->is_function_enabled($widget_key_full) || isset($required_by_functions[$widget_key])) {
                 $this->init_widget($widget_key, $widget_data);
             }
         }
@@ -6207,6 +6236,64 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             });
         });
         </script>
+        <?php
+    }
+
+    /**
+     * Render settings for Saved Search function
+     *
+     * @param array $settings Current settings
+     */
+    public function render_saved_search_settings($settings) {
+        // Get all pages for the dropdown
+        $pages = get_pages(array(
+            'sort_column' => 'post_title',
+            'sort_order' => 'ASC',
+        ));
+        $saved_searches_page = isset($settings['saved_searches_page']) ? absint($settings['saved_searches_page']) : 0;
+        ?>
+        <div class="vt-info-box">
+            <?php _e('Allow users to save search filters and receive notifications when new posts match their saved searches.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Features', 'voxel-toolkit'); ?></h4>
+            <ul class="vt-feature-list">
+                <li><?php _e('Save button added to Voxel search form widget', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Saved Search (VT) widget displays user\'s saved searches', 'voxel-toolkit'); ?></li>
+                <li><?php _e('App Events for notifications when new posts match saved searches', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Users can enable/disable notifications per saved search', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Optional title for saved searches', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Configuration', 'voxel-toolkit'); ?></h4>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Saved Searches Page', 'voxel-toolkit'); ?></label>
+                <select name="voxel_toolkit_options[saved_search][saved_searches_page]" class="vt-select" style="width: 300px;">
+                    <option value=""><?php _e('— Select Page —', 'voxel-toolkit'); ?></option>
+                    <?php foreach ($pages as $page) : ?>
+                        <option value="<?php echo esc_attr($page->ID); ?>" <?php selected($saved_searches_page, $page->ID); ?>>
+                            <?php echo esc_html($page->post_title); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="vt-field-description">
+                    <?php _e('Select the page containing the Saved Search (VT) widget. This link will be shown in success messages.', 'voxel-toolkit'); ?>
+                </p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Usage Instructions', 'voxel-toolkit'); ?></h4>
+            <ol class="vt-feature-list">
+                <li><?php _e('Add the Saved Search (VT) widget to a page where users can manage their searches', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Configure the Search Form widget\'s "Saved Search (VT)" section to enable the save button', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Set up App Events in Voxel to send notifications for new matching posts', 'voxel-toolkit'); ?></li>
+            </ol>
+        </div>
         <?php
     }
 }

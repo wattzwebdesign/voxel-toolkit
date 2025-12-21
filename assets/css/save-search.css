@@ -1,0 +1,21 @@
+/**
+ * Save Search Button Styles
+ */
+.ts-form .ts-filter-wrapper .vt_save_search .ts-form-group {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.ts-form-group.vt_save_search .ts-filter.ts-popup-target {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.vt_save_search.hidden {
+    display: none;
+}
+
+.vt-save-search-link {
+    cursor: pointer;
+}

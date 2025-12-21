@@ -1,0 +1,1011 @@
+<?php
+/**
+ * Saved Search Function Class
+ *
+ * Main function class for the Saved Search feature.
+ * Handles AJAX, database setup, Elementor injection, and notifications.
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+class Voxel_Toolkit_Saved_Search {
+
+    private static $instance = null;
+    public static $table_version = '1.0';
+
+    /**
+     * Get singleton instance
+     */
+    public static function instance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * Constructor
+     */
+    private function __construct() {
+        $this->load_dependencies();
+        $this->init_hooks();
+    }
+
+    /**
+     * Load required files
+     */
+    private function load_dependencies() {
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/saved-search/class-saved-search-model.php';
+    }
+
+    /**
+     * Initialize hooks
+     */
+    private function init_hooks() {
+        // Database setup
+        add_action('admin_init', array($this, 'maybe_setup_tables'));
+
+        // AJAX handlers (vt_ prefix)
+        add_action('voxel_ajax_vt_save_search', array($this, 'save_search'));
+        add_action('voxel_ajax_vt_get_saved_searches', array($this, 'get_saved_searches'));
+        add_action('voxel_ajax_vt_delete_saved_search', array($this, 'delete_saved_search'));
+        add_action('voxel_ajax_vt_update_saved_search', array($this, 'update_saved_search'));
+
+        // Notification hooks (register after Voxel post types are ready)
+        add_action('init', array($this, 'register_notification_hooks'), 100);
+
+        // Fallback: WordPress post status transitions (for wp-admin posts)
+        add_action('transition_post_status', array($this, 'on_post_status_change'), 10, 3);
+
+        // Register app events with Voxel
+        add_filter('voxel/app-events/register', array($this, 'register_events'), 99);
+
+        // Search form widget integration
+        add_action('elementor/widget/render_content', array($this, 'render_save_button'), 10, 2);
+        add_action('elementor/element/after_section_end', array($this, 'register_search_form_controls'), 10, 3);
+        add_action('elementor/element/after_section_end', array($this, 'register_search_form_style_controls'), 10, 3);
+        add_action('elementor/element/before_section_end', array($this, 'register_search_form_icon_controls'), 10, 3);
+
+        // Enqueue assets in Elementor preview
+        add_action('elementor/frontend/widget/before_render', array($this, 'enqueue_assets_elementor_iframe'), 999);
+
+        // Register assets
+        add_action('wp_enqueue_scripts', array($this, 'register_assets'), 5);
+    }
+
+    /**
+     * Maybe setup database tables
+     */
+    public function maybe_setup_tables() {
+        $current_version = get_option('vt_saved_search_table_version', '');
+        if ($current_version !== static::$table_version) {
+            static::setup_tables();
+        }
+    }
+
+    /**
+     * Setup database tables
+     */
+    public static function setup_tables() {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'vt_saved_searches';
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE $table_name (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            title varchar(255) NOT NULL,
+            user_id bigint(20) unsigned NOT NULL,
+            published_as bigint(20) unsigned DEFAULT NULL,
+            notification tinyint(1) NOT NULL DEFAULT 1,
+            details longtext NOT NULL,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            PRIMARY KEY (id),
+            KEY user_id (user_id),
+            KEY notification (notification)
+        ) $charset_collate;";
+
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        dbDelta($sql);
+
+        update_option('vt_saved_search_table_version', static::$table_version);
+    }
+
+    /**
+     * Register assets
+     */
+    public function register_assets() {
+        wp_register_script(
+            'vt-save-search',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/save-search.js',
+            array('jquery'),
+            VOXEL_TOOLKIT_VERSION,
+            true
+        );
+
+        wp_register_style(
+            'vt-save-search',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/save-search.css',
+            array(),
+            VOXEL_TOOLKIT_VERSION
+        );
+
+        wp_register_script(
+            'vt-saved-search',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/saved-search.js',
+            array('jquery'),
+            VOXEL_TOOLKIT_VERSION,
+            true
+        );
+
+        wp_register_style(
+            'vt-saved-search',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/saved-search.css',
+            array(),
+            VOXEL_TOOLKIT_VERSION
+        );
+    }
+
+    /**
+     * Enqueue assets in Elementor iframe
+     */
+    public function enqueue_assets_elementor_iframe($widget) {
+        if (function_exists('\Voxel\is_elementor_preview') && \Voxel\is_elementor_preview()) {
+            wp_enqueue_script('vt-save-search');
+            wp_enqueue_style('vt-save-search');
+        }
+    }
+
+    /**
+     * Register saved search events with Voxel
+     */
+    public function register_events($events) {
+        if (!class_exists('\Voxel\Post_Type')) {
+            return $events;
+        }
+
+        // Load event class
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/saved-search/class-saved-search-event.php';
+
+        foreach (\Voxel\Post_Type::get_voxel_types() as $post_type) {
+            $event = new Voxel_Toolkit_Saved_Search_Event($post_type);
+            $events[$event->get_key()] = $event;
+        }
+
+        return $events;
+    }
+
+    /**
+     * Register notification hooks after Voxel post types are ready
+     */
+    public function register_notification_hooks() {
+        if (!class_exists('\Voxel\Post_Type')) {
+            return;
+        }
+
+        foreach (\Voxel\Post_Type::get_voxel_types() as $post_type) {
+            $hook_created = 'voxel/app-events/post-types/' . $post_type->get_key() . '/post:created';
+            $hook_approved = 'voxel/app-events/post-types/' . $post_type->get_key() . '/post:approved';
+
+            add_action($hook_created, array($this, 'add_cron_event'), 999, 1);
+            add_action($hook_approved, array($this, 'add_cron_event'), 999, 1);
+        }
+    }
+
+    /**
+     * Register search form icon controls
+     */
+    public function register_search_form_icon_controls($element, $section_id, $args) {
+        if ('ts-search-form' !== $element->get_name()) {
+            return;
+        }
+        if ('ts_ui_icons' !== $section_id) {
+            return;
+        }
+
+        $element->add_control(
+            'vt_ss_form_btn_save_icon',
+            [
+                'label' => __('Saved Search icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'skin' => 'inline',
+                'label_block' => false,
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+    }
+
+    /**
+     * Register search form style controls
+     */
+    public function register_search_form_style_controls($element, $section_id, $args) {
+        if ('ts-search-form' !== $element->get_name()) {
+            return;
+        }
+        if ('ts_sf_styling_buttons' !== $section_id) {
+            return;
+        }
+
+        $element->start_controls_section(
+            'vt_ss_save_and_get_notification',
+            [
+                'label' => __('Saved Search (VT)', 'voxel-toolkit'),
+                'tab' => 'tab_general',
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_save_search_items',
+            [
+                'label' => __('General', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $element->start_controls_tabs('vt_ss_save_button_tabs');
+
+        // Normal tab
+        $element->start_controls_tab(
+            'vt_ss_save_button_normal',
+            ['label' => __('Normal', 'voxel-toolkit')]
+        );
+
+        $element->add_responsive_control(
+            'vt_ss_text_align',
+            [
+                'label' => __('Alignment', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => [
+                    'flex-start' => [
+                        'title' => __('Left', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => __('Center', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-center',
+                    ],
+                    'flex-end' => [
+                        'title' => __('Right', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-right',
+                    ],
+                ],
+                'default' => 'flex-start',
+                'toggle' => true,
+                'selectors' => [
+                    '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'justify-content: {{VALUE}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ss_btn_icon_size',
+            [
+                'label' => __('Icon size', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_save_search .ts-popup-target i' => 'font-size: {{SIZE}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vt_save_search .ts-popup-target svg' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ss_btn_height',
+            [
+                'label' => __('Button Height', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'height: {{SIZE}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ss_btn_radius',
+            [
+                'label' => __('Border radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px', '%'],
+                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1], '%' => ['min' => 0, 'max' => 100]],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'border-radius: {{SIZE}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'vt_ss_btn_typo',
+                'label' => __('Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt_save_search .ts-popup-target',
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ss_btn_color',
+            [
+                'label' => __('Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#000000',
+                'selectors' => [
+                    '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'color: {{VALUE}}!important',
+                    '{{WRAPPER}} .vt_save_search .ts-popup-target svg' => 'fill: {{VALUE}}!important',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ss_btn_bg',
+            [
+                'label' => __('Background color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt_save_search div.ts-popup-target' => 'background-color: {{VALUE}}!important',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ss_btn_padding',
+            [
+                'label' => __('Button padding', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%', 'em'],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ss_btn_margin',
+            [
+                'label' => __('Button margin', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%', 'em'],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Border::get_type(),
+            [
+                'name' => 'vt_ss_btn_border',
+                'label' => __('Border', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt_save_search .ts-popup-target',
+            ]
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Box_Shadow::get_type(),
+            [
+                'name' => 'vt_ss_btn_shadow',
+                'label' => __('Box Shadow', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt_save_search .ts-popup-target',
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ss_btn_icon_spacing',
+            [
+                'label' => __('Icon/Text spacing', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'grid-gap: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $element->end_controls_tab();
+
+        // Hover tab
+        $element->start_controls_tab(
+            'vt_ss_save_button_hover',
+            ['label' => __('Hover', 'voxel-toolkit')]
+        );
+
+        $element->add_control(
+            'vt_ss_btn_color_hover',
+            [
+                'label' => __('Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt_save_search:hover .ts-popup-target' => 'color: {{VALUE}}!important',
+                    '{{WRAPPER}} .vt_save_search:hover .ts-popup-target svg' => 'fill: {{VALUE}}!important',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_btn_bg_hover',
+            [
+                'label' => __('Background color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt_save_search:hover .ts-popup-target' => 'background: {{VALUE}}!important',
+                ],
+            ]
+        );
+
+        $element->end_controls_tab();
+        $element->end_controls_tabs();
+        $element->end_controls_section();
+    }
+
+    /**
+     * Register search form controls
+     */
+    public function register_search_form_controls($element, $section_id, $args) {
+        if ('ts-search-form' !== $element->get_name()) {
+            return;
+        }
+        if ('ts_sf_buttons' !== $section_id) {
+            return;
+        }
+
+        $element->start_controls_section(
+            'vt_ss_save_search_button',
+            [
+                'label' => __('Saved Search (VT)', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_show_save_search_btn',
+            [
+                'label' => __('Enable', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'no',
+                'return_value' => 'yes',
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_success_message',
+            [
+                'label' => __('Success message', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Search saved successfully', 'voxel-toolkit'),
+                'placeholder' => __('Type your text', 'voxel-toolkit'),
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_link_label',
+            [
+                'label' => __('Go to saved page label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Your searches', 'voxel-toolkit'),
+                'placeholder' => __('Type your text', 'voxel-toolkit'),
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        // Top popup button heading
+        $element->add_control(
+            'vt_ss_top_popup_heading',
+            [
+                'label' => __('Top popup button', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_show_top_popup_btn',
+            [
+                'label' => __('Show on desktop', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_show_top_popup_btn_tablet',
+            [
+                'label' => __('Show on tablet', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_show_top_popup_btn_mobile',
+            [
+                'label' => __('Show on mobile', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        // Main button heading
+        $element->add_control(
+            'vt_ss_main_btn_heading',
+            [
+                'label' => __('Main button', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_show_main_btn',
+            [
+                'label' => __('Show on desktop', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_show_main_btn_tablet',
+            [
+                'label' => __('Show on tablet', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_show_main_btn_mobile',
+            [
+                'label' => __('Show on mobile', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_btn_text',
+            [
+                'label' => __('Button label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Save Search', 'voxel-toolkit'),
+                'placeholder' => __('Type your text', 'voxel-toolkit'),
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ss_btn_width',
+            [
+                'label' => __('Button Width', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['%', 'px', 'vw'],
+                'default' => ['unit' => '%', 'size' => 100],
+                'range' => [
+                    '%' => ['min' => 0, 'max' => 100, 'step' => 1],
+                    'px' => ['min' => 0, 'max' => 1000, 'step' => 1],
+                    'vw' => ['min' => 0, 'max' => 100, 'step' => 1],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_save_search' => 'width: {{SIZE}}%!important;',
+                ],
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        // Ask for title popup settings
+        $element->add_control(
+            'vt_ss_general_heading',
+            [
+                'label' => __('Ask for title popup', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_ask_for_title',
+            [
+                'label' => __('Enable', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'true',
+                'return_value' => 'true',
+                'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_placeholder',
+            [
+                'label' => __('Input placeholder', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Leave a short note...', 'voxel-toolkit'),
+                'placeholder' => __('Type your text', 'voxel-toolkit'),
+                'condition' => [
+                    'vt_ss_ask_for_title' => 'true',
+                    'vt_ss_show_save_search_btn' => 'yes',
+                ],
+            ]
+        );
+
+        $element->end_controls_section();
+    }
+
+    /**
+     * Render save search button on search form widget
+     */
+    public function render_save_button($widget_content, $widget) {
+        if ($widget->get_name() !== 'ts-search-form') {
+            return $widget_content;
+        }
+
+        $settings = $widget->get_settings_for_display();
+
+        $save_icon = $widget->get_settings_for_display('vt_ss_form_btn_save_icon');
+
+        // Get saved search page from toolkit settings
+        $function_settings = Voxel_Toolkit_Settings::instance()->get_function_settings('saved_search', array());
+        $saved_search_page = isset($function_settings['saved_searches_page']) ? absint($function_settings['saved_searches_page']) : 0;
+
+        // Default save search icon
+        $default_icon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M20.137,24a2.8,2.8,0,0,1-1.987-.835L12,17.051,5.85,23.169a2.8,2.8,0,0,1-3.095.609A2.8,2.8,0,0,1,1,21.154V5A5,5,0,0,1,6,0H18a5,5,0,0,1,5,5V21.154a2.8,2.8,0,0,1-1.751,2.624A2.867,2.867,0,0,1,20.137,24ZM6,2A3,3,0,0,0,3,5V21.154a.843.843,0,0,0,1.437.6h0L11.3,14.933a1,1,0,0,1,1.41,0l6.855,6.819a.843.843,0,0,0,1.437-.6V5a3,3,0,0,0-3-3Z"/></svg>';
+
+        $config = [
+            'widgetId' => $widget->get_id(),
+            'enable' => $widget->get_settings_for_display('vt_ss_show_save_search_btn') === 'yes',
+            'label' => $widget->get_settings_for_display('vt_ss_btn_text') ?: 'Save Search',
+            'placeholder' => $widget->get_settings_for_display('vt_ss_placeholder') ?: 'Leave a short note...',
+            'askForTitle' => $widget->get_settings_for_display('vt_ss_ask_for_title') === 'true',
+            'icon' => $save_icon && !empty($save_icon['value']) ? \Voxel\get_icon_markup($save_icon) : $default_icon,
+            'link' => $saved_search_page ? get_permalink($saved_search_page) : '#',
+            'successMessage' => $widget->get_settings_for_display('vt_ss_success_message') ?: 'Search saved successfully.',
+            'linkLabel' => $widget->get_settings_for_display('vt_ss_link_label') ?: 'Your searches',
+            'showTopPopupButton' => [
+                'desktop' => $widget->get_settings_for_display('vt_ss_show_top_popup_btn') === 'yes',
+                'tablet' => $widget->get_settings_for_display('vt_ss_show_top_popup_btn_tablet') === 'yes',
+                'mobile' => $widget->get_settings_for_display('vt_ss_show_top_popup_btn_mobile') === 'yes',
+            ],
+            'showMainButton' => [
+                'desktop' => $widget->get_settings_for_display('vt_ss_show_main_btn') === 'yes',
+                'tablet' => $widget->get_settings_for_display('vt_ss_show_main_btn_tablet') === 'yes',
+                'mobile' => $widget->get_settings_for_display('vt_ss_show_main_btn_mobile') === 'yes',
+            ],
+        ];
+
+        if ($config['enable']) {
+            $template_path = VOXEL_TOOLKIT_PLUGIN_DIR . 'templates/saved-search/save-search-button.php';
+            if (file_exists($template_path)) {
+                include $template_path;
+            }
+            wp_enqueue_script('vt-save-search');
+            wp_enqueue_style('vt-save-search');
+        }
+
+        ?>
+        <script type="text/json" class="vtSavedSearchConfig">
+            <?php echo wp_specialchars_decode(wp_json_encode($config)); ?>
+        </script>
+        <?php
+
+        return $widget_content;
+    }
+
+    /**
+     * Save a search (AJAX handler)
+     */
+    public function save_search() {
+        try {
+            if (!is_user_logged_in()) {
+                throw new \Exception(__('You must be logged in to save a search', 'voxel-toolkit'));
+            }
+
+            $current_user = \Voxel\current_user();
+            $post = function_exists('\Voxel\get_current_post') ? \Voxel\get_current_post() : null;
+
+            $data = [
+                'user_id' => $current_user->get_id(),
+                'details' => isset($_POST['details']) ? $_POST['details'] : '',
+                'title' => sanitize_text_field(isset($_POST['title']) ? $_POST['title'] : ''),
+                'published_as' => $post ? $post->get_id() : null,
+                'notification' => true,
+            ];
+
+            $search = Voxel_Toolkit_Saved_Search_Model::create($data);
+
+            return wp_send_json([
+                'success' => true,
+                'message' => $search,
+            ]);
+        } catch (\Exception $e) {
+            return wp_send_json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Delete a saved search (AJAX handler)
+     */
+    public function delete_saved_search() {
+        try {
+            if (!is_user_logged_in()) {
+                throw new \Exception(__('You must be logged in', 'voxel-toolkit'));
+            }
+
+            $search_id = absint(isset($_POST['search_id']) ? $_POST['search_id'] : 0);
+            if (!$search_id) {
+                throw new \Exception(__('Search ID is required', 'voxel-toolkit'));
+            }
+
+            $search = Voxel_Toolkit_Saved_Search_Model::get($search_id);
+            if (!$search) {
+                throw new \Exception(__('Search not found', 'voxel-toolkit'));
+            }
+
+            $current_user = \Voxel\current_user();
+            if ($search->get_user_id() !== $current_user->get_id()) {
+                throw new \Exception(__('You do not have permission to delete this search', 'voxel-toolkit'));
+            }
+
+            $search->delete();
+
+            return wp_send_json([
+                'success' => true,
+                'message' => __('Deleted successfully', 'voxel-toolkit'),
+            ]);
+        } catch (\Exception $e) {
+            return wp_send_json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Update a saved search (AJAX handler)
+     */
+    public function update_saved_search() {
+        try {
+            if (!is_user_logged_in()) {
+                throw new \Exception(__('You must be logged in', 'voxel-toolkit'));
+            }
+
+            $search_id = absint(isset($_POST['search_id']) ? $_POST['search_id'] : 0);
+            if (!$search_id) {
+                throw new \Exception(__('Search ID is required', 'voxel-toolkit'));
+            }
+
+            $data = isset($_POST['data']) ? $_POST['data'] : null;
+            if (!$data) {
+                throw new \Exception(__('Data cannot be empty', 'voxel-toolkit'));
+            }
+
+            $search = Voxel_Toolkit_Saved_Search_Model::get($search_id);
+            if (!$search) {
+                throw new \Exception(__('Search not found', 'voxel-toolkit'));
+            }
+
+            $current_user = \Voxel\current_user();
+            if ($search->get_user_id() !== $current_user->get_id()) {
+                throw new \Exception(__('You do not have permission to update this search', 'voxel-toolkit'));
+            }
+
+            $search->update($data);
+
+            return wp_send_json([
+                'success' => true,
+                'message' => __('Updated successfully', 'voxel-toolkit'),
+            ]);
+        } catch (\Exception $e) {
+            return wp_send_json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Get saved searches for current user (AJAX handler)
+     */
+    public function get_saved_searches() {
+        $page = absint(isset($_GET['page']) ? $_GET['page'] : 1);
+        $per_page = 10;
+
+        $current_user = function_exists('\Voxel\current_user') ? \Voxel\current_user() : null;
+        if (!$current_user) {
+            return wp_send_json([
+                'success' => false,
+                'message' => __('You must be logged in to view saved searches', 'voxel-toolkit'),
+            ]);
+        }
+
+        $user_id = $current_user->get_id();
+
+        $args = [
+            'limit' => $per_page + 1,
+            'user_id' => $user_id,
+            'order_by' => 'created_at',
+            'order' => 'DESC',
+        ];
+
+        if ($page > 1) {
+            $args['offset'] = ($page - 1) * $per_page;
+        }
+
+        $searches = Voxel_Toolkit_Saved_Search_Model::query($args);
+        $has_more = count($searches) > $per_page;
+
+        if ($has_more) {
+            array_pop($searches);
+        }
+
+        $data = [];
+        foreach ($searches as $search) {
+            $data[$search->get_id()] = $search->get_saved_search_to_display();
+        }
+
+        return wp_send_json([
+            'success' => true,
+            'data' => $data,
+            'has_more' => $has_more,
+        ]);
+    }
+
+    /**
+     * Handle post status transitions (fallback for backend/wp-admin posts)
+     */
+    public function on_post_status_change($new_status, $old_status, $post) {
+        if (!class_exists('\Voxel\Post_Type')) {
+            return;
+        }
+
+        $voxel_types = array_keys(\Voxel\Post_Type::get_voxel_types());
+        if (!in_array($post->post_type, $voxel_types)) {
+            return;
+        }
+
+        // Trigger on new publish or transition to publish
+        if ($new_status === 'publish' && $old_status !== 'publish') {
+            $this->add_cron_event($post->ID);
+        }
+    }
+
+    /**
+     * Schedule cron event for notifications
+     */
+    public function add_cron_event($post_id) {
+        // Handle Voxel event objects
+        if (!is_numeric($post_id)) {
+            $event = $post_id;
+            if (!isset($event->post)) {
+                return;
+            }
+            $post = $event->post;
+            if ($post->get_status() !== 'publish') {
+                return;
+            }
+            $post_id = $post->get_id();
+        }
+
+        // Check if we've already processed this post to prevent duplicate notifications
+        $processed_key = 'vt_ss_processed_' . $post_id;
+        if (get_transient($processed_key)) {
+            return;
+        }
+
+        // Mark as processed for 60 seconds to prevent duplicates
+        set_transient($processed_key, true, 60);
+
+        // Process notifications immediately
+        $this->send_notifications($post_id);
+    }
+
+    /**
+     * Send notifications for matching saved searches
+     */
+    public function send_notifications($post_id) {
+        if (!class_exists('\Voxel\Post')) {
+            return;
+        }
+
+        $post = \Voxel\Post::get($post_id);
+        if (!$post) {
+            return;
+        }
+
+        // Only process published posts
+        if ($post->get_status() !== 'publish') {
+            return;
+        }
+
+        // Index the post to ensure it's searchable
+        $post->index();
+        $post_type = $post->post_type;
+
+        if (!$post_type) {
+            return;
+        }
+
+        // Query saved searches for this post type (excluding post author)
+        $saved_searches = Voxel_Toolkit_Saved_Search_Model::query([
+            'limit' => PHP_INT_MAX,
+            'user_id' => -(int) $post->get_author_id(),
+            'post_type' => $post_type->get_key(),
+            'notification' => 1,
+        ]);
+
+        if (empty($saved_searches)) {
+            return;
+        }
+
+        // Load event class
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/saved-search/class-saved-search-event.php';
+
+        foreach ($saved_searches as $search) {
+            if (!$search->get_notification()) {
+                continue;
+            }
+
+            try {
+                $args = [];
+                $search_details = $search->get_details();
+                $ignore_filters = $search->get_ignore_filters();
+
+                foreach ($post_type->get_filters() as $filter) {
+                    if (isset($search_details[$filter->get_key()])) {
+                        if (!in_array($filter->get_type(), $ignore_filters)) {
+                            $args[$filter->get_key()] = $search_details[$filter->get_key()];
+                        }
+                    }
+                }
+
+                $cb = function($query) use ($post_id) {
+                    $query->where(sprintf(
+                        '`%s`.post_id = %d',
+                        $query->table->get_escaped_name(),
+                        $post_id
+                    ));
+                };
+
+                $match = $post_type->query($args, $cb);
+
+                if (!empty($match)) {
+                    // Dispatch notification event
+                    $event = new Voxel_Toolkit_Saved_Search_Event($post_type);
+                    $event->dispatch($post->get_id(), $search->get_user_id(), $search->get_id());
+                }
+            } catch (\Exception $e) {
+                // Log error but continue processing other searches
+                if (function_exists('\Voxel\log')) {
+                    \Voxel\log(sprintf(
+                        '[VT Saved Search] Error processing search %d: %s',
+                        $search->get_id(),
+                        $e->getMessage()
+                    ));
+                }
+            }
+        }
+    }
+}
