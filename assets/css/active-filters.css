@@ -12,6 +12,16 @@
     width: fit-content;
 }
 
+/* Hide Elementor wrapper when widget is empty */
+.elementor-widget:has(.vt-active-filters-widget.vt-hidden-empty) {
+    display: none !important;
+}
+
+/* Fallback for browsers without :has() support */
+.vt-active-filters-widget.vt-hidden-empty {
+    display: none !important;
+}
+
 /* Heading */
 .vt-active-filters-heading {
     font-size: 14px;

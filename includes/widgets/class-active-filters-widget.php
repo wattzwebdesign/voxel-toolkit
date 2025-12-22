@@ -1242,10 +1242,17 @@ class Voxel_Toolkit_Active_Filters_Widget extends \Elementor\Widget_Base {
 
         // Determine if widget should be hidden initially
         $is_empty = empty($filters) && !$is_preview;
-        $hide_style = ($is_empty && $settings['hide_when_empty'] === 'yes') ? ' style="display:none;"' : '';
+
+        // Don't render anything if empty and hide_when_empty is enabled
+        // This prevents Elementor wrapper from taking up space
+        if ($is_empty && $settings['hide_when_empty'] === 'yes') {
+            // Output a minimal placeholder that JS can find and populate later
+            echo '<div class="vt-active-filters-widget vt-hidden-empty"' . $data_string . ' style="display:none;"></div>';
+            return;
+        }
 
         ?>
-        <div class="vt-active-filters-widget<?php echo esc_attr($layout_class); ?>"<?php echo $data_string; ?><?php echo $hide_style; ?>>
+        <div class="vt-active-filters-widget<?php echo esc_attr($layout_class); ?>"<?php echo $data_string; ?>>
             <?php if ($heading_text): ?>
                 <div class="vt-active-filters-heading"><?php echo esc_html($heading_text); ?></div>
             <?php endif; ?>

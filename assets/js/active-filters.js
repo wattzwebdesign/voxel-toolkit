@@ -239,12 +239,27 @@
     function renderFilters(config, filters) {
         var widget = config.element;
 
+        // Find Elementor widget wrapper (parent container that may have padding/margin)
+        var elementorWrapper = widget.closest('.elementor-widget');
+
+        // Check if widget was initially rendered empty (minimal placeholder)
+        var wasHiddenEmpty = widget.classList.contains('vt-hidden-empty');
+
         // Handle empty state
         if (filters.length === 0) {
             if (config.hideWhenEmpty) {
                 widget.style.display = 'none';
+                widget.classList.add('vt-hidden-empty');
+                // Also hide the Elementor wrapper to remove white space
+                if (elementorWrapper) {
+                    elementorWrapper.style.display = 'none';
+                }
             } else {
                 widget.style.display = '';
+                widget.classList.remove('vt-hidden-empty');
+                if (elementorWrapper) {
+                    elementorWrapper.style.display = '';
+                }
             }
             // Clear the inner content
             var inner = widget.querySelector('.vt-active-filters-inner');
@@ -257,11 +272,20 @@
             return;
         }
 
-        // Show widget
+        // Show widget and Elementor wrapper
         widget.style.display = '';
+        widget.classList.remove('vt-hidden-empty');
+        if (elementorWrapper) {
+            elementorWrapper.style.display = '';
+        }
 
-        // Find or create inner container
+        // If widget was initially empty, we need to build the full structure
         var inner = widget.querySelector('.vt-active-filters-inner');
+        if (!inner && wasHiddenEmpty) {
+            // Build the full widget structure
+            inner = buildWidgetStructure(config, widget);
+        }
+
         if (!inner) {
             return;
         }
@@ -289,6 +313,39 @@
             btn.href = getClearAllUrl();
             btn.style.display = filters.length > 0 ? '' : 'none';
         });
+    }
+
+    /**
+     * Build full widget structure for initially empty widgets
+     */
+    function buildWidgetStructure(config, widget) {
+        var html = '';
+
+        // Add heading if configured
+        if (config.headingText) {
+            html += '<div class="vt-active-filters-heading">' + escapeHtml(config.headingText) + '</div>';
+        }
+
+        // Build inner container
+        html += '<div class="vt-active-filters-inner">';
+
+        // Clear all before
+        if (config.showClearAll && config.clearAllPosition === 'before') {
+            html += '<a href="' + escapeHtml(getClearAllUrl()) + '" class="vt-clear-all-filters">' + escapeHtml(config.clearAllText) + '</a>';
+        }
+
+        // Filter list
+        html += '<div class="vt-active-filters-list"></div>';
+
+        // Clear all after
+        if (config.showClearAll && config.clearAllPosition === 'after') {
+            html += '<a href="' + escapeHtml(getClearAllUrl()) + '" class="vt-clear-all-filters">' + escapeHtml(config.clearAllText) + '</a>';
+        }
+
+        html += '</div>';
+
+        widget.innerHTML = html;
+        return widget.querySelector('.vt-active-filters-inner');
     }
 
     /**
@@ -336,16 +393,65 @@
      * Trigger Voxel to refresh search results
      */
     function triggerVoxelRefresh() {
-        // Dispatch popstate event which Voxel listens to
-        window.dispatchEvent(new PopStateEvent('popstate', { state: {} }));
+        var refreshed = false;
 
-        // Also try triggering Voxel's custom events if available
+        // Method 1: Try to access Voxel's search form Vue app and trigger URL sync
+        var searchForm = document.querySelector('.ts-form.ts-search-form');
+        if (searchForm && searchForm.__vue_app__) {
+            try {
+                var vueApp = searchForm.__vue_app__;
+                var component = vueApp._container._vnode.component;
+                if (component && component.proxy) {
+                    // Call syncFromUrl if available
+                    if (typeof component.proxy.syncFromUrl === 'function') {
+                        component.proxy.syncFromUrl();
+                        refreshed = true;
+                    }
+                    // Or trigger submit
+                    else if (typeof component.proxy.submit === 'function') {
+                        component.proxy.submit();
+                        refreshed = true;
+                    }
+                }
+            } catch (e) {
+                console.warn('VT Active Filters: Could not access Voxel Vue app', e);
+            }
+        }
+
+        // Method 2: Find and click Voxel's submit button
+        if (!refreshed) {
+            var submitBtn = document.querySelector('.ts-search-form .ts-form-submit, .ts-search-form [type="submit"], .ts-search-form .ts-submit-btn');
+            if (submitBtn) {
+                submitBtn.click();
+                refreshed = true;
+            }
+        }
+
+        // Method 3: Dispatch popstate event which some Voxel setups listen to
+        if (!refreshed) {
+            window.dispatchEvent(new PopStateEvent('popstate', { state: {} }));
+        }
+
+        // Method 4: Try triggering Voxel's custom events if available
         if (window.Voxel && window.Voxel.events) {
             window.Voxel.events.emit('search:refresh');
         }
 
         // Dispatch a custom event that can be listened to
         window.dispatchEvent(new CustomEvent('vt-filters-changed'));
+
+        // Method 5: If still no refresh detected, fall back to page reload after short delay
+        // This ensures the filter is removed even if other methods fail
+        if (!refreshed) {
+            setTimeout(function() {
+                // Check if results actually updated by looking for loading state
+                var hasLoading = document.querySelector('.ts-search-form.loading, .ts-form.loading');
+                if (!hasLoading) {
+                    // Results didn't refresh, do a page reload
+                    window.location.reload();
+                }
+            }, 300);
+        }
     }
 
     // Initialize when DOM is ready
