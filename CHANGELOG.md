@@ -145,6 +145,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Admin Menu Hide**: Updated with new menu item options
 - **Poll Field**: Added translation support for all user-facing strings
 
+### Fixed
+- **Table of Contents Widget**: Fixed avatar/profile fields displaying as "voxel:name" instead of actual label (now shows "Profile Picture", "Display Name", etc.)
+- **Table of Contents Widget**: Fixed list style switching between numbered/bullets not working
+- **Table of Contents Widget**: Field completion indicators now update in real-time as you type (previously only updated on save)
+
 
 ## [1.5.7] - 2025-12-07
 
