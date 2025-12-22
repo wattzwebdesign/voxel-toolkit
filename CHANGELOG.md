@@ -78,8 +78,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Accept/decline flow with email notifications
   - App Events: Team member invited, accepted, declined
   - "User is team member of current post" visibility rule for Elementor
-  - Extended Author filter to include posts where user is a team member
-  - Delete protection: only post author can delete (team members can edit only)
+- **Saved Search**: Allow users to save search filters and quickly reload them
+  - Save Search button added to Voxel search form widget
+  - Saved Search (VT) widget displays user's saved searches in grid layout
+  - Load Search dropdown to quickly apply saved filters
+  - Auto-apply option remembers and loads last used search on page return
+  - App Event notifications when new posts match saved searches (in-app, email, SMS)
+  - Users can enable/disable notifications per saved search
+  - localStorage persistence for seamless cross-session experience
 - **Anonymous Timeline**: Allow users to post anonymously on timelines, walls, and reviews
   - Users can check "Post Anonymously" on any timeline post or comment
   - Each user gets a unique persistent Anonymous Member ID (5-digit number)
