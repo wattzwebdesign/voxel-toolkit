@@ -133,6 +133,21 @@ class Voxel_Toolkit_Saved_Search {
         );
 
         wp_register_script(
+            'vt-load-search',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/load-search.js',
+            array('jquery'),
+            VOXEL_TOOLKIT_VERSION,
+            true
+        );
+
+        wp_register_style(
+            'vt-load-search',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/load-search.css',
+            array(),
+            VOXEL_TOOLKIT_VERSION
+        );
+
+        wp_register_script(
             'vt-saved-search',
             VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/saved-search.js',
             array('jquery'),
@@ -155,6 +170,8 @@ class Voxel_Toolkit_Saved_Search {
         if (function_exists('\Voxel\is_elementor_preview') && \Voxel\is_elementor_preview()) {
             wp_enqueue_script('vt-save-search');
             wp_enqueue_style('vt-save-search');
+            wp_enqueue_script('vt-load-search');
+            wp_enqueue_style('vt-load-search');
         }
     }
 
@@ -208,11 +225,22 @@ class Voxel_Toolkit_Saved_Search {
         $element->add_control(
             'vt_ss_form_btn_save_icon',
             [
-                'label' => __('Saved Search icon', 'voxel-toolkit'),
+                'label' => __('Save Search icon', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::ICONS,
                 'skin' => 'inline',
                 'label_block' => false,
                 'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_form_btn_icon',
+            [
+                'label' => __('Load Search icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'skin' => 'inline',
+                'label_block' => false,
+                'condition' => ['vt_ls_enable' => 'yes'],
             ]
         );
     }
@@ -649,6 +677,181 @@ class Voxel_Toolkit_Saved_Search {
             ]
         );
 
+        // Load Search section
+        $element->add_control(
+            'vt_ls_heading',
+            [
+                'label' => __('Load Saved Search', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_enable',
+            [
+                'label' => __('Enable', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'no',
+                'return_value' => 'yes',
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_auto_apply',
+            [
+                'label' => __('Auto-apply on page load', 'voxel-toolkit'),
+                'description' => __('Automatically load the last used saved search when user returns', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_btn_text',
+            [
+                'label' => __('Button label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Load Search', 'voxel-toolkit'),
+                'placeholder' => __('Type your text', 'voxel-toolkit'),
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_search_placeholder',
+            [
+                'label' => __('Search placeholder', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Search saved...', 'voxel-toolkit'),
+                'placeholder' => __('Type your text', 'voxel-toolkit'),
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_clear_label',
+            [
+                'label' => __('Clear filters label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Clear filters', 'voxel-toolkit'),
+                'placeholder' => __('Type your text', 'voxel-toolkit'),
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_loaded_message',
+            [
+                'label' => __('Loaded message', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Search loaded', 'voxel-toolkit'),
+                'placeholder' => __('Type your text', 'voxel-toolkit'),
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_empty_text',
+            [
+                'label' => __('Empty state text', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('No saved searches yet', 'voxel-toolkit'),
+                'placeholder' => __('Type your text', 'voxel-toolkit'),
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        // Load Search - Top popup button
+        $element->add_control(
+            'vt_ls_top_popup_heading',
+            [
+                'label' => __('Top popup button', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_show_top_popup_btn',
+            [
+                'label' => __('Show on desktop', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_show_top_popup_btn_tablet',
+            [
+                'label' => __('Show on tablet', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_show_top_popup_btn_mobile',
+            [
+                'label' => __('Show on mobile', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        // Load Search - Main button
+        $element->add_control(
+            'vt_ls_main_btn_heading',
+            [
+                'label' => __('Main button', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_show_main_btn',
+            [
+                'label' => __('Show on desktop', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_show_main_btn_tablet',
+            [
+                'label' => __('Show on tablet', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_show_main_btn_mobile',
+            [
+                'label' => __('Show on mobile', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
         $element->end_controls_section();
     }
 
@@ -663,21 +866,26 @@ class Voxel_Toolkit_Saved_Search {
         $settings = $widget->get_settings_for_display();
 
         $save_icon = $widget->get_settings_for_display('vt_ss_form_btn_save_icon');
+        $load_icon = $widget->get_settings_for_display('vt_ls_form_btn_icon');
 
         // Get saved search page from toolkit settings
         $function_settings = Voxel_Toolkit_Settings::instance()->get_function_settings('saved_search', array());
         $saved_search_page = isset($function_settings['saved_searches_page']) ? absint($function_settings['saved_searches_page']) : 0;
 
         // Default save search icon
-        $default_icon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M20.137,24a2.8,2.8,0,0,1-1.987-.835L12,17.051,5.85,23.169a2.8,2.8,0,0,1-3.095.609A2.8,2.8,0,0,1,1,21.154V5A5,5,0,0,1,6,0H18a5,5,0,0,1,5,5V21.154a2.8,2.8,0,0,1-1.751,2.624A2.867,2.867,0,0,1,20.137,24ZM6,2A3,3,0,0,0,3,5V21.154a.843.843,0,0,0,1.437.6h0L11.3,14.933a1,1,0,0,1,1.41,0l6.855,6.819a.843.843,0,0,0,1.437-.6V5a3,3,0,0,0-3-3Z"/></svg>';
+        $default_save_icon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M20.137,24a2.8,2.8,0,0,1-1.987-.835L12,17.051,5.85,23.169a2.8,2.8,0,0,1-3.095.609A2.8,2.8,0,0,1,1,21.154V5A5,5,0,0,1,6,0H18a5,5,0,0,1,5,5V21.154a2.8,2.8,0,0,1-1.751,2.624A2.867,2.867,0,0,1,20.137,24ZM6,2A3,3,0,0,0,3,5V21.154a.843.843,0,0,0,1.437.6h0L11.3,14.933a1,1,0,0,1,1.41,0l6.855,6.819a.843.843,0,0,0,1.437-.6V5a3,3,0,0,0-3-3Z"/></svg>';
+
+        // Default load search icon (folder/open icon)
+        $default_load_icon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M19,2H5A5.006,5.006,0,0,0,0,7V17a5.006,5.006,0,0,0,5,5H19a5.006,5.006,0,0,0,5-5V7A5.006,5.006,0,0,0,19,2ZM5,4H19a3,3,0,0,1,3,3v.5H2V7A3,3,0,0,1,5,4ZM19,20H5a3,3,0,0,1-3-3V9.5H22V17A3,3,0,0,1,19,20Z"/></svg>';
 
         $config = [
             'widgetId' => $widget->get_id(),
+            // Save Search config
             'enable' => $widget->get_settings_for_display('vt_ss_show_save_search_btn') === 'yes',
             'label' => $widget->get_settings_for_display('vt_ss_btn_text') ?: 'Save Search',
             'placeholder' => $widget->get_settings_for_display('vt_ss_placeholder') ?: 'Leave a short note...',
             'askForTitle' => $widget->get_settings_for_display('vt_ss_ask_for_title') === 'true',
-            'icon' => $save_icon && !empty($save_icon['value']) ? \Voxel\get_icon_markup($save_icon) : $default_icon,
+            'icon' => $save_icon && !empty($save_icon['value']) ? \Voxel\get_icon_markup($save_icon) : $default_save_icon,
             'link' => $saved_search_page ? get_permalink($saved_search_page) : '#',
             'successMessage' => $widget->get_settings_for_display('vt_ss_success_message') ?: 'Search saved successfully.',
             'linkLabel' => $widget->get_settings_for_display('vt_ss_link_label') ?: 'Your searches',
@@ -691,8 +899,28 @@ class Voxel_Toolkit_Saved_Search {
                 'tablet' => $widget->get_settings_for_display('vt_ss_show_main_btn_tablet') === 'yes',
                 'mobile' => $widget->get_settings_for_display('vt_ss_show_main_btn_mobile') === 'yes',
             ],
+            // Load Search config
+            'enableLoadSearch' => $widget->get_settings_for_display('vt_ls_enable') === 'yes',
+            'autoApply' => $widget->get_settings_for_display('vt_ls_auto_apply') === 'yes',
+            'loadLabel' => $widget->get_settings_for_display('vt_ls_btn_text') ?: 'Load Search',
+            'loadIcon' => $load_icon && !empty($load_icon['value']) ? \Voxel\get_icon_markup($load_icon) : $default_load_icon,
+            'searchPlaceholder' => $widget->get_settings_for_display('vt_ls_search_placeholder') ?: 'Search saved...',
+            'clearLabel' => $widget->get_settings_for_display('vt_ls_clear_label') ?: 'Clear filters',
+            'loadedMessage' => $widget->get_settings_for_display('vt_ls_loaded_message') ?: 'Search loaded',
+            'emptyText' => $widget->get_settings_for_display('vt_ls_empty_text') ?: 'No saved searches yet',
+            'showLoadTopPopupButton' => [
+                'desktop' => $widget->get_settings_for_display('vt_ls_show_top_popup_btn') === 'yes',
+                'tablet' => $widget->get_settings_for_display('vt_ls_show_top_popup_btn_tablet') === 'yes',
+                'mobile' => $widget->get_settings_for_display('vt_ls_show_top_popup_btn_mobile') === 'yes',
+            ],
+            'showLoadMainButton' => [
+                'desktop' => $widget->get_settings_for_display('vt_ls_show_main_btn') === 'yes',
+                'tablet' => $widget->get_settings_for_display('vt_ls_show_main_btn_tablet') === 'yes',
+                'mobile' => $widget->get_settings_for_display('vt_ls_show_main_btn_mobile') === 'yes',
+            ],
         ];
 
+        // Include Save Search template and assets
         if ($config['enable']) {
             $template_path = VOXEL_TOOLKIT_PLUGIN_DIR . 'templates/saved-search/save-search-button.php';
             if (file_exists($template_path)) {
@@ -700,6 +928,16 @@ class Voxel_Toolkit_Saved_Search {
             }
             wp_enqueue_script('vt-save-search');
             wp_enqueue_style('vt-save-search');
+        }
+
+        // Include Load Search template and assets
+        if ($config['enableLoadSearch']) {
+            $template_path = VOXEL_TOOLKIT_PLUGIN_DIR . 'templates/saved-search/load-search-button.php';
+            if (file_exists($template_path)) {
+                include $template_path;
+            }
+            wp_enqueue_script('vt-load-search');
+            wp_enqueue_style('vt-load-search');
         }
 
         ?>
