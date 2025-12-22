@@ -95,9 +95,10 @@ class Voxel_Toolkit_Table_Of_Contents_Widget {
                 );
             } elseif ($include_fields && $current_step_index >= 0 && !in_array($field_type, $ui_field_types)) {
                 // Add field to current step (exclude UI-only fields)
+                $field_label = self::get_field_display_label($field);
                 $steps[$current_step_index]['fields'][] = array(
                     'key' => isset($field['key']) ? $field['key'] : '',
-                    'label' => isset($field['label']) ? $field['label'] : ucfirst(str_replace(array('-', '_'), ' ', isset($field['key']) ? $field['key'] : '')),
+                    'label' => $field_label,
                     'type' => $field_type,
                     'required' => isset($field['required']) ? $field['required'] : false,
                 );
@@ -105,6 +106,52 @@ class Voxel_Toolkit_Table_Of_Contents_Widget {
         }
 
         return $steps;
+    }
+
+    /**
+     * Get a user-friendly display label for a field
+     * Handles special Voxel field formats like "voxel:avatar"
+     */
+    private static function get_field_display_label($field) {
+        $label = isset($field['label']) ? $field['label'] : '';
+        $key = isset($field['key']) ? $field['key'] : '';
+        $type = isset($field['type']) ? $field['type'] : '';
+
+        // If label is empty, generate from key
+        if (empty($label)) {
+            $label = ucfirst(str_replace(array('-', '_'), ' ', $key));
+        }
+
+        // Handle "voxel:something" format labels - use human-readable name
+        if (strpos($label, 'voxel:') === 0 || strpos($label, 'Voxel:') === 0) {
+            // Map common voxel field labels to readable names
+            $voxel_label_map = array(
+                'voxel:avatar' => __('Profile Picture', 'voxel-toolkit'),
+                'Voxel:avatar' => __('Profile Picture', 'voxel-toolkit'),
+                'voxel:name' => __('Display Name', 'voxel-toolkit'),
+                'Voxel:name' => __('Display Name', 'voxel-toolkit'),
+                'voxel:logo' => __('Logo', 'voxel-toolkit'),
+                'Voxel:logo' => __('Logo', 'voxel-toolkit'),
+                'voxel:cover' => __('Cover Image', 'voxel-toolkit'),
+                'Voxel:cover' => __('Cover Image', 'voxel-toolkit'),
+            );
+
+            if (isset($voxel_label_map[$label])) {
+                return $voxel_label_map[$label];
+            }
+
+            // For unmapped voxel: labels, strip the prefix and format nicely
+            $stripped = preg_replace('/^[Vv]oxel:/', '', $label);
+            return ucfirst(str_replace(array('-', '_'), ' ', $stripped));
+        }
+
+        // Use the label from Voxel's field configuration
+        // Check for 'props.label' which Voxel uses for some field types
+        if (isset($field['props']['label']) && !empty($field['props']['label'])) {
+            return $field['props']['label'];
+        }
+
+        return $label;
     }
 
     /**
@@ -271,7 +318,16 @@ class Voxel_Toolkit_Table_Of_Contents_Widget {
                 </<?php echo esc_attr($args['title_tag']); ?>>
             <?php endif; ?>
 
-            <<?php echo $args['list_style'] === 'none' ? 'div' : 'ol'; ?> class="voxel-toc-list" style="<?php echo esc_attr(implode('; ', $list_styles)); ?>">
+            <?php
+            $list_tag = 'ol';
+            if ($args['list_style'] === 'none') {
+                $list_tag = 'div';
+            } elseif ($args['list_style'] === 'bullets') {
+                $list_tag = 'ul';
+            }
+            $list_class = 'voxel-toc-list vt-toc-' . esc_attr($args['list_style']);
+            ?>
+            <<?php echo $list_tag; ?> class="<?php echo $list_class; ?>" style="<?php echo esc_attr(implode('; ', $list_styles)); ?>">
                 <?php foreach ($steps as $step): ?>
                     <?php
                     $is_active = ($current_step === $step['key']);
@@ -294,7 +350,7 @@ class Voxel_Toolkit_Table_Of_Contents_Widget {
                         <?php endif; ?>
                     </li>
                 <?php endforeach; ?>
-            </<?php echo $args['list_style'] === 'none' ? 'div' : 'ol'; ?>>
+            </<?php echo $list_tag; ?>>
 
         </div>
 

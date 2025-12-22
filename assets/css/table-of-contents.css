@@ -32,11 +32,15 @@
     display: none !important;
 }
 
-/* CSS counter-based numbering for visible items only */
+/* CSS counter-based numbering for visible items only (numbered lists) */
 .voxel-toc-list.vt-toc-numbered {
     counter-reset: toc-counter;
     list-style: none;
     padding-left: 0;
+}
+
+.voxel-toc-list.vt-toc-numbered .voxel-toc-item {
+    list-style: none;
 }
 
 .voxel-toc-list.vt-toc-numbered .voxel-toc-item:not(.vt-toc-hidden) {
@@ -47,24 +51,43 @@
     content: counter(toc-counter) ". ";
 }
 
-/* When using ol element with native numbering, hide hidden items properly */
-ol.voxel-toc-list {
-    counter-reset: toc-counter;
+.voxel-toc-list.vt-toc-numbered .voxel-toc-item.vt-toc-hidden::before {
+    content: none;
 }
 
-ol.voxel-toc-list .voxel-toc-item {
+/* Bullet list styles */
+.voxel-toc-list.vt-toc-bullets {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.voxel-toc-list.vt-toc-bullets .voxel-toc-item {
+    display: list-item;
+    list-style-type: disc;
+}
+
+.voxel-toc-list.vt-toc-bullets .voxel-toc-item::before {
+    content: none;
+}
+
+/* When showing fields under bullets, use block but add manual bullet */
+.vt-toc-with-fields .voxel-toc-list.vt-toc-bullets .voxel-toc-item {
+    display: block;
     list-style: none;
 }
 
-ol.voxel-toc-list .voxel-toc-item:not(.vt-toc-hidden) {
-    counter-increment: toc-counter;
+.vt-toc-with-fields .voxel-toc-list.vt-toc-bullets .voxel-toc-item:not(.vt-toc-hidden) .vt-toc-step-label::before {
+    content: "•";
+    margin-right: 8px;
 }
 
-ol.voxel-toc-list .voxel-toc-item:not(.vt-toc-hidden)::before {
-    content: counter(toc-counter) ". ";
+/* No list style */
+.voxel-toc-list.vt-toc-none {
+    list-style: none;
+    padding-left: 0;
 }
 
-ol.voxel-toc-list .voxel-toc-item.vt-toc-hidden::before {
+.voxel-toc-list.vt-toc-none .voxel-toc-item::before {
     content: none;
 }
 
@@ -128,7 +151,7 @@ ol.voxel-toc-list .voxel-toc-item.vt-toc-hidden::before {
 }
 
 /* Step numbering with fields - maintain proper counter behavior */
-.vt-toc-with-fields ol.voxel-toc-list .voxel-toc-item:not(.vt-toc-hidden)::before {
+.vt-toc-with-fields .voxel-toc-list.vt-toc-numbered .voxel-toc-item:not(.vt-toc-hidden)::before {
     content: counter(toc-counter) ". ";
 }
 

@@ -221,12 +221,112 @@
 
                     // Listen for form input changes
                     this.observeFieldChanges();
+
+                    // Also poll Vue data periodically for real-time updates
+                    // Vue.js doesn't always fire DOM events when values change through reactivity
+                    this.startFieldPolling();
                 } else {
                     setTimeout(() => tryInit(attempts + 1), 500);
                 }
             };
 
             setTimeout(() => tryInit(), 500);
+        }
+
+        /**
+         * Poll Vue data for field changes (real-time updates)
+         */
+        startFieldPolling() {
+            // Check every 300ms for Vue data changes
+            setInterval(() => {
+                this.checkFieldCompletionFromVue();
+            }, 300);
+        }
+
+        /**
+         * Check field completion from Vue data directly
+         */
+        checkFieldCompletionFromVue() {
+            const $tocs = $('.voxel-table-of-contents[data-show-fields="true"]');
+            if (!$tocs.length) return;
+
+            const formElement = document.querySelector('.ts-form.ts-create-post.create-post-form');
+            if (!formElement || !formElement.__vue_app__) return;
+
+            try {
+                const form_app = formElement.__vue_app__;
+                const node_data = form_app._container._vnode.component.data;
+
+                if (!node_data || !node_data.fields) return;
+
+                $tocs.each((index, tocElement) => {
+                    const $toc = $(tocElement);
+                    const $fields = $toc.find('.vt-toc-field');
+
+                    $fields.each((i, fieldElement) => {
+                        const $field = $(fieldElement);
+                        const fieldKey = $field.data('field-key');
+
+                        if (!fieldKey || !node_data.fields[fieldKey]) return;
+
+                        const fieldData = node_data.fields[fieldKey];
+                        const isFilled = this.isFieldFilledFromVueData(fieldData, fieldKey);
+
+                        if (isFilled) {
+                            $field.addClass('is-filled');
+                        } else {
+                            $field.removeClass('is-filled');
+                        }
+                    });
+                });
+            } catch (e) {
+                // Silently fail - Vue structure may have changed
+            }
+        }
+
+        /**
+         * Check if field has value based on Vue data
+         */
+        isFieldFilledFromVueData(fieldData, fieldKey) {
+            if (!fieldData) return false;
+
+            // Check for 'value' property which Voxel uses for most fields
+            if (fieldData.hasOwnProperty('value')) {
+                const value = fieldData.value;
+
+                // Handle different value types
+                if (value === null || value === undefined) return false;
+                if (typeof value === 'string') return value.trim().length > 0;
+                if (typeof value === 'number') return true;
+                if (typeof value === 'boolean') return value;
+                if (Array.isArray(value)) return value.length > 0;
+                if (typeof value === 'object') return Object.keys(value).length > 0;
+            }
+
+            // Check for 'selected' property (used by taxonomy/select fields)
+            if (fieldData.hasOwnProperty('selected')) {
+                const selected = fieldData.selected;
+                if (Array.isArray(selected)) return selected.length > 0;
+                if (selected) return true;
+            }
+
+            // Check for 'files' property (used by image/file fields)
+            if (fieldData.hasOwnProperty('files')) {
+                const files = fieldData.files;
+                if (Array.isArray(files)) return files.length > 0;
+            }
+
+            // Check for 'address' property (used by location field)
+            if (fieldData.hasOwnProperty('address')) {
+                return fieldData.address && fieldData.address.trim().length > 0;
+            }
+
+            // Check for 'items' property (used by repeater fields)
+            if (fieldData.hasOwnProperty('items')) {
+                return Array.isArray(fieldData.items) && fieldData.items.length > 0;
+            }
+
+            return false;
         }
 
         /**
