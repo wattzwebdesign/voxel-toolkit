@@ -48,6 +48,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Character map for special symbols
   - Frontend CSS for image alignment with text wrap
   - Secure: only available to logged-in users, content sanitized via wp_kses_post()
+- **Timeline Filters**: Add custom ordering options to Voxel Timeline widgets
+  - "Unanswered" filter shows posts with no replies, sorted by newest
+  - Works with all Timeline modes: Reviews, Wall, Timeline, Global Feed, User Feed
+  - Custom label option for the filter button
+  - Designed for future filter additions
 - **Enhanced Post Relation**: Customize post display in Post Relation field dropdowns
   - Configure display templates per post type using dynamic tags
   - Example: Show "Title - City" for places, "Name (Membership)" for profiles
