@@ -536,6 +536,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'admin/messages/class-messages-admin.php',
                 'icon' => 'dashicons-email-alt',
             ),
+            'timeline_filters' => array(
+                'name' => __('Timeline Filters', 'voxel-toolkit'),
+                'description' => __('Add custom filtering options to Voxel Timeline widgets, including an "Unanswered" filter for posts with no replies.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Timeline_Filters',
+                'file' => 'functions/class-timeline-filters.php',
+                'icon' => 'dashicons-filter',
+                'settings_callback' => array($this, 'render_timeline_filters_settings'),
+            ),
         );
 
         // Allow other plugins/themes to register functions
@@ -6300,6 +6308,66 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <li><?php _e('Configure the Search Form widget\'s "Saved Search (VT)" section to enable the save button', 'voxel-toolkit'); ?></li>
                 <li><?php _e('Set up App Events in Voxel to send notifications for new matching posts', 'voxel-toolkit'); ?></li>
             </ol>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render Timeline Filters settings
+     */
+    public function render_timeline_filters_settings($settings) {
+        $enable_unanswered = isset($settings['enable_unanswered']) ? (bool) $settings['enable_unanswered'] : false;
+        $unanswered_label = isset($settings['unanswered_label']) ? $settings['unanswered_label'] : '';
+        ?>
+        <div class="vt-info-box">
+            <?php _e('Add custom filtering options to Voxel Timeline widgets. These filters appear in the ordering dropdown alongside native Voxel options.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Unanswered Filter', 'voxel-toolkit'); ?></h4>
+
+            <div class="vt-field-group">
+                <label class="vt-checkbox-label">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[timeline_filters][enable_unanswered]"
+                           value="1"
+                           <?php checked($enable_unanswered); ?>>
+                    <?php _e('Enable "Unanswered" ordering option', 'voxel-toolkit'); ?>
+                </label>
+                <p class="vt-field-description">
+                    <?php _e('Shows timeline posts that have no replies (reply_count = 0), sorted by newest first. Useful for community sites where users want to find and help with unanswered questions.', 'voxel-toolkit'); ?>
+                </p>
+            </div>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Button Label', 'voxel-toolkit'); ?></label>
+                <input type="text"
+                       name="voxel_toolkit_options[timeline_filters][unanswered_label]"
+                       value="<?php echo esc_attr($unanswered_label); ?>"
+                       class="vt-input"
+                       placeholder="<?php esc_attr_e('Unanswered', 'voxel-toolkit'); ?>"
+                       style="width: 300px;">
+                <p class="vt-field-description">
+                    <?php _e('Custom label for the Unanswered filter button. Leave empty to use the default "Unanswered" label.', 'voxel-toolkit'); ?>
+                </p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('How It Works', 'voxel-toolkit'); ?></h4>
+            <ul class="vt-feature-list">
+                <li><?php _e('Adds custom ordering options to all Timeline widgets on your site', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Works with all Timeline modes: Reviews, Wall, Timeline, Global Feed, and User Feed', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Uses custom AJAX endpoint to query posts with zero replies', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Results are sorted by newest first within the unanswered filter', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Future Filters', 'voxel-toolkit'); ?></h4>
+            <p class="vt-field-description">
+                <?php _e('Additional timeline filters can be added here in future updates. Have a suggestion? Let us know!', 'voxel-toolkit'); ?>
+            </p>
         </div>
         <?php
     }

@@ -1819,6 +1819,16 @@ class Voxel_Toolkit_Admin {
                         }
                         break;
 
+                    case 'timeline_filters':
+                        // Enable unanswered filter (checkbox) - JS sends "1" or "0" as string
+                        $sanitized_function['enable_unanswered'] = !empty($function_input['enable_unanswered']) && $function_input['enable_unanswered'] !== '0';
+
+                        // Custom label for unanswered filter
+                        $sanitized_function['unanswered_label'] = isset($function_input['unanswered_label'])
+                            ? sanitize_text_field($function_input['unanswered_label'])
+                            : '';
+                        break;
+
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(

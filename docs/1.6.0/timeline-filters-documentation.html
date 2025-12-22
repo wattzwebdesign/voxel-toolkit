@@ -1,0 +1,388 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Timeline Filters</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Timeline Filters function adds custom ordering options to Voxel's Timeline widget. The first available filter is "Unanswered" which shows posts that have no replies yet.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Voxel's Timeline widget includes built-in ordering options like Latest, Most Liked, and Most Discussed. Timeline Filters extends this with additional ordering options that Voxel doesn't provide out of the box.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Available Filters</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Unanswered</strong> - Shows posts with no replies (reply_count = 0), sorted by newest first</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>More filters may be added in future updates.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Timeline Filters</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Filter Options</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Click the gear icon next to Timeline Filters to open settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check <strong>Enable "Unanswered" filter</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Optionally set a custom label (default: "Unanswered")</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Enable on Timeline Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your page in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select the <strong>Timeline (VX)</strong> widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>In the <strong>Timeline settings</strong> section, find <strong>Enable "Unanswered" Filter (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle it on</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Optionally set a custom label for this specific widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the page</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When enabled on a Timeline widget:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>The "Unanswered" option appears in the ordering dropdown alongside Voxel's default options</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>When selected, posts are filtered to show only those with zero replies</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Results are sorted by newest first</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Pagination works normally with the "Load more" button</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Supported Timeline Modes</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Unanswered filter works with all Timeline widget display modes:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Post Reviews</strong> - Shows unanswered reviews on a listing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Post Wall</strong> - Shows unanswered wall posts on a listing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Post Timeline</strong> - Shows unanswered timeline posts from a listing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Author Timeline</strong> - Shows unanswered posts by the profile author</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>User Feed</strong> - Shows unanswered posts in the logged-in user's newsfeed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Global Feed</strong> - Shows unanswered posts from sitewide activity</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Community Forums</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Help community managers quickly find questions that haven't been answered yet, ensuring no member's query goes unnoticed.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Support Requests</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>On listings that function as support tickets or requests, filter to see which ones still need a response.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Review Management</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Business owners can find reviews they haven't responded to yet, improving customer engagement.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Q&A Sections</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>On listings with Q&A walls, surface unanswered questions so experts can provide answers.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Per-Widget Configuration</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The filter can be enabled or disabled on each Timeline widget independently. This allows you to:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Enable the filter on a community page's timeline</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Keep it disabled on a listing's review section</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use different labels on different pages</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Filter Not Appearing in Dropdown</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify Timeline Filters function is enabled in Toolkit settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that "Enable Unanswered filter" is checked in function settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the toggle is enabled on the specific Timeline widget in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any page caches and hard refresh the browser</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">No Results When Filtering</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>This is normal if all posts have at least one reply</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try on a timeline that has some posts without replies</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Toggle Not Showing in Elementor</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Make sure the function is enabled with the Unanswered filter checked</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Look in the "Timeline settings" section of the widget, not the style tabs</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The control appears at the bottom of the section</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Technical Details</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The filter queries the Voxel timeline database table with these conditions:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><code>reply_count = 0</code> - Posts with no replies</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><code>moderation = 1</code> - Only approved/published posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><code>repost_of IS NULL</code> - Original posts only (not reposts)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Sorted by <code>created_at DESC</code> - Newest first</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Timeline (VX) widget in use</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
