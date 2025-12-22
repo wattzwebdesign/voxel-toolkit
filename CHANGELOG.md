@@ -149,6 +149,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Table of Contents Widget**: Fixed avatar/profile fields displaying as "voxel:name" instead of actual label (now shows "Profile Picture", "Display Name", etc.)
 - **Table of Contents Widget**: Fixed list style switching between numbered/bullets not working
 - **Table of Contents Widget**: Field completion indicators now update in real-time as you type (previously only updated on save)
+- **Active Filters Widget**: Fixed clicking X to remove filter not refreshing search results
+- **Active Filters Widget**: Fixed widget taking up white space when no filters are active
 
 
 ## [1.5.7] - 2025-12-07
