@@ -131,6 +131,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Optional approval workflow with pending terms hidden until approved
   - App Events integration for admin notifications (in-app and email)
   - User instructions for pending term workflow
+- **Message Moderation**: Admin page to view and moderate all direct messages
+  - Top-level Messages (VT) menu in WordPress admin
+  - View all messages with sender, receiver, content, status, and date
+  - Filter by read/unread status, message ID, sender/receiver ID, sender type
+  - Full-text search across message content
+  - Row actions: mark read/unread, delete
+  - Bulk actions: mark as read, mark as unread, delete
+  - Links to sender admin profile and receiver frontend profile
+  - Requires `edit_others_posts` capability (Administrators, Editors)
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options
