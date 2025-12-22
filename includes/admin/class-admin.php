@@ -53,6 +53,29 @@ class Voxel_Toolkit_Admin {
         // Tools page AJAX handlers
         add_action('wp_ajax_vt_get_post_type_fields', array($this, 'ajax_get_post_type_fields'));
         add_action('wp_ajax_vt_duplicate_post_fields', array($this, 'ajax_duplicate_post_fields'));
+
+        // Initialize Messages Admin
+        $this->init_messages_admin();
+    }
+
+    /**
+     * Initialize Messages Admin page
+     */
+    private function init_messages_admin() {
+        // Only load if Voxel's Message class exists
+        if ( ! class_exists( '\Voxel\Modules\Direct_Messages\Message' ) ) {
+            return;
+        }
+
+        // Check if function is enabled
+        if ( ! $this->settings->is_function_enabled( 'message_moderation' ) ) {
+            return;
+        }
+
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/admin/messages/class-messages-table.php';
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/admin/messages/class-messages-admin.php';
+
+        Voxel_Toolkit_Messages_Admin::instance();
     }
     
     /**

@@ -1,0 +1,448 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Message Moderation</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Message Moderation function adds a top-level admin menu to view, search, and moderate all direct messages on your site.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Site administrators often need to review private messages for moderation purposes, customer support, or dispute resolution. The Message Moderation function provides a centralized admin interface to browse and manage all direct messages sent between users and posts on your Voxel site.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Top-level admin menu for quick access</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>View all messages in a sortable table</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Filter by read/unread status</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search by message ID, sender ID, or receiver ID</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Filter by sender type (user or post)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Content search across all messages</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Mark messages as read or unread</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Delete individual or bulk messages</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Links to sender and receiver profiles</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Message Moderation</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Once enabled, a new <strong>Messages (VT)</strong> menu item will appear in your WordPress admin sidebar, just below Voxel's Timeline menu.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Using the Messages Page</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Message Table Columns</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The messages table displays the following information:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Sender</strong> - The user or post that sent the message, with avatar and link to their admin profile</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Receiver</strong> - The user or post that received the message, with avatar and link to their frontend profile/page</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Content</strong> - The message text and any file attachments</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Status</strong> - Read or Unread badge</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Sent on</strong> - Date and time the message was sent</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Filtering Messages</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use the view tabs to filter messages by status:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>All</strong> - Shows all messages</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Unread</strong> - Shows only unread messages</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Read</strong> - Shows only read messages</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Additional filter options above the table:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Message ID</strong> - Find a specific message by its ID</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Sender ID</strong> - Filter by sender's user or post ID</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Receiver ID</strong> - Filter by receiver's user or post ID</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Sender Type</strong> - Filter by User or Post senders</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Search</strong> - Full-text search in message content</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Row Actions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Hover over any message row to reveal action links:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Mark Read</strong> - Mark an unread message as read</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Mark Unread</strong> - Mark a read message as unread</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Delete</strong> - Permanently delete the message (with confirmation)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Bulk Actions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Select multiple messages using the checkboxes to perform bulk operations:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Mark as read</strong> - Mark all selected messages as read</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Mark as unread</strong> - Mark all selected messages as unread</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Delete</strong> - Permanently delete all selected messages</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>To use bulk actions:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Select messages using the checkboxes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Choose an action from the Bulk Actions dropdown</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click Apply</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Customer Support</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Review messages between buyers and sellers to help resolve disputes or answer questions about transactions.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Content Moderation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Monitor messages for inappropriate content, spam, or policy violations.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">User Reports</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Investigate reported conversations by searching for specific user IDs or message content.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Debugging</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Verify that messages are being sent and received correctly when troubleshooting messaging issues.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Permissions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Messages (VT) admin page requires the <code>edit_others_posts</code> capability, which is available to:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Administrators</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Editors</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>This matches the permission level used by Voxel's Timeline moderation page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Database Table</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This function reads from Voxel's <code>wp_voxel_messages</code> table. The table stores:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Sender and receiver information (type and ID)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Message content</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>File attachment references</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Read/seen status</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Timestamps</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Menu Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled in Voxel Toolkit > Functions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that Voxel theme is active</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Confirm your user has the required capability (Administrator or Editor)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">No Messages Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify messages exist in the database</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check if filters are applied that might hide messages</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try the "All" view tab</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Sender/Receiver Shows "Deleted"</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This indicates the user account or post has been deleted. The message data is preserved but the associated user/post no longer exists.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Direct Messages feature in use</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

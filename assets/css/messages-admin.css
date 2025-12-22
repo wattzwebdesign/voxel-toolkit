@@ -1,0 +1,234 @@
+/**
+ * Messages Admin Styles
+ *
+ * @package Voxel_Toolkit
+ */
+
+/* Column widths */
+.vt-messages-wrap .column-sender,
+.vt-messages-wrap #sender {
+    width: 20%;
+}
+
+.vt-messages-wrap .column-receiver,
+.vt-messages-wrap #receiver {
+    width: 20%;
+}
+
+.vt-messages-wrap .column-content,
+.vt-messages-wrap #content {
+    width: 35%;
+}
+
+.vt-messages-wrap .column-status,
+.vt-messages-wrap #status {
+    width: 10%;
+}
+
+.vt-messages-wrap .column-date,
+.vt-messages-wrap #date {
+    width: 15%;
+}
+
+/* Party (sender/receiver) styling */
+.vt-message-party {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.vt-message-party img {
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.vt-message-party .item-title {
+    flex: 1;
+    min-width: 0;
+}
+
+.vt-message-party .item-title a {
+    text-decoration: none;
+}
+
+.vt-message-party .item-title b {
+    display: block;
+    word-wrap: break-word;
+}
+
+.vt-message-party .item-subtitle {
+    color: #666;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+.vt-deleted-party {
+    color: #999;
+    font-style: italic;
+}
+
+/* Message content styling */
+.vt-message-content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
+    padding: 8px 10px;
+    max-height: 120px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: #f9f9f9;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.vt-message-content p {
+    margin: 0 0 0.5em 0;
+}
+
+.vt-message-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Message files/attachments */
+.vt-message-files {
+    margin-top: 8px;
+    padding: 8px;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.vt-message-files label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #666;
+}
+
+.vt-message-files a {
+    display: inline-block;
+    margin-right: 8px;
+    margin-bottom: 4px;
+    padding: 2px 6px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.vt-message-files a:hover {
+    background: #f5f5f5;
+    border-color: #ccc;
+}
+
+.vt-empty-content {
+    color: #999;
+}
+
+/* Status badges */
+.vt-status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.vt-status-badge--read {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.vt-status-badge--unread {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+/* Row actions */
+.vt-messages-wrap .row-actions {
+    visibility: visible;
+    padding-top: 5px;
+}
+
+.vt-messages-wrap .row-actions .vt-message-id {
+    color: #999;
+    font-size: 11px;
+}
+
+.vt-messages-wrap .msg__action {
+    cursor: pointer;
+}
+
+.vt-messages-wrap .msg__action-delete {
+    color: #b32d2e !important;
+}
+
+.vt-messages-wrap .msg__action-delete:hover {
+    color: #8c2324 !important;
+}
+
+/* Filter inputs */
+.vt-messages-wrap .tablenav.top .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+}
+
+.vt-messages-wrap input[name="search_id"],
+.vt-messages-wrap input[name="search_sender_id"],
+.vt-messages-wrap input[name="search_receiver_id"] {
+    width: 100px;
+}
+
+.vt-messages-wrap select[name="search_sender_type"] {
+    width: 130px;
+}
+
+/* Loading/disabled state */
+.vt-messages-wrap tr.vt-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1200px) {
+    .vt-messages-wrap .column-content,
+    .vt-messages-wrap #content {
+        width: 30%;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .vt-messages-wrap .column-receiver,
+    .vt-messages-wrap #receiver {
+        display: none;
+    }
+
+    .vt-messages-wrap .column-sender,
+    .vt-messages-wrap #sender {
+        width: 30%;
+    }
+
+    .vt-messages-wrap .column-content,
+    .vt-messages-wrap #content {
+        width: 40%;
+    }
+}
+
+/* Search box alignment */
+.vt-messages-wrap .search-box {
+    margin-bottom: 10px;
+}
+
+/* Views styling */
+.vt-messages-wrap .subsubsub {
+    margin-bottom: 10px;
+}

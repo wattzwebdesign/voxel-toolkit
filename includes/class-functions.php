@@ -529,6 +529,13 @@ class Voxel_Toolkit_Functions {
                 'icon' => 'dashicons-search',
                 'required_widgets' => array('saved_search_widget'),
             ),
+            'message_moderation' => array(
+                'name' => __('Message Moderation', 'voxel-toolkit'),
+                'description' => __('Add a top-level admin menu to view, search, and moderate all direct messages on the site.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Messages_Admin',
+                'file' => 'admin/messages/class-messages-admin.php',
+                'icon' => 'dashicons-email-alt',
+            ),
         );
 
         // Allow other plugins/themes to register functions
