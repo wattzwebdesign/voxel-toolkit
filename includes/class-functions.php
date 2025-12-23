@@ -6299,6 +6299,32 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <?php _e('Select the page containing the Saved Search (VT) widget. This link will be shown in success messages.', 'voxel-toolkit'); ?>
                 </p>
             </div>
+
+            <?php
+            $expiration = isset($settings['expiration']) ? $settings['expiration'] : 'never';
+            $expiration_options = array(
+                'never' => __('Never (no expiration)', 'voxel-toolkit'),
+                '7' => __('7 days', 'voxel-toolkit'),
+                '14' => __('14 days', 'voxel-toolkit'),
+                '30' => __('30 days', 'voxel-toolkit'),
+                '90' => __('90 days', 'voxel-toolkit'),
+                '180' => __('6 months', 'voxel-toolkit'),
+                '365' => __('1 year', 'voxel-toolkit'),
+            );
+            ?>
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Auto-delete Saved Searches', 'voxel-toolkit'); ?></label>
+                <select name="voxel_toolkit_options[saved_search][expiration]" class="vt-select" style="width: 300px;">
+                    <?php foreach ($expiration_options as $value => $label) : ?>
+                        <option value="<?php echo esc_attr($value); ?>" <?php selected($expiration, $value); ?>>
+                            <?php echo esc_html($label); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="vt-field-description">
+                    <?php _e('Automatically delete saved searches after this period. Expired searches are cleaned up daily.', 'voxel-toolkit'); ?>
+                </p>
+            </div>
         </div>
 
         <div class="vt-settings-section">
@@ -6371,4 +6397,5 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
         <?php
     }
+
 }

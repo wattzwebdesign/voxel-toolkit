@@ -53,6 +53,10 @@ class Voxel_Toolkit_Saved_Search {
         add_action('voxel_ajax_vt_delete_saved_search', array($this, 'delete_saved_search'));
         add_action('voxel_ajax_vt_update_saved_search', array($this, 'update_saved_search'));
 
+        // Expiration cleanup cron
+        add_action('vt_saved_search_cleanup', array($this, 'cleanup_expired_searches'));
+        $this->schedule_cleanup_cron();
+
         // Notification hooks (register after Voxel post types are ready)
         add_action('init', array($this, 'register_notification_hooks'), 100);
 
@@ -111,6 +115,63 @@ class Voxel_Toolkit_Saved_Search {
         dbDelta($sql);
 
         update_option('vt_saved_search_table_version', static::$table_version);
+    }
+
+    /**
+     * Schedule cleanup cron job
+     */
+    public function schedule_cleanup_cron() {
+        // Get expiration setting
+        $settings = get_option('voxel_toolkit_options', array());
+        $expiration = isset($settings['saved_search']['expiration']) ? $settings['saved_search']['expiration'] : 'never';
+
+        $scheduled = wp_next_scheduled('vt_saved_search_cleanup');
+
+        if ($expiration === 'never') {
+            // Unschedule if expiration is disabled
+            if ($scheduled) {
+                wp_unschedule_event($scheduled, 'vt_saved_search_cleanup');
+            }
+            return;
+        }
+
+        // Schedule if not already scheduled
+        if (!$scheduled) {
+            wp_schedule_event(time(), 'daily', 'vt_saved_search_cleanup');
+        }
+    }
+
+    /**
+     * Cleanup expired saved searches
+     */
+    public function cleanup_expired_searches() {
+        global $wpdb;
+
+        // Get expiration setting
+        $settings = get_option('voxel_toolkit_options', array());
+        $expiration = isset($settings['saved_search']['expiration']) ? $settings['saved_search']['expiration'] : 'never';
+
+        // If expiration is set to never, do nothing
+        if ($expiration === 'never') {
+            return;
+        }
+
+        // Calculate expiration date
+        $days = absint($expiration);
+        if ($days <= 0) {
+            return;
+        }
+
+        $table_name = $wpdb->prefix . 'vt_saved_searches';
+        $expiration_date = gmdate('Y-m-d H:i:s', strtotime("-{$days} days"));
+
+        // Delete expired searches
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$table_name} WHERE created_at < %s",
+                $expiration_date
+            )
+        );
     }
 
     /**
