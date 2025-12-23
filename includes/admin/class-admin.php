@@ -1817,6 +1817,13 @@ class Voxel_Toolkit_Admin {
                         if (isset($function_input['saved_searches_page'])) {
                             $sanitized_function['saved_searches_page'] = absint($function_input['saved_searches_page']);
                         }
+                        // Expiration setting
+                        if (isset($function_input['expiration'])) {
+                            $valid_expirations = array('never', '7', '14', '30', '90', '180', '365');
+                            $sanitized_function['expiration'] = in_array($function_input['expiration'], $valid_expirations, true)
+                                ? $function_input['expiration']
+                                : 'never';
+                        }
                         break;
 
                     case 'timeline_filters':
