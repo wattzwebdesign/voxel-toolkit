@@ -91,6 +91,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - App Event notifications when new posts match saved searches (in-app, email, SMS)
   - Users can enable/disable notifications per saved search
   - localStorage persistence for seamless cross-session experience
+  - Auto-delete expiration setting (7/14/30/90 days, 6 months, 1 year, or never)
 - **Anonymous Timeline**: Allow users to post anonymously on timelines, walls, and reviews
   - Users can check "Post Anonymously" on any timeline post or comment
   - Each user gets a unique persistent Anonymous Member ID (5-digit number)
