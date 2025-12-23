@@ -145,6 +145,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Bulk actions: mark as read, mark as unread, delete
   - Links to sender admin profile and receiver frontend profile
   - Requires `edit_others_posts` capability (Administrators, Editors)
+- **Messenger Widget - Persistent Admin Chat**: Add a persistent chat circle for a designated admin
+  - Toggle to enable persistent admin chat in widget settings
+  - Enter admin user ID to create always-visible chat circle
+  - Chat circle cannot be closed, only minimized
+  - Chat window hides close button (minimize only)
+  - Green online indicator on persistent chat circle
+  - Only visible to logged-in users (excludes the admin themselves)
+- **Messenger Widget - Widget Default Avatar**: Per-widget default avatar upload
+  - Override global default avatar at the widget level
+  - Fallback chain: Widget avatar → Admin avatar → No avatar
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options
