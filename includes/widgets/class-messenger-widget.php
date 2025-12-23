@@ -243,6 +243,65 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        // Persistent Admin Chat Section
+        $this->add_control(
+            'persistent_admin_chat_heading',
+            [
+                'label' => __('Persistent Admin Chat', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'enable_persistent_admin_chat',
+            [
+                'label' => __('Enable Persistent Admin Chat', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => 'no',
+                'description' => __('Show a persistent chat circle for a specific admin user that cannot be closed.', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'persistent_admin_user_id',
+            [
+                'label' => __('Admin User ID', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::NUMBER,
+                'min' => 1,
+                'default' => '',
+                'description' => __('Enter the WordPress User ID of the admin to chat with.', 'voxel-toolkit'),
+                'condition' => [
+                    'enable_persistent_admin_chat' => 'yes',
+                ],
+            ]
+        );
+
+        // Default Avatar Section
+        $this->add_control(
+            'default_avatar_heading',
+            [
+                'label' => __('Default Avatar', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'widget_default_avatar',
+            [
+                'label' => __('Widget Default Avatar', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::MEDIA,
+                'default' => [
+                    'url' => '',
+                ],
+                'description' => __('Override the global default avatar for this widget instance. Leave empty to use the global setting.', 'voxel-toolkit'),
+            ]
+        );
+
         $this->end_controls_section();
 
         // Style Tab - Button
@@ -1370,6 +1429,28 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
 
         $placeholder_text = !empty($settings['input_placeholder_text']) ? $settings['input_placeholder_text'] : __('Type a message...', 'voxel-toolkit');
         $reply_as_text = !empty($settings['reply_as_text']) ? $settings['reply_as_text'] : __('Reply as %s', 'voxel-toolkit');
+
+        // Prepare persistent admin chat data
+        $persistent_admin_data = '{}';
+        $persistent_admin_enabled = isset($settings['enable_persistent_admin_chat']) && $settings['enable_persistent_admin_chat'] === 'yes';
+        $persistent_admin_user_id = !empty($settings['persistent_admin_user_id']) ? intval($settings['persistent_admin_user_id']) : 0;
+        $current_user_id = get_current_user_id();
+
+        // Only enable if: feature is on, user ID is set, user is logged in, and not chatting with self
+        if ($persistent_admin_enabled && $persistent_admin_user_id > 0 && is_user_logged_in() && $current_user_id !== $persistent_admin_user_id) {
+            $admin_user = get_user_by('id', $persistent_admin_user_id);
+            if ($admin_user) {
+                $persistent_admin_data = wp_json_encode([
+                    'enabled' => true,
+                    'userId' => $persistent_admin_user_id,
+                    'userName' => $admin_user->display_name,
+                    'userAvatar' => get_avatar_url($persistent_admin_user_id, ['size' => 100]),
+                ]);
+            }
+        }
+
+        // Prepare widget-level default avatar
+        $widget_avatar = !empty($settings['widget_default_avatar']['url']) ? $settings['widget_default_avatar']['url'] : '';
         ?>
         <div class="vt-messenger-container <?php echo esc_attr($position_class); ?> <?php echo ($is_editor && $preview_mode) ? 'vt-preview-mode' : ''; ?>"
              data-max-chats="<?php echo esc_attr($max_chats); ?>"
@@ -1377,7 +1458,9 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
              data-placeholder="<?php echo esc_attr($placeholder_text); ?>"
              data-reply-as="<?php echo esc_attr($reply_as_text); ?>"
              data-send-icon="<?php echo esc_attr($send_icon_html); ?>"
-             data-upload-icon="<?php echo esc_attr($upload_icon_html); ?>">
+             data-upload-icon="<?php echo esc_attr($upload_icon_html); ?>"
+             data-persistent-admin="<?php echo esc_attr($persistent_admin_data); ?>"
+             data-widget-avatar="<?php echo esc_attr($widget_avatar); ?>">
 
             <!-- Main Messenger Button -->
             <button class="vt-messenger-button" aria-label="<?php _e('Open messenger', 'voxel-toolkit'); ?>">

@@ -838,3 +838,41 @@
         background-color: #242526;
     }
 }
+
+/* ============================================
+   Persistent Admin Chat Styles
+   ============================================ */
+
+/* Persistent admin chat circle - green online indicator */
+.vt-messenger-chat-item.vt-persistent-admin-chat {
+    position: relative;
+}
+
+.vt-messenger-chat-item.vt-persistent-admin-chat::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 14px;
+    height: 14px;
+    background-color: #00d26a;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+/* Hide close button on persistent admin chat window */
+.vt-messenger-chat-window.vt-persistent-admin-window .vt-messenger-chat-close {
+    display: none !important;
+}
+
+/* Persistent admin chat minimized state */
+.vt-messenger-chat-window.vt-persistent-admin-window.minimized {
+    height: 56px;
+    width: 250px;
+}
+
+.vt-messenger-chat-window.vt-persistent-admin-window.minimized .vt-messenger-chat-body,
+.vt-messenger-chat-window.vt-persistent-admin-window.minimized .vt-messenger-chat-footer {
+    display: none !important;
+}

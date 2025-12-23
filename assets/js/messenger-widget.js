@@ -27,6 +27,8 @@
             searchTerm: '',
             unreadChats: {}, // Track unread status and count by chat key: { 'chat-key': 3 }
             seenChatKeys: {}, // Track all chat keys we've ever seen to prevent auto-opening existing chats
+            persistentAdminChat: null, // Stores persistent admin chat config
+            persistentChatKey: null, // The chat key for persistent admin
         },
 
         init: function() {
@@ -54,7 +56,8 @@
                     placeholder: self.container.attr('data-placeholder') || self.config.i18n.typeMessage,
                     replyAs: self.container.attr('data-reply-as') || self.config.i18n.replyAs,
                     sendIcon: self.container.attr('data-send-icon') || '',
-                    uploadIcon: self.container.attr('data-upload-icon') || ''
+                    uploadIcon: self.container.attr('data-upload-icon') || '',
+                    widgetAvatar: self.container.attr('data-widget-avatar') || ''
                 };
 
                 // Load unread state from localStorage
@@ -74,6 +77,9 @@
 
                 // Load initial chat list
                 self.loadChats();
+
+                // Initialize persistent admin chat if configured
+                self.initPersistentAdminChat();
 
                 // Start polling for new messages
                 if (self.config.polling && self.config.polling.enabled) {
@@ -163,6 +169,257 @@
             $('body').css('overflow', '');
         },
 
+        /**
+         * Initialize persistent admin chat from data attribute
+         */
+        initPersistentAdminChat: function() {
+            var self = this;
+
+            // Get persistent admin config from container data attribute
+            var persistentAdminData = self.container.attr('data-persistent-admin');
+            if (!persistentAdminData || persistentAdminData === '{}') {
+                return;
+            }
+
+            try {
+                var config = JSON.parse(persistentAdminData);
+                if (!config.enabled || !config.userId) {
+                    return;
+                }
+
+                self.state.persistentAdminChat = {
+                    userId: config.userId,
+                    userName: config.userName,
+                    userAvatar: config.userAvatar,
+                };
+
+                // Generate a unique chat key for persistent admin
+                var currentUserId = self.config.userId;
+                self.state.persistentChatKey = 'persistent-admin-' + config.userId;
+
+                // Create the persistent chat circle after a short delay to ensure chat list is loaded
+                setTimeout(function() {
+                    self.createPersistentAdminCircle();
+                }, 500);
+
+            } catch (e) {
+                console.error('VT Messenger: Error parsing persistent admin config', e);
+            }
+        },
+
+        /**
+         * Create the persistent admin chat circle in the chat list
+         */
+        createPersistentAdminCircle: function() {
+            var self = this;
+            var admin = self.state.persistentAdminChat;
+
+            if (!admin) return;
+
+            var $list = self.popup.find('.vt-messenger-chat-list');
+
+            // Check if already exists
+            if ($list.find('.vt-persistent-admin-chat').length > 0) {
+                return;
+            }
+
+            // Create avatar HTML
+            var avatarHtml = '';
+            if (admin.userAvatar) {
+                avatarHtml = '<img src="' + self.escapeHtml(admin.userAvatar) + '" alt="' + self.escapeHtml(admin.userName) + '">';
+            } else {
+                // Use widget avatar or global default avatar
+                var fallbackAvatar = self.widgetConfig.widgetAvatar || self.config.defaultAvatar;
+                if (fallbackAvatar) {
+                    avatarHtml = '<img src="' + self.escapeHtml(fallbackAvatar) + '" alt="' + self.escapeHtml(admin.userName) + '">';
+                }
+            }
+
+            var circleHtml = '<div class="vt-messenger-chat-item vt-persistent-admin-chat" ';
+            circleHtml += 'data-chat-key="' + self.state.persistentChatKey + '" ';
+            circleHtml += 'data-name="' + self.escapeHtml(admin.userName) + '" ';
+            circleHtml += 'data-excerpt="' + self.escapeHtml('Chat with ' + admin.userName) + '" ';
+            circleHtml += 'data-persistent="true">';
+            circleHtml += '  <div class="vt-chat-avatar">' + avatarHtml + '</div>';
+            circleHtml += '</div>';
+
+            // Insert at the top of the chat list
+            $list.prepend(circleHtml);
+        },
+
+        /**
+         * Open the persistent admin chat window
+         */
+        openPersistentAdminChat: function() {
+            var self = this;
+            var admin = self.state.persistentAdminChat;
+
+            if (!admin) return;
+
+            // Check if already open
+            var existing = null;
+            for (var i = 0; i < self.state.openChats.length; i++) {
+                if (self.state.openChats[i].isPersistentAdmin) {
+                    existing = self.state.openChats[i];
+                    break;
+                }
+            }
+
+            if (existing) {
+                // Already open, expand if minimized
+                if (existing.minimized) {
+                    self.expandChat(existing.key);
+                }
+                return;
+            }
+
+            // Create avatar HTML
+            var avatarHtml = '';
+            if (admin.userAvatar) {
+                avatarHtml = '<img src="' + self.escapeHtml(admin.userAvatar) + '" alt="' + self.escapeHtml(admin.userName) + '">';
+            } else {
+                var fallbackAvatar = self.widgetConfig.widgetAvatar || self.config.defaultAvatar;
+                if (fallbackAvatar) {
+                    avatarHtml = '<img src="' + self.escapeHtml(fallbackAvatar) + '" alt="' + self.escapeHtml(admin.userName) + '">';
+                }
+            }
+
+            // Create a chat object for the admin
+            var adminChat = {
+                key: self.state.persistentChatKey,
+                isPersistentAdmin: true,
+                author: {
+                    type: 'user',
+                    id: self.config.userId,
+                    name: 'You',
+                },
+                target: {
+                    type: 'user',
+                    id: admin.userId,
+                    name: admin.userName,
+                    avatar: avatarHtml,
+                },
+                messages: [],
+                loading: true,
+                minimized: false,
+            };
+
+            // Add to open chats
+            self.state.openChats.push(adminChat);
+
+            // Render with special persistent flag
+            self.renderPersistentAdminChatWindow(adminChat);
+
+            // Load actual messages via Voxel's inbox API
+            self.loadPersistentAdminMessages(adminChat);
+        },
+
+        /**
+         * Render the persistent admin chat window (without close button)
+         */
+        renderPersistentAdminChatWindow: function(chat) {
+            var self = this;
+            var targetName = chat.target.name;
+            var targetAvatar = chat.target.avatar;
+
+            // Get icon HTML from widget config
+            var sendIconHtml = self.widgetConfig.sendIcon || '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>';
+            var uploadIconHtml = self.widgetConfig.uploadIcon || '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg>';
+            var placeholderText = self.widgetConfig.placeholder || self.config.i18n.typeMessage;
+
+            var html = '<div class="vt-messenger-chat-window vt-persistent-admin-window" data-chat-key="' + chat.key + '" data-persistent="true">';
+
+            // Header - NO close button for persistent chat
+            html += '  <div class="vt-messenger-chat-header">';
+            html += '    <div class="vt-chat-header-info">';
+            html += '      <div class="vt-chat-header-avatar">' + targetAvatar + '</div>';
+            html += '      <div class="vt-chat-header-name">' + self.escapeHtml(targetName) + '</div>';
+            html += '    </div>';
+            html += '    <div class="vt-chat-header-actions">';
+            html += '      <button class="vt-messenger-chat-minimize" title="' + (self.config.i18n.minimize || 'Minimize') + '">';
+            html += '        <span>−</span>';
+            html += '      </button>';
+            // NOTE: NO close button here for persistent admin chat
+            html += '    </div>';
+            html += '  </div>';
+
+            // Body
+            html += '  <div class="vt-messenger-chat-body">';
+            html += '    <div class="vt-messenger-messages">';
+            html += '      <div class="vt-messenger-loading"><i class="eicon-loading eicon-animation-spin"></i></div>';
+            html += '    </div>';
+            html += '  </div>';
+
+            // Footer
+            html += '  <div class="vt-messenger-chat-footer">';
+            html += '    <textarea class="vt-messenger-input" placeholder="' + self.escapeHtml(placeholderText) + '" rows="1"></textarea>';
+            html += '    <div class="vt-messenger-upload-buttons">';
+            html += '      <button class="vt-messenger-upload-btn vt-upload-device" title="Upload from device">';
+            html += uploadIconHtml;
+            html += '      </button>';
+            html += '    </div>';
+            html += '    <button class="vt-messenger-send-btn">';
+            html += sendIconHtml;
+            html += '    </button>';
+            html += '    <input type="file" class="vt-messenger-file-input" style="display: none;" accept="image/*,video/*,application/pdf" multiple>';
+            html += '  </div>';
+
+            html += '</div>';
+
+            self.chatWindows.append(html);
+            self.repositionChatWindows();
+        },
+
+        /**
+         * Load messages for persistent admin chat via Voxel's inbox API
+         */
+        loadPersistentAdminMessages: function(chat) {
+            var self = this;
+            var admin = self.state.persistentAdminChat;
+
+            // Build the AJAX URL for Voxel's inbox
+            var ajaxUrl = (typeof Voxel_Config !== 'undefined' && Voxel_Config.ajax_url)
+                ? Voxel_Config.ajax_url + '&action=inbox.load_chat'
+                : self.config.ajaxUrl + '?action=inbox.load_chat';
+
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    author_type: 'user',
+                    author_id: self.config.userId,
+                    target_type: 'user',
+                    target_id: admin.userId,
+                    _wpnonce: self.config.nonce,
+                },
+                success: function(response) {
+                    if (response.success) {
+                        chat.messages = response.list || [];
+                        chat.loading = false;
+
+                        // Update author info if available
+                        if (response.author) {
+                            chat.author = response.author;
+                        }
+
+                        self.renderMessages(chat.key);
+                    } else {
+                        // Chat may not exist yet - that's okay
+                        chat.messages = [];
+                        chat.loading = false;
+                        self.renderMessages(chat.key);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('VT Messenger: Error loading persistent admin messages', error);
+                    chat.messages = [];
+                    chat.loading = false;
+                    self.renderMessages(chat.key);
+                }
+            });
+        },
+
         bindEvents: function() {
             var self = this;
 
@@ -206,7 +463,15 @@
                     'opacity': '0'
                 });
 
-                var chatKey = $(this).data('chat-key');
+                var $item = $(this);
+                var chatKey = $item.data('chat-key');
+
+                // Check if this is a persistent admin chat
+                if ($item.hasClass('vt-persistent-admin-chat') || $item.data('persistent') === true) {
+                    self.openPersistentAdminChat();
+                    return;
+                }
+
                 var chat = self.findChatByKey(chatKey);
                 if (chat) {
                     self.openChat(chat);
@@ -282,7 +547,14 @@
             // Close chat window
             $(document).on('click', '.vt-messenger-chat-close', function(e) {
                 e.preventDefault();
-                var chatKey = $(this).closest('.vt-messenger-chat-window').data('chat-key');
+                var $window = $(this).closest('.vt-messenger-chat-window');
+
+                // Block closing persistent admin chat
+                if ($window.data('persistent') === true || $window.hasClass('vt-persistent-admin-window')) {
+                    return;
+                }
+
+                var chatKey = $window.data('chat-key');
                 self.closeChat(chatKey);
             });
 
@@ -460,9 +732,16 @@
             var $list = self.popup.find('.vt-messenger-chat-list');
             var chats = self.state.searchTerm ? self.filterChatsByTerm(self.state.chats, self.state.searchTerm) : self.state.chats;
 
+            // Preserve persistent admin circle before updating
+            var $persistentCircle = $list.find('.vt-persistent-admin-chat').detach();
+
             if (chats.length === 0) {
                 if ($list.children().length > 0) {
                     $list.empty();
+                }
+                // Re-add persistent admin circle
+                if ($persistentCircle.length > 0) {
+                    $list.prepend($persistentCircle);
                 }
                 return;
             }
@@ -475,9 +754,12 @@
                 var targetAvatar = chat.target ? chat.target.avatar : '';
                 var excerpt = chat.excerpt || '';
 
-                // Use default avatar if no avatar is set
-                if (!targetAvatar && self.config.defaultAvatar) {
-                    targetAvatar = '<img src="' + self.escapeHtml(self.config.defaultAvatar) + '" alt="' + self.escapeHtml(targetName) + '">';
+                // Use widget avatar first, then global default avatar
+                if (!targetAvatar) {
+                    var fallbackAvatar = self.widgetConfig.widgetAvatar || self.config.defaultAvatar;
+                    if (fallbackAvatar) {
+                        targetAvatar = '<img src="' + self.escapeHtml(fallbackAvatar) + '" alt="' + self.escapeHtml(targetName) + '">';
+                    }
                 }
 
                 // Get sender name - check if message was sent by author or target
@@ -521,6 +803,11 @@
             var currentHtml = $list.html();
             if (currentHtml !== html) {
                 $list.html(html);
+            }
+
+            // Re-add persistent admin circle at top
+            if ($persistentCircle.length > 0) {
+                $list.prepend($persistentCircle);
             }
         },
 
@@ -621,9 +908,12 @@
             var targetName = chat.target ? chat.target.name : 'Unknown';
             var targetAvatar = chat.target ? chat.target.avatar : '';
 
-            // Use default avatar if no avatar is set
-            if (!targetAvatar && self.config.defaultAvatar) {
-                targetAvatar = '<img src="' + self.escapeHtml(self.config.defaultAvatar) + '" alt="' + self.escapeHtml(targetName) + '">';
+            // Use widget avatar first, then global default avatar
+            if (!targetAvatar) {
+                var fallbackAvatar = self.widgetConfig.widgetAvatar || self.config.defaultAvatar;
+                if (fallbackAvatar) {
+                    targetAvatar = '<img src="' + self.escapeHtml(fallbackAvatar) + '" alt="' + self.escapeHtml(targetName) + '">';
+                }
             }
 
             var html = '<div class="vt-messenger-chat-window" data-chat-key="' + chat.key + '">';
@@ -994,6 +1284,16 @@
             var chat = self.findChatByKey(chatKey);
             if (!chat) return;
 
+            var $window = self.chatWindows.find('[data-chat-key="' + chatKey + '"]');
+
+            // Handle persistent admin chat differently - hide window but keep in state
+            if (chat.isPersistentAdmin) {
+                chat.minimized = true;
+                $window.hide();
+                self.repositionChatWindows();
+                return;
+            }
+
             // Remove from open chats
             var openIndex = self.state.openChats.findIndex(function(c) {
                 return c.key === chatKey;
@@ -1003,7 +1303,6 @@
             }
 
             // Close the chat window
-            var $window = self.chatWindows.find('[data-chat-key="' + chatKey + '"]');
             $window.fadeOut(200, function() {
                 $(this).remove();
                 self.repositionChatWindows();
@@ -1028,6 +1327,8 @@
             chat.minimized = false;
             var $window = this.chatWindows.find('[data-chat-key="' + chatKey + '"]');
             $window.removeClass('minimized');
+            $window.show();
+
             this.repositionChatWindows();
 
             // Scroll to bottom
@@ -1037,6 +1338,15 @@
 
         closeChat: function(chatKey, silent) {
             var self = this;
+
+            // Check if this is a persistent admin chat - cannot be closed
+            var chat = self.state.openChats.find(function(c) {
+                return c.key === chatKey;
+            });
+            if (chat && chat.isPersistentAdmin) {
+                return; // Cannot close persistent admin chat
+            }
+
             var chatIndex = self.state.openChats.findIndex(function(c) {
                 return c.key === chatKey;
             });
