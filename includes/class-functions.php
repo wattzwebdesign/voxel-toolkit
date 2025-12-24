@@ -544,6 +544,14 @@ class Voxel_Toolkit_Functions {
                 'icon' => 'dashicons-filter',
                 'settings_callback' => array($this, 'render_timeline_filters_settings'),
             ),
+            'timeline_reply_summary' => array(
+                'name' => __('Timeline Reply Summary', 'voxel-toolkit'),
+                'description' => __('AI-generated TL;DR summaries of timeline post replies. Requires OpenAI or Anthropic API key.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Timeline_Reply_Summary',
+                'file' => 'functions/class-timeline-reply-summary.php',
+                'icon' => 'dashicons-text',
+                'settings_callback' => array($this, 'render_timeline_reply_summary_settings'),
+            ),
         );
 
         // Allow other plugins/themes to register functions
@@ -6394,6 +6402,183 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <p class="vt-field-description">
                 <?php _e('Additional timeline filters can be added here in future updates. Have a suggestion? Let us know!', 'voxel-toolkit'); ?>
             </p>
+        </div>
+        <?php
+    }
+
+    /**
+     * Get default summary prompt
+     */
+    public function get_default_summary_prompt() {
+        return __(
+            "Summarize the following discussion replies concisely in 2-3 sentences.\n" .
+            "Focus on:\n" .
+            "- Main points and key takeaways\n" .
+            "- Any consensus or common themes\n" .
+            "- Notable disagreements or different perspectives\n\n" .
+            "Keep the tone neutral and informative. Do not include usernames.\n\n" .
+            "Replies:\n{{replies}}\n\n" .
+            "Summary:",
+            'voxel-toolkit'
+        );
+    }
+
+    /**
+     * Render Timeline Reply Summary settings
+     */
+    public function render_timeline_reply_summary_settings($settings) {
+        $ai_provider = isset($settings['ai_provider']) ? $settings['ai_provider'] : 'openai';
+        $api_key = isset($settings['api_key']) ? $settings['api_key'] : '';
+        $reply_threshold = isset($settings['reply_threshold']) ? absint($settings['reply_threshold']) : 3;
+        $max_summary_length = isset($settings['max_summary_length']) ? absint($settings['max_summary_length']) : 300;
+        $label_text = isset($settings['label_text']) ? $settings['label_text'] : '';
+        $prompt_template = isset($settings['prompt_template']) ? $settings['prompt_template'] : '';
+        $feeds = isset($settings['feeds']) ? (array) $settings['feeds'] : array('post_reviews', 'post_wall', 'post_timeline');
+        ?>
+        <div class="vt-info-box">
+            <?php _e('Generate AI-powered TL;DR summaries of timeline post replies. Similar to Reddit\'s summary bot, this feature helps users quickly understand long discussions.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('AI Provider Settings', 'voxel-toolkit'); ?></h4>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('AI Provider', 'voxel-toolkit'); ?></label>
+                <select name="voxel_toolkit_options[timeline_reply_summary][ai_provider]" class="vt-select" style="width: 300px;">
+                    <option value="openai" <?php selected($ai_provider, 'openai'); ?>><?php _e('OpenAI (GPT-4o-mini)', 'voxel-toolkit'); ?></option>
+                    <option value="anthropic" <?php selected($ai_provider, 'anthropic'); ?>><?php _e('Anthropic (Claude 3 Haiku)', 'voxel-toolkit'); ?></option>
+                </select>
+                <p class="vt-field-description">
+                    <?php _e('Choose which AI service to use for generating summaries. Both use cost-effective models optimized for summarization.', 'voxel-toolkit'); ?>
+                </p>
+            </div>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('API Key', 'voxel-toolkit'); ?></label>
+                <input type="password"
+                       name="voxel_toolkit_options[timeline_reply_summary][api_key]"
+                       value="<?php echo esc_attr($api_key); ?>"
+                       class="vt-input"
+                       placeholder="<?php esc_attr_e('Enter your API key', 'voxel-toolkit'); ?>"
+                       style="width: 400px;"
+                       autocomplete="off">
+                <p class="vt-field-description">
+                    <?php _e('Your API key for the selected provider. Get your key from:', 'voxel-toolkit'); ?>
+                    <br>
+                    <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI API Keys</a> |
+                    <a href="https://console.anthropic.com/settings/keys" target="_blank">Anthropic API Keys</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Summary Settings', 'voxel-toolkit'); ?></h4>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Reply Count Threshold', 'voxel-toolkit'); ?></label>
+                <input type="number"
+                       name="voxel_toolkit_options[timeline_reply_summary][reply_threshold]"
+                       value="<?php echo esc_attr($reply_threshold); ?>"
+                       class="vt-input"
+                       min="1"
+                       max="100"
+                       style="width: 100px;">
+                <p class="vt-field-description">
+                    <?php _e('Minimum number of replies required before showing the summary. Recommended: 3 or more.', 'voxel-toolkit'); ?>
+                </p>
+            </div>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Max Summary Length (tokens)', 'voxel-toolkit'); ?></label>
+                <input type="number"
+                       name="voxel_toolkit_options[timeline_reply_summary][max_summary_length]"
+                       value="<?php echo esc_attr($max_summary_length); ?>"
+                       class="vt-input"
+                       min="50"
+                       max="1000"
+                       style="width: 100px;">
+                <p class="vt-field-description">
+                    <?php _e('Maximum length of the generated summary in tokens (~4 characters per token). Default: 300.', 'voxel-toolkit'); ?>
+                </p>
+            </div>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Summary Label', 'voxel-toolkit'); ?></label>
+                <input type="text"
+                       name="voxel_toolkit_options[timeline_reply_summary][label_text]"
+                       value="<?php echo esc_attr($label_text); ?>"
+                       class="vt-input"
+                       placeholder="<?php esc_attr_e('TL;DR', 'voxel-toolkit'); ?>"
+                       style="width: 200px;">
+                <p class="vt-field-description">
+                    <?php _e('Label displayed on the summary header. Default: "TL;DR"', 'voxel-toolkit'); ?>
+                </p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Enabled Feeds', 'voxel-toolkit'); ?></h4>
+            <p class="vt-field-description" style="margin-bottom: 10px;">
+                <?php _e('Select which timeline feeds should show reply summaries:', 'voxel-toolkit'); ?>
+            </p>
+
+            <div class="vt-field-group">
+                <label class="vt-checkbox-label">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[timeline_reply_summary][feeds][]"
+                           value="post_reviews"
+                           <?php checked(in_array('post_reviews', $feeds)); ?>>
+                    <?php _e('Post Reviews', 'voxel-toolkit'); ?>
+                </label>
+            </div>
+
+            <div class="vt-field-group">
+                <label class="vt-checkbox-label">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[timeline_reply_summary][feeds][]"
+                           value="post_wall"
+                           <?php checked(in_array('post_wall', $feeds)); ?>>
+                    <?php _e('Post Wall', 'voxel-toolkit'); ?>
+                </label>
+            </div>
+
+            <div class="vt-field-group">
+                <label class="vt-checkbox-label">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[timeline_reply_summary][feeds][]"
+                           value="post_timeline"
+                           <?php checked(in_array('post_timeline', $feeds)); ?>>
+                    <?php _e('Post Timeline', 'voxel-toolkit'); ?>
+                </label>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Custom Prompt Template', 'voxel-toolkit'); ?></h4>
+            <p class="vt-field-description" style="margin-bottom: 10px;">
+                <?php _e('Customize the prompt sent to the AI. Use {{replies}} as a placeholder for the reply content.', 'voxel-toolkit'); ?>
+            </p>
+
+            <div class="vt-field-group">
+                <textarea name="voxel_toolkit_options[timeline_reply_summary][prompt_template]"
+                          class="vt-textarea"
+                          rows="8"
+                          style="width: 100%; font-family: monospace;"
+                          placeholder="<?php echo esc_attr($this->get_default_summary_prompt()); ?>"><?php echo esc_textarea($prompt_template); ?></textarea>
+                <p class="vt-field-description">
+                    <?php _e('Leave empty to use the default prompt. The {{replies}} placeholder will be replaced with the actual reply content formatted as a bulleted list.', 'voxel-toolkit'); ?>
+                </p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('How It Works', 'voxel-toolkit'); ?></h4>
+            <ul class="vt-feature-list">
+                <li><?php _e('Summaries are generated when a post reaches the reply threshold', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Summaries are cached in the database and only regenerated when new replies are added', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Users can expand/collapse the summary by clicking the TL;DR header', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Summaries are loaded on-demand to minimize API costs', 'voxel-toolkit'); ?></li>
+            </ul>
         </div>
         <?php
     }

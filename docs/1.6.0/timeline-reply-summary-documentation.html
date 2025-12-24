@@ -1,0 +1,599 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Timeline Reply Summary</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Timeline Reply Summary function uses AI to automatically generate concise summaries of timeline post replies. Similar to Reddit's TL;DR feature, it helps users quickly understand the key points of a discussion without reading every reply.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When a timeline post accumulates enough replies, an AI-generated summary becomes available. The summary appears as a collapsible section when users expand the replies, providing a quick overview of the discussion's main points, common themes, and any notable disagreements.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>AI-generated summaries of timeline reply discussions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Support for OpenAI (GPT-4o-mini) and Anthropic (Claude 3 Haiku) AI providers</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable reply count threshold to trigger summaries</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customizable AI prompt template</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Summaries cached in database until replies change</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Collapsible UI that appears only when replies are expanded</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works on reviews, post walls, post timelines, and user timelines</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Lazy loading - summary fetched only when user clicks to view</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Timeline Reply Summary</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Configure AI Provider</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Click the settings icon next to the function toggle</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select your <strong>AI Provider</strong> (OpenAI or Anthropic)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter your <strong>API Key</strong> for the selected provider</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p><strong>Important:</strong> You must provide a valid API key for the feature to work. API usage will be billed by your AI provider based on their pricing.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>AI Provider</strong></td><td>Choose between OpenAI or Anthropic for AI generation</td><td>OpenAI</td></tr><tr><td><strong>API Key</strong></td><td>Your API key for the selected AI provider</td><td>-</td></tr><tr><td><strong>Reply Threshold</strong></td><td>Minimum number of replies before a summary is generated</td><td>3</td></tr><tr><td><strong>Max Summary Length</strong></td><td>Maximum tokens for the AI-generated summary</td><td>300</td></tr><tr><td><strong>Label Text</strong></td><td>Text displayed on the summary toggle button</td><td>TL;DR</td></tr><tr><td><strong>Enabled Feeds</strong></td><td>Which timeline feeds should show summaries</td><td>All feeds</td></tr><tr><td><strong>Prompt Template</strong></td><td>Custom AI prompt for generating summaries</td><td>Default prompt</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Summary Generation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>A timeline post receives replies from users</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>When the reply count reaches the threshold, the post becomes eligible for a summary</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The summary is generated when a user first expands it (lazy loading)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>All approved replies are sent to the AI with your prompt template</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The AI generates a concise summary of the discussion</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The summary is cached in the database for future views</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Summary Regeneration</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Summaries are automatically regenerated when:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>New replies are added to the post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Replies are deleted or moderated</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The reply count changes from when the summary was generated</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">User Experience</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>User views a timeline post with multiple replies</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User clicks the reply count to expand replies</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>If eligible, a "TL;DR" button appears above the replies with an "AI" badge</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User clicks the button to expand and view the summary</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Summary loads (or generates if first view)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>When replies are collapsed, the summary hides automatically</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Supported Feeds</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Reply summaries work on all Voxel timeline feeds:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Feed Type</th><th>Description</th></tr></thead><tbody><tr><td><strong>Post Reviews</strong></td><td>Reviews left on listings</td></tr><tr><td><strong>Post Wall</strong></td><td>Wall posts on listing pages</td></tr><tr><td><strong>Post Timeline</strong></td><td>Timeline posts on listings</td></tr><tr><td><strong>User Timeline</strong></td><td>User profile timelines and newsfeed</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:paragraph -->
+<p>You can enable or disable specific feeds in the function settings.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">AI Providers</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">OpenAI</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Model:</strong> GPT-4o-mini</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Get API Key:</strong> <a href="https://platform.openai.com/api-keys">platform.openai.com/api-keys</a></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Pricing:</strong> Pay-per-use based on tokens</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Anthropic</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Model:</strong> Claude 3 Haiku</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Get API Key:</strong> <a href="https://console.anthropic.com/">console.anthropic.com</a></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Pricing:</strong> Pay-per-use based on tokens</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Both providers offer fast, cost-effective models suitable for summarization tasks.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Custom Prompt Template</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You can customize the AI prompt used to generate summaries. The default prompt is:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Summarize the following discussion replies concisely in 2-3 sentences.
+Focus on:
+- Main points and key takeaways
+- Any consensus or common themes
+- Notable disagreements or different perspectives
+
+Keep the tone neutral and informative. Do not include usernames.
+
+Replies:
+{{replies}}
+
+Summary:</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>Use the <code>{{replies}}</code> placeholder where you want the reply content to be inserted. The replies are formatted as a bulleted list of quoted text.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Prompt Tips</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Be specific about the summary length you want</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Specify the tone (neutral, friendly, professional)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Tell the AI what to focus on or ignore</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Request specific formatting if needed</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Database Storage</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Summaries are stored in a dedicated database table (<code>wp_voxel_toolkit_reply_summaries</code>) with the following information:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Status ID (linked to the timeline post)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Generated summary text</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Reply count at generation time</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Generation timestamp</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>AI provider used</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>This caching ensures fast load times and minimizes API costs by only regenerating when replies change.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Review Aggregation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Quickly understand the overall sentiment and key points from multiple reviews on a listing.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Discussion Summary</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Catch up on long discussion threads without reading every reply.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Community Insights</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>See what your community is saying about topics at a glance.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Time Saving</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users can quickly decide if they want to read the full discussion based on the summary.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Summary Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify your API key is entered correctly</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the post has enough replies (check threshold setting)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Make sure the feed type is enabled in settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click to expand replies first - summary only shows when replies are visible</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Summary Shows Error</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check your API key is valid and has credits</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify your API account is in good standing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check server error logs for API response details</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try switching AI providers if one isn't working</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Summary Not Updating</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Summaries regenerate when reply count changes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>New replies must be approved/moderated first</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser cache and refresh the page</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Summary Not Hiding</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>The summary should hide when replies are collapsed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser cache and ensure you have the latest version</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for JavaScript errors in browser console</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">API Cost Considerations</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To minimize API costs:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Set an appropriate reply threshold (higher = fewer summaries)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Summaries are cached and only regenerate when replies change</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Lazy loading means API is only called when users view summaries</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Both GPT-4o-mini and Claude 3 Haiku are cost-effective models</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Long replies are truncated before sending to the API</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>OpenAI or Anthropic API key</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Timeline features in use on your site</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

@@ -1,0 +1,167 @@
+/**
+ * Timeline Reply Summary Styles
+ * Matches Voxel Timeline Design
+ *
+ * @package Voxel_Toolkit
+ */
+
+/* Summary Container - Hidden by default, shown when replies expanded */
+.vt-reply-summary {
+    display: none;
+    padding: 0 20px;
+    animation-name: feedIntro;
+    animation-duration: .3s;
+}
+
+.vt-reply-summary.vt-reply-summary--visible {
+    display: block;
+}
+
+/* Header - Clickable Toggle */
+.vt-reply-summary__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    background: var(--main-bg, #fff);
+    border: 1px solid var(--main-border, var(--ts-shade-4));
+    border-radius: var(--md-radius, 6px);
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.vt-reply-summary__header:hover {
+    border-color: var(--ts-accent-1, #3b82f6);
+}
+
+/* Icon */
+.vt-reply-summary__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ts-accent-1, #3b82f6);
+}
+
+.vt-reply-summary__icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Label */
+.vt-reply-summary__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--main-text, var(--ts-shade-1));
+}
+
+/* AI Badge - Styled like Voxel badges */
+.vt-reply-summary__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #fff;
+    background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+    border-radius: 4px;
+}
+
+/* Toggle Arrow */
+.vt-reply-summary__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    color: var(--faded-text, var(--ts-shade-3));
+    transition: transform 0.2s ease;
+}
+
+.vt-reply-summary__toggle svg {
+    width: 12px;
+    height: 12px;
+}
+
+.vt-reply-summary--expanded .vt-reply-summary__toggle {
+    transform: rotate(180deg);
+}
+
+/* Content Area */
+.vt-reply-summary__content {
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+/* Summary Text - Styled like Voxel post body */
+.vt-reply-summary__text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--main-text, var(--ts-shade-1));
+    background: var(--ts-shade-5, rgba(0, 0, 0, 0.02));
+    padding: 12px 14px;
+    border-radius: var(--md-radius, 6px);
+    border-left: 3px solid var(--ts-accent-1, #3b82f6);
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+/* Loading State */
+.vt-reply-summary__loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--faded-text, var(--ts-shade-3));
+    background: var(--ts-shade-5, rgba(0, 0, 0, 0.02));
+    border-radius: var(--md-radius, 6px);
+}
+
+/* Spinner - Matches Voxel's loading style */
+.vt-reply-summary__spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--main-border, var(--ts-shade-4));
+    border-top-color: var(--ts-accent-1, #3b82f6);
+    border-radius: 50%;
+    animation: vt-reply-summary-spin 0.8s linear infinite;
+}
+
+@keyframes vt-reply-summary-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Error State */
+.vt-reply-summary__error {
+    font-size: 13px;
+    color: var(--faded-text, var(--ts-shade-3));
+    font-style: italic;
+    padding: 12px 14px;
+    background: var(--ts-shade-5, rgba(0, 0, 0, 0.02));
+    border-radius: var(--md-radius, 6px);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .vt-reply-summary {
+        padding: 0 15px;
+    }
+
+    .vt-reply-summary__header {
+        padding: 8px 10px;
+    }
+
+    .vt-reply-summary__label {
+        font-size: 12px;
+    }
+
+    .vt-reply-summary__text {
+        font-size: 13px;
+        padding: 10px 12px;
+    }
+}

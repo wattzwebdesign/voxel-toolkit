@@ -1836,6 +1836,48 @@ class Voxel_Toolkit_Admin {
                             : '';
                         break;
 
+                    case 'timeline_reply_summary':
+                        // AI Provider
+                        $sanitized_function['ai_provider'] = isset($function_input['ai_provider']) && in_array($function_input['ai_provider'], array('openai', 'anthropic'), true)
+                            ? $function_input['ai_provider']
+                            : 'openai';
+
+                        // API Key
+                        $sanitized_function['api_key'] = isset($function_input['api_key'])
+                            ? sanitize_text_field($function_input['api_key'])
+                            : '';
+
+                        // Reply threshold (min 1)
+                        $sanitized_function['reply_threshold'] = isset($function_input['reply_threshold'])
+                            ? max(1, absint($function_input['reply_threshold']))
+                            : 3;
+
+                        // Max summary length (50-1000)
+                        $sanitized_function['max_summary_length'] = isset($function_input['max_summary_length'])
+                            ? max(50, min(1000, absint($function_input['max_summary_length'])))
+                            : 300;
+
+                        // Label text
+                        $sanitized_function['label_text'] = isset($function_input['label_text']) && !empty(trim($function_input['label_text']))
+                            ? sanitize_text_field($function_input['label_text'])
+                            : __('TL;DR', 'voxel-toolkit');
+
+                        // Prompt template - use default if empty
+                        if (isset($function_input['prompt_template']) && !empty(trim($function_input['prompt_template']))) {
+                            $sanitized_function['prompt_template'] = wp_kses_post($function_input['prompt_template']);
+                        } else {
+                            $sanitized_function['prompt_template'] = Voxel_Toolkit_Functions::instance()->get_default_summary_prompt();
+                        }
+
+                        // Enabled feeds
+                        $allowed_feeds = array('post_reviews', 'post_wall', 'post_timeline');
+                        if (isset($function_input['feeds']) && is_array($function_input['feeds'])) {
+                            $sanitized_function['feeds'] = array_values(array_intersect($function_input['feeds'], $allowed_feeds));
+                        } else {
+                            $sanitized_function['feeds'] = $allowed_feeds;
+                        }
+                        break;
+
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(
