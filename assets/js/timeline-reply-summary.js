@@ -34,8 +34,8 @@
         container.innerHTML = [
             '<div class="vt-reply-summary__header">',
             '  <span class="vt-reply-summary__icon">',
-            '    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">',
-            '      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>',
+            '    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">',
+            '      <path d="M9.5 2l1.5 3.5L14.5 7l-3.5 1.5L9.5 12 8 8.5 4.5 7 8 5.5 9.5 2zm5 10l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1 1-2.5zM5 14l1.5 3L10 18.5 6.5 20 5 23l-1.5-3L0 18.5 3.5 17 5 14z"/>',
             '    </svg>',
             '  </span>',
             '  <span class="vt-reply-summary__label">' + escapeHtml(label) + '</span>',
