@@ -92,16 +92,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Users can enable/disable notifications per saved search
   - localStorage persistence for seamless cross-session experience
   - Auto-delete expiration setting (7/14/30/90 days, 6 months, 1 year, or never)
-- **Anonymous Timeline**: Allow users to post anonymously on timelines, walls, and reviews
-  - Users can check "Post Anonymously" on any timeline post or comment
-  - Each user gets a unique persistent Anonymous Member ID (5-digit number)
-  - Replaces name, avatar, and profile link with anonymous placeholders
-  - Works on all timeline feeds: post_reviews, post_wall, post_timeline, user_timeline
-  - Site administrators can always see real identity for moderation
-  - Anonymous likes are also anonymized
-  - Reposting and quoting anonymous posts is disabled
-  - Anonymous ID column added to WordPress Users table
-  - Deactivation warning updated to mention anonymous posts becoming public
 - **Timeline & Reviews Dynamic Tags**: Access latest and oldest entries from post timelines, walls, and reviews
   - `@post(vt_reviews.latest/oldest.content)` - Review content text
   - `@post(vt_reviews.latest/oldest.author)` - Reviewer display name
@@ -156,6 +146,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Messenger Widget - Widget Default Avatar**: Per-widget default avatar upload
   - Override global default avatar at the widget level
   - Fallback chain: Widget avatar → Admin avatar → No avatar
+- **Timeline Reply Summary**: AI-generated summaries of timeline post replies (TL;DR)
+  - Support for OpenAI (GPT-4o-mini) and Anthropic (Claude 3 Haiku) AI providers
+  - Configurable reply count threshold to trigger summaries
+  - Customizable AI prompt template with {{replies}} placeholder
+  - Summaries cached in database, auto-regenerate when replies change
+  - Collapsible UI appears only when replies are expanded
+  - Works on reviews, walls, timelines, and user feeds
+  - Lazy loading - summary fetched only when user clicks to view
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options
