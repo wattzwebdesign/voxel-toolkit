@@ -456,6 +456,7 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-widget-css-injector.php',
                 'settings_callback' => array('Voxel_Toolkit_Widget_CSS_Injector', 'render_settings'),
                 'always_enabled' => true,
+                'hidden' => true,
             ),
             'share_count' => array(
                 'name' => __('Share Count', 'voxel-toolkit'),
@@ -551,6 +552,23 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-timeline-reply-summary.php',
                 'icon' => 'dashicons-text',
                 'settings_callback' => array($this, 'render_timeline_reply_summary_settings'),
+            ),
+            'ai_settings' => array(
+                'name' => __('AI Settings', 'voxel-toolkit'),
+                'description' => __('Central configuration for AI providers (OpenAI, Anthropic). Required for AI-powered features.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_AI_Settings',
+                'file' => 'functions/class-ai-settings.php',
+                'settings_callback' => array($this, 'render_ai_settings'),
+                'always_enabled' => true,
+                'icon' => 'dashicons-admin-generic',
+            ),
+            'ai_post_summary' => array(
+                'name' => __('AI Post Summary', 'voxel-toolkit'),
+                'description' => __('Auto-generate AI summaries for posts on publish/update. Access via @post().ai_summary() dynamic tag.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_AI_Post_Summary',
+                'file' => 'functions/class-ai-post-summary.php',
+                'settings_callback' => array($this, 'render_ai_post_summary_settings'),
+                'icon' => 'dashicons-format-aside',
             ),
         );
 
@@ -6581,6 +6599,236 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </ul>
         </div>
         <?php
+    }
+
+    /**
+     * Render AI Settings
+     */
+    public function render_ai_settings($settings) {
+        $provider = isset($settings['provider']) ? $settings['provider'] : 'openai';
+        $api_key = isset($settings['api_key']) ? $settings['api_key'] : '';
+        $openai_model = isset($settings['openai_model']) ? $settings['openai_model'] : 'gpt-4o-mini';
+        $anthropic_model = isset($settings['anthropic_model']) ? $settings['anthropic_model'] : 'claude-3-5-haiku-20241022';
+        ?>
+
+        <table class="form-table">
+            <tr>
+                <th scope="row"><?php _e('AI Provider', 'voxel-toolkit'); ?></th>
+                <td>
+                    <select name="voxel_toolkit_options[ai_settings][provider]" class="vt-select" style="width: 300px;">
+                        <option value="openai" <?php selected($provider, 'openai'); ?>><?php _e('OpenAI', 'voxel-toolkit'); ?></option>
+                        <option value="anthropic" <?php selected($provider, 'anthropic'); ?>><?php _e('Anthropic (Claude)', 'voxel-toolkit'); ?></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('API Key', 'voxel-toolkit'); ?></th>
+                <td>
+                    <input type="password"
+                           name="voxel_toolkit_options[ai_settings][api_key]"
+                           value="<?php echo esc_attr($api_key); ?>"
+                           class="regular-text"
+                           style="width: 300px;"
+                           placeholder="<?php _e('Enter your API key', 'voxel-toolkit'); ?>">
+                    <p class="description"><?php _e('Your API key for the selected provider.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('OpenAI Model', 'voxel-toolkit'); ?></th>
+                <td>
+                    <select name="voxel_toolkit_options[ai_settings][openai_model]" class="vt-select" style="width: 300px;">
+                        <option value="gpt-4o-mini" <?php selected($openai_model, 'gpt-4o-mini'); ?>>GPT-4o Mini (Recommended)</option>
+                        <option value="gpt-4o" <?php selected($openai_model, 'gpt-4o'); ?>>GPT-4o</option>
+                        <option value="gpt-4.1" <?php selected($openai_model, 'gpt-4.1'); ?>>GPT-4.1</option>
+                        <option value="gpt-4.1-mini" <?php selected($openai_model, 'gpt-4.1-mini'); ?>>GPT-4.1 Mini</option>
+                        <option value="o1" <?php selected($openai_model, 'o1'); ?>>o1</option>
+                        <option value="o1-mini" <?php selected($openai_model, 'o1-mini'); ?>>o1-mini</option>
+                        <option value="o3-mini" <?php selected($openai_model, 'o3-mini'); ?>>o3-mini</option>
+                        <option value="gpt-4-turbo" <?php selected($openai_model, 'gpt-4-turbo'); ?>>GPT-4 Turbo</option>
+                    </select>
+                    <p class="description"><?php _e('Used when OpenAI is selected as provider.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Anthropic Model', 'voxel-toolkit'); ?></th>
+                <td>
+                    <select name="voxel_toolkit_options[ai_settings][anthropic_model]" class="vt-select" style="width: 300px;">
+                        <option value="claude-3-5-haiku-20241022" <?php selected($anthropic_model, 'claude-3-5-haiku-20241022'); ?>>Claude 3.5 Haiku (Recommended)</option>
+                        <option value="claude-3-5-sonnet-20241022" <?php selected($anthropic_model, 'claude-3-5-sonnet-20241022'); ?>>Claude 3.5 Sonnet</option>
+                        <option value="claude-sonnet-4-20250514" <?php selected($anthropic_model, 'claude-sonnet-4-20250514'); ?>>Claude Sonnet 4</option>
+                        <option value="claude-opus-4-20250514" <?php selected($anthropic_model, 'claude-opus-4-20250514'); ?>>Claude Opus 4</option>
+                        <option value="claude-3-opus-20240229" <?php selected($anthropic_model, 'claude-3-opus-20240229'); ?>>Claude 3 Opus</option>
+                    </select>
+                    <p class="description"><?php _e('Used when Anthropic is selected as provider.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+        </table>
+
+        <div class="vt-settings-info" style="margin-top: 20px; padding: 15px; background: #f0f6fc; border-radius: 6px; border-left: 4px solid #0073aa;">
+            <strong><?php _e('About AI Settings:', 'voxel-toolkit'); ?></strong>
+            <p style="margin: 10px 0 0 0;"><?php _e('This is the central AI configuration used by all AI-powered features in Voxel Toolkit, including AI Post Summary. Configure your API key here once and all AI features will use it.', 'voxel-toolkit'); ?></p>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render AI Post Summary settings
+     */
+    public function render_ai_post_summary_settings($settings) {
+        // Check if AI Settings is configured
+        $ai_configured = class_exists('Voxel_Toolkit_AI_Settings') && Voxel_Toolkit_AI_Settings::instance()->is_configured();
+
+        if (!$ai_configured) {
+            ?>
+            <div class="vt-settings-notice vt-settings-notice-warning">
+                <span class="dashicons dashicons-warning"></span>
+                <?php _e('AI Settings must be configured first. Please enable and configure AI Settings before using this feature.', 'voxel-toolkit'); ?>
+            </div>
+            <?php
+            return;
+        }
+
+        // Get Voxel post types
+        $voxel_post_types = array();
+        if (class_exists('\Voxel\Post_Type')) {
+            $voxel_post_types = \Voxel\Post_Type::get_voxel_types();
+        }
+
+        $enabled_post_types = isset($settings['post_types']) ? (array) $settings['post_types'] : array();
+        $max_tokens = isset($settings['max_tokens']) ? absint($settings['max_tokens']) : 300;
+        $prompt_template = isset($settings['prompt_template']) ? $settings['prompt_template'] : '';
+        ?>
+
+        <table class="form-table">
+            <tr>
+                <th scope="row"><?php _e('Enable for Post Types', 'voxel-toolkit'); ?></th>
+                <td>
+                    <fieldset>
+                        <?php if (!empty($voxel_post_types)): ?>
+                            <?php foreach ($voxel_post_types as $pt): ?>
+                                <label style="display: block; margin-bottom: 5px;">
+                                    <input type="checkbox"
+                                           name="voxel_toolkit_options[ai_post_summary][post_types][]"
+                                           value="<?php echo esc_attr($pt->get_key()); ?>"
+                                           <?php checked(in_array($pt->get_key(), $enabled_post_types)); ?>>
+                                    <?php echo esc_html($pt->get_label()); ?>
+                                </label>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p class="description"><?php _e('No Voxel post types found.', 'voxel-toolkit'); ?></p>
+                        <?php endif; ?>
+                    </fieldset>
+                    <p class="description"><?php _e('Select which post types should auto-generate AI summaries.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Max Tokens', 'voxel-toolkit'); ?></th>
+                <td>
+                    <input type="number"
+                           name="voxel_toolkit_options[ai_post_summary][max_tokens]"
+                           value="<?php echo esc_attr($max_tokens); ?>"
+                           min="50"
+                           max="1000"
+                           class="small-text">
+                    <p class="description"><?php _e('Maximum tokens for the summary (50-1000). Higher = longer summaries.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Prompt Template', 'voxel-toolkit'); ?></th>
+                <td>
+                    <textarea name="voxel_toolkit_options[ai_post_summary][prompt_template]"
+                              rows="6"
+                              class="large-text code"
+                              placeholder="<?php echo esc_attr($this->get_default_ai_post_summary_prompt()); ?>"><?php echo esc_textarea($prompt_template); ?></textarea>
+                    <p class="description"><?php _e('Custom prompt template. Use {{post_data}} as placeholder for post content. Leave empty for default.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+        </table>
+
+        <div class="vt-settings-info" style="margin-top: 20px; padding: 15px; background: #f0f6fc; border-radius: 6px; border-left: 4px solid #0073aa;">
+            <strong><?php _e('How to use:', 'voxel-toolkit'); ?></strong>
+            <ul style="margin: 10px 0 0 20px; list-style: disc;">
+                <li><?php _e('Summaries are auto-generated when posts are published or updated.', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Access the summary using the dynamic tag: <code>@post().ai_summary()</code>', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Summaries are stored in post meta and only regenerated when content changes.', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
+
+        <div class="vt-settings-section" style="margin-top: 30px;">
+            <h4><?php _e('Bulk Generate Summaries', 'voxel-toolkit'); ?></h4>
+            <p class="description"><?php _e('Generate AI summaries for existing posts that don\'t have one yet.', 'voxel-toolkit'); ?></p>
+            <button type="button" id="vt-bulk-generate-summaries" class="button button-secondary" style="margin-top: 10px;">
+                <?php _e('Generate Summaries', 'voxel-toolkit'); ?>
+            </button>
+            <span id="vt-bulk-generate-status" style="margin-left: 10px;"></span>
+        </div>
+
+        <script>
+        jQuery(document).ready(function($) {
+            $('#vt-bulk-generate-summaries').on('click', function() {
+                var $btn = $(this);
+                var $status = $('#vt-bulk-generate-status');
+                var isRunning = false;
+
+                if (isRunning) return;
+                isRunning = true;
+
+                $btn.prop('disabled', true).text('<?php _e('Processing...', 'voxel-toolkit'); ?>');
+                $status.html('<span style="color: #666;"><?php _e('Starting bulk generation...', 'voxel-toolkit'); ?></span>');
+
+                var offset = 0;
+                var totalProcessed = 0;
+                var totalGenerated = 0;
+
+                function processBatch() {
+                    $.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'vt_bulk_generate_ai_summaries',
+                            nonce: '<?php echo wp_create_nonce('vt_ai_summary_nonce'); ?>',
+                            offset: offset
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                totalProcessed += response.data.processed;
+                                totalGenerated += response.data.generated;
+
+                                if (response.data.has_more) {
+                                    offset += response.data.processed;
+                                    $status.html('<span style="color: #666;"><?php _e('Processed', 'voxel-toolkit'); ?> ' + totalProcessed + ' <?php _e('posts, generated', 'voxel-toolkit'); ?> ' + totalGenerated + ' <?php _e('summaries...', 'voxel-toolkit'); ?></span>');
+                                    processBatch();
+                                } else {
+                                    isRunning = false;
+                                    $btn.prop('disabled', false).text('<?php _e('Generate Summaries', 'voxel-toolkit'); ?>');
+                                    $status.html('<span style="color: #46b450;"><?php _e('Complete! Processed', 'voxel-toolkit'); ?> ' + totalProcessed + ' <?php _e('posts, generated', 'voxel-toolkit'); ?> ' + totalGenerated + ' <?php _e('new summaries.', 'voxel-toolkit'); ?></span>');
+                                }
+                            } else {
+                                isRunning = false;
+                                $btn.prop('disabled', false).text('<?php _e('Generate Summaries', 'voxel-toolkit'); ?>');
+                                $status.html('<span style="color: #dc2626;">' + (response.data.message || '<?php _e('Error occurred.', 'voxel-toolkit'); ?>') + '</span>');
+                            }
+                        },
+                        error: function() {
+                            isRunning = false;
+                            $btn.prop('disabled', false).text('<?php _e('Generate Summaries', 'voxel-toolkit'); ?>');
+                            $status.html('<span style="color: #dc2626;"><?php _e('Request failed. Please try again.', 'voxel-toolkit'); ?></span>');
+                        }
+                    });
+                }
+
+                processBatch();
+            });
+        });
+        </script>
+        <?php
+    }
+
+    /**
+     * Get default AI Post Summary prompt
+     */
+    public function get_default_ai_post_summary_prompt() {
+        return "Based on the following information about a listing/post, write a concise, engaging summary (2-3 sentences) that highlights the key features and value proposition. Focus on what makes this unique and appealing to potential visitors or customers.\n\n{{post_data}}\n\nSummary:";
     }
 
 }

@@ -49,6 +49,7 @@ class Voxel_Toolkit_Admin {
         add_action('wp_ajax_vt_admin_notifications_user_search', array($this, 'ajax_admin_notifications_user_search'));
         add_action('wp_ajax_voxel_toolkit_reorder_fields', array($this, 'ajax_reorder_fields'));
         add_action('wp_ajax_vt_save_function_settings', array($this, 'ajax_save_function_settings'));
+        add_action('wp_ajax_vt_bulk_generate_ai_summaries', array($this, 'ajax_bulk_generate_ai_summaries'));
 
         // Tools page AJAX handlers
         add_action('wp_ajax_vt_get_post_type_fields', array($this, 'ajax_get_post_type_fields'));
@@ -565,10 +566,28 @@ class Voxel_Toolkit_Admin {
             }
         }
 
-        // Sort functions alphabetically by name
-        uasort($enabled_functions, function($a, $b) {
+        // Separate utility functions (always_enabled) from regular functions
+        $regular_functions = array();
+        $utility_functions = array();
+
+        foreach ($enabled_functions as $function_key => $function_data) {
+            if (!empty($function_data['always_enabled'])) {
+                $utility_functions[$function_key] = $function_data;
+            } else {
+                $regular_functions[$function_key] = $function_data;
+            }
+        }
+
+        // Sort both arrays alphabetically by name
+        uasort($regular_functions, function($a, $b) {
             return strcasecmp($a['name'], $b['name']);
         });
+        uasort($utility_functions, function($a, $b) {
+            return strcasecmp($a['name'], $b['name']);
+        });
+
+        // Merge: regular functions first, then utility functions
+        $enabled_functions = $regular_functions + $utility_functions;
 
         ?>
         <div class="wrap">
@@ -604,10 +623,20 @@ class Voxel_Toolkit_Admin {
                         <div class="vt-settings-tabs-list">
                             <?php
                             $first = true;
+                            $utility_started = false;
                             foreach ($enabled_functions as $function_key => $function_data):
-                            ?>
+                                $is_utility = !empty($function_data['always_enabled']);
+
+                                // Add divider before first utility function
+                                if ($is_utility && !$utility_started && !empty($regular_functions)):
+                                    $utility_started = true;
+                                ?>
+                                    <div class="vt-settings-tab-divider">
+                                        <span><?php _e('Configuration', 'voxel-toolkit'); ?></span>
+                                    </div>
+                                <?php endif; ?>
                                 <button type="button"
-                                        class="vt-settings-tab <?php echo $first ? 'active' : ''; ?>"
+                                        class="vt-settings-tab <?php echo $first ? 'active' : ''; ?> <?php echo $is_utility ? 'vt-settings-tab-utility' : ''; ?>"
                                         data-tab="<?php echo esc_attr($function_key); ?>">
                                     <?php echo esc_html($function_data['name']); ?><?php if (!empty($function_data['beta'])): ?> <span class="vt-badge-beta"><?php _e('Beta', 'voxel-toolkit'); ?></span><?php endif; ?>
                                 </button>
@@ -1878,6 +1907,58 @@ class Voxel_Toolkit_Admin {
                         }
                         break;
 
+                    case 'ai_settings':
+                        // Provider
+                        $sanitized_function['provider'] = isset($function_input['provider']) && in_array($function_input['provider'], array('openai', 'anthropic'), true)
+                            ? $function_input['provider']
+                            : 'openai';
+
+                        // API Key - preserve if empty (don't overwrite with blank)
+                        if (isset($function_input['api_key']) && !empty($function_input['api_key'])) {
+                            $sanitized_function['api_key'] = sanitize_text_field($function_input['api_key']);
+                        } else {
+                            // Preserve existing API key
+                            $current_settings = Voxel_Toolkit_Settings::instance()->get_function_settings('ai_settings', array());
+                            $sanitized_function['api_key'] = isset($current_settings['api_key']) ? $current_settings['api_key'] : '';
+                        }
+
+                        // OpenAI Model
+                        $allowed_openai = array('gpt-4o-mini', 'gpt-4o', 'gpt-4.1', 'gpt-4.1-mini', 'o1', 'o1-mini', 'o3-mini', 'gpt-4-turbo');
+                        $sanitized_function['openai_model'] = isset($function_input['openai_model']) && in_array($function_input['openai_model'], $allowed_openai, true)
+                            ? $function_input['openai_model']
+                            : 'gpt-4o-mini';
+
+                        // Anthropic Model
+                        $allowed_anthropic = array('claude-3-5-haiku-20241022', 'claude-3-5-sonnet-20241022', 'claude-sonnet-4-20250514', 'claude-opus-4-20250514', 'claude-3-opus-20240229');
+                        $sanitized_function['anthropic_model'] = isset($function_input['anthropic_model']) && in_array($function_input['anthropic_model'], $allowed_anthropic, true)
+                            ? $function_input['anthropic_model']
+                            : 'claude-3-5-haiku-20241022';
+                        break;
+
+                    case 'ai_post_summary':
+                        // Post types
+                        if (isset($function_input['post_types']) && is_array($function_input['post_types'])) {
+                            $sanitized_function['post_types'] = array_map('sanitize_text_field', $function_input['post_types']);
+                            // Validate against Voxel post types
+                            if (class_exists('\Voxel\Post_Type')) {
+                                $valid_types = array_keys(\Voxel\Post_Type::get_voxel_types());
+                                $sanitized_function['post_types'] = array_values(array_intersect($sanitized_function['post_types'], $valid_types));
+                            }
+                        } else {
+                            $sanitized_function['post_types'] = array();
+                        }
+
+                        // Max tokens (50-1000)
+                        $sanitized_function['max_tokens'] = isset($function_input['max_tokens'])
+                            ? max(50, min(1000, absint($function_input['max_tokens'])))
+                            : 300;
+
+                        // Prompt template
+                        $sanitized_function['prompt_template'] = isset($function_input['prompt_template'])
+                            ? sanitize_textarea_field($function_input['prompt_template'])
+                            : '';
+                        break;
+
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(
@@ -1887,7 +1968,7 @@ class Voxel_Toolkit_Admin {
                         );
                         break;
                 }
-                
+
                 } catch (Exception $e) {
                     // Log error but don't break the sanitization process
                     // Ensure we still have a valid sanitized function array
@@ -4671,6 +4752,89 @@ class Voxel_Toolkit_Admin {
             'skipped' => $skipped,
             'copied_count' => count($copied),
             'skipped_count' => count($skipped)
+        ));
+    }
+
+    /**
+     * AJAX handler for bulk generating AI summaries
+     */
+    public function ajax_bulk_generate_ai_summaries() {
+        // Verify nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'vt_ai_summary_nonce')) {
+            wp_send_json_error(array('message' => __('Security check failed.', 'voxel-toolkit')));
+            return;
+        }
+
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('You do not have sufficient permissions.', 'voxel-toolkit')));
+            return;
+        }
+
+        // Check if AI Post Summary class exists
+        if (!class_exists('Voxel_Toolkit_AI_Post_Summary')) {
+            wp_send_json_error(array('message' => __('AI Post Summary class not found.', 'voxel-toolkit')));
+            return;
+        }
+
+        // Get settings
+        $settings = Voxel_Toolkit_Settings::instance()->get_function_settings('ai_post_summary', array());
+        $enabled_post_types = isset($settings['post_types']) ? (array) $settings['post_types'] : array();
+
+        if (empty($enabled_post_types)) {
+            wp_send_json_error(array('message' => __('No post types enabled for AI summaries.', 'voxel-toolkit')));
+            return;
+        }
+
+        $offset = isset($_POST['offset']) ? absint($_POST['offset']) : 0;
+        $batch_size = 10;
+
+        // Get posts without AI summaries
+        $args = array(
+            'post_type' => $enabled_post_types,
+            'post_status' => 'publish',
+            'posts_per_page' => $batch_size,
+            'offset' => $offset,
+            'meta_query' => array(
+                array(
+                    'key' => '_vt_ai_post_summary',
+                    'compare' => 'NOT EXISTS',
+                ),
+            ),
+        );
+
+        $query = new WP_Query($args);
+        $posts = $query->posts;
+
+        $generated = 0;
+        $ai_summary = Voxel_Toolkit_AI_Post_Summary::instance();
+
+        foreach ($posts as $post) {
+            $result = $ai_summary->generate_summary_for_post($post->ID);
+            if ($result && !is_wp_error($result)) {
+                $generated++;
+            }
+        }
+
+        // Check if there are more posts
+        $total_remaining = new WP_Query(array(
+            'post_type' => $enabled_post_types,
+            'post_status' => 'publish',
+            'posts_per_page' => 1,
+            'offset' => $offset + count($posts),
+            'meta_query' => array(
+                array(
+                    'key' => '_vt_ai_post_summary',
+                    'compare' => 'NOT EXISTS',
+                ),
+            ),
+            'fields' => 'ids',
+        ));
+
+        wp_send_json_success(array(
+            'processed' => count($posts),
+            'generated' => $generated,
+            'has_more' => $total_remaining->have_posts(),
         ));
     }
 
