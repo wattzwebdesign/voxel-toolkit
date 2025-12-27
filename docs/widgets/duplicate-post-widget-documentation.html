@@ -1,0 +1,428 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Duplicate Post Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Duplicate Post widget adds a button that allows users to duplicate posts directly from the frontend. Users can quickly create copies of listings, templates, or any content they have permission to duplicate.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Enable users to duplicate posts without accessing the WordPress admin. The widget displays a button that creates a copy of the current post and optionally redirects the user to edit the new copy. Role-based permissions control who can duplicate content.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>One-click post duplication</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Role-based access control</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Post type restrictions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Custom button text</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Redirect options after duplication</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Custom title suffix for copies</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Full button styling controls</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Duplicate Post</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure which post types can be duplicated</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set allowed user roles</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Enable the Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Widgets</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Duplicate Post</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Add to Template</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your single post template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Duplicate Post (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to your desired location</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure button text and redirect options</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Content Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Button Text</strong></td><td>Text displayed on the duplicate button</td><td>"Duplicate Post"</td></tr><tr><td><strong>Redirect After Duplicate</strong></td><td>Where to go after duplication</td><td>Create/Edit Page</td></tr><tr><td><strong>Copying Text</strong></td><td>Text shown while duplication is in progress</td><td>"Duplicating..."</td></tr><tr><td><strong>Title Suffix</strong></td><td>Text added to the duplicated post title</td><td>"(Copy)"</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Redirect Options</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Create/Edit Page</strong> - Redirect to the Voxel create/edit form for the new post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Current Page</strong> - Stay on the current page after duplication</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Styling Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Button Style</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Typography (font family, size, weight)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Background color/gradient (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Box shadow</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Hover animation</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Alignment (left, center, right)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Permission Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Configure who can duplicate posts in <strong>Voxel Toolkit &gt; Functions &gt; Duplicate Post</strong>:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Post Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Select which post types can be duplicated. The button will only appear on enabled post types.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Allowed Roles</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Choose which user roles can duplicate posts:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Administrator</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Editor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Author</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Contributor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>All Roles (allows any logged-in user)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Listing Templates</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allow business owners to duplicate their own listings to create similar ones quickly.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Event Duplication</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let event organizers duplicate past events to create recurring or similar events.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Product Variations</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Enable sellers to duplicate product listings to create variations with minor differences.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Content Templates</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Create template posts that users can duplicate and customize.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Button Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the Duplicate Post function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the post type is in the allowed list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the user is logged in</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the user's role is allowed to duplicate</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Shows "Duplication Disabled"</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Enable the Duplicate Post function in Toolkit settings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Shows "Not Enabled for This Post Type"</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Add this post type to the allowed post types in function settings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Shows "Login Required"</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Users must be logged in to duplicate posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the user's role is in the allowed roles list</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Duplicate Post function enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User must be logged in</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

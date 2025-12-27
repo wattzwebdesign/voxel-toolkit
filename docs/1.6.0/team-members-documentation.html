@@ -1,0 +1,448 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Team Members</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Team Members function allows post authors to invite other users to help manage their listings. Team members can edit posts they've been invited to, enabling collaborative listing management.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Sometimes a listing needs multiple people to manage it - a business with multiple owners, a team managing a property, or staff members helping with updates. The Team Members feature lets post authors invite collaborators by email who can then edit the post as if they owned it.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Team Members post field for managing invites</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Invite collaborators by email</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable invite expiration (default 7 days)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Accept/decline invitation flow</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Email notifications for invites</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>App Events integration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor visibility rule for team members</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Team Members</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add Field to Post Type</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Voxel &gt; Post Types</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Edit the post type where you want team members</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add a new field and select <strong>Team Members (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure field settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the post type</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Configure App Events (Optional)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Voxel &gt; App Events</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find the Team Members events</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure email notifications for invites, acceptances, and declines</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Sending an Invite</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Post author edits their post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>They enter an email address in the Team Members field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>An invitation email is sent to that address</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The invite appears as "Pending" in the field</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Accepting an Invite</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Invited user receives email with invitation link</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>They click the link and log in (or register)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>They see the invitation and click Accept</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>They can now edit the post</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Declining an Invite</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users can decline invitations, which removes the invite and notifies the post author.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Field Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Invite Expiration</strong></td><td>How long invites remain valid</td><td>7 days</td></tr><tr><td><strong>Max Team Members</strong></td><td>Maximum number of team members allowed</td><td>Unlimited</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">App Events</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Three app events are added for notifications:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Event</th><th>Triggers When</th><th>Use For</th></tr></thead><tbody><tr><td><strong>Team Member Invited</strong></td><td>Post author sends an invite</td><td>Send invite email to recipient</td></tr><tr><td><strong>Team Member Accepted</strong></td><td>Invited user accepts</td><td>Notify post author of acceptance</td></tr><tr><td><strong>Team Member Declined</strong></td><td>Invited user declines</td><td>Notify post author of decline</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Elementor Visibility Rule</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A new visibility rule is added: <strong>"User is team member of current post"</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Use this to show or hide elements based on whether the current user is a team member of the post. For example:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Show an "Edit Listing" button only to team members</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Display internal notes visible only to the team</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Show a team member badge on the post</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Business Partners</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A business with multiple owners can all manage the listing together.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Property Management</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Property owners can invite property managers to help update availability and details.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Event Teams</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Event organizers can invite team members to help manage event listings.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Staff Access</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Business owners can give staff members access to update the business listing.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Permissions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Team members can:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit all fields on the post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Update media and images</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>View the post as if they were the author</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Team members cannot:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Delete the post (only the original author can)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Invite other team members (only the author can)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Remove other team members</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Invite Email Not Received</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check spam/junk folders</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify WordPress is sending emails correctly</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use an SMTP plugin for reliable delivery</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check the App Event is configured correctly</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Invite Link Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check if the invite has expired</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the user is logged in with the correct email</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the invite hasn't already been accepted or declined</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Team Member Can't Edit Post</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify they accepted the invite (not just received it)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check they're logged in with the email that received the invite</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the post type has the Team Members field</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Team Members field added to post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Working email delivery from WordPress</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

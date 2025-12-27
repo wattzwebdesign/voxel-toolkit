@@ -1,0 +1,342 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">International Phone Input</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The International Phone Input function enhances Voxel phone fields with country code selection and auto-detection. Users can select their country from a dropdown with flags, and the country code is stored separately for accurate phone number formatting.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Replace basic phone input fields with an international phone picker that includes country flags, automatic country detection, and proper E.164 phone number formatting. This integration uses the popular intl-tel-input library and works seamlessly with Voxel's phone fields.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Country flag dropdown selector</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Automatic country detection</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>E.164 phone number formatting</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Country code stored separately from phone number</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with all Voxel phone fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Frontend and admin support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Automatic migration of existing phone numbers</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>High-resolution flag sprites (Retina support)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Configure SMS Notifications (Optional)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If you want existing phone numbers to be migrated with a default country code:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>SMS Notifications</strong> and configure the default country code</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Enable International Phone Input</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>International Phone Input</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>All Voxel phone fields will now display the international phone picker.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Data Storage</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function stores phone data in two separate meta fields:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Meta Key</th><th>Example Value</th><th>Description</th></tr></thead><tbody><tr><td><code>phone</code></td><td>5551234567</td><td>The phone number without country code</td></tr><tr><td><code>phone_country_code</code></td><td>1</td><td>The country dial code (without +)</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Phone Number Formatting</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function provides helper methods for retrieving phone numbers:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>// Get full E.164 formatted number
+$full_phone = Voxel_Toolkit_Intl_Phone::get_full_phone($post_id, 'phone');
+// Returns: +15551234567
+
+// Get country code only
+$country_code = Voxel_Toolkit_Intl_Phone::get_country_code($post_id, 'phone');
+// Returns: 1
+
+// Get display phone (local format)
+$display = Voxel_Toolkit_Intl_Phone::get_display_phone($post_id, 'phone');
+// Returns: 5551234567</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Automatic Migration</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When the function is first enabled, it automatically migrates existing phone numbers:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Reads the default country code from SMS Notifications settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Scans all Voxel post types for phone fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Adds the default country code to phones that don't have one</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Records migration completion to prevent re-running</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#fff3e0"},"border":{"left":{"color":"#ff9800","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#fff3e0;border-left-color:#ff9800;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Note:</strong> If no default country code is configured in SMS Notifications, migration will be skipped.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">International Directories</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allow listings from multiple countries with proper phone formatting for each region.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">SMS Integration</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Ensure phone numbers are stored in proper E.164 format for SMS notifications via Twilio or other providers.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Click-to-Call</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Generate proper tel: links with full international format for mobile users.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Data Validation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The intl-tel-input library validates phone numbers against country-specific rules.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Country Flags Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that flag sprite images exist in assets/img/</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser cache and any site caching</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for JavaScript errors in browser console</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Country Code Not Saving</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the phone field key matches in settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that hidden country code field is being submitted</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure form submission is not being blocked</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Migration Didn't Run</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check if default country code is set in SMS Notifications</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Migration only runs once - check option 'vt_intl_phone_migrated'</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Delete the option to re-run migration</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Phone fields configured in Voxel post types</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>JavaScript enabled in browser</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

@@ -1,0 +1,332 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Post Fields Anywhere</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Post Fields Anywhere function provides a dynamic tag that lets you display any Voxel post field from any post, anywhere on your site. Access field values, taxonomies, locations, and more using a simple syntax.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Voxel's @post() dynamic tags normally only work within the context of the current post. This function extends that capability by allowing you to render any @post() tag for any post ID on your site. Perfect for displaying related content, cross-referencing listings, or building custom dashboards.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Access any post field by ID</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Full @post() tag support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with taxonomy fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with location fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with image/media fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Supports all Voxel modifiers</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use anywhere dynamic tags are supported</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Post Fields Anywhere</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>The @site().render_post_tag() dynamic tag will now be available.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Usage Syntax</h2>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>@site().render_post_tag(post_id, @post(...))</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td><code>post_id</code></td><td>The numeric ID of the post to get data from</td></tr><tr><td><code>@post(...)</code></td><td>Any valid Voxel @post() dynamic tag</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Examples</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Basic Field Access</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>// Get post title
+@site().render_post_tag(123, @post(:title))
+
+// Get post content
+@site().render_post_tag(123, @post(:content))
+
+// Get custom field value
+@site().render_post_tag(123, @post(custom_field_key))</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Taxonomy Fields</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>// Get taxonomy label
+@site().render_post_tag(123, @post(category))
+
+// Get taxonomy slug
+@site().render_post_tag(123, @post(category.slug))
+
+// Get taxonomy ID
+@site().render_post_tag(123, @post(category.id))</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Location Fields</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>// Get latitude
+@site().render_post_tag(123, @post(location.lat))
+
+// Get longitude
+@site().render_post_tag(123, @post(location.lng))
+
+// Get full address
+@site().render_post_tag(123, @post(location.address))</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Image Fields</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>// Get logo/featured image
+@site().render_post_tag(123, @post(logo))
+
+// Get gallery images
+@site().render_post_tag(123, @post(gallery))</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">With Modifiers</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>// Convert title to uppercase
+@site().render_post_tag(123, @post(:title)|uppercase())
+
+// Use fallback value
+@site().render_post_tag(123, @post(logo)|default(@post(:logo)))
+
+// Truncate text
+@site().render_post_tag(123, @post(:content)|truncate(100))</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Related Listings Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display information from related listings by their IDs stored in a relationship field.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Cross-Reference Data</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show data from a parent listing on child pages, or vice versa.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Custom Dashboards</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Build admin dashboards that display data from multiple posts in one view.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Email Templates</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Include field values from specific posts in notification emails.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Static Reference Sections</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display information from a specific post (like a settings or about page) anywhere on your site.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tag Returns Empty</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the post ID exists and is published</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the field key is correct</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the field has a value for that post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the function is enabled</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tag Not Recognized</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Make sure you're using the correct syntax</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dynamic tags require @site() prefix for this function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for typos in the tag name</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Modifiers Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Modifiers go after the @post() tag, before the closing parenthesis</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use pipe | character to chain modifiers</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check Voxel documentation for available modifiers</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dynamic tags enabled in Elementor or template</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

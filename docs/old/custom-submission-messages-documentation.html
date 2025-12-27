@@ -1,0 +1,299 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Custom Submission Messages</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Custom Submission Messages function allows you to customize the confirmation messages shown after users submit posts. Configure different messages for pending review, published posts, and pre-approved users.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Replace Voxel's default submission messages with your own custom text. Different messages can be shown based on whether the post goes to pending review or is published immediately.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Custom messages per post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Different messages for different outcomes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Pre-approved user message support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with frontend AJAX submissions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Supports HTML formatting</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Custom Submission Messages</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Post Type Messages</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Select a post type to configure</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enable custom messages for this post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter your custom messages for each scenario</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Message Types</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Message Type</th><th>When Shown</th></tr></thead><tbody><tr><td><strong>Pending Review</strong></td><td>Post submitted and waiting for admin approval</td></tr><tr><td><strong>Published</strong></td><td>Post published immediately (user can publish directly)</td></tr><tr><td><strong>Pre-Approved</strong></td><td>Post auto-published via Pre-Approve Posts function</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Example Messages</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Pending Review</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Thank you for your submission! Our team will review your listing within 24 hours. You'll receive an email notification once it's approved.</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Published</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Congratulations! Your listing is now live. Share it with your audience and start receiving inquiries!</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Pre-Approved</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>As a trusted member, your listing has been published immediately. Thank you for being part of our community!</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Integration with Pre-Approve Posts</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When used with the Pre-Approve Posts function:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Pre-approved users see the "Pre-Approved" message</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Regular users see the "Pending Review" message</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Gives appropriate feedback based on actual post status</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Brand Voice</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Replace generic messages with text that matches your brand's tone and voice.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Set Expectations</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Tell users what to expect next (review timeframe, email notifications, etc.).</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Multilingual Sites</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>While this function shows static messages, you can use it with translation plugins for different languages.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Messages Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that messages are configured for the post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure "Enable custom messages" is checked for the post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser cache and any site caching</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Wrong Message Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check which status the post actually receives</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify Pre-Approve Posts settings if using that function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The function detects the outcome and shows the appropriate message</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Formatting Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Basic HTML is supported in messages</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Some CSS may be overridden by Voxel styles</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Keep formatting simple for best results</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

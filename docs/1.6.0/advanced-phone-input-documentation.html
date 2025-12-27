@@ -1,0 +1,412 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Advanced Phone Input</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Advanced Phone Input function enhances Voxel's phone fields with international support. Users can select their country from a dropdown with flags and dial codes, making it easier to enter phone numbers correctly.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Phone numbers vary significantly by country - different formats, different lengths, different dial codes. This function adds a country selector to phone fields so users can easily select their country and enter just their local number. The country code is stored separately for proper E.164 formatting.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Country selector dropdown with flags</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dial codes displayed (+1, +44, +81, etc.)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Per-field default country setting</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Country restrictions per field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle for dropdown visibility</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>E.164 format storage</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Advanced Phone Input</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Phone Fields</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Configure settings for each phone field in your post types:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Voxel &gt; Post Types</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Edit a post type with phone fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click on a phone field to edit it</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find the Advanced Phone settings section</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure default country and restrictions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the post type</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Field Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Each phone field can be configured with these settings:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Show Country Selector</strong></td><td>Enable/disable the country dropdown</td><td>Enabled</td></tr><tr><td><strong>Default Country</strong></td><td>Pre-selected country when field is empty</td><td>United States</td></tr><tr><td><strong>Allowed Countries</strong></td><td>Restrict to specific countries only</td><td>All countries</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Country Selector</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The country selector dropdown shows:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Country flag</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Country name</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dial code (e.g., +1, +44)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Users can:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Search by typing country name</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Scroll through the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click to select</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Country Restrictions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If your site only operates in certain countries, you can restrict the country selector to show only those countries.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Example Use Cases</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>US-only business</strong> - Only show United States</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>European service</strong> - Show only EU countries</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Regional directory</strong> - Show neighboring countries</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Data Storage</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Phone numbers are stored with the country code for proper formatting:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Country code</strong> - Stored separately (e.g., "1" for US)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Phone number</strong> - The local number entered by user</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Full number</strong> - Combined in E.164 format (e.g., +14155551234)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">E.164 Format</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>E.164 is the international standard for phone numbers:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Starts with + and country code</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>No spaces or special characters</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Maximum 15 digits</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Example: +14155551234</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">International Directories</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allow listings from any country to enter phone numbers correctly.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Contact Forms</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Make it easy for international visitors to submit their contact info.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">User Profiles</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let users enter their phone number with proper country code for SMS notifications.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Booking Systems</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Collect properly formatted phone numbers for booking confirmations.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Country Selector Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify "Show Country Selector" is enabled on the field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear caching and refresh the page</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Wrong Default Country</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check the field's Default Country setting</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the post type after making changes</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Missing Countries</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check if country restrictions are set on the field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear restrictions to show all countries</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Phone Number Not Saving Correctly</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure the country is selected before entering number</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter only the local number (without country code)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Phone fields in your post types</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

@@ -1,0 +1,293 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Helpful Votes Sorting</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Helpful Votes Sorting function adds new sort options to Voxel search forms based on Article Helpful widget votes. Display your most helpful content first by sorting by yes votes, no votes, or total engagement.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If you use the Article Helpful widget to let users vote on whether content was helpful, this function lets visitors sort your content by those votes. Show the most helpful articles first, or find disputed content that may need improvement.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Sort by most helpful (yes votes)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Sort by most disputed (no votes)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Sort by total engagement (all votes)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with Voxel's search form Order By filter</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dynamic tags for vote timestamps</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Helpful Votes Sorting</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add Order By Filter</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Voxel &gt; Post Types</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Edit the post type that uses Article Helpful</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Go to <strong>Search &gt; Filters</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add or edit the <strong>Order By</strong> filter</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The new sort options will be available automatically</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the post type</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Sort Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Option</th><th>Description</th><th>Use Case</th></tr></thead><tbody><tr><td><strong>Most Helpful</strong></td><td>Sort by number of "Yes" votes (descending)</td><td>Show best content first</td></tr><tr><td><strong>Most Disputed</strong></td><td>Sort by number of "No" votes (descending)</td><td>Find content needing improvement</td></tr><tr><td><strong>Most Engagement</strong></td><td>Sort by total votes (Yes + No combined)</td><td>Show most-discussed content</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Dynamic Tags</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This function also adds dynamic tags for the last vote timestamps:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Dynamic Tag</th><th>Description</th></tr></thead><tbody><tr><td><code>@post(article_helpful_latest_yes)</code></td><td>Date of the last "Yes" vote</td></tr><tr><td><code>@post(article_helpful_latest_no)</code></td><td>Date of the last "No" vote</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Using Date Modifiers</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You can use date modifiers with these tags:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>@post(article_helpful_latest_yes)|date('M j, Y')
+@post(article_helpful_latest_yes)|time_diff()</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Knowledge Base</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let users sort articles by helpfulness to find the best answers first.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">FAQ Pages</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show the most helpful FAQs at the top of your list.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tutorial Sites</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Highlight tutorials that users find most valuable.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Content Moderation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use "Most Disputed" sorting to find content that may need updating or review.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Recently Helpful Badge</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use the timestamp tags with Elementor visibility rules to show badges like "Recently marked helpful" on articles that received a yes vote within the last week.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Sort Options Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the Order By filter is added to the post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear caching and refresh the frontend</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Sorting Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure posts have Article Helpful vote data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the Article Helpful widget has been enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify votes have been cast on posts</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Timestamp Tags Empty</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>The post may not have received that type of vote yet</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Timestamps are only recorded after enabling the function</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Article Helpful widget in use</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Order By filter on the post type</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

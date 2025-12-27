@@ -1,0 +1,364 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Profile Progress Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Profile Progress widget displays how complete a user's profile is. Show a progress bar or circular indicator based on which profile fields have been filled out, encouraging users to complete their profiles.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Track profile completion by checking which fields users have filled out. Display progress as a horizontal bar or circular indicator with an optional percentage and field checklist. Available as both an Elementor widget and a shortcode.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Horizontal or circular progress display</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable field selection</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Percentage display option</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Optional field checklist</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with all Voxel profile fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor widget and shortcode support</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Widgets</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Profile Progress</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add to Template</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your profile or dashboard template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Profile Progress</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to your desired location</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select which fields to track</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Configuration Options</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Options</th></tr></thead><tbody><tr><td><strong>User ID</strong></td><td>Which user's profile to show (empty = current user)</td><td>User ID or empty</td></tr><tr><td><strong>Field Keys</strong></td><td>Which profile fields to track</td><td>Select from available fields</td></tr><tr><td><strong>Progress Type</strong></td><td>Visual style of progress indicator</td><td>Horizontal, Circular</td></tr><tr><td><strong>Show Percentage</strong></td><td>Display the completion percentage</td><td>Yes/No</td></tr><tr><td><strong>Show Field List</strong></td><td>Display checklist of fields</td><td>Yes/No</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Progress Types</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Horizontal Bar</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A standard progress bar that fills from left to right based on completion percentage.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Circular Progress</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A circular/ring indicator that fills based on completion percentage. Great for dashboard displays.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Shortcode Usage</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use the shortcode for non-Elementor pages:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>[voxel_profile_progress field_keys="name,bio,avatar" progress_type="horizontal" show_percentage="yes"]</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Shortcode Parameters</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>user_id</strong></td><td>User ID to show progress for</td><td>Current user</td></tr><tr><td><strong>field_keys</strong></td><td>Comma-separated field keys</td><td>Required</td></tr><tr><td><strong>progress_type</strong></td><td>"horizontal" or "circular"</td><td>horizontal</td></tr><tr><td><strong>show_percentage</strong></td><td>"yes" or "no"</td><td>yes</td></tr><tr><td><strong>show_field_list</strong></td><td>"yes" or "no"</td><td>no</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How Progress is Calculated</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The widget checks each selected field to see if it has a value:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Fields with any content are marked as complete</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Empty fields are marked as incomplete</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Percentage = (completed fields / total fields) × 100</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Supported Field Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Text fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Textarea/Description</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Avatar/Profile image</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Number fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>And more...</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">User Dashboard</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show users their profile completion status to encourage them to fill in all details.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Onboarding Flow</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display progress during new user onboarding to guide them through profile setup.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Profile Page</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show completion status on the user's own profile page with a link to edit.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Gamification</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use profile completion as a metric for user engagement and rewards.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Progress Shows 0%</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify user has a Voxel profile created</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that selected field keys are correct</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure user is logged in (if checking current user)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">"No profile fields found"</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify Voxel's profile post type is configured</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that profile fields exist in Voxel settings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Widget only shows for logged-in users by default</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the widget is enabled in Toolkit settings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement) or shortcode support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel profile post type configured</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

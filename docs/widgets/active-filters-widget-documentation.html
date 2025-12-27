@@ -1,0 +1,471 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Active Filters Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Active Filters widget displays currently applied search filters as removable tags. Users can see what filters are active and easily remove them to refine their search results.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Parse URL parameters and display them as visual filter tags. Each tag shows what filter is applied and can be clicked to remove it. Includes a "Clear All" button to reset all filters at once. Perfect for search result pages with multiple filter options.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Automatic URL parameter parsing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click-to-remove filter tags</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear all filters button</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel filter label integration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Range value formatting (0..300 → $0 - $300)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Horizontal or vertical layout</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Hide when no filters applied</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Preview mode for editor styling</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Widgets</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Active Filters</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add to Search Page</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your search results template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Active Filters (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget above your search results</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enable "Show Preview" to style in the editor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">General Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Show Preview</strong></td><td>Display placeholder filters in editor</td><td>No</td></tr><tr><td><strong>Heading</strong></td><td>Optional heading above filters</td><td>Empty</td></tr><tr><td><strong>Layout</strong></td><td>Horizontal or Vertical</td><td>Horizontal</td></tr><tr><td><strong>Hide When No Filters</strong></td><td>Hide widget when no filters active</td><td>Yes</td></tr><tr><td><strong>Empty State Message</strong></td><td>Text when no filters (if not hidden)</td><td>Empty</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Filter Display</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Hide Post Type Filter</strong></td><td>Don't show the "type" parameter</td><td>Yes</td></tr><tr><td><strong>Hide Sort Filter</strong></td><td>Don't show the "sort" parameter</td><td>No</td></tr><tr><td><strong>Exclude Parameters</strong></td><td>Comma-separated list to hide</td><td>Empty</td></tr><tr><td><strong>Remove Icon</strong></td><td>Icon style for remove button</td><td>× (Times)</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Clear All Button</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Show Clear All</strong></td><td>Display clear all button</td><td>Yes</td></tr><tr><td><strong>Clear All Text</strong></td><td>Button text</td><td>"Clear All"</td></tr><tr><td><strong>Clear All Position</strong></td><td>Before or After filters</td><td>After</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Filter Labels</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Show Filter Name</strong></td><td>Display filter name with value</td><td>Yes</td></tr><tr><td><strong>Keywords Label</strong></td><td>Label for search keywords</td><td>"Search"</td></tr><tr><td><strong>Sort Label</strong></td><td>Label for sort filter</td><td>"Sort"</td></tr><tr><td><strong>Range Separator</strong></td><td>Text between range values</td><td>" - "</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Styling Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Heading</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Color and typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Bottom spacing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Alignment</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Filter Tags</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Background color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Box shadow</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Remove Icon</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Icon color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Icon size</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Icon spacing</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Clear All Button</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Text color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Background color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding and border radius</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Layout</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Gap between tags</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Widget alignment</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Container background and border</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Container padding and margin</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Value Formatting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The widget automatically formats values for better readability:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Range Values</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>URL: ?price=0..300
+Display: Price: 0 - 300</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Multiple Terms</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>URL: ?category=apartments,houses
+Display: Category: Apartments, Houses</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Boolean Values</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>URL: ?featured=1
+Display: Featured: Yes</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Property Search</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show active price range, location, and amenity filters with one-click removal.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Job Board</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display selected job type, location, and salary filters for easy refinement.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">E-commerce</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show category, brand, and price filters on product listing pages.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Directory Listings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display location, category, and rating filters for business directories.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Filters Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check URL has query parameters</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify parameters aren't in exclude list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Disable "Hide When Empty" temporarily</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enable "Show Preview" in editor</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Wrong Filter Labels</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Widget reads labels from Voxel post type config</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check filter labels in Voxel > Post Types</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use widget label settings to override</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Remove Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Widget uses standard URL navigation</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for JavaScript errors in console</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify links are not being blocked</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search page with URL-based filters</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

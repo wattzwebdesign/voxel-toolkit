@@ -1,0 +1,303 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Export Orders</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Export Orders function adds a CSV export button to the Voxel orders page. Download all order data including customer details, line items, and shipping information in a spreadsheet-friendly format.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Easily export your Voxel orders for accounting, analysis, or reporting purposes. The export includes comprehensive order data organized with one row per line item for easy analysis in Excel or Google Sheets.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>One-click CSV export</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Comprehensive order data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customer and vendor information</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Line item details</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Shipping/checkout information</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Product variations included</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>UTF-8 support for international characters</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Export Orders</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How to Export</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Voxel &gt; Orders</strong> in WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find the <strong>Export Orders to CSV</strong> button at the top of the page</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click the button</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>CSV file downloads automatically</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Exported Data Fields</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Order Information</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Order ID</td><td>Unique order identifier</td></tr><tr><td>User</td><td>Customer display name</td></tr><tr><td>Email</td><td>Customer email address</td></tr><tr><td>Order Value</td><td>Total order amount</td></tr><tr><td>Currency</td><td>Currency code (USD, EUR, etc.)</td></tr><tr><td>Order Status</td><td>Current order status</td></tr><tr><td>Payment Method</td><td>How payment was made</td></tr><tr><td>Transaction ID</td><td>Payment gateway transaction ID</td></tr><tr><td>Created At</td><td>Order date/time</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Item Information</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Item Name</td><td>Product/listing name (with variations)</td></tr><tr><td>Item Quantity</td><td>Number of items</td></tr><tr><td>Item Price</td><td>Price per unit</td></tr><tr><td>Item Total</td><td>Line item total</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Checkout Details</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody><tr><td>Checkout Customer Name</td><td>Name provided at checkout</td></tr><tr><td>Checkout Email</td><td>Email from checkout</td></tr><tr><td>Checkout Phone</td><td>Phone number</td></tr><tr><td>Address Line 1</td><td>Street address</td></tr><tr><td>Address Line 2</td><td>Apt/Suite/Unit</td></tr><tr><td>City</td><td>City name</td></tr><tr><td>State</td><td>State/Province</td></tr><tr><td>Postal Code</td><td>ZIP/Postal code</td></tr><tr><td>Country</td><td>Country code</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Export Format</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">File Naming</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>voxel-orders-export-2024-01-15-143022.csv</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>Files are named with the export date and time for easy identification.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Row Structure</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Each line item gets its own row. Orders with multiple items will have multiple rows, all with the same order information but different item details.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Accounting</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Export orders for bookkeeping and accounting software imports.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Sales Reports</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Create custom sales reports and analysis in Excel or Google Sheets.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Customer Data</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Extract customer information for marketing or communication purposes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Backup</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Keep offline records of all orders for backup purposes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Export Button Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure you're on the main Voxel Orders page (not viewing a single order)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check user has manage_options capability</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">CSV Opens Incorrectly</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Export includes UTF-8 BOM for Excel compatibility</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>In Google Sheets, use File &gt; Import and select UTF-8 encoding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>International characters should display correctly with proper encoding</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Missing Data</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Some fields may be empty if not collected at checkout</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Order details depend on Stripe checkout configuration</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active with orders/payments enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Administrator access (manage_options capability)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

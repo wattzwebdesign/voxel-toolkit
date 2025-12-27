@@ -1,0 +1,383 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Guest View</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Guest View function allows administrators to preview their site exactly as a logged-out visitor would see it. This is essential for testing visibility settings, logged-out user experience, and content restrictions.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Browse your site as a guest without logging out. Your session is temporarily suspended while you view the site as an anonymous visitor. Exit guest view at any time to return to your admin account.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>One-click switch to guest view</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Floating exit button for easy return</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Admin bar integration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor widget available</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customizable button colors and position</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Session preservation (you're never actually logged out)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Guest View</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Customize Appearance (Optional)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Configure the exit button's appearance:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Button Position</strong></td><td>Corner placement of exit button</td><td>Bottom Right</td></tr><tr><td><strong>Background Color</strong></td><td>Button background color</td><td>#ff4444 (Red)</td></tr><tr><td><strong>Text Color</strong></td><td>Button text color</td><td>#ffffff (White)</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How to Use</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Enter Guest View</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>There are multiple ways to enter guest view:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">From Admin Bar</h4>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>While viewing your site's frontend (logged in)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>View as Guest</strong> in the admin bar</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The page reloads showing the guest view</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">Using Elementor Widget</h4>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Add the "Guest View" widget to any page</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure button text and styling</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Widget automatically shows for authorized users only</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Exit Guest View</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Look for the floating "Exit Guest View" button (default: bottom right corner)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click the button</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Your admin session is restored immediately</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function uses secure cookies to temporarily suspend your session:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>When entering guest view, your user ID is stored in an encrypted cookie</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>WordPress authentication cookies are temporarily suspended</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The site renders as if you were a logged-out visitor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>When exiting, cookies are restored and you're logged back in</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#e8f5e9"},"border":{"left":{"color":"#4caf50","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#e8f5e9;border-left-color:#4caf50;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Security Note:</strong> You are never actually logged out. Your session is preserved and can only be restored from the same browser. The stored user ID is encrypted for security.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Testing Content Visibility</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Verify that member-only content is properly hidden from guests.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Login/Register Flow Testing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Test your login and registration pages as a new visitor would experience them.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">SEO and Public Appearance</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>See exactly what search engines and public visitors see on your site.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Client Demonstrations</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show clients what their site looks like to public visitors without logging out.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Elementor Widget</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>An Elementor widget is included for placing a guest view toggle button anywhere on your site.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Options</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Button Text:</strong> Customize the toggle button text</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Button Alignment:</strong> Left, center, or right alignment</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Styling:</strong> Full control over colors, padding, and typography</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Exit Button Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure you're in guest view mode (check for the guest view cookie)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the button isn't hidden behind other elements (z-index issues)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the function is enabled in settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser cache</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Can't Exit Guest View</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Clear all cookies for the site</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Navigate directly to /wp-admin/ to log in normally</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try a different browser or incognito mode</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Admin Bar Still Visible</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The admin bar should be hidden in guest view. If it still appears:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check for caching plugins that might be serving a cached version</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify guest view is actually active (check cookies)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Administrator access</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Cookies must be enabled in browser</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

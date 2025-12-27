@@ -1,0 +1,423 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">External Link Warning</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The External Link Warning function displays a confirmation modal when visitors click links that lead to external websites. This helps protect users from accidentally leaving your site and warns them about potentially untrusted destinations.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When a visitor clicks a link to an external website, a warning modal appears asking them to confirm they want to leave. This is especially useful for directories and marketplaces where listings may contain user-submitted links that you can't fully verify.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Customizable warning title and message</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Domain whitelist to bypass trusted sites</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>CSS selector exclusions for specific links</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Option to show the destination URL</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Full color customization</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Live preview in settings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>External Link Warning</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>After enabling, click the settings icon to customize:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Enter your warning title and message</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add any trusted domains to the whitelist</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customize colors to match your site</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Configuration Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Content Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Warning Title</strong></td><td>Modal heading text</td><td>"You're leaving our site"</td></tr><tr><td><strong>Warning Message</strong></td><td>Explanation text in the modal</td><td>"You're about to visit an external website..."</td></tr><tr><td><strong>Show URL</strong></td><td>Display the destination URL in the modal</td><td>Yes</td></tr><tr><td><strong>Continue Button</strong></td><td>Text for the proceed button</td><td>"Continue"</td></tr><tr><td><strong>Cancel Button</strong></td><td>Text for the stay button</td><td>"Go Back"</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Domain Whitelist</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add trusted domains that should NOT trigger the warning. Enter one domain per line without http:// or https://.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>google.com
+facebook.com
+instagram.com
+twitter.com
+youtube.com</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>Links to these domains will open directly without showing the warning modal.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">CSS Selector Exclusions</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Exclude specific links based on their CSS class or selector. Enter one selector per line.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>.no-warning
+.trusted-link
+#partner-links a
+.sponsor-banner a</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>Any link matching these selectors will bypass the warning.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Color Customization</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Customize every aspect of the modal's appearance:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Modal Colors</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Background color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Title text color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Message text color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>URL text color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Overlay (backdrop) color</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Icon Colors</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Warning icon color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Icon background color</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Button Colors</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Continue button background</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Continue button text</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Cancel button background</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Cancel button text</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Visitor clicks an external link</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>JavaScript checks if the domain is whitelisted</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>JavaScript checks if the link matches any exclusion selector</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>If not excluded, the warning modal appears</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User clicks Continue to proceed or Cancel to stay</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Internal links (same domain) are never affected and work normally.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Directory Listings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Warn users before visiting external business websites submitted by listing owners.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Marketplace Protection</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Alert buyers when clicking links in seller descriptions that lead off-platform.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Community Sites</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Protect users from clicking suspicious links in user-generated content.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Affiliate Disclosure</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use as a disclosure mechanism when linking to affiliate or partner sites.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Warning Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the link is actually external (different domain)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check if the domain is in your whitelist</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check if the link matches any exclusion selector</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser cache and try again</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Warning Appearing on Internal Links</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>This should not happen - internal links are automatically excluded</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check if you have multiple domains pointing to the same site</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add any alternate domains to the whitelist</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Modal Styling Issues</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check if theme CSS is overriding modal styles</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use the live preview to verify color settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for CSS conflicts</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>JavaScript enabled in visitor's browser</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

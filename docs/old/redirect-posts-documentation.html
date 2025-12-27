@@ -1,0 +1,311 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Redirect Posts</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Redirect Posts function automatically redirects visitors when they try to access posts with specific statuses. Use this to redirect pending, draft, or unpublished posts to a custom URL.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When users try to access a post that's pending review or in another non-published status, WordPress may show a 404 error or the post content. This function lets you redirect them to a more useful page instead.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Redirect posts based on status</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure different redirect URLs per post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>301 permanent redirect for SEO</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Catches posts before 404 errors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with all public post types</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Redirect Posts</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Redirect Statuses</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>In the <strong>Redirect Statuses</strong> section, select which post statuses should trigger redirects</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Common choices: pending, draft, private</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Set Redirect URLs</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>For each post type, enter the URL to redirect to</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use full URLs (e.g., https://yoursite.com/coming-soon/)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Configuration Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Redirect Statuses</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Status</th><th>Description</th></tr></thead><tbody><tr><td><strong>pending</strong></td><td>Posts awaiting review</td></tr><tr><td><strong>draft</strong></td><td>Unpublished drafts</td></tr><tr><td><strong>private</strong></td><td>Posts only visible to admins</td></tr><tr><td><strong>future</strong></td><td>Scheduled posts not yet published</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Per-Post Type URLs</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Configure different redirect destinations for each post type:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Places:</strong> → /explore-places/</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Events:</strong> → /upcoming-events/</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Jobs:</strong> → /job-board/</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Posts:</strong> → /blog/</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>User tries to access a post URL</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Function checks the post status</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>If status is in the configured list, redirect is triggered</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User is redirected with a 301 (permanent) redirect</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#e8f5e9"},"border":{"left":{"color":"#4caf50","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#e8f5e9;border-left-color:#4caf50;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>SEO Note:</strong> The function uses 301 redirects, which tell search engines the redirect is permanent. This is appropriate for posts that shouldn't be indexed in their current status.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Pending Listings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When a listing is pending review, redirect visitors to the main listing archive instead of showing an error.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Draft Content</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Prevent users from accessing draft URLs (which could be shared accidentally) by redirecting to a relevant page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Scheduled Posts</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Redirect visitors who find scheduled post URLs before they're published.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Redirect Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the post status is in the configured list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure a redirect URL is set for the post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for caching issues</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Wrong Redirect URL</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the URL is entered correctly in settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure URL includes https:// or http://</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the destination page exists</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Logged-In Users Still Seeing Posts</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Note: WordPress may show pending/draft posts to users who can edit them. The redirect applies to users who would normally see a 404.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

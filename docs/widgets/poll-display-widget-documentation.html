@@ -1,0 +1,500 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Poll Display Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Poll Display widget shows interactive polls from Voxel poll fields. Users can vote on options, see real-time results with percentages, and optionally add their own options to the poll.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display polls created with the Voxel Toolkit Poll Field. The widget shows all poll options with voting functionality, progress bars showing results, and the ability for users to submit their own options if enabled.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Radio or checkbox voting (single/multiple choice)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Real-time vote counting and percentages</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Visual progress bars for each option</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User-submitted options (optional)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customizable text labels</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Full styling controls</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Vote change support</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Prerequisites</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Before using this widget, you need to:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Enable the <strong>Poll Field</strong> in Voxel Toolkit > Post Fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add a poll field to your post type in Voxel > Post Types</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure poll options in the field settings</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Widgets</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Poll Display</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add to Template</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your single post template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Poll Display (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to your desired location</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select the poll field to display</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Poll Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Select Poll Field</strong></td><td>Choose which poll field to display</td><td>First available</td></tr><tr><td><strong>Hide if No Options</strong></td><td>Hide widget when poll has no options</td><td>No</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Text Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Vote (Singular)</strong></td><td>Text for single vote</td><td>"vote"</td></tr><tr><td><strong>Votes (Plural)</strong></td><td>Text for multiple votes</td><td>"votes"</td></tr><tr><td><strong>Add Option Placeholder</strong></td><td>Placeholder for new option input</td><td>"Add your own option..."</td></tr><tr><td><strong>Add Option Button</strong></td><td>Button text for adding options</td><td>"Add Option"</td></tr><tr><td><strong>Total Votes Text</strong></td><td>Label for total vote count</td><td>"Total votes:"</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Styling Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Radio/Checkbox</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Size</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border color and width</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Checked color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Checkmark color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Hover border color</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Option Name</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Separate styles for voted and non-voted states:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text color</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Option Box</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Border color and width</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Background (voted and not voted)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Hover border color</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Progress Bar</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Background color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Fill color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Vote Count & Percentage</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Color</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Add Option Input & Button</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Input typography and colors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Button typography and colors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding and border radius</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Poll Types</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Single Choice (Radio)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users can only select one option. When they vote for a different option, their previous vote is removed.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Multiple Choice (Checkbox)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users can select multiple options. Each checkbox can be toggled independently.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>The poll type is configured in the poll field settings, not in the widget.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">User-Submitted Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When enabled in the poll field:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Logged-in users can add their own options</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User-submitted options show who submitted them</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>New options appear immediately and can be voted on</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Event Planning</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let attendees vote on event times, activities, or locations.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Community Decisions</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Gather community input on features, improvements, or priorities.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Product Feedback</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Poll customers about preferred features or product options.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Quick Surveys</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Create simple surveys embedded in listings or posts.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">"Please select a poll field"</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure the Poll Field is enabled in Toolkit settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add a poll field to your post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select the field in the widget settings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">"No poll data available"</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Add options to the poll field in the post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the post has poll data saved</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Voting Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Users must be logged in to vote</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for JavaScript errors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify AJAX requests aren't blocked</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Poll Field enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Users must be logged in to vote</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

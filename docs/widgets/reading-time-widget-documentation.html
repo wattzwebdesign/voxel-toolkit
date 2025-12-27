@@ -1,0 +1,390 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Reading Time Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Reading Time widget displays an estimated reading time for posts based on word count. Help visitors know how long it will take to read an article before they start.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Calculate and display how long it takes to read a post. The widget counts words in the content and calculates reading time based on an average reading speed. Available as both an Elementor widget and a shortcode.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Automatic word count calculation</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customizable reading speed (words per minute)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Prefix and postfix text options</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Alignment controls</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography and color styling</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor widget and shortcode support</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Widgets</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Reading Time</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add to Template</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your single post template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Reading Time</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget below the post title or in the meta area</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure text and styling</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Content Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Prefix</strong></td><td>Text before the reading time</td><td>"Reading time: "</td></tr><tr><td><strong>Postfix</strong></td><td>Text after the reading time</td><td>" min"</td></tr><tr><td><strong>Words Per Minute</strong></td><td>Average reading speed for calculation</td><td>300</td></tr><tr><td><strong>Alignment</strong></td><td>Text alignment</td><td>Left</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Display Examples</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>With default settings, a 900-word post displays as:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Reading time: 3 min</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>You can customize to show:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>⏱️ 3 minute read
+3 min to read
+Estimated: 3 minutes</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Shortcode Usage</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use the shortcode for non-Elementor pages:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>[voxel_reading_time prefix="⏱️ " postfix=" minute read"]</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Shortcode Parameters</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>prefix</strong></td><td>Text before reading time</td><td>"Reading time: "</td></tr><tr><td><strong>postfix</strong></td><td>Text after reading time</td><td>" min"</td></tr><tr><td><strong>words_per_minute</strong></td><td>Reading speed calculation</td><td>300</td></tr><tr><td><strong>alignment</strong></td><td>Text alignment (left, center, right)</td><td>left</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How Reading Time is Calculated</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>The post content is retrieved</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Shortcodes and HTML are stripped</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Words are counted</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Word count is divided by words per minute</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Result is rounded up (minimum 1 minute)</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Reading Speed Guidelines</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>200 WPM</strong> - Slower, more careful reading</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>250 WPM</strong> - Average reading speed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>300 WPM</strong> - Average (default)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>350+ WPM</strong> - Fast readers</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Styling Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>In Elementor, you can style:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Prefix color and typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Reading time value color and typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Postfix color and typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Container alignment</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Blog Posts</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Help readers decide if they have time to read an article now or save it for later.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Documentation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show estimated time to read help articles or guides.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">News Articles</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display reading time in article meta information.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tutorials</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let users know how long a tutorial will take to complete.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Shows "1 min" for All Posts</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Minimum reading time is 1 minute</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Very short posts will show 1 minute</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the widget is enabled in Toolkit settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify you're viewing a single post (not an archive)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the post has content</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Inaccurate Reading Time</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Adjust words per minute based on your audience</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Technical content may need lower WPM (slower reading)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Light content may use higher WPM (faster reading)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement) or shortcode support</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

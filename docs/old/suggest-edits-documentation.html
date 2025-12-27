@@ -1,0 +1,431 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Suggest Edits</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Suggest Edits function allows users to suggest corrections or updates to posts they don't own. Suggestions are submitted for review, and post owners or admins can approve or reject them.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Enable community-driven accuracy for your directory listings. Users can suggest corrections to information, upload proof images, and even mark listings as permanently closed. Suggestions go through a moderation workflow before being applied.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>User-submitted edit suggestions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Field-by-field suggestion system</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Proof image upload support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Permanently Closed" marking option</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Admin review interface</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Owner notification via Voxel App Events</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor widgets included</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Bulk actions for suggestion management</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Suggest Edits</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Post Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>In the <strong>Post Types</strong> section, select which post types allow suggestions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>For each post type, select which fields can be suggested for editing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enable "Permanently Closed" option if applicable</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Add Frontend Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your single listing template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add the <strong>Suggest Edits Widget (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure button text and styling</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Available Widgets</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Suggest Edits Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Place on single post templates to show the "Suggest Edit" button.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th></tr></thead><tbody><tr><td><strong>Button Text</strong></td><td>Text displayed on the button</td></tr><tr><td><strong>Icon</strong></td><td>Optional icon before button text</td></tr><tr><td><strong>Button Style</strong></td><td>Full styling controls</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Pending Suggestions Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show pending suggestions to post owners on their account pages.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th></tr></thead><tbody><tr><td><strong>No Suggestions Text</strong></td><td>Message when no pending suggestions</td></tr><tr><td><strong>Approve Button Text</strong></td><td>Text for approval button</td></tr><tr><td><strong>Reject Button Text</strong></td><td>Text for rejection button</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Admin Interface</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Suggestions are managed in the WordPress admin:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Accessing Suggestions</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to the post type menu (e.g., <strong>Places</strong>)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Suggested Edits</strong> submenu</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>View all pending, approved, and rejected suggestions</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Suggestion Actions</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Action</th><th>Description</th></tr></thead><tbody><tr><td><strong>View</strong></td><td>See full suggestion details</td></tr><tr><td><strong>Approve</strong></td><td>Apply the suggested change to the post</td></tr><tr><td><strong>Reject</strong></td><td>Decline the suggestion</td></tr><tr><td><strong>Delete</strong></td><td>Remove the suggestion entirely</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Bulk Actions</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Select multiple suggestions and:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Bulk approve</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Bulk reject</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Bulk delete</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Notification Integration</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function integrates with Voxel's App Events system:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Available Events</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Suggestion Submitted:</strong> Notifies post owner when someone suggests an edit</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Suggestion Approved:</strong> Notifies suggester when their edit is approved</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Suggestion Rejected:</strong> Notifies suggester when their edit is rejected</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Configure these events in <strong>Voxel &gt; App Events</strong> to enable email, SMS, or in-app notifications.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Permanently Closed Feature</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>For business listings, users can suggest marking a location as permanently closed:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Special "Permanently Closed" checkbox in suggestion form</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>When approved, post can be moved to a special status</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Useful for directories with business listings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Business Directories</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let users report outdated business information like wrong hours or addresses.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Event Listings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allow attendees to suggest corrections to event details.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Community Content</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Crowdsource accuracy improvements for community-generated content.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the post type is configured for suggestions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that at least one field is enabled for suggestions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Widget may be hidden from post owners (they can edit directly)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Suggestions Not Saving</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check database table exists (vx_toolkit_suggestions)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify user is logged in</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for JavaScript errors</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Admin Menu Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure the post type is public</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The submenu appears under each configured post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify user has permission to manage posts</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for frontend widgets)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Users must be logged in to submit suggestions</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

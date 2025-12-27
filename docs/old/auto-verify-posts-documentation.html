@@ -1,0 +1,314 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Auto Verify Posts</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Auto Verify Posts function automatically marks posts as verified when they are submitted for selected post types. This eliminates the need for manual verification of new listings, making the submission process seamless for your users.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When users submit new posts on your Voxel-powered site, those posts typically require manual verification by an administrator before they display the "verified" badge. The Auto Verify Posts function automates this process by automatically marking posts as verified immediately upon submission.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Automatically verifies posts upon submission</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with any Voxel post type (listings, places, events, etc.)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Selective post type configuration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with both frontend submissions and admin-created posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Seamless integration with Voxel theme hooks</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Auto Verify Posts</strong> in the list of available functions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Post Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>After enabling the function, you'll see configuration options appear:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>In the <strong>Post Types</strong> section, select which post types should have automatic verification</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check the boxes next to each post type you want to enable (e.g., "places", "events", "jobs")</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#fff3cd"},"border":{"left":{"color":"#ffc107","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#fff3cd;border-left-color:#ffc107;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Note:</strong> Only posts from the selected post types will be automatically verified. Posts from other post types will still require manual verification.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Auto Verify Posts function hooks into multiple points in the Voxel post creation process to ensure posts are verified regardless of how they're created:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Verification Triggers</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Frontend Submissions:</strong> When users submit posts through the Create Post form</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Admin Creation:</strong> When posts are created in the WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Status Transitions:</strong> When a post status changes to "publish"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>AJAX Submissions:</strong> When posts are submitted via AJAX</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Verification Process</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When a post is created for an enabled post type, the function:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Detects the post creation event</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Checks if the post type is configured for auto-verification</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Sets the verification meta data on the post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Triggers Voxel's verification hooks for compatibility</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Trusted User Submissions</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If you have a membership site where only vetted users can submit listings, auto-verification removes unnecessary moderation steps.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Paid Listings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>For sites where users pay to list, auto-verification ensures their listing is immediately visible after payment.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Community Directories</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>For community-driven directories where speed of publication matters more than pre-moderation.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Developer Information</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Custom Hook</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function fires a custom action when a post is auto-verified:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>do_action('voxel_toolkit/post_auto_verified', $post_id, $post_type);</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>You can use this hook to perform additional actions when a post is auto-verified:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>add_action('voxel_toolkit/post_auto_verified', function($post_id, $post_type) {
+    // Your custom code here
+    // For example, send a notification or log the verification
+}, 10, 2);</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Posts Not Being Verified</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure the function is enabled in Voxel Toolkit &gt; Functions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify that the specific post type is selected in the configuration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the post is being published (draft posts are not verified)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any caching plugins after enabling the function</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Verification Badge Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that your Voxel theme template displays the verification badge</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the post has the <code>voxel:verified</code> meta set to "1"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the post type is configured to show verification status in Voxel settings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active and configured)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>At least one Voxel post type configured</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

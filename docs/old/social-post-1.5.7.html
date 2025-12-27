@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voxel Toolkit 1.5.7 - What's New</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #fff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .version-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #fff 0%, #a8edea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            font-size: 18px;
+            color: #a0aec0;
+            margin-bottom: 10px;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .icon-new {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        .icon-fix {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+        }
+        .feature-list {
+            list-style: none;
+        }
+        .feature-item {
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .feature-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .feature-name {
+            font-size: 17px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .feature-desc {
+            font-size: 15px;
+            color: #a0aec0;
+            line-height: 1.6;
+        }
+        .code {
+            background: rgba(102, 126, 234, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            color: #a8edea;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .social-copy {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        .social-copy h3 {
+            font-size: 14px;
+            color: #667eea;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .social-copy p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #e2e8f0;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="version-badge">VERSION 1.5.7</div>
+            <h1>Voxel Toolkit Update</h1>
+            <p class="subtitle">New features & bug fixes since 1.5.6</p>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon icon-new">+</div>
+                <h2 class="section-title">New Features</h2>
+            </div>
+            <ul class="feature-list">
+                <li class="feature-item">
+                    <div class="feature-name">Calendar Week Start</div>
+                    <div class="feature-desc">Date pickers now respect your WordPress "Week Starts On" setting. No more Monday-only calendars!</div>
+                </li>
+                <li class="feature-item">
+                    <div class="feature-name">Share Count Tracking</div>
+                    <div class="feature-desc">Track share button clicks with dynamic tags. Use <span class="code">@post(share_count)</span> for total or <span class="code">@post(share_count.facebook)</span> for per-network stats.</div>
+                </li>
+                <li class="feature-item">
+                    <div class="feature-name">Auto Reply Dynamic Tag</div>
+                    <div class="feature-desc">Auto Reply field values now available as dynamic tags for use in your templates.</div>
+                </li>
+                <li class="feature-item">
+                    <div class="feature-name">Table of Contents - Field Indicators</div>
+                    <div class="feature-desc">Show individual fields under each step with completion status. Empty/filled circle indicators update in real-time.</div>
+                </li>
+                <li class="feature-item">
+                    <div class="feature-name">Docs Menu Link</div>
+                    <div class="feature-desc">Quick access to documentation right from your WordPress admin menu.</div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon icon-fix">&#10003;</div>
+                <h2 class="section-title">Bug Fixes</h2>
+            </div>
+            <ul class="feature-list">
+                <li class="feature-item">
+                    <div class="feature-name">Messenger Settings on Cloudways</div>
+                    <div class="feature-desc">Fixed "The link you followed has expired" error on cached hosting environments.</div>
+                </li>
+                <li class="feature-item">
+                    <div class="feature-name">Messenger Widget - Reply As</div>
+                    <div class="feature-desc">Added translatable "Reply As" text setting. Fixed scrollbar on long listing names.</div>
+                </li>
+                <li class="feature-item">
+                    <div class="feature-name">Membership Plan Filter</div>
+                    <div class="feature-desc">Fixed filter not working on sites using Voxel's Stripe test mode.</div>
+                </li>
+                <li class="feature-item">
+                    <div class="feature-name">SMS Notifications Toggle</div>
+                    <div class="feature-desc">Fixed 400 error when toggling SMS in App Events page.</div>
+                </li>
+                <li class="feature-item">
+                    <div class="feature-name">AI Review Summary</div>
+                    <div class="feature-desc">Fixed OpenAI API key not saving in Toolkit Settings.</div>
+                </li>
+                <li class="feature-item">
+                    <div class="feature-name">Suggest Edits Widget</div>
+                    <div class="feature-desc">Fixed taxonomy terms showing IDs instead of labels. Added option to hide "Permanently Closed".</div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <a href="https://docs.getvoxel.io/voxel-toolkit" class="cta-button">View Full Documentation</a>
+
+            <div class="social-copy">
+                <h3>Copy for Social Media</h3>
+                <p>🚀 Voxel Toolkit 1.5.7 is here!
+
+✨ NEW:
+• Calendar week start respects WP settings
+• Share count tracking with dynamic tags
+• Table of Contents field indicators
+• Auto Reply dynamic tag support
+
+🔧 FIXED:
+• Messenger settings on Cloudways/cached hosts
+• Membership plan filter in test mode
+• SMS toggle errors
+• And more...
+
+Update now in your WordPress dashboard!
+
+#Voxel #WordPress #DirectoryTheme #VoxelToolkit</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Tools Page</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Tools Page provides utility tools for managing your Voxel site. Access these tools from the Voxel Toolkit > Tools submenu in your WordPress admin.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Tools page contains helpful utilities that simplify common site management tasks. Currently, the main tool is the Duplicate Post Fields feature, with more tools planned for future releases.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Duplicate Post Fields</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Copy fields from one Voxel post type to another. This is useful when you want to reuse field configurations across multiple post types without manually recreating them.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Select source and destination post types</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Choose specific fields to copy via checkbox list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Required key suffix to prevent naming conflicts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Automatic singleton field detection with warnings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Handles nested repeater fields</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">How to Use</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Tools</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find the <strong>Duplicate Post Fields</strong> section</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select the <strong>Source Post Type</strong> (where fields exist)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select the <strong>Destination Post Type</strong> (where to copy fields)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check the fields you want to copy</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter a <strong>Key Suffix</strong> (required)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Duplicate Fields</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Key Suffix</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When duplicating fields, you must provide a key suffix that will be appended to all copied field keys. This prevents naming conflicts with existing fields.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Example</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If you copy a field with key <code>description</code> and use suffix <code>_copy</code>:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Original key: <code>description</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>New key: <code>description_copy</code></li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#e8f5e9"},"border":{"left":{"color":"#4caf50","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#e8f5e9;border-left-color:#4caf50;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Tip:</strong> Use descriptive suffixes like <code>_events</code> or <code>_products</code> to indicate where the field came from.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Singleton Field Warnings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Some Voxel fields are "singletons" - fields that should only exist once per post type. These include:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Title</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Description</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Location</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Featured Image</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Timezone</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>When you select a singleton field, a warning will appear. If the destination post type already has a field of that type, the duplicate may not work as expected.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Repeater Fields</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Repeater fields are fully supported. When you duplicate a repeater field:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>All nested sub-fields are copied</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The suffix is applied to the parent field key</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Sub-field structure is preserved</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Validation rules are maintained</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Standardizing Fields</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Copy a set of common fields (contact info, social links) to multiple post types for consistency.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Creating Variations</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Duplicate a complex product field configuration to create a similar but slightly different post type.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Testing Changes</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Copy fields to a test post type before making changes, so you can experiment safely.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Migration</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When restructuring your site, copy field configurations to new post types before migrating data.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Fields Not Appearing After Duplication</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Refresh the destination post type editor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check if the field key already existed (would be skipped)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify you selected the correct destination post type</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Duplicate Button Disabled</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Select both source and destination post types</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select at least one field to copy</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter a key suffix</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Singleton Field Errors</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Remove the existing singleton field from the destination first</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Or skip duplicating singleton fields and configure them manually</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Administrator access to WordPress</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

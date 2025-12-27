@@ -1,0 +1,372 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Users Purchased Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Users Purchased widget displays users who have purchased a specific product or listing. Show social proof with buyer avatars and optional purchase details.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display a grid of user avatars or a detailed list showing who has purchased a product. This widget queries Voxel's orders system and shows completed purchases, providing social proof that encourages conversions.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Avatar grid or detailed list view</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Overlapping avatar display</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Total purchase count display</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Purchase date display (list view)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Email display with truncation (list view)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable stacking order</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Caching for performance</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Widgets</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Users Purchased</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add to Template</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your single product/listing template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Users Purchased (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to your desired location</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Choose avatar grid or list view</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Display Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>View Type</strong></td><td>Avatar Grid or User List</td><td>Avatar Grid</td></tr><tr><td><strong>Post Source</strong></td><td>Current Post or Custom Post ID</td><td>Current Post</td></tr><tr><td><strong>Custom Post ID</strong></td><td>Specific post ID (if custom source)</td><td>Empty</td></tr><tr><td><strong>Number of Users</strong></td><td>How many users to display</td><td>10</td></tr><tr><td><strong>Show Total Count</strong></td><td>Display total purchase count</td><td>Yes</td></tr><tr><td><strong>Count Text</strong></td><td>Text after the count number</td><td>"people purchased this"</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Avatar Grid Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Avatar Size</strong></td><td>Size of each avatar in pixels</td><td>50px</td></tr><tr><td><strong>Avatar Overlap</strong></td><td>How much avatars overlap horizontally</td><td>-10px</td></tr><tr><td><strong>Row Spacing</strong></td><td>Vertical gap between avatar rows</td><td>10px</td></tr><tr><td><strong>Stacking Order</strong></td><td>Which avatars appear on top</td><td>Right on Top</td></tr><tr><td><strong>Border</strong></td><td>Border around each avatar</td><td>Configurable</td></tr><tr><td><strong>Border Radius</strong></td><td>Roundness of avatars</td><td>50% (circle)</td></tr><tr><td><strong>Box Shadow</strong></td><td>Shadow effect on avatars</td><td>Optional</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">List View Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Show Avatar</strong></td><td>Display user avatar in list</td><td>Yes</td></tr><tr><td><strong>Show Display Name</strong></td><td>Show user's display name</td><td>Yes</td></tr><tr><td><strong>Show Email</strong></td><td>Show user's email address</td><td>No</td></tr><tr><td><strong>Email Max Length</strong></td><td>Truncate email after X characters</td><td>20</td></tr><tr><td><strong>Show Purchase Date</strong></td><td>Display when purchase was made</td><td>Yes</td></tr><tr><td><strong>List Avatar Size</strong></td><td>Avatar size in list view</td><td>40px</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Styling Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Container Style</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Background color/gradient</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Typography</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Count text typography and color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Name text typography and color (list view)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Meta text typography and color (list view)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Widget queries the <code>vx_orders</code> table for completed orders</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Parses order details JSON to find matching post IDs</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Fetches user data including Voxel avatars</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Results are cached for 5 minutes to improve performance</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Displays unique users (no duplicates)</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Product Pages</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show buyer avatars to create social proof and urgency.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Course/Membership Sales</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display enrolled students or members to encourage sign-ups.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Event Tickets</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show attendees who have purchased tickets.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Service Bookings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display customers who have booked the service.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">No Users Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify completed orders exist for the product</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the vx_orders table exists</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure order status is "completed"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear transient cache if data seems stale</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Missing Avatars</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Widget falls back to Gravatar if no Voxel avatar</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check user's voxel:avatar meta field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure avatar attachment exists</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Editor Preview Empty</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Widget displays placeholder in editor when no data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Preview on the actual product page to see real data</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel orders system with completed purchases</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Products/listings with payment integration</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

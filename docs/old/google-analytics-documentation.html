@@ -1,0 +1,388 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Google Analytics & Custom Tags</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Google Analytics & Custom Tags function allows you to easily add tracking codes and custom scripts to your site without editing theme files. Add Google Analytics 4, Google Tag Manager, Universal Analytics, and custom code snippets in the head, body, or footer.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Centralize all your tracking codes and custom scripts in one place. This function supports modern Google Analytics 4 (GA4), Google Tag Manager (GTM), legacy Universal Analytics, and allows you to add custom code to various locations on your pages.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Google Analytics 4 (GA4) integration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Google Tag Manager support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Universal Analytics (legacy) support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Custom head tags injection</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Custom body tags (after opening body)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Custom footer tags (before closing body)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>No theme file editing required</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with any caching plugin</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Google Analytics & Custom Tags</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add Your Tracking IDs</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Enter your tracking IDs in the appropriate fields:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Tracking Type</th><th>ID Format</th><th>Example</th></tr></thead><tbody><tr><td><strong>GA4 Measurement ID</strong></td><td>G-XXXXXXXXXX</td><td>G-ABC123XYZ9</td></tr><tr><td><strong>GTM Container ID</strong></td><td>GTM-XXXXXXX</td><td>GTM-ABC1234</td></tr><tr><td><strong>Universal Analytics</strong></td><td>UA-XXXXXXXX-X</td><td>UA-12345678-1</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Configuration Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Google Analytics 4 (GA4)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The recommended tracking method for new sites. Enter your GA4 Measurement ID to enable automatic page view tracking.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Measurement ID: G-XXXXXXXXXX</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Google Tag Manager</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>For advanced tracking needs. GTM requires code in both the head and body sections, which this function handles automatically.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Container ID: GTM-XXXXXXX</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Universal Analytics (Legacy)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:group {"style":{"color":{"background":"#fff3cd"},"border":{"left":{"color":"#ffc107","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#fff3cd;border-left-color:#ffc107;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Note:</strong> Universal Analytics has been deprecated by Google. Use GA4 for new implementations. This option is provided for sites that still need legacy support.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Tracking ID: UA-XXXXXXXX-X</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Custom Tags Locations</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Location</th><th>When to Use</th><th>Examples</th></tr></thead><tbody><tr><td><strong>Head Tags</strong></td><td>Meta tags, CSS, tracking pixels</td><td>Facebook Pixel, custom fonts, schema markup</td></tr><tr><td><strong>Body Tags</strong></td><td>Code needed right after body opens</td><td>Noscript fallbacks, chat widgets</td></tr><tr><td><strong>Footer Tags</strong></td><td>Scripts to load last</td><td>Custom JS, third-party widgets</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Example Custom Tags</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Facebook Pixel (Head)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>&lt;!-- Facebook Pixel Code --&gt;
+&lt;script&gt;
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', 'YOUR_PIXEL_ID');
+fbq('track', 'PageView');
+&lt;/script&gt;
+&lt;noscript&gt;&lt;img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"
+/&gt;&lt;/noscript&gt;
+&lt;!-- End Facebook Pixel Code --&gt;</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Custom Chat Widget (Footer)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>&lt;!-- Chat Widget --&gt;
+&lt;script&gt;
+(function() {
+    var chat = document.createElement('script');
+    chat.src = 'https://widget.example.com/chat.js';
+    chat.async = true;
+    document.body.appendChild(chat);
+})();
+&lt;/script&gt;</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Website Analytics</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Track page views, user behavior, and conversion events with Google Analytics 4.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Marketing Pixels</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add Facebook Pixel, TikTok Pixel, or other advertising platform tracking codes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">A/B Testing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Integrate Google Optimize or other testing tools via custom head tags.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Custom Functionality</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add custom JavaScript for specific site functionality without theme modifications.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Best Practices</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Choose GA4 or GTM, not both:</strong> GTM can include GA4, so pick one approach</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Test in GTM Preview:</strong> Before publishing GTM changes, test thoroughly</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Validate custom code:</strong> Test custom scripts on staging before production</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Use async loading:</strong> Load non-critical scripts asynchronously</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Monitor site speed:</strong> Too many scripts can slow down your site</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tracking Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check ID format is correct (including the prefix)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>View page source to confirm code is outputting</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use Google Tag Assistant browser extension</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for caching (purge cache after changes)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Custom Code Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure code is saved properly</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for HTML syntax errors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify theme uses <code>wp_head()</code>, <code>wp_body_open()</code>, and <code>wp_footer()</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear all caches</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Site Breaking After Adding Code</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Remove the problematic code immediately</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for JavaScript errors in browser console</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Validate HTML/JS syntax before adding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Test on staging site first</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Theme must use standard WordPress hooks (wp_head, wp_body_open, wp_footer)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

@@ -1,0 +1,435 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Submission Reminder</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Submission Reminder function tracks user submissions and sends automated email reminders to users who haven't posted recently. Encourage continued engagement by reminding users to create new listings or content.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Keep your community active by automatically reaching out to users who haven't submitted content in a while. The function tracks submission history per post type and sends configurable reminder emails to encourage new submissions.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Automatic submission tracking per user</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Per-post-type tracking</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable reminder intervals</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customizable email templates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Multiple notification schedules</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Placeholder support for personalization</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Sync existing posts to tracking data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Daily cron-based email sending</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Submission Reminder</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Select Post Types to Track</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Choose which post types should have submission tracking</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Common choices: Places, Events, Jobs, Products</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Configure Reminder Notifications</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>For each post type, create reminder notifications</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set the time interval (e.g., 7 days, 2 weeks)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customize email subject and message</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enable the notification</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 4: Sync Existing Posts (Optional)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If you have existing posts, use the sync feature to populate tracking data based on historical submissions.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Configuration Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Notification Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th></tr></thead><tbody><tr><td><strong>Time Value</strong></td><td>Number for the time interval</td></tr><tr><td><strong>Time Unit</strong></td><td>Hours, days, weeks, or months</td></tr><tr><td><strong>Subject</strong></td><td>Email subject line</td></tr><tr><td><strong>Message</strong></td><td>Email body content</td></tr><tr><td><strong>Enabled</strong></td><td>Whether this notification is active</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Available Placeholders</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Placeholder</th><th>Description</th></tr></thead><tbody><tr><td><code>{user_name}</code></td><td>User's display name</td></tr><tr><td><code>{user_email}</code></td><td>User's email address</td></tr><tr><td><code>{days_since_last}</code></td><td>Days since last submission</td></tr><tr><td><code>{time_value}</code></td><td>Configured time interval value</td></tr><tr><td><code>{time_unit}</code></td><td>Configured time unit</td></tr><tr><td><code>{post_type}</code></td><td>Post type label (e.g., "Places")</td></tr><tr><td><code>{total_submissions}</code></td><td>User's total submissions count</td></tr><tr><td><code>{submissions_[post_type]}</code></td><td>Submissions for specific post type</td></tr><tr><td><code>{site_name}</code></td><td>Your website name</td></tr><tr><td><code>{site_url}</code></td><td>Your website URL</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Example Email Template</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">7-Day Reminder</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Subject: Time to add a new {post_type} on {site_name}!
+
+Hi {user_name},
+
+It's been {days_since_last} days since your last {post_type} submission on {site_name}. We'd love to see more content from you!
+
+Your submission stats:
+- Total submissions: {total_submissions}
+- {post_type} submissions: {submissions_places}
+
+Visit {site_url} to submit a new {post_type}.
+
+Thanks for being part of our community!
+
+Best regards,
+{site_name} Team</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tracking Process</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>User publishes a post (or post goes to pending)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Function records submission in user meta</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Submission count is incremented</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Last submission date is updated</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Reminder Process</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Daily cron job checks for users needing reminders</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Compares last submission date against configured intervals</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Sends email to eligible users</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Records that reminder was sent (prevents duplicate sends)</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Directory Sites</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Remind business owners to keep their listings updated and add new locations.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Event Platforms</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Encourage event organizers to post upcoming events regularly.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Job Boards</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Prompt employers to post new job openings periodically.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Marketplace Sites</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Remind sellers to add new products or update existing listings.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Tracked Data</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function stores the following data in user meta:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><code>voxel_toolkit_submissions_[post_type]</code> - Submission count per post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><code>voxel_toolkit_total_submissions</code> - Total submissions across all types</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><code>voxel_toolkit_last_submission_[post_type]</code> - Last submission date per type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><code>voxel_toolkit_last_submission_any</code> - Most recent submission date</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><code>voxel_toolkit_last_reminder_[post_type]_[id]</code> - When reminder was last sent</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Reminders Not Sending</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check WordPress cron is running</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure notifications are enabled for the post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify users have submission history</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check email delivery (use SMTP plugin)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tracking Data Missing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Use the Sync feature to import existing post data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure post types are selected in settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Only tracks publish/pending status changes</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Duplicate Reminders</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Function prevents same reminder within 24 hours</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that reminder meta is being saved correctly</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>WordPress cron enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Working email delivery (SMTP recommended)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

@@ -1,0 +1,391 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Pre-Approve Posts</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Pre-Approve Posts function automatically publishes posts from trusted users without requiring manual review. Configure approval based on user roles, verified profile status, or manual user selection.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>By default, Voxel posts go to "pending" status for admin review. This function allows trusted users to bypass the review queue and have their posts published immediately.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Automatic publishing for pre-approved users</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Role-based approval</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verified profile approval</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Manual per-user approval</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User list column showing approval status</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with all Voxel post types</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Pre-Approve Posts</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Approval Methods</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Choose how users become pre-approved:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">By User Role</h4>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>In the <strong>Approved Roles</strong> section, select which roles are pre-approved</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>All users with the selected roles will have their posts auto-published</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">By Verified Status</h4>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Enable the <strong>Approve Verified Users</strong> option</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Users with verified Voxel profiles will be pre-approved</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">By Manual Selection</h4>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Users</strong> in WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Edit any user's profile</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Voxel Toolkit Settings</strong> section</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check <strong>Pre-Approved for Publishing</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the user profile</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Approval Methods Priority</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users are considered pre-approved if ANY of the following are true:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Method</th><th>Indicator</th><th>Color Code</th></tr></thead><tbody><tr><td><strong>Manual</strong></td><td>Manually approved in user profile</td><td>Green</td></tr><tr><td><strong>Verified</strong></td><td>Has verified Voxel profile</td><td>Blue</td></tr><tr><td><strong>Role</strong></td><td>Has an approved role</td><td>Purple</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Users List Column</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A "Pre-Approved?" column is added to the Users list showing:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>✓ Manual</strong> - User is manually pre-approved</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>✓ Verified</strong> - User has verified profile</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>✓ Role</strong> - User has an approved role</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><em>Empty</em> - User is not pre-approved</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>You can disable this column in the function settings if desired.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When a pre-approved user submits a post:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Post is created with "pending" status (normal Voxel behavior)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Function detects the new post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Checks if author is pre-approved</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>If approved, status is immediately changed to "publish"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Post is live without admin intervention</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Trusted Vendors</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allow established vendors to publish listings instantly while new users require review.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Premium Members</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Grant pre-approval to users with premium membership roles as a perk.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Verified Businesses</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use Voxel's profile verification to establish trust and auto-approve verified businesses.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Combining with Custom Submission Messages</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If you use the <strong>Custom Submission Messages</strong> function, you can configure different messages for pre-approved users:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Pending Review:</strong> "Your listing has been submitted for review."</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Pre-Approved:</strong> "Your listing is now live!"</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Posts Still Going to Pending</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the user is actually pre-approved (check Users list column)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure no other plugins are modifying post status</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">User Not Showing as Pre-Approved</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>For role approval: verify user has the approved role</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>For verified approval: check user's profile has voxel:verified meta</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>For manual approval: check user profile settings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Column Not Appearing in Users List</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure "Show Column" option is enabled in settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check Screen Options in Users list to ensure column is visible</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel post types configured</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

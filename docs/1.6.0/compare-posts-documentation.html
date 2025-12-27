@@ -1,0 +1,540 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Compare Posts</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Compare Posts function lets visitors select multiple listings and view them side-by-side in a comparison table. Perfect for helping users make decisions between similar options like hotels, products, or services.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Visitors can add up to 4 posts to their comparison list, then view them in a detailed side-by-side table. The comparison persists across page visits using browser storage, and syncs across multiple browser tabs automatically.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Compare 2-4 posts of the same type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Compare Button widget for adding posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Comparison Table widget for the comparison page</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Floating comparison bar (bottom or side)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure which fields to compare per post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Custom field labels and drag-to-reorder</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Supports all Voxel field types</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Print comparison table</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Cross-tab synchronization</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Compare Posts</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Comparison Fields</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Click the settings icon next to Compare Posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select a post type from the dropdown</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check the fields you want to include in comparisons</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Optionally add custom labels for fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag to reorder fields as desired</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Add Compare Button Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Open your single post template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add the <strong>Compare Button (VT)</strong> widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure button text and styling</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 4: Create Comparison Page</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Create a new page for comparisons (e.g., "Compare")</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Edit with Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add the <strong>Comparison Table (VT)</strong> widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure table styling</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Publish the page</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Compare Button Widget</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The button widget adds posts to the comparison list.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th></tr></thead><tbody><tr><td><strong>Add Text</strong></td><td>Button text when post is not in list</td></tr><tr><td><strong>Remove Text</strong></td><td>Button text when post is already in list</td></tr><tr><td><strong>Icon</strong></td><td>Optional icon before button text</td></tr><tr><td><strong>Comparison Page</strong></td><td>Page URL for the comparison table</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Button States</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Add to Compare</strong> - Default state, adds post when clicked</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Remove from Compare</strong> - When post is already in list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Limit Reached</strong> - When 4 posts are already selected</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Floating Comparison Bar</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A floating bar appears when posts are added to the comparison list, showing selected items and providing quick access to the comparison page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Bar Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Shows thumbnails of selected posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Quick remove buttons for each post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Compare Now" button to view comparison</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Clear All" to reset the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Minimizable to reduce screen space</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Position Options</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Bottom</strong> - Fixed bar at bottom of screen</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Side</strong> - Floating panel on the side</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Comparison Table Widget</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Displays the side-by-side comparison of selected posts.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th></tr></thead><tbody><tr><td><strong>Show Print Button</strong></td><td>Add button to print the comparison table</td></tr><tr><td><strong>Show Remove Buttons</strong></td><td>Allow removing posts from comparison</td></tr><tr><td><strong>Empty Message</strong></td><td>Text shown when no posts are selected</td></tr><tr><td><strong>Header Style</strong></td><td>Styling for the post title row</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Supported Field Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The comparison table renders all Voxel field types appropriately:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Text fields</strong> - Displayed as-is</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Number fields</strong> - Formatted with proper decimals</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Taxonomy fields</strong> - Shows term labels</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Work hours</strong> - Formatted schedule display</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Location</strong> - Address display</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Images</strong> - Thumbnail display</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Yes/No fields</strong> - Checkmark or X icons</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Print Feature</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The comparison table can be printed for offline reference:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Portrait format optimized layout</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clean styling without navigation elements</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Properly sized columns for paper</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with browser print dialog</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Cross-Tab Sync</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The comparison list automatically syncs across browser tabs:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Add a post in one tab, it appears in all tabs</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Remove a post in one tab, it updates everywhere</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Comparison bar updates in real-time</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Uses localStorage for persistence</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Hotel Comparison</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let guests compare rooms, amenities, prices, and ratings across properties.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Product Comparison</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Help shoppers compare features, specifications, and prices of similar products.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Service Providers</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allow users to compare contractors, agencies, or professionals side-by-side.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Real Estate</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Compare properties by bedrooms, square footage, price, and amenities.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Compare Button Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify JavaScript is enabled in browser</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser cache and localStorage</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for errors</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Fields Not Showing in Table</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify fields are enabled in the settings for that post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the post actually has data for those fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure posts are the same post type</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Comparison Not Persisting</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check if browser is blocking localStorage</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try in a normal (non-private) browsing session</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify no browser extensions are blocking scripts</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>localStorage enabled in browser</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

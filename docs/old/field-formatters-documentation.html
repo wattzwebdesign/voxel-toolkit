@@ -1,0 +1,267 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Field Formatters</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Field Formatters function provides shared utility methods for formatting Voxel field values for display. Convert complex field data like work hours and locations into human-readable formats.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Voxel stores complex field data in arrays and JSON formats. This utility function provides methods to format that data into readable strings for display in templates, widgets, and custom integrations.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Format work hours schedules</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Format location/address data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Day name translations</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Status handling (open, closed, by appointment)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Multiple time slot support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Safe output escaping</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Field Formatters</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Available Formatters</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Work Hours Formatter</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Converts Voxel work hours field data into readable schedule display.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Input Status</th><th>Output</th></tr></thead><tbody><tr><td>closed</td><td>Closed</td></tr><tr><td>open</td><td>Open 24 hours</td></tr><tr><td>appointments_only</td><td>By appointment only</td></tr><tr><td>hours</td><td>Time range (e.g., "9:00 - 17:00")</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">Example Output</h4>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code><strong>Mon, Tue, Wed:</strong> 9:00 - 17:00
+<strong>Thu, Fri:</strong> 9:00 - 12:00, 13:00 - 17:00
+<strong>Sat:</strong> 10:00 - 14:00
+<strong>Sun:</strong> Closed</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Location Formatter</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Extracts and formats address from Voxel location field data.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Handles:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>JSON encoded location data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Array with address key</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Plain string addresses</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Day Abbreviations</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The work hours formatter uses abbreviated day names:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Day Key</th><th>Display</th></tr></thead><tbody><tr><td>mon</td><td>Mon</td></tr><tr><td>tue</td><td>Tue</td></tr><tr><td>wed</td><td>Wed</td></tr><tr><td>thu</td><td>Thu</td></tr><tr><td>fri</td><td>Fri</td></tr><tr><td>sat</td><td>Sat</td></tr><tr><td>sun</td><td>Sun</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Custom Templates</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display formatted work hours in custom Elementor templates or widgets.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Email Notifications</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Include readable schedule information in automated emails.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">CSV Exports</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Format field data for export to spreadsheets.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Admin Displays</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show formatted field values in admin columns or meta boxes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">"No hours set" Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the work hours field has data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check the schedule array structure</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure at least one day group is configured</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">"No location set" Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify location field has an address</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check if data is properly JSON encoded</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure 'address' key exists in location data</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

@@ -1,0 +1,371 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Pending Posts Badge</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Pending Posts Badge function displays a count of pending posts in the WordPress admin menu. Quickly see how many posts await review without navigating to each post type.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Stay on top of pending content with visual badges that show exactly how many posts need attention. Similar to the comments badge WordPress shows, but for any post type you choose.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Visual pending count badges in admin menu</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable per post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customizable badge colors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Auto-updating counts (every 30 seconds)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with all post types including Voxel custom types</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Animation on count changes</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Pending Posts Badge</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Select Post Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>In the <strong>Post Types</strong> section, check which post types should show pending badges</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Common selections: Posts, Pages, and Voxel custom post types (places, events, etc.)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Customize Colors (Optional)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Set <strong>Background Color</strong> for the badge (default: #d63638 - red)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set <strong>Text Color</strong> for the count number (default: #ffffff - white)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Badge Display</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Badges appear next to the post type name in the admin menu:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Posts <span style="background:#d63638;color:#fff;padding:2px 6px;border-radius:10px;font-size:11px;">5</span></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Places <span style="background:#d63638;color:#fff;padding:2px 6px;border-radius:10px;font-size:11px;">12</span></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Events <span style="background:#d63638;color:#fff;padding:2px 6px;border-radius:10px;font-size:11px;">3</span></li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Automatic Updates</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Badges update automatically every 30 seconds via AJAX</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>When count changes, the badge briefly animates (pulse effect)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Badge disappears when count reaches zero</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Color Customization</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Choose colors that fit your admin color scheme or stand out appropriately:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Color Purpose</th><th>Suggested Colors</th></tr></thead><tbody><tr><td>Urgent (default)</td><td>Red (#d63638)</td></tr><tr><td>Warning</td><td>Orange (#dba617)</td></tr><tr><td>Information</td><td>Blue (#2271b1)</td></tr><tr><td>Subtle</td><td>Gray (#646970)</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Content Moderation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Instantly see how many listings, posts, or submissions need review.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Editorial Workflow</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Editors can quickly identify which content types have pending items.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Directory Management</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>For Voxel directory sites, see pending places, events, or other listing types at a glance.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Compatibility</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Works With All Color Schemes</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The badge is styled to work with all WordPress admin color schemes:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Default</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Light</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Blue</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Coffee</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ectoplasm</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Midnight</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ocean</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Sunrise</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Badge Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure the function is enabled for the post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify there are actually pending posts (check the post list)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser cache</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check if another plugin is modifying the admin menu</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Wrong Count Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Count updates every 30 seconds - wait for refresh</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Refresh the page manually to get immediate count</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check if posts are actually in "pending" status (not draft or other)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Badge Styling Issues</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Custom admin themes may override badge styles</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Adjust your custom colors if visibility is poor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for CSS conflicts with other admin plugins</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User must have edit_posts capability</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

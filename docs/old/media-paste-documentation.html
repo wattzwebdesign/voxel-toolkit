@@ -1,0 +1,365 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Media Paste</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Media Paste function allows you to paste images directly from your clipboard into the WordPress Media Library. Simply copy an image and paste it anywhere in the admin - no need to save and upload files manually.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Speed up your workflow by pasting screenshots, copied images, or any clipboard images directly into WordPress. The image is automatically uploaded to your Media Library and ready to use.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Paste images directly from clipboard</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Automatic upload to Media Library</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Supports JPEG, PNG, GIF, and WebP</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Role-based permissions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works on post edit screens and media pages</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Visual feedback during upload</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Media Paste</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Allowed Roles (Optional)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>By default, administrators and editors can paste images. Configure additional roles:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>In the <strong>Allowed Roles</strong> section, select which roles can use media paste</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Options include: Administrator, Editor, Author, Contributor, or All Roles</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How to Use</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Pasting Images</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Copy an image to your clipboard:
+<ul>
+<li>Take a screenshot (Print Screen, Cmd+Shift+4, etc.)</li>
+<li>Right-click an image and select "Copy Image"</li>
+<li>Copy from any image editing software</li>
+</ul>
+</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Go to any supported admin page (post edit, media library)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Press <strong>Ctrl+V</strong> (Windows) or <strong>Cmd+V</strong> (Mac)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Watch the upload progress indicator</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Image appears in your Media Library</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Supported Admin Pages</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Post/Page edit screens (post.php, post-new.php)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Media Library (upload.php)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Media upload popup (media-upload.php)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>General admin pages (admin.php)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Supported Image Types</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Format</th><th>MIME Type</th><th>Supported</th></tr></thead><tbody><tr><td>JPEG</td><td>image/jpeg</td><td>Yes</td></tr><tr><td>PNG</td><td>image/png</td><td>Yes</td></tr><tr><td>GIF</td><td>image/gif</td><td>Yes</td></tr><tr><td>WebP</td><td>image/webp</td><td>Yes</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">File Handling</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Automatic Naming</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Pasted images are automatically named with a timestamp:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>pasted-image-1704067200.png</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Size Limits</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Image size is limited by your WordPress upload settings. Check <strong>Settings &gt; Media</strong> for maximum upload size.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Storage Location</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Pasted images are stored in the standard WordPress uploads directory, organized by year/month like normal uploads.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Screenshots for Documentation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Take a screenshot and paste it directly when writing tutorials or documentation.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Quick Image Sharing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Copy images from other websites or applications and paste directly into posts.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Bug Reports</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Quickly capture and upload screenshots when documenting issues.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Paste Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify your user role is allowed to paste</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that you have an image (not text) in your clipboard</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try on a supported admin page</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for JavaScript errors</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Upload Fails</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check if image exceeds maximum upload size</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the image type is supported (JPEG, PNG, GIF, WebP)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure your uploads directory is writable</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for disk space availability</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Image Quality Issues</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Pasted images maintain their original quality. If images appear low quality:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check the source image quality</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Screenshots may have different quality based on your screen settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Some applications compress images when copying</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Modern browser with clipboard API support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>WordPress uploads directory writable</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

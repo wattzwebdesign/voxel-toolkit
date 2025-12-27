@@ -1,0 +1,243 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Sticky Admin Bar</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Sticky Admin Bar function makes the WordPress admin bar fixed to the top of the screen when scrolling on the frontend. This keeps quick admin links always accessible as you browse your site.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>By default, Voxel theme sets the admin bar to a static position, which means it scrolls away when you scroll down the page. This function overrides that behavior to keep the admin bar fixed at the top of the viewport.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Fixed/sticky admin bar on frontend</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Proper content spacing to prevent overlap</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Mobile responsive (adjusts for mobile admin bar height)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>High z-index ensures visibility over other elements</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>No configuration required - just enable and go</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Sticky Admin Bar</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>That's it! The admin bar will now remain fixed at the top of the screen when scrolling on the frontend.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function adds CSS styles that:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Set the admin bar position to <code>fixed</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add appropriate margin to the HTML element to prevent content overlap</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Apply responsive adjustments for mobile devices</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Desktop vs Mobile</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Device</th><th>Admin Bar Height</th><th>Top Margin Applied</th></tr></thead><tbody><tr><td>Desktop</td><td>32px</td><td>32px</td></tr><tr><td>Mobile (≤782px)</td><td>46px</td><td>46px</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Content Creators</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Keep quick access to "Edit Post", "New Post", and other admin links visible while reviewing your content.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Site Administrators</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Always have access to the admin dashboard, site customization, and user profile without scrolling back to the top.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Developers</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Quick access to debugging tools and admin features while testing frontend functionality.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Admin Bar Overlapping Content</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Clear any caching plugins</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check if another plugin is modifying admin bar styles</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify no custom CSS is interfering with the top margin</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Admin Bar Not Sticky</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure the function is enabled in Voxel Toolkit &gt; Functions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the admin bar is visible (logged in and admin bar enabled in profile)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser and site caches</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Conflicts with Fixed Headers</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If your theme has a fixed header, you may need to adjust its top positioning to account for the admin bar. Add CSS like:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>.admin-bar .your-fixed-header {
+    top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+    .admin-bar .your-fixed-header {
+        top: 46px;
+    }
+}</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User must be logged in with admin bar enabled</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

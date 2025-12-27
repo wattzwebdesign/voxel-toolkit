@@ -1,0 +1,383 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Post Position Tracker</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Post Position Tracker function tracks the position of posts within Voxel feed loops. Use dynamic tags to display post numbering, rankings, or position-based styling in your listing cards.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When displaying posts in a feed, sometimes you need to know each post's position in the results. This function tracks position across pagination, providing accurate 1-indexed positions that account for page offsets. Perfect for numbered lists, ranking displays, or position-based conditional styling.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Track post position in feeds</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Accurate across pagination</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>1-indexed positions (starts at 1, not 0)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with Voxel search results</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Safe in Elementor preview mode</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Prevents stale data in live preview</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dynamic tag support</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Post Position Tracker</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Position tracking will now be available in Voxel feed loops.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Position Calculation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The position is calculated using:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Position = Index in Feed + Pagination Offset + 1
+
+Example (Page 1, limit 10):
+- First post: 0 + 0 + 1 = Position 1
+- Fifth post: 4 + 0 + 1 = Position 5
+
+Example (Page 2, limit 10):
+- First post: 0 + 10 + 1 = Position 11
+- Fifth post: 4 + 10 + 1 = Position 15</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Feed Context Detection</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The tracker detects when it's in a valid feed context by:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Hooking into <code>voxel/before_render_search_results</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Capturing pagination offset from request parameters</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Tracking which posts have been rendered</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Resetting after <code>voxel/after_render_search_results</code></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">PHP API</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Get Current Position</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>$position = Voxel_Toolkit_Post_Position_Tracker::get_current_position();
+
+if ($position !== null) {
+    echo "Position: " . $position;
+}</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Check Feed Context</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>if (Voxel_Toolkit_Post_Position_Tracker::is_in_feed()) {
+    // We're inside a feed loop
+}</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Get Current Offset</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>$offset = Voxel_Toolkit_Post_Position_Tracker::get_current_offset();
+// Returns pagination offset (e.g., 10 for page 2 with limit 10)</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Numbered Rankings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display position numbers on listing cards for "Top 10" or ranking-style layouts.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Position-Based Styling</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Apply different CSS classes based on position (e.g., highlight top 3 results).</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Alternating Layouts</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use odd/even positions for alternating card designs or zebra striping.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">First/Last Detection</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Identify first or last items in a feed for special treatment.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Elementor Preview Safety</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The tracker automatically detects Elementor preview/edit modes and returns null to prevent:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Stale cached positions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Incorrect numbering during template editing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Confusion from AJAX live preview updates</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Detected preview modes:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>elementor-preview parameter</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>elementor_library parameter</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>preview=true parameter</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor AJAX actions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Editor edit mode</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Preview mode</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Position Returns Null</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify you're inside a Voxel feed/search results loop</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that you're not in Elementor preview mode</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Position is only available during active render cycle</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Wrong Position Numbers</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check pagination parameters (pg, limit) in URL</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify feed is rendering posts in expected order</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for out-of-sequence renders (returns null as safety)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Not Working in Custom Loops</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Function only works with Voxel search results</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Custom WP_Query loops are not supported</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Must use Voxel's feed widget/shortcode</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel search/feed widgets in use</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

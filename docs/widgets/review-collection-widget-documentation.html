@@ -1,0 +1,532 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Review Collection Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Review Collection widget displays a grid of reviews from Voxel's review system. Showcase positive reviews from across your site, filter by post type, and customize the layout to match your design.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Pull reviews from Voxel's timeline and display them in a beautiful grid layout. Filter reviews by minimum rating, post type, or specific posts. Each review card shows the reviewer, rating stars, review content, and the reviewed post.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Responsive grid layout</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Minimum rating filter</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Post type filtering</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Content line limiting</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customizable star ratings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Author avatars and names</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Full styling controls</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Widgets</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Review Collection</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add to Page</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your page in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Review Collection (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to your layout</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure content and styling</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the page</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Content Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Number of Reviews</strong></td><td>How many reviews to display</td><td>3</td></tr><tr><td><strong>Minimum Rating</strong></td><td>Only show reviews with this rating or higher (1-5)</td><td>4</td></tr><tr><td><strong>Post ID</strong></td><td>Show reviews for a specific post only</td><td>Empty (all)</td></tr><tr><td><strong>Author ID</strong></td><td>Show reviews from a specific author</td><td>Empty (all)</td></tr><tr><td><strong>Post Types</strong></td><td>Filter by post types (comma-separated)</td><td>Empty (all)</td></tr><tr><td><strong>Only With Message</strong></td><td>Only show reviews that have text content</td><td>Yes</td></tr><tr><td><strong>Enable Link</strong></td><td>Link to the reviewed post</td><td>Yes</td></tr><tr><td><strong>Content Line Limit</strong></td><td>Lines of review text to show before truncating</td><td>4</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Date Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Date Prefix</strong></td><td>Text before the date</td><td>"Published on"</td></tr><tr><td><strong>Date Format</strong></td><td>PHP date format</td><td>WordPress default</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Styling Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">General</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Number of columns (responsive)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Gap between reviews</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Review Card</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Background color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Box shadow</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Post Image</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Image size</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Thumbnail size selection</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Bottom margin</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Post Title</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Alignment</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Bottom margin</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Rating Stars</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Alignment</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Custom icon</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Icon size</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Active color (filled stars)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Inactive color (empty stars)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Icon spacing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Bottom margin</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Author Section</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Alignment</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Avatar size and border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Avatar margin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Username typography and color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Section margin</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Review Content</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Alignment</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Margin</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Date</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Alignment</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text color</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Filtering Reviews</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">By Minimum Rating</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Set a minimum rating (1-5 stars) to only show positive reviews. Most sites use 4 or 5 stars to display only the best reviews.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">By Post Type</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Enter post type keys separated by commas:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>places,events,profile</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">For Specific Post</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Enter a post ID to show only reviews for that listing/post.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">From Specific Author</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Enter a user ID to show only reviews written by that person.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Homepage Testimonials</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display top reviews across all post types to showcase social proof.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Post Type Archives</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show reviews specific to a category or post type.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Listing Pages</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display reviews for a specific listing using the Post ID filter.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">User Profiles</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show all reviews written by a specific user using the Author ID filter.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">No Reviews Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that reviews exist in the Voxel timeline</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Lower the minimum rating filter</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Disable "Only With Message" to include all reviews</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check post type filter is correct</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Wrong Reviews Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check your post type filter settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the post ID or author ID filters</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Layout Issues</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Adjust column count for different screen sizes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check gap and padding settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Adjust content line limit if text is cut off</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel review/rating system active</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Reviews in the Voxel timeline database</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

@@ -1,0 +1,295 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Admin Bar Publish Toggle</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Admin Bar Publish Toggle function adds a convenient Publish/Mark as Pending button directly to the WordPress admin bar. This allows quick status changes for posts without navigating to the edit screen.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When viewing a post on the frontend or in the admin edit screen, this function adds a prominent button to the admin bar that allows you to instantly toggle the post status between "Published" and "Pending Review".</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>One-click publish/unpublish from the admin bar</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works on both frontend and admin edit screens</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>AJAX-powered instant updates (no page reload required)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Visual feedback with color-coded buttons</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable per post type</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Admin Bar Publish Toggle</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Select Post Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Choose which post types should display the publish toggle button:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>In the <strong>Post Types</strong> section, check the boxes for the post types you want to enable</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Common options include: posts, pages, and Voxel custom post types (places, events, jobs, etc.)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Button States</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Current Status</th><th>Button Text</th><th>Button Color</th><th>Action</th></tr></thead><tbody><tr><td>Pending</td><td>Publish</td><td>Green</td><td>Changes status to Published</td></tr><tr><td>Published</td><td>Mark as Pending</td><td>Yellow/Orange</td><td>Changes status to Pending</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Where the Button Appears</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Frontend:</strong> On any single post page for enabled post types</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Admin:</strong> On the post edit screen (post.php)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#fff3cd"},"border":{"left":{"color":"#ffc107","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#fff3cd;border-left-color:#ffc107;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Note:</strong> The button only appears for posts with "pending" or "publish" status. Draft, trashed, or other status posts will not show the toggle button.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Content Moderation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Quickly review and approve pending content while browsing the frontend of your site.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Temporary Unpublishing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Need to temporarily hide a listing? One click sets it to pending while you make updates.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Listing Management</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>For directory sites, easily approve or unpublish listings without navigating through multiple admin screens.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Developer Information</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Custom Hook</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function fires an action when post status is changed:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>do_action('voxel_toolkit/post_status_changed', $post_id, $new_status, $old_status);</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>Example usage:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>add_action('voxel_toolkit/post_status_changed', function($post_id, $new_status, $old_status) {
+    // Log status changes
+    error_log("Post {$post_id} changed from {$old_status} to {$new_status}");
+
+    // Or send notification
+    if ($new_status === 'publish') {
+        // Send notification that post was published
+    }
+}, 10, 3);</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Button Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure the function is enabled in Voxel Toolkit &gt; Functions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the post type is selected in the configuration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the post status is either "publish" or "pending"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Make sure you have permission to edit the post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Confirm the admin bar is visible (not hidden by theme or other plugins)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Status Not Changing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check browser console for JavaScript errors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify you have edit permissions for the post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure no caching is interfering with AJAX requests</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active and configured)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User must have edit permissions for the post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Admin bar must be visible</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

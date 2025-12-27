@@ -1,0 +1,568 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">RSVP System</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The RSVP System allows visitors to register for events, workshops, classes, or any post type on your site. It includes an RSVP form widget for submissions and an attendee list widget for displaying who's coming.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add event registration capabilities to any Voxel post type. Visitors can RSVP for events, you can set attendee limits, and optionally require approval before confirming attendance. Guest RSVPs are supported for non-logged-in users.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>RSVP Form widget for event registration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Attendee List widget to show who's coming</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Guest RSVP support (no login required)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable fields (name, email, comment, custom fields)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Approval workflow (pending/approved/rejected)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Maximum attendee limits</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>CSV export for attendee data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>App Event notifications</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Per-post-type custom fields</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>RSVP System</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure RSVP Fields (Optional)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Define custom fields for each post type that uses RSVPs:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Click the settings icon next to RSVP System</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select a post type from the dropdown</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add custom fields (dietary restrictions, t-shirt size, etc.)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Add Widgets to Your Template</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Open your event/post single template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add the <strong>RSVP Form (VT)</strong> widget where you want the registration form</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add the <strong>Attendee List (VT)</strong> widget where you want to show attendees</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure widget settings and styling</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">RSVP Form Widget</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The form widget allows visitors to register for events.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th></tr></thead><tbody><tr><td><strong>Allow Guests</strong></td><td>Allow non-logged-in users to RSVP</td></tr><tr><td><strong>Require Approval</strong></td><td>RSVPs need admin approval before confirmation</td></tr><tr><td><strong>Max Attendees</strong></td><td>Limit how many people can register (0 = unlimited)</td></tr><tr><td><strong>Auto-Close</strong></td><td>Automatically close RSVPs when limit reached</td></tr><tr><td><strong>Show Count</strong></td><td>Display how many spots are left</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Built-in Fields</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Name</strong> - Attendee's name (required for guests)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Email</strong> - Contact email (required for guests)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Comment</strong> - Optional message or note</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">RSVP States</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users can see their current RSVP status and cancel if needed:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Not RSVP'd</strong> - Shows the registration form</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Pending</strong> - Waiting for approval</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Confirmed</strong> - RSVP approved</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Rejected</strong> - RSVP declined</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Attendee List Widget</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display who's attending the event with optional admin controls.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th></tr></thead><tbody><tr><td><strong>Show Avatars</strong></td><td>Display attendee profile pictures</td></tr><tr><td><strong>Show Names</strong></td><td>Display attendee names</td></tr><tr><td><strong>Show Count</strong></td><td>Show total number of attendees</td></tr><tr><td><strong>Admin Actions</strong></td><td>Show approve/reject buttons for admins</td></tr><tr><td><strong>Layout</strong></td><td>Grid or list view</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Admin Actions</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When admin actions are enabled, post authors and administrators can:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Approve pending RSVPs</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Reject RSVPs</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Remove attendees</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Export attendee list to CSV</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Custom Fields</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add custom fields to collect additional information from attendees. Fields are configured per post type, so events can have different fields than workshops.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Field Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Text</strong> - Single line text input</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Textarea</strong> - Multi-line text input</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Select</strong> - Dropdown with predefined options</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Checkbox</strong> - Multiple choice options</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Example Custom Fields</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Dietary restrictions (vegetarian, vegan, gluten-free)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>T-shirt size</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Company name</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>How did you hear about us?</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Special accommodations needed</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">App Events</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The RSVP System adds three app events that you can use for notifications:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Event</th><th>Triggers When</th><th>Available Dynamic Tags</th></tr></thead><tbody><tr><td><strong>RSVP Submitted</strong></td><td>Someone submits an RSVP</td><td>Attendee name, email, post title</td></tr><tr><td><strong>RSVP Approved</strong></td><td>Admin approves an RSVP</td><td>Attendee name, email, post title</td></tr><tr><td><strong>RSVP Rejected</strong></td><td>Admin rejects an RSVP</td><td>Attendee name, email, post title</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:paragraph -->
+<p>Configure these events in <strong>Voxel &gt; App Events</strong> to send email notifications, in-app notifications, or SMS (with SMS Notifications function enabled).</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Approval Workflow</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When approval is required:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Visitor submits RSVP</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>RSVP status is set to "Pending"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Post author/admin receives notification</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Admin approves or rejects the RSVP</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Attendee receives confirmation notification</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Without approval required, RSVPs are automatically confirmed immediately.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">CSV Export</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Export all attendee data to a CSV file for:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check-in lists at the event</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Importing to email marketing tools</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Creating name badges</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Backup and records</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>The export includes all fields: name, email, status, custom field responses, and RSVP date.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Event Registration</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allow attendees to register for conferences, meetups, or parties with optional capacity limits.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Class Signups</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let students register for classes or workshops with approval from the instructor.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Restaurant Reservations</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Accept table reservations with party size and special requests as custom fields.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Volunteer Signups</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Collect volunteer registrations with availability and skill information.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Form Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the widget is added to your template</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check if maximum attendees has been reached</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify guest RSVPs are enabled if testing logged out</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Submissions Not Saving</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check browser console for JavaScript errors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify all required fields are filled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure email format is valid for guest RSVPs</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check if the user has already RSVP'd</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Notifications Not Sending</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Configure app events in Voxel > App Events</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify email settings in WordPress</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check spam folders for test emails</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

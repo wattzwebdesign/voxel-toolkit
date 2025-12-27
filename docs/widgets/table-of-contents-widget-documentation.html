@@ -1,0 +1,456 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Table of Contents Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Table of Contents widget displays a navigation list of Voxel post type form steps. Help users navigate through multi-step submission forms by showing all available sections with optional field completion indicators.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Create a navigation sidebar for Voxel's multi-step post submission forms. The widget reads the UI Step fields from your post type configuration and displays them as a clickable list. Users can jump to any step, and optionally see which fields within each step are complete.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Automatic step detection from post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Numbered, bullet, or plain list styles</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Optional field list per step</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Field completion indicators</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Active step highlighting</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor widget and shortcode support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Full styling controls</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Widgets</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Table of Contents</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add to Submit Form Template</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your post submission template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Table of Contents</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to a sidebar position</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select the post type to show steps for</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Content Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Post Type</strong></td><td>Which post type's steps to display</td><td>Select from list</td></tr><tr><td><strong>Title</strong></td><td>Heading above the list</td><td>"Table of Contents"</td></tr><tr><td><strong>Show Title</strong></td><td>Display the heading</td><td>Yes</td></tr><tr><td><strong>Title Tag</strong></td><td>HTML tag for title (H1-H6)</td><td>H3</td></tr><tr><td><strong>List Style</strong></td><td>Numbered, Bullets, or None</td><td>Numbered</td></tr><tr><td><strong>Show Fields</strong></td><td>Display fields within each step</td><td>No</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Field Display Options</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When "Show Fields" is enabled:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Indicator Empty Color</strong></td><td>Color for incomplete field indicator</td><td>#e0e0e0</td></tr><tr><td><strong>Indicator Filled Color</strong></td><td>Color for complete field indicator</td><td>#22c55e</td></tr><tr><td><strong>Indicator Size</strong></td><td>Size of the indicator dot</td><td>12px</td></tr><tr><td><strong>Field Indent</strong></td><td>Indentation for field list</td><td>20px</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Styling Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Container</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Background color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border color and width</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding (all sides)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text alignment</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Title</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">List Items</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Color (normal, hover, active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Item spacing</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Shortcode Usage</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use the shortcode for non-Elementor pages:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>[voxel_table_of_contents post_type="places" title="Steps" show_title="yes"]</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Shortcode Parameters</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>post_type</strong></td><td>Post type key (e.g., "places")</td><td>Required</td></tr><tr><td><strong>title</strong></td><td>Heading text</td><td>"Table of Contents"</td></tr><tr><td><strong>show_title</strong></td><td>"yes" or "no"</td><td>yes</td></tr><tr><td><strong>alignment</strong></td><td>"left", "center", "right"</td><td>left</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step Detection</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Widget reads the <code>voxel:post_types</code> option</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Finds all fields with type "ui-step"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Extracts step keys and labels</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Groups non-step fields under each step</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Active Step</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The current step is determined from the URL's <code>step</code> parameter. If no step is specified, the first step is marked as active.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Field Completion</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When "Show Fields" is enabled, the widget uses JavaScript to check if form fields have values and updates the completion indicators in real-time.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Excluded Field Types</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The following UI field types are excluded from the field list:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>ui-step</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>ui-heading</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>ui-image</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>ui-html</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Listing Submission Forms</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Help users navigate complex multi-step listing submission forms with a sidebar table of contents.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Profile Editing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show users all sections of their profile with completion status indicators.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Registration Wizards</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display progress through multi-step registration or application forms.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Product Submissions</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Guide vendors through product listing steps with clear navigation.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">No Steps Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify post type is selected in widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure post type has UI Step fields configured</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check voxel:post_types option contains data</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Wrong Step Active</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Active step is determined by ?step= URL parameter</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>First step is active if no parameter present</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check step key matches the URL value</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Field Indicators Not Updating</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>JavaScript must be enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for console errors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify form fields have matching data attributes</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement) or shortcode support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel post type with UI Step fields</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

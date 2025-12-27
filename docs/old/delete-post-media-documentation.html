@@ -1,0 +1,335 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Delete Post Media</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Delete Post Media function automatically deletes all media attachments when a post is permanently deleted. This prevents orphaned media files from accumulating in your Media Library.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When posts are deleted in WordPress, their attached media files typically remain in the Media Library. Over time, this can lead to significant storage usage from orphaned files. This function automatically cleans up all associated media when a post is deleted.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Automatic media cleanup on post deletion</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Double confirmation dialog for safety</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Detects media from multiple sources (featured image, content, meta fields, Voxel fields)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable per post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with Voxel gallery, image, and file fields</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#ffebee"},"border":{"left":{"color":"#f44336","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#ffebee;border-left-color:#f44336;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Warning:</strong> This action is permanent. When you delete a post with this function enabled, all associated media files will be permanently deleted and cannot be recovered. Use with caution.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Delete Post Media</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Select Post Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Choose which post types should have automatic media deletion:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>In the <strong>Post Types</strong> section, check the boxes for the post types you want to enable</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Consider enabling for Voxel post types that have user-uploaded media (places, events, profiles)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Confirmation Dialog</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When you click "Delete" on an enabled post type, a confirmation dialog appears warning you that:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>All attached media files will be permanently deleted</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>This action cannot be undone</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>You must check a confirmation checkbox to proceed</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Media Detection Sources</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function finds media from multiple sources:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Source</th><th>Description</th></tr></thead><tbody><tr><td><strong>Featured Image</strong></td><td>Post thumbnail</td></tr><tr><td><strong>Attached Media</strong></td><td>Files with post as parent</td></tr><tr><td><strong>Post Content</strong></td><td>Images embedded in content</td></tr><tr><td><strong>Post Meta</strong></td><td>Media IDs stored in custom fields</td></tr><tr><td><strong>Voxel Fields</strong></td><td>Gallery, image, and file field types</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">User-Generated Content Sites</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>For directory sites where users upload photos for their listings, automatically cleaning up media when listings are deleted prevents storage bloat.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Storage Management</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Particularly useful on hosting plans with limited storage, keeping your Media Library clean and manageable.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Privacy Compliance</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When users request account or listing deletion, this ensures their uploaded media is also removed.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Supported Media Detection</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Detected File Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Images: JPG, JPEG, PNG, GIF, SVG</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Documents: PDF, DOC, DOCX</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Media: MP4, MP3</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Archives: ZIP</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Voxel Field Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Image fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>File fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Gallery fields</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Confirmation Dialog Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure jQuery UI Dialog is loading correctly</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for JavaScript errors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser cache</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Media Not Being Deleted</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled for the post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the media was actually attached to the post (not just used via URL)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Some media may be used by multiple posts - shared media is not deleted</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Accidentally Deleted Media</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Unfortunately, deleted media cannot be recovered through WordPress. Consider:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Restoring from a backup</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Checking if files exist on the server (may not be in Media Library)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>For future, always maintain regular backups</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User must have permission to delete posts</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

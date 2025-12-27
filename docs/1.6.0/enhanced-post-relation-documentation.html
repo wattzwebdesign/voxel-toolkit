@@ -1,0 +1,359 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Enhanced Post Relation</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Enhanced Post Relation function lets you customize how posts appear in Post Relation field dropdowns. Instead of showing just the title, display additional information like location, price, or membership level.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When users select related posts in a Post Relation field, they see a dropdown list of options. By default, only the post title is shown. This function allows you to add context using Voxel dynamic tags, making it easier for users to identify the right post.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Configure display templates per post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use any dynamic tag or modifier</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Native dynamic tag picker interface</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Post-type-specific field suggestions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Supports Toolkit's custom dynamic tags</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Enhanced Post Relation</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Display Templates</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Click the settings icon next to Enhanced Post Relation</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select a post type that appears in Post Relation dropdowns</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter a display template using dynamic tags</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Display Template Examples</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Create display templates using Voxel's dynamic tag syntax:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Show Title with City</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>@post(title) - @post(location.city)</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>Result: "Oceanview Hotel - Miami"</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Show Name with Membership</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>@post(title) (@post(membership_level))</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>Result: "John Smith (Premium Member)"</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Show Title with Price</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>@post(title) - $@post(price)</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>Result: "Deluxe Room - $199"</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Show Title with Category</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>@post(title) [@post(category.label)]</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>Result: "Best Pizza in Town [Restaurant]"</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Dynamic Tag Picker</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The settings panel includes a native dynamic tag picker that shows:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>All available fields for the selected post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Field properties (e.g., location.city, location.lat)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Available modifiers</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toolkit's custom dynamic tags</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Click a field to insert its dynamic tag at your cursor position.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Supported Modifiers</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You can use any Voxel modifier in your templates:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>@post(title)|truncate(30)
+@post(price)|format_number()
+@post(date)|date('M j, Y')
+@post(name)|uppercase()</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Property Listings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When selecting a related property, show the location to help identify the right one.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">User Profiles</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When linking to profiles, show the membership level or verification status.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Products</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When selecting related products, show the price or category.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Events</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When selecting events, show the date alongside the event name.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Template Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify you've configured the correct post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the Post Relation field references that post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any caching and refresh</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Dynamic Tags Not Rendering</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the field exists on the post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check the syntax of your dynamic tag</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the post has data in that field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Test with a simple tag like @post(title) first</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Dropdown Too Long</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Use the |truncate() modifier to shorten text</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Include only essential information</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Keep templates concise</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Post Relation fields in your post types</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

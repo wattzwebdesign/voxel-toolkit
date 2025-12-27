@@ -1,0 +1,440 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Breadcrumbs Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Breadcrumbs widget displays hierarchical navigation breadcrumbs showing the path from the homepage to the current page. Help visitors understand where they are and navigate back to parent pages easily.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show users their current location within your site's hierarchy. The widget automatically generates breadcrumb trails based on page structure, post types, and taxonomy terms. Includes SEO-friendly schema markup for better search engine visibility.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Automatic breadcrumb trail generation</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with pages, posts, archives, and custom post types</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel taxonomy field support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>JSON-LD schema markup for SEO</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Multiple separator styles</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Full styling customization</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Responsive design</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Widgets</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Breadcrumbs</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add to Template</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your page or template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Breadcrumbs (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to your desired location (typically below the header)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure settings and styling</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">General Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Home Text</strong></td><td>Text displayed for the home link</td><td>Home</td></tr><tr><td><strong>Show Home Link</strong></td><td>Include home page in breadcrumbs</td><td>Yes</td></tr><tr><td><strong>Separator</strong></td><td>Character between breadcrumb items</td><td>/ (slash)</td></tr><tr><td><strong>Show Current Page</strong></td><td>Display the current page name</td><td>Yes</td></tr><tr><td><strong>Max Depth</strong></td><td>Maximum number of levels to display</td><td>10</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Separator Options</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>/</strong> - Slash</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>></strong> - Greater than</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>→</strong> - Arrow</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>|</strong> - Pipe</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>·</strong> - Dot</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Custom</strong> - Enter your own separator</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Structure Options</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Include Post Type Archive</strong></td><td>Show archive link before single posts</td><td>Yes</td></tr><tr><td><strong>Show Parent Posts</strong></td><td>Display hierarchical parent chain</td><td>Yes</td></tr><tr><td><strong>Include Taxonomy Terms</strong></td><td>Add category/taxonomy terms to trail</td><td>No</td></tr><tr><td><strong>Taxonomy Field Key</strong></td><td>Voxel taxonomy field key (e.g., job-category)</td><td>Empty</td></tr><tr><td><strong>Show Parent Terms</strong></td><td>Include parent taxonomy terms</td><td>Yes</td></tr><tr><td><strong>Prefix Text</strong></td><td>Optional text before breadcrumbs</td><td>Empty</td></tr><tr><td><strong>Suffix Text</strong></td><td>Optional text after breadcrumbs</td><td>Empty</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">SEO & Schema</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Enable Schema Markup</strong></td><td>Add JSON-LD structured data for search engines</td><td>Yes</td></tr><tr><td><strong>Add Nofollow to Links</strong></td><td>Add rel="nofollow" to all breadcrumb links</td><td>No</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Styling Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Link Styling</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Link color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text decoration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Hover effects</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Current Page Styling</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Text color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Separator Styling</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Separator color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Size</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Spacing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Opacity</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Container Styling</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Background color/gradient</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding and margin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border and border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Box shadow</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Alignment (left, center, right)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Using with Voxel Taxonomies</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To include Voxel taxonomy terms in your breadcrumbs:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Enable "Include Taxonomy Terms"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter your taxonomy field key (e.g., "job-category" or "listing-type")</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Optionally enable "Show Parent Terms" for hierarchical taxonomies</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>The breadcrumbs will show the term hierarchy leading to the current post.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Directory Listings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show category hierarchy: Home > Restaurants > Italian > Pizza Place</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Documentation Sites</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Help users navigate docs: Home > Getting Started > Installation</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">E-commerce</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display product category path: Home > Electronics > Phones > iPhone</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Blog Posts</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show article location: Home > Blog > Technology > Article Title</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Breadcrumbs Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>On the homepage, only the home link shows (this is expected)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the widget is enabled in Toolkit settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the widget is added to the correct template</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Taxonomy Terms Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the taxonomy field key is correct</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the post has terms assigned</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure "Include Taxonomy Terms" is enabled</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Wrong Page Hierarchy</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check page parent settings in WordPress</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>For custom post types, verify hierarchical structure</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

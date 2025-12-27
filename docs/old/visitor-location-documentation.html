@@ -1,0 +1,447 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Visitor Location</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Visitor Location function detects your site visitors' geographic location using IP geolocation. Display personalized content based on city, state, or country using dynamic tags and shortcodes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Personalize your site experience by detecting where visitors are located. The function queries multiple geolocation APIs for accuracy and caches results to minimize API calls. Use the data to show location-relevant content, pre-fill search forms, or customize messaging.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>IP-based geolocation detection</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Optional browser geolocation (with user permission)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Multiple API fallback for accuracy</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Consensus algorithm picks best result</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable cache duration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Returns city, state, country data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Formatted location strings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>US-specific formatting (City, State)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Visitor Location</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Choose detection mode (IP or Browser)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set cache duration (default: 1 hour)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Configuration Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Detection Mode</strong></td><td>IP-based or Browser geolocation</td><td>IP</td></tr><tr><td><strong>Cache Duration</strong></td><td>How long to cache location results (seconds)</td><td>3600 (1 hour)</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Detection Modes</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Mode</th><th>Description</th><th>Pros/Cons</th></tr></thead><tbody><tr><td><strong>IP</strong></td><td>Uses visitor's IP address to determine location</td><td>Automatic, no permission needed, but less accurate</td></tr><tr><td><strong>Browser</strong></td><td>Uses browser's built-in geolocation API</td><td>More accurate, but requires user permission</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Dynamic Tags</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use these dynamic tags anywhere Voxel dynamic tags are supported (Elementor widgets, templates, etc.):</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Dynamic Tag</th><th>Description</th><th>Example Output</th></tr></thead><tbody><tr><td><code>@site().visitor.location</code></td><td>Full formatted location string</td><td>"Los Angeles, California" or "London, United Kingdom"</td></tr><tr><td><code>@site().visitor.city</code></td><td>Visitor's city name</td><td>"Los Angeles"</td></tr><tr><td><code>@site().visitor.state</code></td><td>State or region name</td><td>"California"</td></tr><tr><td><code>@site().visitor.country</code></td><td>Country name</td><td>"United States"</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Usage Examples</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>// Display full location
+Welcome, visitor from @site().visitor.location!
+
+// Display city only
+Find listings near @site().visitor.city
+
+// Display state/region
+Browse services in @site().visitor.state
+
+// Display country
+You're visiting from @site().visitor.country
+
+// With modifiers
+@site().visitor.city|default(your area)</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:group {"style":{"color":{"background":"#e8f5e9"},"border":{"left":{"color":"#4caf50","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#e8f5e9;border-left-color:#4caf50;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Tip:</strong> Use the <code>|default()</code> modifier to provide fallback text when location cannot be detected (e.g., on localhost or for VPN users).</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Available Data</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function provides access to the following location data:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Data</th><th>Description</th><th>Example</th></tr></thead><tbody><tr><td><strong>Location (Full)</strong></td><td>Formatted location string</td><td>"Los Angeles, California" or "London, United Kingdom"</td></tr><tr><td><strong>City</strong></td><td>Visitor's city</td><td>"Los Angeles"</td></tr><tr><td><strong>State</strong></td><td>State or region</td><td>"California"</td></tr><tr><td><strong>Country</strong></td><td>Country name</td><td>"United States"</td></tr><tr><td><strong>Country Code</strong></td><td>Two-letter country code</td><td>"US"</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">IP Detection Process</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Visitor loads a page on your site</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Function retrieves visitor's IP via Voxel's Visitor class</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Checks cache for existing location data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>If no cache, queries multiple geolocation APIs:
+<ul>
+<li>geojs.io</li>
+<li>ipapi.co</li>
+<li>ip-api.com</li>
+</ul>
+</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Consensus algorithm selects best result</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Result is cached for configured duration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Location data is available for display</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Consensus Algorithm</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When multiple APIs return different results, the function:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Counts which city is returned most often</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Prioritizes results with more complete data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Returns the most reliable result</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Personalized Greetings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display location-specific welcome messages: "Welcome, visitor from Los Angeles!"</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Pre-Filled Search</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Auto-fill location search fields with visitor's detected city.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Localized Content</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show different promotions or content based on visitor's country.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Directory Defaults</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Default listing search results to show nearby businesses first.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Location Not Detected</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Local development IPs (127.0.0.1, 192.168.x.x) won't return location</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Test on a live server with real visitor IPs</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that Voxel's Visitor class is available</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify function is enabled</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Inaccurate Location</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>IP geolocation is not 100% accurate</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>VPN users may show incorrect locations</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Consider using browser mode for better accuracy</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Mobile users may show ISP location, not actual location</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Browser Mode Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>User must grant location permission</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Site must use HTTPS (required for geolocation API)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Falls back to IP detection if permission denied</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">API Services Used</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function uses free geolocation APIs:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>geojs.io</strong> - Free, no API key required</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>ipapi.co</strong> - Free tier available, no API key required</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>ip-api.com</strong> - Free for non-commercial use</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#fff3cd"},"border":{"left":{"color":"#ffc107","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#fff3cd;border-left-color:#ffc107;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Note:</strong> These free services have rate limits. Caching is essential to stay within limits and ensure fast page loads.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Live server (not localhost) for IP detection</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>HTTPS for browser geolocation mode</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

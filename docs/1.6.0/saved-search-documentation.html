@@ -1,0 +1,496 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Saved Search</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Saved Search function lets users save their search filters and quickly reload them later. Users can also receive notifications when new posts match their saved searches.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Visitors often return to your site looking for the same type of content. With Saved Search, they can save their filter combinations and reload them with one click. Even better, they can opt to receive notifications when new content matches their criteria.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Save Search button in Voxel search form widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Saved Search widget displays saved searches in grid layout</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Load Search dropdown for quick filter application</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Auto-apply option for returning visitors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Notifications for new matching posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Per-search notification preferences</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>localStorage persistence</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Saved Search</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Once enabled, the Save Search button will automatically appear in Voxel's search form widget.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add Saved Search Widget (Optional)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To display saved searches on user profile or account pages:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit the page in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add the <strong>Saved Search (VT)</strong> widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure grid layout and styling</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the page</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Save Search Button</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The button appears in the Voxel search form when filters are active.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Saving a Search</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>User applies search filters</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User clicks the Save Search button</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>A popup appears to name the search</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User can enable/disable notifications</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search is saved to their account</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Load Search Dropdown</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A dropdown in the search form lets users quickly apply saved searches:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Lists all saved searches for this search form</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>One-click to apply all filters from that search</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Shows filter summary for each saved search</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Saved Search Widget</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Displays all saved searches in a grid layout.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Grid layout with configurable columns</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search name and filter summary</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click to go to search with filters applied</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Delete button to remove saved searches</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Notification toggle per search</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Auto-Apply Feature</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users can set a saved search to auto-apply when they return to the search page:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Enable auto-apply on a saved search</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>When they visit the search page, those filters are automatically applied</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Only one search can be set to auto-apply at a time</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Uses localStorage for persistence across sessions</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Notifications</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When new posts match a user's saved search, they can receive notifications:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Notification Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>In-App</strong> - Notification appears in Voxel's notification system</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Email</strong> - Email sent to the user</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>SMS</strong> - Text message (if SMS Notifications enabled)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Configuring Notifications</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Voxel &gt; App Events</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Saved Search: New Match</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure email template and delivery options</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">User Controls</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users can enable or disable notifications per saved search:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Toggle in the save dialog when creating</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle in the Saved Search widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Notifications are off by default</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Job Seekers</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Save search filters for jobs in their field and location, get notified when new jobs are posted.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Property Hunters</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Save searches for properties in their price range and preferred neighborhoods.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Marketplace Buyers</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Save searches for specific products or categories they're interested in.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Event Attendees</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Save searches for events in their area or of specific types.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Storage</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Saved searches are stored in:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Logged-in users</strong> - Database (syncs across devices)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Guests</strong> - localStorage (browser only)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>When a guest logs in, their localStorage searches can be migrated to their account.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Save Button Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Apply at least one filter first (button shows when filters are active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify you're using Voxel's search form widget</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Saved Searches Not Persisting</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>For guests, check localStorage is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try logging in to save searches to your account</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser privacy settings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Notifications Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify notifications are enabled on the saved search</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check App Event is configured in Voxel</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify WordPress is sending emails</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel search form widget in use</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

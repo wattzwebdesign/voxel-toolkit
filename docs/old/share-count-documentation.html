@@ -1,0 +1,424 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Share Count</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Share Count function tracks how many times each post has been shared through Voxel's share menu or the Toolkit's Share Menu function. Display share counts using dynamic tags for social proof and engagement metrics.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When visitors click share buttons on your listings, this function tracks each share event. You can display total share counts or break them down by network (Facebook, WhatsApp, Twitter, etc.). Perfect for showing social proof on popular listings.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Track total share count per post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Track shares by network (Facebook, Twitter, WhatsApp, etc.)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dynamic tags for use in templates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with Voxel's built-in share menu</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with Toolkit's Share Menu function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Supports 18+ share networks</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>PHP API for custom integrations</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Share Count</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Share tracking will now be active. Every time a visitor clicks a share button, the count will increment automatically.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Dynamic Tags</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use these dynamic tags in your Voxel templates to display share counts:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Total Share Count</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display the total number of times a post has been shared across all networks:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>@post(share_count)
+@post(share_count.total)</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>Both tags return the same value - the total share count for the post.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Network-Specific Counts</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display share counts for specific social networks:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>@post(share_count.facebook)    - Facebook shares
+@post(share_count.twitter)     - X/Twitter shares
+@post(share_count.linkedin)    - LinkedIn shares
+@post(share_count.whatsapp)    - WhatsApp shares
+@post(share_count.telegram)    - Telegram shares
+@post(share_count.pinterest)   - Pinterest shares
+@post(share_count.reddit)      - Reddit shares
+@post(share_count.tumblr)      - Tumblr shares
+@post(share_count.threads)     - Threads shares
+@post(share_count.bluesky)     - Bluesky shares
+@post(share_count.sms)         - SMS shares
+@post(share_count.line)        - Line shares
+@post(share_count.viber)       - Viber shares
+@post(share_count.snapchat)    - Snapchat shares
+@post(share_count.kakaotalk)   - KakaoTalk shares
+@post(share_count.email)       - Email shares
+@post(share_count.copy-link)   - Copy Link clicks
+@post(share_count.native-share) - Native Share (mobile) clicks</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Social Proof Badge</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add a share count badge to listing cards to show popularity:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>&lt;div class="share-badge"&gt;
+    &lt;span class="icon"&gt;&lt;/span&gt;
+    @post(share_count) shares
+&lt;/div&gt;</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Network Breakdown</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show detailed sharing statistics on a listing page:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>&lt;div class="share-stats"&gt;
+    &lt;div&gt;Facebook: @post(share_count.facebook)&lt;/div&gt;
+    &lt;div&gt;Twitter: @post(share_count.twitter)&lt;/div&gt;
+    &lt;div&gt;WhatsApp: @post(share_count.whatsapp)&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Conditional Display</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Only show share count when it's greater than zero using Voxel's conditional visibility.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Popular Listings Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Combine with post queries to show most-shared listings by storing the count in post meta.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">PHP API</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Get Total Share Count</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>$count = Voxel_Toolkit_Share_Count::get_share_count($post_id);
+
+echo "This post has been shared " . $count . " times";</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Get Network-Specific Count</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>$facebook_shares = Voxel_Toolkit_Share_Count::get_share_count_by_network($post_id, 'facebook');
+$twitter_shares = Voxel_Toolkit_Share_Count::get_share_count_by_network($post_id, 'twitter');
+$whatsapp_shares = Voxel_Toolkit_Share_Count::get_share_count_by_network($post_id, 'whatsapp');
+
+echo "Facebook: " . $facebook_shares;</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Direct Meta Access</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Share counts are stored in post meta and can be accessed directly:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>// Total count
+$total = get_post_meta($post_id, '_vt_share_count', true);
+
+// Network-specific (prepend _vt_share_count_ to network key)
+$facebook = get_post_meta($post_id, '_vt_share_count_facebook', true);
+$twitter = get_post_meta($post_id, '_vt_share_count_twitter', true);</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tracking Flow</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Visitor clicks a share button in Voxel's share menu</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>JavaScript detects the click and identifies the network</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>AJAX request is sent with post ID and network name</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Server increments both total count and network-specific count</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Counts are stored in post meta for fast retrieval</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Supported Share Menus</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function tracks shares from:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Voxel's built-in share menu</strong> - Native share popup</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Toolkit's Share Menu function</strong> - Extended share options</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Available Networks</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The following networks are tracked and have dedicated dynamic tags:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Network</th><th>Dynamic Tag</th><th>Meta Key</th></tr></thead><tbody><tr><td>Facebook</td><td><code>@post(share_count.facebook)</code></td><td><code>_vt_share_count_facebook</code></td></tr><tr><td>X/Twitter</td><td><code>@post(share_count.twitter)</code></td><td><code>_vt_share_count_twitter</code></td></tr><tr><td>LinkedIn</td><td><code>@post(share_count.linkedin)</code></td><td><code>_vt_share_count_linkedin</code></td></tr><tr><td>WhatsApp</td><td><code>@post(share_count.whatsapp)</code></td><td><code>_vt_share_count_whatsapp</code></td></tr><tr><td>Telegram</td><td><code>@post(share_count.telegram)</code></td><td><code>_vt_share_count_telegram</code></td></tr><tr><td>Pinterest</td><td><code>@post(share_count.pinterest)</code></td><td><code>_vt_share_count_pinterest</code></td></tr><tr><td>Reddit</td><td><code>@post(share_count.reddit)</code></td><td><code>_vt_share_count_reddit</code></td></tr><tr><td>Tumblr</td><td><code>@post(share_count.tumblr)</code></td><td><code>_vt_share_count_tumblr</code></td></tr><tr><td>Threads</td><td><code>@post(share_count.threads)</code></td><td><code>_vt_share_count_threads</code></td></tr><tr><td>Bluesky</td><td><code>@post(share_count.bluesky)</code></td><td><code>_vt_share_count_bluesky</code></td></tr><tr><td>SMS</td><td><code>@post(share_count.sms)</code></td><td><code>_vt_share_count_sms</code></td></tr><tr><td>Line</td><td><code>@post(share_count.line)</code></td><td><code>_vt_share_count_line</code></td></tr><tr><td>Viber</td><td><code>@post(share_count.viber)</code></td><td><code>_vt_share_count_viber</code></td></tr><tr><td>Snapchat</td><td><code>@post(share_count.snapchat)</code></td><td><code>_vt_share_count_snapchat</code></td></tr><tr><td>KakaoTalk</td><td><code>@post(share_count.kakaotalk)</code></td><td><code>_vt_share_count_kakaotalk</code></td></tr><tr><td>Email</td><td><code>@post(share_count.email)</code></td><td><code>_vt_share_count_email</code></td></tr><tr><td>Copy Link</td><td><code>@post(share_count.copy-link)</code></td><td><code>_vt_share_count_copy-link</code></td></tr><tr><td>Native Share</td><td><code>@post(share_count.native-share)</code></td><td><code>_vt_share_count_native-share</code></td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Shares Not Being Tracked</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the Share Count function is enabled in Toolkit Settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for JavaScript errors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the share menu is from Voxel or Toolkit (custom share buttons won't track)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any caching plugins and try again</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Dynamic Tag Returns 0</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>The post may not have been shared yet</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify you're using the tag in a post context (not outside a loop)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the function was enabled before shares occurred</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Network Count Not Matching Total</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>This is normal - total is all shares, network counts are specific</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Some shares may be from untracked or custom networks</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Network-specific tracking was added in v1.5.7 - older shares only have totals</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Share Count function enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel share menu or Toolkit Share Menu in use</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

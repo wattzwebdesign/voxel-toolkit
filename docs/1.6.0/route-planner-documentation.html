@@ -1,0 +1,596 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Route Planner Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Route Planner widget displays interactive routes with turn-by-turn directions. Pull waypoints from repeater fields, post relations, or individual location fields to create multi-stop routes on an interactive map.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display routes between multiple locations on an interactive map. Users can switch travel modes, reorder stops, and export routes to Google Maps, Apple Maps, or GPX files. Perfect for tour guides, delivery routes, property tours, or any multi-stop itinerary.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Multiple data sources (repeater, post relation, post fields)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Map providers: Google Maps, Mapbox, OpenStreetMap</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Travel modes: driving, walking, cycling, transit</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User GPS location as starting point</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag to reorder waypoints</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Route optimization</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Turn-by-turn directions panel</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Export to Google Maps, Apple Maps, GPX</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Full Elementor styling controls</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Widgets</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Route Planner</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add to Template</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your page or template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Route Planner (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to your layout</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure data source and settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Data Sources</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The widget can pull waypoint locations from three types of sources:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Repeater Field</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use a repeater field containing location sub-fields. Each repeater row becomes a waypoint.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Select the repeater field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select the location sub-field within the repeater</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Optionally select a title sub-field for waypoint names</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Post Relation Field</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use a post relation field to pull locations from related posts.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Select the post relation field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select the location field on the related post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Related post titles are used as waypoint names</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Post Fields</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use multiple individual location fields from the current post.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Select multiple location fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Each field becomes a waypoint</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Field labels are used as waypoint names</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Map Providers</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Provider</th><th>Requirements</th><th>Features</th></tr></thead><tbody><tr><td><strong>Google Maps</strong></td><td>API key in Voxel settings</td><td>Best routing, transit support</td></tr><tr><td><strong>Mapbox</strong></td><td>Access token in Voxel settings</td><td>Customizable styles, good routing</td></tr><tr><td><strong>OpenStreetMap</strong></td><td>None (uses OSRM)</td><td>Free, basic routing</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Travel Modes</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users can switch between travel modes (when enabled):</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Driving</strong> - Car/vehicle routing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Walking</strong> - Pedestrian routes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Cycling</strong> - Bike-friendly routes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Transit</strong> - Public transportation (Google Maps only)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Starting Point Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Option</th><th>Description</th></tr></thead><tbody><tr><td><strong>First Waypoint</strong></td><td>Route starts from the first location in the list</td></tr><tr><td><strong>User GPS</strong></td><td>Requests user location and starts from there</td></tr><tr><td><strong>Custom Address</strong></td><td>Specify a fixed starting address</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Interactive Features</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Drag to Reorder</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users can drag waypoints in the list to reorder them. The route automatically recalculates.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Route Optimization</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Enable the "Optimize Route" button to automatically reorder stops for the shortest total distance using the nearest neighbor algorithm.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step Highlighting</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Clicking a step in the directions panel highlights that segment on the map.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Marker Popups</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Clicking map markers shows a popup with stop details.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Directions Panel</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The directions panel shows:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Step-by-step turn instructions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Distance for each step</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Total route distance and duration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Waypoint list with addresses</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Export Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users can export routes for use in other apps:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Open in Google Maps</strong> - Opens route in Google Maps app/website</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Open in Apple Maps</strong> - Opens route in Apple Maps (iOS/macOS)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Download GPX</strong> - Downloads GPX file for GPS devices</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Styling Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Full Elementor styling controls for:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Map</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Height</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Box shadow</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Route Line</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Line color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Line width</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Line opacity</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Markers</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Custom marker icons</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Marker size</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Marker color</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Panel</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Background color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text colors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tour Guides</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Create walking tours with multiple stops, exportable for tourists to follow.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Property Tours</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show routes between multiple properties for real estate viewings.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Delivery Routes</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display optimized delivery routes with multiple stops.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Road Trips</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Plan road trip itineraries with multiple destinations.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Map Not Loading</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that API keys are configured in Voxel settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the map provider is selected correctly</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for API errors</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Route Not Calculating</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure at least 2 waypoints have valid coordinates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that locations have latitude/longitude data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the data source is configured correctly</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">GPS Location Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Site must use HTTPS for geolocation</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User must grant location permission</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Falls back to first waypoint if denied</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Map API key (Google/Mapbox) or OSRM for OpenStreetMap</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

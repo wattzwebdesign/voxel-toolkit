@@ -1,0 +1,424 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Anonymous Timeline</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Anonymous Timeline function lets users post on timelines, walls, and reviews anonymously. Each user gets a unique anonymous ID that stays consistent across their anonymous posts while keeping their identity hidden.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Sometimes users want to share feedback or participate in discussions without revealing their identity. This function adds a "Post Anonymously" option that replaces their name, avatar, and profile link with anonymous placeholders while maintaining moderation capabilities for administrators.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>"Post Anonymously" checkbox on timeline posts and comments</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Unique persistent Anonymous Member ID per user</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works on reviews, post walls, post timelines, and user timelines</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Administrators can still see real identities</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Anonymous likes are also anonymized</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Prevents reposting/quoting anonymous posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Anonymous ID column in WordPress Users table</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Anonymous Timeline</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>The "Post Anonymously" option will now appear on all timeline feeds.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Posting Anonymously</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>User opens the timeline post composer</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>They check the "Post Anonymously" checkbox</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>They write and submit their post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The post displays with "Anonymous Member #12345" instead of their name</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Anonymous Member ID</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Each user gets a unique 5-digit Anonymous Member ID:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Generated when they first post anonymously</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Stays the same for all their anonymous posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Allows community members to recognize consistent anonymous contributors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Cannot be traced back to the user by other members</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">What Gets Hidden</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Name</strong> - Replaced with "Anonymous Member #XXXXX"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Avatar</strong> - Replaced with generic anonymous avatar</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Profile Link</strong> - Removed, clicking name does nothing</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Supported Locations</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Anonymous posting works on all Voxel timeline feeds:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Feed Type</th><th>Description</th></tr></thead><tbody><tr><td><strong>Post Reviews</strong></td><td>Reviews left on listings</td></tr><tr><td><strong>Post Wall</strong></td><td>Wall posts on listing pages</td></tr><tr><td><strong>Post Timeline</strong></td><td>Timeline posts on listings</td></tr><tr><td><strong>User Timeline</strong></td><td>User profile timelines</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Administrator Access</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Site administrators can always see the real identity of anonymous posters:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Real name shown in parentheses after anonymous ID</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Profile link still works for admins</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enables proper moderation of anonymous content</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Admin access based on user role</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Anonymous Likes</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When a user likes a post while they have posted anonymously:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Their like shows as coming from their anonymous ID</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Maintains anonymity even for engagement</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Restrictions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To prevent misuse, some actions are blocked for anonymous posts:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Reposting</strong> - Cannot repost an anonymous post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Quoting</strong> - Cannot quote an anonymous post</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>This prevents anonymous content from being shared in ways that could compromise the original poster's intent.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Admin Tools</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Users Table Column</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>An "Anonymous ID" column is added to the WordPress Users table showing each user's anonymous ID (if they have one).</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Deactivation Warning</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When disabling this function, a warning appears that all anonymous posts will become public and show real identities. This cannot be undone.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Honest Reviews</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users may feel more comfortable leaving honest feedback when they can do so anonymously.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Sensitive Topics</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>For communities discussing sensitive topics, anonymity encourages participation.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Whistleblowing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users can report issues or concerns without fear of identification.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Community Questions</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users can ask questions they might find embarrassing without revealing who they are.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Anonymous Option Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify you're logged in</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser cache and refresh</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Identity Still Visible</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>The "Post Anonymously" checkbox must be checked before posting</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Existing posts cannot be made anonymous retroactively</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Admins will always see real identities - this is by design</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Anonymous ID Changed</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Anonymous IDs are permanent once assigned</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>If it changed, the user may have a different account</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel timeline features in use</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

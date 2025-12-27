@@ -1,0 +1,353 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Auto Promotion</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Auto Promotion function automatically boosts new posts to the top of listings for a specified duration. When a post is published, it receives a temporary priority boost that reverts after the promotion period ends.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Give new listings visibility by automatically promoting them when published. The promotion uses Voxel's priority system to boost posts higher in search results, then automatically reverts when the promotion period expires.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Automatic priority boost on publish</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable promotion duration (hours, days, weeks)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable priority level</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Automatic reversion when expired</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Per-post type settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with Voxel frontend submissions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Cron-based cleanup (runs every 5 minutes)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Auto Promotion</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Post Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>In the <strong>Post Types</strong> section, select which post types should have auto promotion</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>For each selected post type, configure:
+<ul>
+<li><strong>Priority Level:</strong> The boost amount (higher = more visibility)</li>
+<li><strong>Duration:</strong> How long the promotion lasts</li>
+<li><strong>Duration Unit:</strong> Hours, days, or weeks</li>
+</ul>
+</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Configuration Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Example</th></tr></thead><tbody><tr><td><strong>Priority Level</strong></td><td>The voxel:priority value to set</td><td>10, 50, 100</td></tr><tr><td><strong>Duration</strong></td><td>How long the promotion lasts</td><td>7</td></tr><tr><td><strong>Duration Unit</strong></td><td>Time unit for duration</td><td>hours, days, weeks</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Recommended Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>New Listing Boost:</strong> Priority 50, Duration 7 days</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Short Visibility Burst:</strong> Priority 100, Duration 24 hours</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Extended Promotion:</strong> Priority 25, Duration 2 weeks</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Promotion Process</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>User publishes a new post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Function detects the publish event</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Original priority is saved (or 0 if none)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configured priority is applied to voxel:priority meta</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Promotion data is stored with expiration time</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Expiration Process</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Cron job runs every 5 minutes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Checks for expired promotions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Reverts priority to original value</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Removes promotion tracking data</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">New Listing Visibility</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Help new listings get initial visibility by featuring them prominently for their first week.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Fair Rotation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Give all new listings equal opportunity for visibility regardless of when they're posted.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Event Announcements</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Boost new events for a short period to maximize early registration.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Monitoring Promotions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Active promotions are stored in the WordPress options table. You can view them via:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Option name: <code>voxel_toolkit_active_promotions</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Contains post IDs, original priority, and expiration times</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Promotion Not Applied</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the post type is configured</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure priority and duration are greater than 0</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check the post is actually being published (not updated)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Promotion Not Expiring</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify WordPress cron is running</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the cleanup cron is scheduled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use WP Crontrol plugin to verify cron events</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Priority Not Reverting Correctly</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that original priority was saved</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify no other plugins are modifying priority</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>WordPress cron enabled</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

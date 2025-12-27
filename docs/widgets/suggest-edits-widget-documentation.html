@@ -1,0 +1,576 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Suggest Edits Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Suggest Edits widget allows visitors to suggest corrections or updates to listing information. Users can propose changes to specific fields, upload proof photos, and mark listings as permanently closed.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Enable community-driven data accuracy by letting users suggest edits to post fields. The widget displays a button that opens a modal showing current values and input fields for suggested changes. Submissions are stored for admin review before being applied.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Field-by-field edit suggestions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Current value display for comparison</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Photo upload for proof of changes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Permanently closed" option</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Don't know but incorrect" checkbox</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Taxonomy and select field support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Work hours editor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Guest submission support</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Suggest Edits</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure which post types can receive suggestions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Optionally enable guest submissions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add Widget to Template</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your single listing template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Suggest Edits (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to your desired location</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select which fields users can suggest edits for</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Content Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Button Text</strong></td><td>Text on the trigger button</td><td>"Suggest an edit"</td></tr><tr><td><strong>Button Icon</strong></td><td>Optional icon for the button</td><td>None</td></tr><tr><td><strong>Modal Title</strong></td><td>Heading in the popup modal</td><td>"Suggest an edit"</td></tr><tr><td><strong>Input Placeholder</strong></td><td>Placeholder for text inputs</td><td>"Enter new value..."</td></tr><tr><td><strong>Fields to Show</strong></td><td>Which fields users can edit</td><td>Select from post type</td></tr><tr><td><strong>Submit Button Text</strong></td><td>Text on submit button</td><td>"Submit"</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Feature Toggles</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Show "Don't know" Checkbox</strong></td><td>Allow marking as incorrect without new value</td><td>Yes</td></tr><tr><td><strong>Show "Permanently Closed"</strong></td><td>Option to mark listing as closed</td><td>Yes</td></tr><tr><td><strong>Enable Photo Upload</strong></td><td>Allow uploading proof photos</td><td>Yes</td></tr><tr><td><strong>Max Photos</strong></td><td>Maximum photos per submission</td><td>5</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Translation Labels</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Default Value</th></tr></thead><tbody><tr><td>Current Value Label</td><td>"Current value:"</td></tr><tr><td>Suggested Value Label</td><td>"Suggested value:"</td></tr><tr><td>Incorrect Checkbox Label</td><td>"Don't know, but this is incorrect"</td></tr><tr><td>Add Photos Label</td><td>"Add Photos (proof of changes)"</td></tr><tr><td>Upload Photos Button</td><td>"Upload Photos"</td></tr><tr><td>Permanently Closed Label</td><td>"Mark as Permanently Closed"</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Styling Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Suggest Button</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Text and background color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius and color</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Field Title</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Input Fields</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Border color and radius</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Values Labels</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Upload Button</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Icon and text color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Background color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border color and radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Modal</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Background color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Supported Field Types</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The widget supports editing these Voxel field types:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Text fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Textarea/Description</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Number fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select/Multiselect fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Taxonomy fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Location fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Work hours fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Image fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Rich text/Editor fields</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Excluded field types: timezone, switcher, file, repeater, recurring-date, post-relation, time, and UI fields.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Work Hours Editor</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>For work hours fields, a special popup editor appears allowing users to:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>View current schedule grouped by days</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add new schedule groups</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set open/closed status for each group</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure multiple time slots per day</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save suggested hours</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Guest Submissions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When guest submissions are enabled:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Name and email fields appear in the modal</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Email is required for submission</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Guest data is stored with the suggestion</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Business Directories</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let visitors suggest updated hours, phone numbers, or addresses for local businesses.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Restaurant Listings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allow customers to report menu changes, new hours, or closures.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Event Venues</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Enable users to suggest capacity updates or amenity changes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Real Estate</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let visitors report sold properties or price changes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Reviewing Suggestions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Suggestions are stored and can be reviewed in:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Pending Suggestions</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>View all pending suggestions by post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Compare current vs suggested values</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Approve or reject each suggestion</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>View uploaded proof photos</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify Suggest Edits function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check current post type is in allowed list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure fields are selected in widget settings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">No Fields Available</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Widget only shows fields with values</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Empty fields are automatically excluded</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Some field types (UI, repeater) are excluded</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Submission Fails</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>At least one change must be made</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Guests must provide email</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for AJAX errors</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Suggest Edits function enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Post type with editable Voxel fields</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

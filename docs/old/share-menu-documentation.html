@@ -1,0 +1,284 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Share Menu</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Share Menu function adds additional social sharing options to Voxel's share popup. Expand beyond the default sharing platforms to include Pinterest, Email, Threads, Bluesky, SMS, and popular messaging apps.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Give your users more ways to share your listings and content. This function hooks into Voxel's share system to add new social platforms that match modern sharing behavior, including newer platforms like Threads and Bluesky.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Adds 9 new sharing options</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Custom SVG icons for each platform</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Properly formatted share URLs</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with Voxel's native share popup</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Mobile-friendly sharing (SMS, messaging apps)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>International messaging apps (Line, KakaoTalk, Viber)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Share Menu</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>The new sharing options will automatically appear in Voxel share popups across your site.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Added Share Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Platform</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td><strong>Pinterest</strong></td><td>Social</td><td>Create pins from listing images</td></tr><tr><td><strong>Email</strong></td><td>Direct</td><td>Opens email client with pre-filled subject/body</td></tr><tr><td><strong>Threads</strong></td><td>Social</td><td>Meta's text-based social platform</td></tr><tr><td><strong>Bluesky</strong></td><td>Social</td><td>Decentralized social network</td></tr><tr><td><strong>SMS</strong></td><td>Mobile</td><td>Opens SMS app on mobile devices</td></tr><tr><td><strong>Line</strong></td><td>Messaging</td><td>Popular in Japan, Thailand, Taiwan</td></tr><tr><td><strong>Viber</strong></td><td>Messaging</td><td>Popular in Eastern Europe, Middle East</td></tr><tr><td><strong>Snapchat</strong></td><td>Social</td><td>Share to Snapchat stories/friends</td></tr><tr><td><strong>KakaoTalk</strong></td><td>Messaging</td><td>Popular in South Korea</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Share URL Formats</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Pinterest</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>https://pinterest.com/pin/create/button/?url={link}&description={title}</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Email</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>mailto:?subject={title}&body={link}</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Threads</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>https://www.threads.net/intent/post?text={title} {link}</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Bluesky</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>https://bsky.app/intent/compose?text={title} {link}</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">SMS</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>sms:?body={title} {link}</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Image-Heavy Sites</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Pinterest is perfect for directories with strong visual content like real estate, restaurants, or travel.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">International Audiences</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Include Line, KakaoTalk, and Viber to serve users in Asia and Europe where these apps dominate.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Mobile Users</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>SMS sharing is quick and easy for mobile visitors who want to share with contacts.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">New Platforms</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Threads and Bluesky reach users on emerging social platforms where competition is lower.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Share Options Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any caching (page cache, browser cache)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that Voxel share popup is working</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure share widget/action is added to template</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Icons Not Displaying</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify SVG icon files exist in plugin assets folder</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for CSS conflicts hiding icons</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Fallback to Voxel share icon if platform icon is missing</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">SMS/Email Not Working on Desktop</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>SMS requires a mobile device or SMS-capable desktop app</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Email requires a configured email client on the device</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>These are protocol links that depend on device configuration</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel share functionality in use</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

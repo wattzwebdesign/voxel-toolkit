@@ -1,0 +1,504 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Add Category</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Add Category function allows users to add new taxonomy terms directly from the frontend Create Post form. When the category they need doesn't exist, they can suggest a new one instead of being stuck.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Sometimes your taxonomy doesn't include every possible category users might need. This function adds an "Add New" option to taxonomy fields so users can suggest new terms. You can optionally require admin approval before new terms appear to other users.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Per-field toggle to enable term creation</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Role-based visibility with Voxel override system</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Optional approval workflow</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>App Events for admin notifications</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User instructions for pending terms</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Add Category</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Enable on Taxonomy Fields</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Voxel &gt; Post Types</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Edit the post type with taxonomy fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click on a taxonomy field to edit it</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find the <strong>Allow Adding New Terms</strong> toggle</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enable it and configure approval settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the post type</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Field Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Each taxonomy field can be configured with:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Allow Adding Terms</strong></td><td>Enable the "Add New" option</td><td>Disabled</td></tr><tr><td><strong>Require Approval</strong></td><td>New terms need admin approval</td><td>Enabled</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Role-Based Access</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You can control which user roles can add new terms using Voxel's override system:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>In the taxonomy field settings, find the role overrides</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add overrides for specific roles</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enable or disable term creation per role</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Example Configurations</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Only editors can add</strong> - Disable for all, enable override for Editor role</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Premium users can add</strong> - Enable override for premium membership level</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Everyone can add</strong> - Enable for all with approval required</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Approval Workflow</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When approval is required:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>User enters a new term name</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Term is created with "pending" status</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User sees message that term is pending approval</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Admin receives notification (if configured)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Admin approves or rejects the term</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Once approved, term appears for all users</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Pending Terms</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Terms pending approval:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Are visible only to the user who created them</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Can be used by that user on their posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Won't appear in search filters</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Are hidden from other users until approved</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">App Events</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Notify admins when new terms are submitted:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Voxel &gt; App Events</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>New Term Submitted</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure email or in-app notification</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Include term name and taxonomy in the message</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Available dynamic tags for the notification:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Term name</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Taxonomy name</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User who submitted</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Post type</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Managing Terms</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Approve or reject pending terms in WordPress:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to the taxonomy in WordPress admin (e.g., Categories)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Look for terms with "Pending Approval" status</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Edit the term to approve (remove pending flag)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Or delete the term to reject</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Service Categories</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let service providers suggest new service types that aren't in your predefined list.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Product Tags</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allow sellers to create new product tags for better organization.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Location Subcategories</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let users add neighborhood or district names that aren't in your location taxonomy.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Skill Tags</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allow professionals to add skill tags for their profiles.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">User Experience</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Adding a New Term</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>User opens the taxonomy field dropdown</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Types to search for their category</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>If not found, "Add New" option appears</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User clicks to add their new term</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Message shows term is pending (if approval required)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User can continue with their post</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Add New Option Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify "Allow Adding Terms" is enabled on the field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check role-based overrides aren't blocking your user</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for a term that doesn't exist to trigger the option</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">New Term Not Visible to Others</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>This is expected if approval is required</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Admin needs to approve the term first</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check the taxonomy for pending terms</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Admin Not Getting Notifications</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Configure the App Event in Voxel > App Events</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify email sending is working in WordPress</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Taxonomy fields in your post types</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

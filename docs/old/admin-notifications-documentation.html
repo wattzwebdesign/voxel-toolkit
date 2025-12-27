@@ -1,0 +1,383 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Admin Notifications</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Admin Notifications function extends Voxel's notification system to send admin notifications to multiple users based on roles and individual selection. This ensures important site events reach all relevant administrators.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>By default, Voxel sends admin notifications to a single designated admin user. This function allows you to configure multiple recipients for all Voxel app events, either by role or by selecting specific user accounts.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Send admin notifications to multiple users</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Role-based recipient selection</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Individual user selection</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with all Voxel app events</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Includes email and in-app notifications</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Integrates with SMS Notifications (if enabled)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Admin Notifications</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Recipients</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You can configure recipients in two ways:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">By User Role</h4>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>In the <strong>User Roles</strong> section, select which roles should receive admin notifications</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>All users with the selected roles will receive notifications</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Common selections: Administrator, Editor, Shop Manager</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">By Individual User</h4>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>In the <strong>Selected Users</strong> section, search for and select specific users</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>These users will receive notifications regardless of their role</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Useful for including specific team members or managers</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#e8f5e9"},"border":{"left":{"color":"#4caf50","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#e8f5e9;border-left-color:#4caf50;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Note:</strong> The default Voxel admin user (set in Voxel Settings) will continue to receive notifications as usual. This function adds additional recipients without affecting the default behavior.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Event Processing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When any Voxel app event fires (post submission, order placed, user registration, etc.):</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel processes the event normally (default admin receives notification)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>This function identifies additional configured recipients</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Each additional recipient receives the same notification (email and/or in-app)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>If SMS Notifications is enabled, SMS is also sent to additional recipients</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Notification Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td><strong>Email</strong></td><td>Uses Voxel's email templates with dynamic tags</td></tr><tr><td><strong>In-App</strong></td><td>Appears in user's notification center</td></tr><tr><td><strong>SMS</strong></td><td>Sent if SMS Notifications is enabled and configured</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Supported Events</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This function works with all Voxel app events, including:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Post submitted for review</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Post approved/published</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>New user registration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User login</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Order placed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Order status changes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Booking requests</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Review submissions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Message notifications</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>And all other Voxel app events</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Multiple Administrators</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Ensure all site administrators are notified of important events like new submissions or orders.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Department-Specific Notifications</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Send notifications to specific team members based on their role (e.g., shop managers for orders).</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Backup Notification Recipients</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add backup recipients to ensure notifications are seen even if the primary admin is unavailable.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">SMS Integration</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When the SMS Notifications function is also enabled:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Additional admin recipients can also receive SMS notifications</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>SMS is sent based on the same event triggers</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Recipients must have a phone number configured in their profile</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Notifications Not Being Received</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled in Voxel Toolkit &gt; Functions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that users are properly selected (by role or individually)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the event has admin notifications enabled in Voxel App Events</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check email deliverability (spam folders, SMTP configuration)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Duplicate Notifications</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If a user is both the default Voxel admin AND in your additional recipients list, they will only receive one notification (duplicates are filtered).</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Some Events Not Triggering</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure the event has admin notification enabled in Voxel's App Events settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the event is actually being triggered (use test scenarios)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify Voxel theme is fully active and configured</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active and configured)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel App Events configured with admin notifications</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

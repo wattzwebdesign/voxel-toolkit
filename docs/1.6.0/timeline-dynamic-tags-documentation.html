@@ -1,0 +1,333 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Timeline & Reviews Dynamic Tags</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Timeline Dynamic Tags function provides dynamic tags to access the latest and oldest entries from post timelines, walls, and reviews. Display review snippets, last review dates, or timeline content anywhere in your templates.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Voxel's timelines and reviews store valuable content that you might want to display in other parts of your templates. These dynamic tags let you pull in the latest or oldest review, timeline post, or wall post and display specific properties like the content, author, score, or date.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Access latest or oldest entries from reviews, timeline, and wall</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Get content, author, score, date, and link</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use with date modifiers for formatting</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Results cached for performance</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Returns empty string when no entries exist</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Timeline Dynamic Tags</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>The dynamic tags will now be available for use in your templates.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Available Dynamic Tags</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Reviews Tags</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Dynamic Tag</th><th>Description</th></tr></thead><tbody><tr><td><code>@post(vt_reviews.latest.content)</code></td><td>Content of the latest review</td></tr><tr><td><code>@post(vt_reviews.latest.author)</code></td><td>Display name of the reviewer</td></tr><tr><td><code>@post(vt_reviews.latest.score)</code></td><td>Review score (1-5)</td></tr><tr><td><code>@post(vt_reviews.latest.date)</code></td><td>Date of the review</td></tr><tr><td><code>@post(vt_reviews.latest.link)</code></td><td>Direct link to the review</td></tr><tr><td><code>@post(vt_reviews.oldest.*)</code></td><td>Same properties for oldest review</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Timeline Tags</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Dynamic Tag</th><th>Description</th></tr></thead><tbody><tr><td><code>@post(vt_timeline.latest.content)</code></td><td>Content of the latest timeline post</td></tr><tr><td><code>@post(vt_timeline.latest.author)</code></td><td>Display name of the author</td></tr><tr><td><code>@post(vt_timeline.latest.date)</code></td><td>Date of the post</td></tr><tr><td><code>@post(vt_timeline.latest.link)</code></td><td>Direct link to the post</td></tr><tr><td><code>@post(vt_timeline.oldest.*)</code></td><td>Same properties for oldest post</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Wall Tags</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Dynamic Tag</th><th>Description</th></tr></thead><tbody><tr><td><code>@post(vt_wall.latest.content)</code></td><td>Content of the latest wall post</td></tr><tr><td><code>@post(vt_wall.latest.author)</code></td><td>Display name of the author</td></tr><tr><td><code>@post(vt_wall.latest.date)</code></td><td>Date of the post</td></tr><tr><td><code>@post(vt_wall.latest.link)</code></td><td>Direct link to the post</td></tr><tr><td><code>@post(vt_wall.oldest.*)</code></td><td>Same properties for oldest post</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:group {"style":{"color":{"background":"#e8f5e9"},"border":{"left":{"color":"#4caf50","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#e8f5e9;border-left-color:#4caf50;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Note:</strong> Timeline and wall posts do not have a score property - only reviews have scores.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Usage Examples</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Display Latest Review</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>"@post(vt_reviews.latest.content)"
+- @post(vt_reviews.latest.author)</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Show Review Date</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Last reviewed: @post(vt_reviews.latest.date)|date('M j, Y')</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Show Latest Review Score</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Latest rating: @post(vt_reviews.latest.score)/5</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Link to Latest Review</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>&lt;a href="@post(vt_reviews.latest.link)"&gt;Read latest review&lt;/a&gt;</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Show Time Since Last Review</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Last review: @post(vt_reviews.latest.date)|time_diff()</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Review Snippets</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display a snippet of the latest review on listing cards or headers.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Last Activity Indicators</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show when the last review or post was added to indicate active listings.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Featured Testimonials</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Pull in the latest positive review to display prominently.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">First Post Recognition</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show the original post on a listing using the oldest timeline tag.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Visibility Rules</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Combine with Elementor visibility rules to show elements only when reviews exist (when the tag is not empty).</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Performance</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Results are cached per page request:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Using multiple properties from the same entry only queries once</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Each unique source (reviews/timeline/wall) + direction (latest/oldest) is cached</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>No performance impact from using tags multiple times on the same page</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tag Returns Empty</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the post has reviews/timeline posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure you're in a post context (not outside a loop)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Score Property Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Score is only available for reviews, not timeline or wall posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that reviews have scores enabled on the post type</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Date Not Formatting</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Use the |date() modifier after the tag</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check PHP date format syntax</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Reviews or timeline enabled on the post type</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

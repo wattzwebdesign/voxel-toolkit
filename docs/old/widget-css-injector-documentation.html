@@ -1,0 +1,402 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Widget CSS Injector</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Widget CSS Injector function adds CSS Class and ID fields to Voxel widget repeater items. Target individual navbar items, user bar elements, and advanced list actions with custom CSS for advanced styling.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Voxel's widgets like Navbar, User Bar, and Advanced List contain repeater items that normally can't be individually targeted with CSS. This function adds CSS Class and ID fields to each item, allowing precise styling and JavaScript targeting.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Adds CSS Class field to widget items</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Adds CSS ID field to widget items</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with Navbar (VX) widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with User Bar (VX) widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with Advanced List (VX) widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>JavaScript-based injection for reliability</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Multiple classes supported (space-separated)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Widget CSS Injector</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add Classes/IDs to Widget Items</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit a page with Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add or edit a supported Voxel widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Expand a repeater item</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find the <strong>CSS Class (VT)</strong> and <strong>CSS ID (VT)</strong> fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter your custom class or ID</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the page</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Supported Widgets</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Widget</th><th>Repeater Field</th><th>Target Element</th></tr></thead><tbody><tr><td><strong>Navbar (VX)</strong></td><td>Navbar items</td><td>li elements in .ts-nav</td></tr><tr><td><strong>User Bar (VX)</strong></td><td>User bar items</td><td>li elements in .user-area-menu</td></tr><tr><td><strong>Advanced List (VX)</strong></td><td>Action items</td><td>li elements in .ts-advanced-list</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How to Use</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Adding a CSS Class</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Field: CSS Class (VT)
+Value: my-custom-class
+
+// Or multiple classes:
+Value: class-one class-two special-item</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Adding a CSS ID</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Field: CSS ID (VT)
+Value: my-unique-id</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:group {"style":{"color":{"background":"#e3f2fd"},"border":{"left":{"color":"#2196f3","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#e3f2fd;border-left-color:#2196f3;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Tip:</strong> IDs should be unique on the page. Don't use the same ID on multiple items.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Example CSS Usage</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Target by Class</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>/* Style a specific navbar item */
+.ts-nav li.featured-link {
+    background: linear-gradient(45deg, #ff6b6b, #feca57);
+    border-radius: 8px;
+}
+
+.ts-nav li.featured-link a {
+    color: white !important;
+}</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Target by ID</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>/* Style the login button specifically */
+#login-button {
+    background-color: #4CAF50;
+    font-weight: bold;
+}
+
+/* Add animation to a specific item */
+#animated-item {
+    animation: pulse 2s infinite;
+}</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">JavaScript Targeting</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>// Target by ID
+document.getElementById('my-special-item').addEventListener('click', function() {
+    // Custom functionality
+});
+
+// Target by class
+document.querySelectorAll('.highlight-item').forEach(function(el) {
+    // Apply changes to all highlighted items
+});</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Highlight Important Links</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add a special class to call-to-action navbar items for distinctive styling.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Conditional Visibility</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use classes with JavaScript to show/hide items based on conditions.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Animation Targets</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Apply CSS animations to specific menu items using targeted classes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Analytics Tracking</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add IDs to track clicks on specific navigation elements with Google Analytics.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Function adds CSS Class and ID controls to widget repeaters</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>When page renders, CSS data is stored as data attribute on widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>JavaScript reads the data attribute after DOM loads</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Classes and IDs are applied to the correct li elements</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>This JavaScript-based approach ensures classes are applied even after Voxel's Vue.js components render.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Fields Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear Elementor cache (Elementor > Tools > Regenerate CSS)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Refresh the Elementor editor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check you're editing a supported widget</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Classes Not Applied</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>View page source to confirm data-vt-css attribute exists</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for JavaScript errors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure no caching is serving old JavaScript</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify item index matches expected element</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">CSS Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Use browser inspector to verify class is applied</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check CSS specificity (may need !important)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure your CSS is loaded after Voxel styles</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor page builder</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>JavaScript enabled in browser</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

@@ -1,0 +1,425 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Membership Notifications</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Membership Notifications function sends automated email notifications to users before their Voxel membership expires. Help users renew on time with configurable reminder emails.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Keep your members informed about upcoming subscription renewals with automated reminder emails. Configure multiple notification triggers based on days or hours before expiration.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Multiple configurable notification triggers</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Days or hours before expiration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customizable email subject and body</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dynamic tags for personalization</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with both legacy and new Voxel membership formats</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Test email functionality</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Manual trigger option</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Automatic hourly checks at 6 AM EST</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Membership Notifications</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Notifications</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add one or more notification triggers:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Click <strong>Add Notification</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set the timing (e.g., "7 days" or "24 hours" before expiration)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter the email subject line</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Write the email body (HTML supported)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Dynamic Tags</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Personalize your emails with these dynamic tags:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Tag</th><th>Description</th><th>Example Output</th></tr></thead><tbody><tr><td><code>{expiration_date}</code></td><td>Membership expiration date</td><td>January 15, 2025</td></tr><tr><td><code>{amount}</code></td><td>Subscription amount</td><td>25.00</td></tr><tr><td><code>{currency}</code></td><td>Currency code</td><td>USD</td></tr><tr><td><code>{plan_name}</code></td><td>Membership plan name</td><td>Premium Plan</td></tr><tr><td><code>{remaining_days}</code></td><td>Days until expiration</td><td>7</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Example Email Template</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p><strong>Subject:</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Your {plan_name} expires in {remaining_days} days</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p><strong>Body:</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>&lt;p&gt;Hello,&lt;/p&gt;
+
+&lt;p&gt;Your &lt;strong&gt;{plan_name}&lt;/strong&gt; membership will expire on &lt;strong&gt;{expiration_date}&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;To continue enjoying all the benefits of your membership, please renew before the expiration date.&lt;/p&gt;
+
+&lt;p&gt;Renewal amount: {currency} {amount}&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://yoursite.com/membership/"&gt;Renew Now&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Thank you for being a valued member!&lt;/p&gt;</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Recommended Notification Schedule</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Consider setting up multiple reminders:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Timing</th><th>Purpose</th></tr></thead><tbody><tr><td>30 days</td><td>Early heads-up for annual plans</td></tr><tr><td>7 days</td><td>Primary reminder</td></tr><tr><td>3 days</td><td>Urgent reminder</td></tr><tr><td>24 hours</td><td>Final reminder</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Automatic Checking</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>A WordPress cron job runs hourly</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Notifications are sent at 6:00 AM Eastern Time daily</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Each user receives each notification only once (tracked in user meta)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Membership Format Support</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function supports both:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Legacy format:</strong> Stripe subscription data with <code>current_period_end</code> timestamp</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>New format:</strong> Voxel's updated billing structure with <code>billing.current_period.end</code></li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Testing</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Send Test Email</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Configure at least one notification</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter a test email address</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select which notification to test</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Send Test Email</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check inbox for the test email with sample data</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Manual Trigger</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To immediately process all notifications (useful for testing):</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Click the <strong>Run Manual Check</strong> button</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>View the results showing processed users and sent notifications</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Reduce Churn</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Remind users before their membership lapses to encourage timely renewals.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Payment Preparation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Give users advance notice so they can ensure payment methods are updated.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Upgrade Opportunities</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use expiration reminders to promote plan upgrades or annual subscriptions.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Emails Not Sending</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that notifications are configured with valid subject and body</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure WordPress cron is running (use WP Crontrol plugin to verify)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Test email deliverability with SMTP plugin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try the manual trigger to see processing stats</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Users Receiving Duplicate Emails</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function tracks sent notifications in user meta. If duplicates occur:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check the user meta key <code>voxel_toolkit_membership_notifications_sent</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear this meta to reset notification history</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Wrong Expiration Date Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that Voxel membership data is properly synced with Stripe</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the membership format (legacy vs new) is being detected correctly</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use the manual trigger to debug and view processing stats</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active with membership system configured)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Active Voxel memberships with expiration dates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>WordPress cron enabled (or alternative cron setup)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

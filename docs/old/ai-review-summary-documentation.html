@@ -1,0 +1,631 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">AI Review Summary</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Generate AI-powered review summaries and category opinions for your Voxel listings using ChatGPT.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The AI Review Summary feature uses OpenAI's ChatGPT API to automatically generate intelligent summaries of your Voxel listing reviews. Similar to TripAdvisor's review summaries, this feature analyzes all reviews for a listing and produces:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li><strong>Review Summaries:</strong> A concise paragraph highlighting the main strengths and weaknesses mentioned by reviewers</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Category Opinions:</strong> One-word sentiment indicators for specific aspects like Food, Service, Atmosphere, Value, etc.</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#e7f3ff"},"border":{"radius":"6px"}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="border-radius:6px;background-color:#e7f3ff"><!-- wp:paragraph {"style":{"elements":{"link":{"color":{"text":"#004085"}}},"color":{"text":"#004085"}}} -->
+<p class="has-text-color has-link-color" style="color:#004085"><strong>How it works:</strong> When a visitor views a page with the shortcode, the system fetches all reviews from the Voxel timeline, sends them to ChatGPT for analysis, and displays the AI-generated summary. Results are cached to minimize API costs.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup &amp; Configuration</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Feature</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p><strong>1. Navigate to Voxel Toolkit Settings</strong><br>Go to <strong>WordPress Admin → Voxel Toolkit → Settings</strong> and find the "AI Review Summary" function in the list.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>2. Enable the Toggle</strong><br>Click the toggle switch to enable the AI Review Summary feature.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Your OpenAI API Key</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p><strong>3. Get an OpenAI API Key</strong><br>Visit <a href="https://platform.openai.com/api-keys" target="_blank" rel="noreferrer noopener">platform.openai.com/api-keys</a> to create an API key. You'll need an OpenAI account with billing set up.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>4. Enter Your API Key</strong><br>Paste your OpenAI API key (starts with <code>sk-proj-...</code>) into the "OpenAI API Key" field in the AI Review Summary settings.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>5. Select Output Language</strong><br>Choose the language you want the AI to generate summaries in. Over 35 languages are supported.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>6. Save Settings</strong><br>Click "Save Changes" to activate the feature.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:group {"style":{"color":{"background":"#fff3cd"},"border":{"radius":"6px"}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="border-radius:6px;background-color:#fff3cd"><!-- wp:paragraph {"style":{"elements":{"link":{"color":{"text":"#856404"}}},"color":{"text":"#856404"}}} -->
+<p class="has-text-color has-link-color" style="color:#856404"><strong>Important:</strong> OpenAI API usage costs apply. Each summary generation uses the GPT-3.5-turbo model. Summaries are cached to minimize API calls, but clearing the cache or adding new reviews will trigger new API requests.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Available Shortcodes</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">[review_summary]</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Generates an AI-powered summary of all reviews for a post. The summary focuses on main strengths and weaknesses mentioned by users, similar to TripAdvisor summaries.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">Parameters</h4>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table class="has-fixed-layout"><thead><tr><th>Parameter</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>post_id</code></td><td>Current post</td><td>The ID of the post to summarize reviews for. If not specified, uses the current post.</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">Examples</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p><strong>Basic usage (uses current post):</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>[review_summary]</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p><strong>Specific post:</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>[review_summary post_id="123"]</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">[category_opinions]</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Creates a 2-column grid of category opinion boxes. Each box displays a category name and a one-word AI-generated sentiment summary based on what reviewers say about that aspect.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">Parameters</h4>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table class="has-fixed-layout"><thead><tr><th>Parameter</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>post_id</code></td><td>Current post</td><td>The ID of the post to analyze reviews for.</td></tr><tr><td><code>categories</code></td><td>Food, Atmosphere, Service, Value</td><td>Comma-separated list of categories to analyze. Customize based on your listing type.</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">Examples</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p><strong>Default categories (Food, Atmosphere, Service, Value):</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>[category_opinions]</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p><strong>Custom categories for a hotel:</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>[category_opinions categories="Cleanliness, Location, Staff, Comfort"]</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p><strong>Custom categories for a product:</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>[category_opinions categories="Quality, Price, Shipping, Support"]</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p><strong>Specific post with custom categories:</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>[category_opinions post_id="456" categories="Teaching, Facilities, Value, Location"]</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Using with Elementor</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You can easily add AI Review Summaries to your Voxel single listing templates using Elementor:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Method 1: Shortcode Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list"><!-- wp:list-item -->
+<li>Edit your single listing template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for the <strong>Shortcode</strong> widget and drag it to your layout</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter <code>[review_summary]</code> or <code>[category_opinions]</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The shortcode will automatically use the current listing's ID</li>
+<!-- /wp:list-item --></ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Method 2: Text Editor Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list"><!-- wp:list-item -->
+<li>Add a <strong>Text Editor</strong> widget to your template</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Switch to the Text/HTML view</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Paste your shortcode</li>
+<!-- /wp:list-item --></ol>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#e7f3ff"},"border":{"radius":"6px"}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="border-radius:6px;background-color:#e7f3ff"><!-- wp:paragraph {"style":{"elements":{"link":{"color":{"text":"#004085"}}},"color":{"text":"#004085"}}} -->
+<p class="has-text-color has-link-color" style="color:#004085"><strong>Tip:</strong> When using shortcodes in single listing templates, you don't need to specify <code>post_id</code> - the system automatically detects the current listing.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Caching &amp; Performance</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To minimize API costs and improve performance, all AI-generated content is cached:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">How Caching Works</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li><strong>Automatic caching:</strong> Summaries are stored as post meta after the first generation</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Smart invalidation:</strong> Cache automatically refreshes when new reviews are added</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Per-category caching:</strong> Each category opinion is cached separately</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Cache Refresh</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The cache is automatically invalidated when:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>The number of reviews for a post changes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>You manually clear the cache from the settings page</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Manual Cache Refresh</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To regenerate all AI summaries:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list"><!-- wp:list-item -->
+<li>Go to <strong>Voxel Toolkit → Settings</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find the AI Review Summary settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>"Refresh All Cached Summaries"</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Confirm the action</li>
+<!-- /wp:list-item --></ol>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#fff3cd"},"border":{"radius":"6px"}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="border-radius:6px;background-color:#fff3cd"><!-- wp:paragraph {"style":{"elements":{"link":{"color":{"text":"#856404"}}},"color":{"text":"#856404"}}} -->
+<p class="has-text-color has-link-color" style="color:#856404"><strong>Note:</strong> Refreshing the cache will delete all stored summaries. New API calls will be made when users next visit pages containing the shortcodes.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Language Support</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The AI can generate summaries in over 35 languages. The language setting affects the output language of all AI-generated content.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Supported Languages</h3>
+<!-- /wp:heading -->
+
+<!-- wp:columns -->
+<div class="wp-block-columns"><!-- wp:column -->
+<div class="wp-block-column"><!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>English</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Italian</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Spanish</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>French</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>German</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Portuguese</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dutch</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Russian</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Chinese</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list --></div>
+<!-- /wp:column -->
+
+<!-- wp:column -->
+<div class="wp-block-column"><!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>Japanese</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Korean</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Arabic</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Hindi</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Turkish</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Polish</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Swedish</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Danish</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Norwegian</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list --></div>
+<!-- /wp:column -->
+
+<!-- wp:column -->
+<div class="wp-block-column"><!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>Finnish</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Czech</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Hungarian</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Romanian</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Bulgarian</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Croatian</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Slovak</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Slovenian</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Estonian</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list --></div>
+<!-- /wp:column -->
+
+<!-- wp:column -->
+<div class="wp-block-column"><!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>Latvian</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Lithuanian</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Greek</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Hebrew</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Thai</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Vietnamese</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Indonesian</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Malay</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ukrainian</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->
+
+<!-- wp:group {"style":{"color":{"background":"#e7f3ff"},"border":{"radius":"6px"}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="border-radius:6px;background-color:#e7f3ff"><!-- wp:paragraph {"style":{"elements":{"link":{"color":{"text":"#004085"}}},"color":{"text":"#004085"}}} -->
+<p class="has-text-color has-link-color" style="color:#004085"><strong>Note:</strong> The AI will generate summaries in the selected language regardless of the original review language. Reviews in any language will be analyzed and summarized in your chosen output language.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Common Issues</h3>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">"No reviews available for this post"</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This message appears when:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>The post has no reviews in the Voxel timeline</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The <code>post_id</code> parameter points to an invalid post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Reviews exist but don't contain rating data</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p><strong>Solution:</strong> Ensure the listing has published reviews with ratings.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">"ChatGPT API key is not configured"</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The OpenAI API key hasn't been saved in the settings.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>Solution:</strong> Go to Voxel Toolkit Settings and enter your OpenAI API key.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">"Error contacting ChatGPT API"</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The API request failed. Possible causes:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>Invalid or expired API key</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>OpenAI API rate limits exceeded</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Network connectivity issues</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>OpenAI service outage</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p><strong>Solution:</strong> Verify your API key is valid and has available credits at <a href="https://platform.openai.com" target="_blank" rel="noreferrer noopener">platform.openai.com</a>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">Summaries not updating after new reviews</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The cache might not have detected the new review count.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>Solution:</strong> Use the "Refresh All Cached Summaries" button in the settings to force regeneration.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">API Cost Optimization Tips</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>Use fewer categories in <code>[category_opinions]</code> to reduce API calls</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Avoid clearing the cache frequently</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Consider only displaying summaries on high-traffic listings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The GPT-3.5-turbo model is used for cost efficiency</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#d4edda"},"border":{"radius":"6px"}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="border-radius:6px;background-color:#d4edda"><!-- wp:paragraph {"style":{"elements":{"link":{"color":{"text":"#155724"}}},"color":{"text":"#155724"}}} -->
+<p class="has-text-color has-link-color" style="color:#155724"><strong>Best Practice:</strong> Place the shortcodes in your single listing Elementor template so summaries are automatically shown for all listings that have reviews.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:paragraph {"align":"center","style":{"color":{"text":"#6c757d"}}} -->
+<p class="has-text-align-center has-text-color" style="color:#6c757d">AI Review Summary feature developed by <strong>Miguel Gomes</strong><br>Part of the Voxel Toolkit plugin</p>
+<!-- /wp:paragraph -->

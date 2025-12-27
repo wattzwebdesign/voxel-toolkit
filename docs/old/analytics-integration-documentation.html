@@ -1,0 +1,426 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Analytics Integration</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Analytics Integration function tracks e-commerce events from Voxel orders, memberships, and paid listings in Google Analytics 4. Get conversion tracking and revenue reporting without complex setup.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Automatically track purchase events when users complete orders, subscribe to memberships, or purchase paid listings. Events are sent to Google Analytics 4 using proper e-commerce event format for accurate revenue reporting.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>GA4 e-commerce event tracking</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Track completed orders</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Track membership activations</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Track paid listing purchases</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Uses shared GA4 Measurement ID</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Debug mode for troubleshooting</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Handles AJAX-based purchases</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Prevents duplicate tracking</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Configure Google Analytics</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>First, enable the "Google Analytics & Custom Tags" function and add your GA4 Measurement ID:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Voxel Toolkit &gt; Functions</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enable <strong>Google Analytics & Custom Tags</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter your GA4 Measurement ID (format: G-XXXXXXXXXX)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Enable Analytics Integration</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Analytics Integration</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure tracking options</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Configuration Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Track Orders</strong></td><td>Send events for completed Voxel orders</td><td>On</td></tr><tr><td><strong>Track Memberships</strong></td><td>Send events for paid membership activations</td><td>On</td></tr><tr><td><strong>Track Listings</strong></td><td>Send events for paid listing purchases</td><td>On</td></tr><tr><td><strong>Debug Mode</strong></td><td>Log tracking events to error log</td><td>Off</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Tracked Events</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Order Completed</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Fires when a Voxel order status changes to "completed":</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Event: purchase
+Parameters:
+  - transaction_id: order_123
+  - value: 99.99
+  - currency: USD
+  - items: [
+      {
+        item_id: product_456,
+        item_name: Product Name,
+        item_category: Orders,
+        price: 99.99,
+        quantity: 1
+      }
+    ]</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Membership Activated</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Fires when a paid membership plan is activated:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Event: purchase
+Parameters:
+  - transaction_id: membership_123_1699900000
+  - value: 29.99
+  - currency: USD
+  - items: [
+      {
+        item_id: plan_premium,
+        item_name: Premium Plan,
+        item_category: Memberships,
+        price: 29.99,
+        quantity: 1
+      }
+    ]</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:group {"style":{"color":{"background":"#e3f2fd"},"border":{"left":{"color":"#2196f3","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#e3f2fd;border-left-color:#2196f3;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Note:</strong> Free membership activations are not tracked - only paid plans trigger events.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel triggers event (order completed, membership activated)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Function captures event data (amount, currency, items)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Purchase data is stored in transient for user</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>On next page load, transient is checked</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>GA4 tracking script is output in footer</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Transient is deleted to prevent duplicates</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>This approach handles AJAX-based checkouts where events happen before page navigation.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Viewing Data in GA4</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">E-commerce Reports</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to Google Analytics 4</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Navigate to Monetization > E-commerce purchases</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>View revenue, transactions, and items</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Realtime Debugging</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Enable Debug Mode in settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use GA4 DebugView (Configure > DebugView)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Complete a test purchase</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Watch for purchase event in DebugView</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Future Providers</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function is built with a provider-based architecture. Future updates may include:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Umami Analytics</strong> - Coming soon</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Fathom Analytics</strong> - Coming soon</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Events Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify GA4 Measurement ID is configured</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enable Debug Mode and check error log</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use GA4 DebugView for realtime testing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that gtag.js is loading on pages</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Duplicate Events</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Function uses transients to prevent duplicates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check if other plugins are also tracking</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify order status wasn't already "completed"</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Wrong Currency/Amount</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Membership amounts are converted from cents to dollars</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Order amounts use Voxel's stored format</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Currency comes from order/membership settings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Google Analytics & Custom Tags function enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Valid GA4 Measurement ID configured</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel orders/payments enabled (for order tracking)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel memberships enabled (for membership tracking)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

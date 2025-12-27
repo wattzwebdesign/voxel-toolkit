@@ -1,0 +1,239 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Admin Menu Hide</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Admin Menu Hide function allows you to hide specific admin menu items from the WordPress admin panel. This is useful for simplifying the admin interface for clients or restricting access to sensitive configuration areas.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This function targets Voxel-specific admin menu items that you may want to hide from certain users or simplify the admin experience. Currently supports hiding the Structure (Post Types) and Membership configuration pages.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Hide Voxel Structure (Post Types) menu</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Hide Voxel Membership menu</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Multiple fallback methods ensure menus stay hidden</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>CSS fallback for complete invisibility</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Easy toggle configuration</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Admin Menu Hide</strong> in the list of available functions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Select Menus to Hide</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>After enabling the function, you can select which menus to hide:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Menu Option</th><th>Description</th><th>URL Hidden</th></tr></thead><tbody><tr><td><strong>Structure (Post Types)</strong></td><td>Hides the Voxel Post Types configuration page</td><td>admin.php?page=voxel-post-types</td></tr><tr><td><strong>Membership</strong></td><td>Hides the Voxel Membership configuration page</td><td>admin.php?page=voxel-membership</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Client Sites</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When building sites for clients, you may want to hide complex configuration areas to prevent accidental changes to the site structure.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Simplified Admin Experience</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>For sites with multiple administrators, hiding menus they don't need access to creates a cleaner, more focused admin interface.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Agency Management</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Agencies can hide structural configuration menus on client sites while maintaining access through other means if needed.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function uses multiple methods to ensure menus are hidden reliably:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Primary Method:</strong> Uses WordPress <code>remove_menu_page()</code> function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Submenu Cleanup:</strong> Removes from submenus if the menu is nested</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Fallback Method:</strong> Hooks into <code>admin_init</code> for secondary removal</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>CSS Fallback:</strong> Adds CSS to hide any remaining menu elements</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#e8f5e9"},"border":{"left":{"color":"#4caf50","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#e8f5e9;border-left-color:#4caf50;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Note:</strong> Hiding a menu does not remove the underlying functionality. Users with direct URLs can still access the pages. For complete access control, use WordPress user role capabilities.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Menu Still Visible</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Clear your browser cache and any caching plugins</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the function is enabled in Voxel Toolkit &gt; Functions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the specific menu is selected to be hidden</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try logging out and back in to refresh admin menus</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Need to Access Hidden Menu</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If you need to access a hidden menu:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Disable the Admin Menu Hide function temporarily</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Or access the page directly via URL (e.g., <code>/wp-admin/admin.php?page=voxel-post-types</code>)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active and configured)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Administrator access to configure the function</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

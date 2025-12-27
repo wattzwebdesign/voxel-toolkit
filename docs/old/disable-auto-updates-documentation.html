@@ -1,0 +1,307 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Disable Automatic Updates</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Disable Automatic Updates function prevents WordPress from automatically updating plugins, themes, or WordPress core. This gives you complete control over when updates are applied to your site.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Automatic updates can occasionally break sites, especially with complex themes like Voxel. This function lets you disable auto-updates selectively for plugins, themes, and/or WordPress core.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Disable plugin auto-updates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Disable theme auto-updates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Disable WordPress core auto-updates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Selective control (choose which to disable)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Simple toggle configuration</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Disable Automatic Updates</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Update Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Select which types of updates to disable:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Option</th><th>Description</th></tr></thead><tbody><tr><td><strong>Disable Plugin Updates</strong></td><td>Prevents automatic plugin updates</td></tr><tr><td><strong>Disable Theme Updates</strong></td><td>Prevents automatic theme updates</td></tr><tr><td><strong>Disable Core Updates</strong></td><td>Prevents automatic WordPress core updates (major and minor)</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">What Gets Disabled</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Plugin Updates</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Background automatic plugin updates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Security updates for plugins</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Updates still appear in dashboard, just not applied automatically</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Theme Updates</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Background automatic theme updates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Parent and child theme updates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Updates still appear in dashboard for manual application</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Core Updates</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Major version updates (e.g., 6.4 to 6.5)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Minor version updates (e.g., 6.4.1 to 6.4.2)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Security patches</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Sets WP_AUTO_UPDATE_CORE constant to false</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#ffebee"},"border":{"left":{"color":"#f44336","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#ffebee;border-left-color:#f44336;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Security Warning:</strong> Disabling automatic updates means you are responsible for keeping your site updated. Outdated software can have security vulnerabilities. Make sure to regularly check for and apply updates manually.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Production Site Stability</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Test updates on a staging site before applying to production to avoid unexpected issues.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Complex Theme Dependencies</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Voxel and Elementor updates may need testing before applying. Disable auto-updates to control timing.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Managed Hosting</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Some hosts provide their own update management. Disable WordPress auto-updates to avoid conflicts.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Best Practices</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">With Auto-Updates Disabled</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check for updates at least weekly</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Create a backup before updating</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Test updates on a staging site first</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Apply security updates promptly</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Subscribe to security advisories for your plugins</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Updates Still Happening</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check if other plugins are forcing updates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify function is enabled and specific update types are checked</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check if hosting provider has their own update system</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any caching</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Can't Re-Enable Updates</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Disable this function in Voxel Toolkit settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>WordPress auto-updates will resume on next cron run</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->

@@ -1,0 +1,476 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Media Gallery Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Media Gallery widget extends Voxel's Gallery widget to support video files alongside images. Display photos and videos in a unified gallery grid with automatic video thumbnail generation and lightbox playback.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Create galleries that include both images and videos from Voxel file fields. Videos display with a thumbnail and play icon overlay, opening in a custom lightbox player when clicked. Perfect for listings that need to showcase mixed media content.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Mixed image and video support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Automatic video thumbnail generation</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customizable play icon overlay</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Video lightbox player</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dynamic files field integration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Grid layout with configurable columns</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Aspect ratio control</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"View all" overlay for hidden items</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Widgets</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Media Gallery</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add to Template</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your single post template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Media Gallery (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to your desired location</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click the dynamic tag icon and select your files field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Media Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Files Field</strong></td><td>Dynamic tag to select files field</td><td>Required</td></tr><tr><td><strong>Number of Items</strong></td><td>How many items to show</td><td>3</td></tr><tr><td><strong>Image Size</strong></td><td>WordPress image size for display</td><td>medium</td></tr><tr><td><strong>Image Size (Lightbox)</strong></td><td>Size for lightbox viewing</td><td>large</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Video Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Show Play Icon</strong></td><td>Display play icon on videos</td><td>Yes</td></tr><tr><td><strong>Play Icon</strong></td><td>Icon to use for play button</td><td>fa-play</td></tr><tr><td><strong>Thumbnail Capture Time</strong></td><td>Time in seconds to capture thumbnail</td><td>1 second</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Grid Layout</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Item Gap</strong></td><td>Space between grid items</td><td>Configurable</td></tr><tr><td><strong>Number of Columns</strong></td><td>Grid columns (1-6)</td><td>3</td></tr><tr><td><strong>Remove Empty Items</strong></td><td>Hide empty grid slots</td><td>No</td></tr><tr><td><strong>Auto Fit</strong></td><td>Auto-fill available columns</td><td>No</td></tr><tr><td><strong>Row Height</strong></td><td>Fixed height for rows</td><td>250px</td></tr><tr><td><strong>Use Aspect Ratio</strong></td><td>Use ratio instead of fixed height</td><td>No</td></tr><tr><td><strong>Aspect Ratio</strong></td><td>Ratio value (e.g., 16/9)</td><td>Empty</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Styling Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">General</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Image border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Overlay background color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Empty item border</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">View All Button</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Background color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Icon and icon color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Icon size</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text color and typography</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Video Items</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Play icon color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Play icon size</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Play icon background</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Play icon padding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Play icon border radius</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Video Thumbnail Generation</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The widget automatically generates video thumbnails using JavaScript:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Video is loaded in a hidden video element</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Video seeks to the configured capture time</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Frame is captured using canvas</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Thumbnail replaces the placeholder image</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>If a video has a <code>_thumbnail_id</code> meta or <code>_video_thumbnail</code> meta, that image is used instead.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Video Lightbox</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When a video is clicked, it opens in a custom lightbox player:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Full-screen video playback</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Standard HTML5 video controls</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click backdrop or X to close</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Press Escape key to close</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Auto-play when opened</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Pauses and resets when closed</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Property Listings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Combine photos and virtual tour videos in a single gallery.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Product Showcases</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display product photos alongside demo videos.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Event Recaps</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show event photos and highlight videos together.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Portfolio Pages</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Mix images and video content in creative portfolios.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Video Thumbnails Not Generating</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>CORS restrictions may prevent thumbnail capture</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Videos must be served from same domain or with CORS headers</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Fallback placeholder image will be used</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Videos Not Playing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check video format is browser-compatible (MP4 recommended)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify video file exists and isn't corrupted</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for errors</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Gallery Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure files field dynamic tag is connected</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the field contains valid attachment IDs</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check Voxel Gallery widget is available</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Supported Video Formats</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>MP4 (video/mp4) - Recommended</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>WebM (video/webm)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ogg (video/ogg)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Any format with MIME type starting with "video/"</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel files field with uploaded media</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Browser with HTML5 video support</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

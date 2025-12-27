@@ -1,0 +1,360 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Fluent Forms Post Author</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Fluent Forms Post Author function adds a special email field to Fluent Forms that automatically populates with the post author's email address. Perfect for contact forms embedded on listings where inquiries should go directly to the listing owner.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When you embed a Fluent Form on a Voxel listing page, this function automatically captures the listing owner's email address. Form notifications can then be sent directly to the post author without needing to configure each form individually.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Custom "Voxel Post Author" field for Fluent Forms</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Auto-populates with post author's email</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works on any Voxel listing page</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Read-only field to prevent tampering</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Option to hide field from frontend</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Compatible with all Fluent Forms versions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use in form notifications to email listing owners</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Fluent Forms Post Author</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add Field to Your Form</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your Fluent Form</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Look in the <strong>Advanced Fields</strong> section</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag <strong>Voxel Post Author</strong> field into your form</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure visibility (visible or hidden)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the form</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Configure Form Notifications</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to form <strong>Settings &gt; Email Notifications</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>In the "Send To" field, use the shortcode: <code>{inputs.voxel_post_author}</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure other notification settings as needed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save notification settings</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Field Configuration</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th></tr></thead><tbody><tr><td><strong>Label</strong></td><td>Display label for the field (default: "Voxel Post Author")</td></tr><tr><td><strong>Placeholder</strong></td><td>Hint text shown in the field</td></tr><tr><td><strong>Help Message</strong></td><td>Additional guidance for users</td></tr><tr><td><strong>Hidden Field</strong></td><td>Hide field from frontend but keep it functional</td></tr><tr><td><strong>Required</strong></td><td>Make the field mandatory (auto-populated anyway)</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Form is embedded on a Voxel listing page</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Function detects the current post and its author</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Author's email is retrieved and populated into the field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Field becomes read-only to prevent modification</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>When form submits, author email is included in data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Notifications can be sent directly to listing owner</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Listing Inquiry Forms</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Create contact forms on listing pages that send inquiries directly to the listing owner's email.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Booking Requests</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allow visitors to submit booking requests that go straight to the service provider.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Question Forms</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let users ask questions about specific listings with answers going to the listing creator.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Quote Requests</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Enable quote request forms on business listings that notify the business owner directly.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Example Notification Setup</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Notification to Listing Owner</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Send To: {inputs.voxel_post_author}
+Subject: New inquiry about your listing
+
+Hi,
+
+You have received a new inquiry:
+
+Name: {inputs.name}
+Email: {inputs.email}
+Message: {inputs.message}
+
+Best regards,
+{site_name}</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Field Not Auto-Populating</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure form is embedded on a single post/listing page</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the post has an author assigned</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check the author has an email address set</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser and site cache</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Field Not Appearing in Form Builder</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify Fluent Forms plugin is active</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check the function is enabled in Voxel Toolkit</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Look in the "Advanced Fields" section</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try refreshing the form editor page</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Notifications Not Sending</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Use the correct shortcode: <code>{inputs.voxel_post_author}</code></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check Fluent Forms notification settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify email delivery is working (use an SMTP plugin)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Test the form on an actual listing page</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Fluent Forms plugin (free or pro)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

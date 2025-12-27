@@ -1,0 +1,324 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Timeline Photos Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Timeline Photos widget displays photos that have been uploaded with reviews for a post. Create a beautiful gallery of user-submitted review photos from Voxel's timeline system.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Collect and display photos from reviews in a responsive gallery layout. When users submit reviews with photos, those images are automatically available to display on the listing page. Show off real customer photos alongside your listing content.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Grid or masonry layout options</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Lightbox support for full-size viewing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable number of columns</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Multiple image size options</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Empty state message customization</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor widget and shortcode support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Debug mode for troubleshooting</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Widgets</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Timeline Photos</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add to Template</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your single post template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Timeline Photos</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to your desired location</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure layout settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Display Options</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Post ID</strong></td><td>Specific post to show photos for (empty = current post)</td><td>Current post</td></tr><tr><td><strong>Columns</strong></td><td>Number of columns in the grid</td><td>3</td></tr><tr><td><strong>Layout</strong></td><td>Grid layout style</td><td>Masonry</td></tr><tr><td><strong>Image Size</strong></td><td>WordPress image size to use</td><td>medium_large</td></tr><tr><td><strong>Lightbox</strong></td><td>Enable lightbox for full-size viewing</td><td>Yes</td></tr><tr><td><strong>Empty Message</strong></td><td>Text to show when no photos exist</td><td>"No photos found in reviews"</td></tr><tr><td><strong>Show Empty</strong></td><td>Display empty state message</td><td>Yes</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Shortcode Usage</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use the shortcode for non-Elementor pages:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>[timeline_photos columns="3" layout="masonry" lightbox="yes"]</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Shortcode Parameters</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>post_id</strong></td><td>Post ID to show photos for</td><td>Current post</td></tr><tr><td><strong>columns</strong></td><td>Number of columns</td><td>3</td></tr><tr><td><strong>layout</strong></td><td>Layout type (masonry, grid)</td><td>masonry</td></tr><tr><td><strong>image_size</strong></td><td>WordPress image size</td><td>medium_large</td></tr><tr><td><strong>lightbox</strong></td><td>Enable lightbox (yes/no)</td><td>yes</td></tr><tr><td><strong>empty_message</strong></td><td>Message when no photos</td><td>"No photos found in reviews"</td></tr><tr><td><strong>show_empty</strong></td><td>Show empty message (yes/no)</td><td>yes</td></tr><tr><td><strong>debug</strong></td><td>Enable debug output (yes/no)</td><td>no</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The widget queries Voxel's timeline database for review entries associated with the post. It extracts photo attachment IDs from the review details and displays them in a responsive gallery.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Widget queries the <code>voxel_timeline</code> table for post reviews</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Extracts file IDs from the review details JSON</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Fetches image attachment data for each file ID</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Renders the gallery with configured layout</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Restaurant Listings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show photos of food and ambiance submitted by diners in their reviews.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Hotel/Accommodation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display guest-submitted photos of rooms, views, and amenities.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Product Reviews</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show customer photos of products in use, providing social proof.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Event Venues</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display photos from past events held at the venue.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">No Photos Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify reviews with photos exist for the post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the voxel_timeline table exists in the database</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use debug mode to see timeline data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure photos were uploaded as attachments</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Using Debug Mode</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add <code>debug="yes"</code> to the shortcode to see detailed information about timeline entries:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>[timeline_photos debug="yes"]</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Photos Not Displaying Correctly</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the image size exists in WordPress</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify attachment files haven't been deleted</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Regenerate thumbnails if needed</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement) or shortcode support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel review system with file uploads enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Reviews with photos in the timeline database</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

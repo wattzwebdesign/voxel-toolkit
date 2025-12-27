@@ -1,0 +1,592 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Onboarding Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Onboarding widget creates interactive guided tours to help users navigate your website. Walk visitors through your site's features with step-by-step tooltips that highlight specific elements on the page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Create engaging onboarding experiences with interactive tours. The widget uses intro.js to display tooltips that guide users through your site, highlighting specific elements and explaining features. Tours can auto-start or be triggered by a button.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Multi-step guided tours</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Target any element by CSS selector</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Auto-start or button-triggered tours</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Progress bar and step bullets</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Tour versioning for updates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Remembers completion status</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Full styling customization</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Preview mode in editor</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Widgets</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Onboarding</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add to Page</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your page in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Onboarding (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to your page</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure tour steps and settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the page</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Create Tour Steps</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Add a step with a title and content</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter the target element's CSS selector</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Choose tooltip position</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Repeat for additional steps</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tour Behavior</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Auto-start Tour</strong></td><td>Automatically start when page loads</td><td>No</td></tr><tr><td><strong>Auto-start Delay</strong></td><td>Seconds to wait before auto-starting</td><td>0.5s</td></tr><tr><td><strong>Show Start Button</strong></td><td>Display a button to manually start tour</td><td>Yes</td></tr><tr><td><strong>Start Button Text</strong></td><td>Text on the start button</td><td>"Start Tour"</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tour Options</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Show Progress Bar</strong></td><td>Display progress indicator</td><td>Yes</td></tr><tr><td><strong>Show Step Bullets</strong></td><td>Display bullet points for steps</td><td>Yes</td></tr><tr><td><strong>Exit on Overlay Click</strong></td><td>Allow closing by clicking overlay</td><td>No</td></tr><tr><td><strong>Show Step Numbers</strong></td><td>Display step numbers in tooltips</td><td>Yes</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tour Steps</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Each step includes:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th></tr></thead><tbody><tr><td><strong>Step Title</strong></td><td>Heading displayed in the tooltip</td></tr><tr><td><strong>Step Content</strong></td><td>Description text (supports rich text)</td></tr><tr><td><strong>Target Element</strong></td><td>CSS selector for the element to highlight</td></tr><tr><td><strong>Tooltip Position</strong></td><td>Where tooltip appears (top, bottom, left, right, auto)</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Targeting Elements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To target specific elements on your page:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Using CSS IDs</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Select any Elementor widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Go to <strong>Advanced &gt; CSS ID</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter an ID (e.g., "search-box")</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>In the tour step, enter <code>#search-box</code></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Using CSS Classes</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Target existing classes with <code>.class-name</code></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Full-Page Overlay</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Leave the target selector empty for a centered tooltip with full-page overlay.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Styling Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Start Button</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Background color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Box shadow</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tooltip</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Background color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Box shadow</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Max width</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Title color and typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Arrow color</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Navigation Buttons</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Background color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Box shadow</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Skip Button</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Background color (normal and hover)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Progress Bar</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Progress color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Background color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Height</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Bullets</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Active bullet color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Inactive bullet color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Bullet size</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Tour Versioning</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When you update your tour and want all users to see it again:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Click the <strong>Reset Tour for All Users</strong> button in the widget settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>This increments the tour version</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Users who completed the old version will see the new tour</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">New User Onboarding</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Guide new users through your site's main features and how to get started.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Feature Announcements</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Highlight new features when you update your site.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Dashboard Tutorials</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Walk users through their account dashboard and available actions.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Listing Submission Guide</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Help users understand how to create and submit listings.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tour Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>If auto-start is enabled, tour only shows once per session</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser storage to reset completion status</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use the Reset Tour button to make it appear again</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Element Not Highlighting</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the CSS selector is correct</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>IDs should start with # (e.g., #my-element)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Classes should start with . (e.g., .my-class)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Make sure the element exists on the page</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tooltip in Wrong Position</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Try a different tooltip position setting</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use "auto" to let it position automatically</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Preview Tour</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use the <strong>Preview Tour</strong> button in the Elementor editor to test your tour without affecting the auto-start behavior or completion status.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
