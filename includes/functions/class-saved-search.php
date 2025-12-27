@@ -38,6 +38,14 @@ class Voxel_Toolkit_Saved_Search {
      */
     private function load_dependencies() {
         require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/saved-search/class-saved-search-model.php';
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/saved-search/class-email-queue.php';
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/saved-search/class-email-batch-processor.php';
+
+        // Initialize batch processor if batching is enabled
+        $batch_settings = $this->get_email_batch_settings();
+        if ($batch_settings['enabled']) {
+            Voxel_Toolkit_Email_Batch_Processor::instance();
+        }
     }
 
     /**
@@ -86,6 +94,12 @@ class Voxel_Toolkit_Saved_Search {
         $current_version = get_option('vt_saved_search_table_version', '');
         if ($current_version !== static::$table_version) {
             static::setup_tables();
+        }
+
+        // Setup email queue table if batching is enabled
+        $batch_settings = $this->get_email_batch_settings();
+        if ($batch_settings['enabled']) {
+            Voxel_Toolkit_Email_Queue::maybe_setup_table();
         }
     }
 
@@ -1259,8 +1273,12 @@ class Voxel_Toolkit_Saved_Search {
             return;
         }
 
-        // Load event class
+        // Load event classes
         require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/saved-search/class-saved-search-event.php';
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/saved-search/class-saved-search-event-no-email.php';
+
+        // Check if email batching is enabled
+        $batch_settings = $this->get_email_batch_settings();
 
         foreach ($saved_searches as $search) {
             if (!$search->get_notification()) {
@@ -1291,9 +1309,18 @@ class Voxel_Toolkit_Saved_Search {
                 $match = $post_type->query($args, $cb);
 
                 if (!empty($match)) {
-                    // Dispatch notification event
-                    $event = new Voxel_Toolkit_Saved_Search_Event($post_type);
-                    $event->dispatch($post->get_id(), $search->get_user_id(), $search->get_id());
+                    if ($batch_settings['enabled']) {
+                        // BATCHED MODE: Dispatch in-app/SMS immediately, queue email
+                        $event = new Voxel_Toolkit_Saved_Search_Event_No_Email($post_type);
+                        $event->dispatch($post->get_id(), $search->get_user_id(), $search->get_id());
+
+                        // Queue email for batch processing
+                        $this->queue_email_notification($post, $search, $post_type);
+                    } else {
+                        // LEGACY MODE: Dispatch all notifications immediately
+                        $event = new Voxel_Toolkit_Saved_Search_Event($post_type);
+                        $event->dispatch($post->get_id(), $search->get_user_id(), $search->get_id());
+                    }
                 }
             } catch (\Exception $e) {
                 // Log error but continue processing other searches
@@ -1304,6 +1331,84 @@ class Voxel_Toolkit_Saved_Search {
                         $e->getMessage()
                     ));
                 }
+            }
+        }
+    }
+
+    /**
+     * Get email batch settings
+     *
+     * @return array Settings array
+     */
+    private function get_email_batch_settings() {
+        $options = get_option('voxel_toolkit_options', array());
+        $saved_search = isset($options['saved_search']) ? $options['saved_search'] : array();
+
+        return array(
+            'enabled' => !empty($saved_search['email_batching_enabled']),
+            'batch_size' => isset($saved_search['email_batch_size']) ? intval($saved_search['email_batch_size']) : 25,
+            'batch_interval' => isset($saved_search['email_batch_interval']) ? intval($saved_search['email_batch_interval']) : 5,
+        );
+    }
+
+    /**
+     * Queue email notification for batch processing
+     *
+     * @param \Voxel\Post $post The post that matched
+     * @param Voxel_Toolkit_Saved_Search_Model $search The saved search
+     * @param \Voxel\Post_Type $post_type The post type
+     */
+    private function queue_email_notification($post, $search, $post_type) {
+        // Get recipient user
+        $recipient = \Voxel\User::get($search->get_user_id());
+        if (!$recipient) {
+            return;
+        }
+
+        // Check if user has email notifications enabled
+        // (Respect Voxel's notification preferences)
+        $email = $recipient->get_email();
+        if (empty($email)) {
+            return;
+        }
+
+        try {
+            // Create event to prepare dynamic tags
+            $event = new Voxel_Toolkit_Saved_Search_Event($post_type);
+            $event->prepare($post->get_id(), $search->get_user_id(), $search->get_id());
+
+            // Get email template from event notifications config
+            $notifications = Voxel_Toolkit_Saved_Search_Event::notifications();
+            $email_config = isset($notifications['notify-subscriber']['email'])
+                ? $notifications['notify-subscriber']['email']
+                : array();
+
+            if (empty($email_config['subject']) || empty($email_config['message'])) {
+                return;
+            }
+
+            // Render subject and message with dynamic tags
+            $dynamic_tags = $event->dynamic_tags();
+            $subject = \Voxel\render($email_config['subject'], $dynamic_tags);
+            $message = \Voxel\render($email_config['message'], $dynamic_tags);
+
+            // Queue the email
+            Voxel_Toolkit_Email_Queue::queue(array(
+                'recipient_email' => $email,
+                'recipient_id' => $search->get_user_id(),
+                'post_id' => $post->get_id(),
+                'saved_search_id' => $search->get_id(),
+                'post_type' => $post_type->get_key(),
+                'subject' => $subject,
+                'message' => $message,
+            ));
+        } catch (\Exception $e) {
+            if (function_exists('\Voxel\log')) {
+                \Voxel\log(sprintf(
+                    '[VT Saved Search] Error queuing email for search %d: %s',
+                    $search->get_id(),
+                    $e->getMessage()
+                ));
             }
         }
     }

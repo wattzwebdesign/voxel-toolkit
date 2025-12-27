@@ -6354,6 +6354,76 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
 
         <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Email Batching', 'voxel-toolkit'); ?></h4>
+
+            <div class="vt-info-box" style="margin-bottom: 15px;">
+                <?php _e('Queue email notifications and send them in batches to reduce server load. In-app and SMS notifications will still be sent immediately.', 'voxel-toolkit'); ?>
+            </div>
+
+            <?php
+            $email_batching_enabled = !empty($settings['email_batching_enabled']);
+            $email_batch_size = isset($settings['email_batch_size']) ? intval($settings['email_batch_size']) : 25;
+            $email_batch_interval = isset($settings['email_batch_interval']) ? intval($settings['email_batch_interval']) : 5;
+
+            $batch_size_options = array(
+                '10' => __('10 emails', 'voxel-toolkit'),
+                '25' => __('25 emails (recommended)', 'voxel-toolkit'),
+                '50' => __('50 emails', 'voxel-toolkit'),
+                '100' => __('100 emails', 'voxel-toolkit'),
+            );
+
+            $interval_options = array(
+                '1' => __('Every 1 minute', 'voxel-toolkit'),
+                '5' => __('Every 5 minutes (recommended)', 'voxel-toolkit'),
+                '10' => __('Every 10 minutes', 'voxel-toolkit'),
+                '15' => __('Every 15 minutes', 'voxel-toolkit'),
+                '30' => __('Every 30 minutes', 'voxel-toolkit'),
+            );
+            ?>
+
+            <div class="vt-field-group">
+                <label class="vt-checkbox-label">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[saved_search][email_batching_enabled]"
+                           value="1"
+                           <?php checked($email_batching_enabled); ?>>
+                    <?php _e('Enable email batching', 'voxel-toolkit'); ?>
+                </label>
+                <p class="vt-field-description">
+                    <?php _e('When enabled, email notifications are queued and sent in batches via WordPress cron.', 'voxel-toolkit'); ?>
+                </p>
+            </div>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Batch Size', 'voxel-toolkit'); ?></label>
+                <select name="voxel_toolkit_options[saved_search][email_batch_size]" class="vt-select" style="width: 300px;">
+                    <?php foreach ($batch_size_options as $value => $label) : ?>
+                        <option value="<?php echo esc_attr($value); ?>" <?php selected($email_batch_size, intval($value)); ?>>
+                            <?php echo esc_html($label); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="vt-field-description">
+                    <?php _e('Number of emails to send per batch.', 'voxel-toolkit'); ?>
+                </p>
+            </div>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Processing Interval', 'voxel-toolkit'); ?></label>
+                <select name="voxel_toolkit_options[saved_search][email_batch_interval]" class="vt-select" style="width: 300px;">
+                    <?php foreach ($interval_options as $value => $label) : ?>
+                        <option value="<?php echo esc_attr($value); ?>" <?php selected($email_batch_interval, intval($value)); ?>>
+                            <?php echo esc_html($label); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="vt-field-description">
+                    <?php _e('How often to process the email queue.', 'voxel-toolkit'); ?>
+                </p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
             <h4 class="vt-settings-section-title"><?php _e('Usage Instructions', 'voxel-toolkit'); ?></h4>
             <ol class="vt-feature-list">
                 <li><?php _e('Add the Saved Search (VT) widget to a page where users can manage their searches', 'voxel-toolkit'); ?></li>

@@ -1853,6 +1853,21 @@ class Voxel_Toolkit_Admin {
                                 ? $function_input['expiration']
                                 : 'never';
                         }
+                        // Email batching settings
+                        $sanitized_function['email_batching_enabled'] = !empty($function_input['email_batching_enabled'])
+                            && $function_input['email_batching_enabled'] !== '0';
+
+                        $valid_batch_sizes = array('10', '25', '50', '100');
+                        $sanitized_function['email_batch_size'] = isset($function_input['email_batch_size'])
+                            && in_array($function_input['email_batch_size'], $valid_batch_sizes, true)
+                            ? intval($function_input['email_batch_size'])
+                            : 25;
+
+                        $valid_intervals = array('1', '5', '10', '15', '30');
+                        $sanitized_function['email_batch_interval'] = isset($function_input['email_batch_interval'])
+                            && in_array($function_input['email_batch_interval'], $valid_intervals, true)
+                            ? intval($function_input['email_batch_interval'])
+                            : 5;
                         break;
 
                     case 'timeline_filters':
