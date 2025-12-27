@@ -154,6 +154,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Collapsible UI appears only when replies are expanded
   - Works on reviews, walls, timelines, and user feeds
   - Lazy loading - summary fetched only when user clicks to view
+- **AI Settings**: Central configuration for AI providers used by AI-powered features
+  - Support for OpenAI and Anthropic (Claude) providers
+  - Model selection for each provider (GPT-4o, GPT-4o-mini, Claude 3.5 Haiku, Claude 3.5 Sonnet, etc.)
+  - Single API key configuration shared across all AI features
+  - Always enabled utility function in Settings under "Configuration" section
+- **AI Post Summary**: Auto-generate AI summaries for posts on publish/update
+  - Per-post-type configuration
+  - Customizable prompt template with {{post_data}} placeholder
+  - Access summaries via `@post().ai_summary()` dynamic tag
+  - Bulk generate tool for existing posts without summaries
+  - Summaries stored in post meta, regenerated on content changes
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options
