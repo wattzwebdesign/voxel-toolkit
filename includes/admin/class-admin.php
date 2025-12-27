@@ -2609,6 +2609,33 @@ class Voxel_Toolkit_Admin {
                 </p>
             </div>
 
+            <?php if (Voxel_Toolkit_Settings::instance()->is_function_enabled('ai_post_summary')): ?>
+            <!-- AI Properties -->
+            <div class="settings-section" style="margin-top: 30px;">
+                <h2><?php _e('AI Properties', 'voxel-toolkit'); ?></h2>
+                <p class="description"><?php _e('AI-generated content available for post objects. Requires AI Post Summary function to be enabled.', 'voxel-toolkit'); ?></p>
+
+                <table class="widefat striped">
+                    <thead>
+                        <tr>
+                            <th><?php _e('Property', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Output Example', 'voxel-toolkit'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>ai.summary</code></td>
+                            <td><?php _e('AI-generated summary of the post content. Auto-generated on publish/update.', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(ai.summary)</code></td>
+                            <td><em>A cozy Italian restaurant in downtown offering authentic pasta dishes and wood-fired pizzas in a family-friendly atmosphere.</em></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <?php endif; ?>
+
             <!-- User/Author Properties -->
             <div class="settings-section" style="margin-top: 30px;">
                 <h2><?php _e('User & Author Properties', 'voxel-toolkit'); ?></h2>

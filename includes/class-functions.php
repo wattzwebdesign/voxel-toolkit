@@ -564,7 +564,7 @@ class Voxel_Toolkit_Functions {
             ),
             'ai_post_summary' => array(
                 'name' => __('AI Post Summary', 'voxel-toolkit'),
-                'description' => __('Auto-generate AI summaries for posts on publish/update. Access via @post().ai_summary() dynamic tag.', 'voxel-toolkit'),
+                'description' => __('Auto-generate AI summaries for posts on publish/update. Access via @post(ai.summary) dynamic tag.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_AI_Post_Summary',
                 'file' => 'functions/class-ai-post-summary.php',
                 'settings_callback' => array($this, 'render_ai_post_summary_settings'),
@@ -6749,7 +6749,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <strong><?php _e('How to use:', 'voxel-toolkit'); ?></strong>
             <ul style="margin: 10px 0 0 20px; list-style: disc;">
                 <li><?php _e('Summaries are auto-generated when posts are published or updated.', 'voxel-toolkit'); ?></li>
-                <li><?php _e('Access the summary using the dynamic tag: <code>@post().ai_summary()</code>', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Access the summary using the dynamic tag: <code>@post(ai.summary)</code>', 'voxel-toolkit'); ?></li>
                 <li><?php _e('Summaries are stored in post meta and only regenerated when content changes.', 'voxel-toolkit'); ?></li>
             </ul>
         </div>

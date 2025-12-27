@@ -162,7 +162,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **AI Post Summary**: Auto-generate AI summaries for posts on publish/update
   - Per-post-type configuration
   - Customizable prompt template with {{post_data}} placeholder
-  - Access summaries via `@post().ai_summary()` dynamic tag
+  - Access summaries via `@post(ai.summary)` dynamic tag
   - Bulk generate tool for existing posts without summaries
   - Summaries stored in post meta, regenerated on content changes
 
