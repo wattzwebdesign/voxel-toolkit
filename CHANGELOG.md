@@ -92,6 +92,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Users can enable/disable notifications per saved search
   - localStorage persistence for seamless cross-session experience
   - Auto-delete expiration setting (7/14/30/90 days, 6 months, 1 year, or never)
+  - Email batching to prevent server overload with high-volume notifications
+    - Queue emails to database, process via WordPress cron in configurable batches
+    - In-app and SMS notifications still send immediately
+    - Configurable batch size (10, 25, 50, 100) and interval (1-30 minutes)
+    - Retry logic for failed emails (max 3 attempts)
 - **Timeline & Reviews Dynamic Tags**: Access latest and oldest entries from post timelines, walls, and reviews
   - `@post(vt_reviews.latest/oldest.content)` - Review content text
   - `@post(vt_reviews.latest/oldest.author)` - Reviewer display name
