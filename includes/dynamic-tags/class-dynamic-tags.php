@@ -426,6 +426,27 @@ class Voxel_Toolkit_Dynamic_Tags {
                 });
         }
 
+        // Add AI properties if AI Post Summary is enabled
+        if ($settings->is_function_enabled('ai_post_summary')) {
+            $properties['ai'] = \Voxel\Dynamic_Data\Tag::Object('AI')->properties(function() use ($group) {
+                return [
+                    'summary' => \Voxel\Dynamic_Data\Tag::String('AI Summary')
+                        ->render(function() use ($group) {
+                            if (!$group->post || !$group->post->get_id()) {
+                                return '';
+                            }
+
+                            if (!class_exists('Voxel_Toolkit_AI_Post_Summary')) {
+                                return '';
+                            }
+
+                            $summary = Voxel_Toolkit_AI_Post_Summary::instance()->get_summary($group->post->get_id());
+                            return !empty($summary) ? esc_html($summary) : '';
+                        }),
+                ];
+            });
+        }
+
         return $properties;
     }
 
