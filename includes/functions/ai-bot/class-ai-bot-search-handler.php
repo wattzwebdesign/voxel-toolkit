@@ -421,6 +421,9 @@ Example response:
                 }
             }
 
+            // Geocode location filters if needed
+            $regular_filters = $this->process_location_filters($regular_filters);
+
             // Build request with regular filters only
             $request = array(
                 'type' => $post_type_key,
@@ -825,5 +828,125 @@ Example response:
      */
     public static function clear_schema_cache() {
         delete_transient(self::SCHEMA_TRANSIENT);
+    }
+
+    /**
+     * Process location filters - geocode addresses if needed
+     *
+     * @param array $filters Filter array
+     * @return array Processed filters with geocoded locations
+     */
+    private function process_location_filters($filters) {
+        // Check for common location filter keys
+        $location_keys = array('location', 'address', 'nearby', 'geo');
+
+        foreach ($location_keys as $key) {
+            if (!isset($filters[$key])) {
+                continue;
+            }
+
+            $location = $filters[$key];
+
+            // If it's just a string, treat it as an address
+            if (is_string($location)) {
+                $geocoded = $this->geocode_address($location);
+                if ($geocoded) {
+                    $filters[$key] = $geocoded;
+                }
+                continue;
+            }
+
+            // If it's an array with 'address' but no lat/lng, geocode it
+            if (is_array($location)) {
+                $has_coords = (isset($location['lat']) && isset($location['lng'])) ||
+                              (isset($location['latitude']) && isset($location['longitude']));
+
+                if (!$has_coords && isset($location['address'])) {
+                    $geocoded = $this->geocode_address($location['address']);
+                    if ($geocoded) {
+                        // Preserve radius if set
+                        if (isset($location['radius'])) {
+                            $geocoded['radius'] = $location['radius'];
+                        }
+                        $filters[$key] = $geocoded;
+                    }
+                }
+            }
+        }
+
+        return $filters;
+    }
+
+    /**
+     * Geocode an address using Google Geocoding API
+     *
+     * @param string $address Address to geocode
+     * @return array|null Geocoded location with lat, lng, address, or null on failure
+     */
+    private function geocode_address($address) {
+        if (empty($address)) {
+            return null;
+        }
+
+        // Create cache key
+        $cache_key = 'vt_ai_bot_geocode_' . md5($address);
+
+        // Check cache first (24 hour expiration)
+        $cached = get_transient($cache_key);
+        if ($cached !== false) {
+            error_log('VT AI Bot Search - Using cached geocode for: ' . $address);
+            return $cached;
+        }
+
+        // Get Google API key from Voxel settings
+        $api_key = '';
+        if (function_exists('Voxel\get')) {
+            $api_key = \Voxel\get('settings.maps.google_maps.api_key');
+        }
+
+        if (empty($api_key)) {
+            error_log('VT AI Bot Search - No Google Maps API key found');
+            return null;
+        }
+
+        // Call Google Geocoding API
+        $url = sprintf(
+            'https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s',
+            urlencode($address),
+            $api_key
+        );
+
+        error_log('VT AI Bot Search - Geocoding address: ' . $address);
+
+        $response = wp_remote_get($url, array('timeout' => 10));
+
+        if (is_wp_error($response)) {
+            error_log('VT AI Bot Search - Geocoding API error: ' . $response->get_error_message());
+            return null;
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        if (empty($data['results'][0]['geometry']['location'])) {
+            error_log('VT AI Bot Search - Geocoding returned no results for: ' . $address);
+            return null;
+        }
+
+        $location = $data['results'][0]['geometry']['location'];
+        $formatted_address = isset($data['results'][0]['formatted_address']) ? $data['results'][0]['formatted_address'] : $address;
+
+        $result = array(
+            'address' => $formatted_address,
+            'lat' => $location['lat'],
+            'lng' => $location['lng'],
+        );
+
+        error_log('VT AI Bot Search - Geocoded: ' . $address . ' -> ' . $location['lat'] . ', ' . $location['lng']);
+
+        // Cache for 24 hours
+        set_transient($cache_key, $result, DAY_IN_SECONDS);
+
+        return $result;
     }
 }
