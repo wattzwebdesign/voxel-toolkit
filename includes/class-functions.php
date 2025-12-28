@@ -570,6 +570,15 @@ class Voxel_Toolkit_Functions {
                 'settings_callback' => array($this, 'render_ai_post_summary_settings'),
                 'icon' => 'dashicons-format-aside',
             ),
+            'ai_bot' => array(
+                'name' => __('AI Bot', 'voxel-toolkit'),
+                'description' => __('AI-powered search assistant. Users ask natural language questions to find posts with Voxel card template results.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_AI_Bot',
+                'file' => 'functions/class-ai-bot.php',
+                'settings_callback' => array($this, 'render_ai_bot_settings'),
+                'icon' => 'dashicons-format-chat',
+                'required_widgets' => array('ai_bot_widget'),
+            ),
         );
 
         // Allow other plugins/themes to register functions
@@ -736,6 +745,15 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-saved-search-widget-manager.php',
                 'icon' => 'eicon-search',
                 'widget_name' => 'vt-saved-search',
+                'hidden' => true,
+            ),
+            'ai_bot_widget' => array(
+                'name' => __('AI Bot (VT)', 'voxel-toolkit'),
+                'description' => __('Trigger button that opens the AI-powered search assistant panel.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_AI_Bot_Widget_Manager',
+                'file' => 'widgets/class-ai-bot-widget-manager.php',
+                'icon' => 'eicon-commenting-o',
+                'widget_name' => 'vt-ai-bot',
                 'hidden' => true,
             ),
         );
@@ -6899,6 +6917,271 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
      */
     public function get_default_ai_post_summary_prompt() {
         return "Based on the following information about a listing/post, write a concise, engaging summary (2-3 sentences) that highlights the key features and value proposition. Focus on what makes this unique and appealing to potential visitors or customers.\n\n{{post_data}}\n\nSummary:";
+    }
+
+    /**
+     * Render AI Bot settings
+     */
+    public function render_ai_bot_settings($settings) {
+        // Check if AI Settings is configured
+        $ai_configured = class_exists('Voxel_Toolkit_AI_Settings') && Voxel_Toolkit_AI_Settings::instance()->is_configured();
+
+        if (!$ai_configured) {
+            ?>
+            <div class="vt-settings-notice vt-settings-notice-warning">
+                <span class="dashicons dashicons-warning"></span>
+                <?php _e('AI Settings must be configured first. Please enable and configure AI Settings before using this feature.', 'voxel-toolkit'); ?>
+            </div>
+            <?php
+            return;
+        }
+
+        // Get Voxel post types
+        $voxel_post_types = array();
+        if (class_exists('\Voxel\Post_Type')) {
+            $voxel_post_types = \Voxel\Post_Type::get_voxel_types();
+        }
+
+        // Get current settings with defaults
+        $panel_position = isset($settings['panel_position']) ? $settings['panel_position'] : 'right';
+        $access_control = isset($settings['access_control']) ? $settings['access_control'] : 'everyone';
+        $enabled_post_types = isset($settings['post_types']) ? (array) $settings['post_types'] : array();
+        $system_prompt = isset($settings['system_prompt']) ? $settings['system_prompt'] : '';
+        $max_results = isset($settings['max_results']) ? absint($settings['max_results']) : 6;
+        $welcome_message = isset($settings['welcome_message']) ? $settings['welcome_message'] : __('Hi! How can I help you find what you\'re looking for?', 'voxel-toolkit');
+        $placeholder_text = isset($settings['placeholder_text']) ? $settings['placeholder_text'] : __('Ask me anything...', 'voxel-toolkit');
+        $panel_title = isset($settings['panel_title']) ? $settings['panel_title'] : __('AI Assistant', 'voxel-toolkit');
+        $conversation_memory = isset($settings['conversation_memory']) ? (bool) $settings['conversation_memory'] : true;
+        $max_memory_messages = isset($settings['max_memory_messages']) ? absint($settings['max_memory_messages']) : 10;
+        $rate_limit_enabled = isset($settings['rate_limit_enabled']) ? (bool) $settings['rate_limit_enabled'] : true;
+        $rate_limit_requests = isset($settings['rate_limit_requests']) ? absint($settings['rate_limit_requests']) : 10;
+        $rate_limit_period = isset($settings['rate_limit_period']) ? absint($settings['rate_limit_period']) : 60;
+        ?>
+
+        <div class="vt-settings-info" style="margin-bottom: 20px; padding: 15px; background: #f0f6fc; border-radius: 6px; border-left: 4px solid #0073aa;">
+            <strong><?php _e('How to use:', 'voxel-toolkit'); ?></strong>
+            <ul style="margin: 10px 0 0 20px; list-style: disc;">
+                <li><?php _e('Add an "Actions (VX)" widget in Elementor and select "Open AI Assistant" as the action.', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Users can click the action to open the AI search panel.', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Users can ask natural language questions to find posts across your site.', 'voxel-toolkit'); ?></li>
+                <li><?php _e('AI understands review/rating filters like "places with 4 stars" or "at least 1 review".', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
+
+        <table class="form-table">
+            <tr>
+                <th scope="row"><?php _e('Panel Position', 'voxel-toolkit'); ?></th>
+                <td>
+                    <select name="voxel_toolkit_options[ai_bot][panel_position]">
+                        <option value="right" <?php selected($panel_position, 'right'); ?>><?php _e('Right side', 'voxel-toolkit'); ?></option>
+                        <option value="left" <?php selected($panel_position, 'left'); ?>><?php _e('Left side', 'voxel-toolkit'); ?></option>
+                    </select>
+                    <p class="description"><?php _e('Which side of the screen the AI panel slides in from.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Access Control', 'voxel-toolkit'); ?></th>
+                <td>
+                    <select name="voxel_toolkit_options[ai_bot][access_control]">
+                        <option value="everyone" <?php selected($access_control, 'everyone'); ?>><?php _e('Everyone (guests & logged-in)', 'voxel-toolkit'); ?></option>
+                        <option value="logged_in" <?php selected($access_control, 'logged_in'); ?>><?php _e('Logged-in users only', 'voxel-toolkit'); ?></option>
+                    </select>
+                    <p class="description"><?php _e('Who can use the AI search assistant.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Panel Title', 'voxel-toolkit'); ?></th>
+                <td>
+                    <input type="text"
+                           name="voxel_toolkit_options[ai_bot][panel_title]"
+                           value="<?php echo esc_attr($panel_title); ?>"
+                           class="regular-text">
+                    <p class="description"><?php _e('The title shown in the panel header.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Welcome Message', 'voxel-toolkit'); ?></th>
+                <td>
+                    <input type="text"
+                           name="voxel_toolkit_options[ai_bot][welcome_message]"
+                           value="<?php echo esc_attr($welcome_message); ?>"
+                           class="large-text">
+                    <p class="description"><?php _e('Initial greeting shown when the panel opens.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Placeholder Text', 'voxel-toolkit'); ?></th>
+                <td>
+                    <input type="text"
+                           name="voxel_toolkit_options[ai_bot][placeholder_text]"
+                           value="<?php echo esc_attr($placeholder_text); ?>"
+                           class="regular-text">
+                    <p class="description"><?php _e('Placeholder text in the message input field.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Searchable Post Types', 'voxel-toolkit'); ?></th>
+                <td>
+                    <fieldset>
+                        <?php if (!empty($voxel_post_types)): ?>
+                            <?php foreach ($voxel_post_types as $pt): ?>
+                                <label style="display: block; margin-bottom: 5px;">
+                                    <input type="checkbox"
+                                           name="voxel_toolkit_options[ai_bot][post_types][]"
+                                           value="<?php echo esc_attr($pt->get_key()); ?>"
+                                           <?php checked(empty($enabled_post_types) || in_array($pt->get_key(), $enabled_post_types)); ?>>
+                                    <?php echo esc_html($pt->get_label()); ?>
+                                </label>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p class="description"><?php _e('No Voxel post types found.', 'voxel-toolkit'); ?></p>
+                        <?php endif; ?>
+                    </fieldset>
+                    <p class="description"><?php _e('Select which post types the AI can search. Leave empty for all.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Max Results', 'voxel-toolkit'); ?></th>
+                <td>
+                    <input type="number"
+                           name="voxel_toolkit_options[ai_bot][max_results]"
+                           value="<?php echo esc_attr($max_results); ?>"
+                           min="1"
+                           max="20"
+                           class="small-text">
+                    <p class="description"><?php _e('Maximum number of results to show per search (1-20).', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+        </table>
+
+        <?php
+        // Card templates section
+        $card_templates = isset($settings['card_templates']) ? (array) $settings['card_templates'] : array();
+        ?>
+        <h3><?php _e('Card Templates', 'voxel-toolkit'); ?></h3>
+        <p class="description" style="margin-bottom: 15px;"><?php _e('Choose which card template to display for each post type in AI search results.', 'voxel-toolkit'); ?></p>
+        <table class="form-table">
+            <?php if (!empty($voxel_post_types)): ?>
+                <?php foreach ($voxel_post_types as $pt):
+                    $pt_key = $pt->get_key();
+                    $selected_template = isset($card_templates[$pt_key]) ? absint($card_templates[$pt_key]) : 0;
+
+                    // Get default card template
+                    $default_templates = $pt->get_templates();
+                    $default_card_id = isset($default_templates['card']) ? $default_templates['card'] : 0;
+
+                    // Get custom card templates
+                    $custom_templates = array();
+                    if (method_exists($pt, 'templates') || isset($pt->templates)) {
+                        $pt_templates = $pt->templates->get_custom_templates();
+                        $custom_templates = isset($pt_templates['card']) ? $pt_templates['card'] : array();
+                    }
+                    ?>
+                    <tr>
+                        <th scope="row"><?php echo esc_html($pt->get_label()); ?></th>
+                        <td>
+                            <select name="voxel_toolkit_options[ai_bot][card_templates][<?php echo esc_attr($pt_key); ?>]">
+                                <option value="0" <?php selected($selected_template, 0); ?>><?php _e('Default Card', 'voxel-toolkit'); ?></option>
+                                <?php if (!empty($custom_templates)): ?>
+                                    <?php foreach ($custom_templates as $template): ?>
+                                        <option value="<?php echo esc_attr($template['id']); ?>" <?php selected($selected_template, $template['id']); ?>>
+                                            <?php echo esc_html($template['label']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="2">
+                        <p class="description"><?php _e('No Voxel post types found.', 'voxel-toolkit'); ?></p>
+                    </td>
+                </tr>
+            <?php endif; ?>
+        </table>
+
+        <h3><?php _e('Conversation Settings', 'voxel-toolkit'); ?></h3>
+        <table class="form-table">
+            <tr>
+                <th scope="row"><?php _e('Conversation Memory', 'voxel-toolkit'); ?></th>
+                <td>
+                    <label>
+                        <input type="checkbox"
+                               name="voxel_toolkit_options[ai_bot][conversation_memory]"
+                               value="1"
+                               <?php checked($conversation_memory); ?>>
+                        <?php _e('Enable conversation memory', 'voxel-toolkit'); ?>
+                    </label>
+                    <p class="description"><?php _e('Allow follow-up questions like "show me cheaper ones" by remembering previous messages.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Max Memory Messages', 'voxel-toolkit'); ?></th>
+                <td>
+                    <input type="number"
+                           name="voxel_toolkit_options[ai_bot][max_memory_messages]"
+                           value="<?php echo esc_attr($max_memory_messages); ?>"
+                           min="1"
+                           max="50"
+                           class="small-text">
+                    <p class="description"><?php _e('Number of previous messages to include for context (1-50).', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+        </table>
+
+        <h3><?php _e('Rate Limiting', 'voxel-toolkit'); ?></h3>
+        <table class="form-table">
+            <tr>
+                <th scope="row"><?php _e('Enable Rate Limiting', 'voxel-toolkit'); ?></th>
+                <td>
+                    <label>
+                        <input type="checkbox"
+                               name="voxel_toolkit_options[ai_bot][rate_limit_enabled]"
+                               value="1"
+                               <?php checked($rate_limit_enabled); ?>>
+                        <?php _e('Limit number of requests per user', 'voxel-toolkit'); ?>
+                    </label>
+                    <p class="description"><?php _e('Helps control API costs and prevent abuse.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Requests Allowed', 'voxel-toolkit'); ?></th>
+                <td>
+                    <input type="number"
+                           name="voxel_toolkit_options[ai_bot][rate_limit_requests]"
+                           value="<?php echo esc_attr($rate_limit_requests); ?>"
+                           min="1"
+                           max="100"
+                           class="small-text">
+                    <span><?php _e('requests per', 'voxel-toolkit'); ?></span>
+                    <input type="number"
+                           name="voxel_toolkit_options[ai_bot][rate_limit_period]"
+                           value="<?php echo esc_attr($rate_limit_period); ?>"
+                           min="10"
+                           max="3600"
+                           class="small-text">
+                    <span><?php _e('seconds', 'voxel-toolkit'); ?></span>
+                    <p class="description"><?php _e('Default: 10 requests per 60 seconds.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+        </table>
+
+        <h3><?php _e('Custom System Prompt', 'voxel-toolkit'); ?></h3>
+        <table class="form-table">
+            <tr>
+                <th scope="row"><?php _e('System Prompt', 'voxel-toolkit'); ?></th>
+                <td>
+                    <textarea name="voxel_toolkit_options[ai_bot][system_prompt]"
+                              rows="10"
+                              class="large-text code"
+                              placeholder="<?php _e('Leave empty for default. Use {{site_name}}, {{schema}}, and {{max_results}} as placeholders.', 'voxel-toolkit'); ?>"><?php echo esc_textarea($system_prompt); ?></textarea>
+                    <p class="description"><?php _e('Advanced: Customize the AI system prompt. Available placeholders: {{site_name}}, {{schema}}, {{max_results}}', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+        </table>
+        <?php
     }
 
 }
