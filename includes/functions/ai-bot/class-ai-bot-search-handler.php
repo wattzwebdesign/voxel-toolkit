@@ -333,7 +333,9 @@ Important rules:
 - The 'searches' array can contain multiple searches if needed
 - Maximum {$max_results} results per search
 - If you can't determine what to search, ask clarifying questions in the explanation and leave searches empty
-- Always include the JSON response at the end of your message
+- Always respond with ONLY the JSON object, no additional text before or after
+- NEVER add comments in the JSON (no // or /* */ comments)
+- The JSON must be valid and parseable
 
 Special filters (prefixed with underscore):
 - \"_min_rating\": Minimum star rating (1-5). Example: 4 means \"4 stars and above\"

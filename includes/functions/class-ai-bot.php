@@ -290,11 +290,25 @@ class Voxel_Toolkit_AI_Bot {
         // Try to find JSON in the response
         if (preg_match('/\{[\s\S]*\}/m', $response, $matches)) {
             $json_str = $matches[0];
+
+            // Remove JavaScript-style comments that AI sometimes adds
+            // Remove single-line comments: // comment
+            $json_str = preg_replace('/\/\/[^\n\r]*/m', '', $json_str);
+            // Remove multi-line comments: /* comment */
+            $json_str = preg_replace('/\/\*[\s\S]*?\*\//', '', $json_str);
+
+            // Clean up any trailing commas before closing brackets (invalid JSON)
+            $json_str = preg_replace('/,\s*([\]}])/m', '$1', $json_str);
+
             $parsed = json_decode($json_str, true);
 
             if (json_last_error() === JSON_ERROR_NONE && isset($parsed['searches'])) {
                 return $parsed;
             }
+
+            // Log parsing error for debugging
+            error_log('VT AI Bot - JSON parse error: ' . json_last_error_msg());
+            error_log('VT AI Bot - Cleaned JSON: ' . substr($json_str, 0, 500));
         }
 
         // If no valid JSON found, return null
