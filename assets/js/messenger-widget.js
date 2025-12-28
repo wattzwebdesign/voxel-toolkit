@@ -81,6 +81,9 @@
                 // Initialize persistent admin chat if configured
                 self.initPersistentAdminChat();
 
+                // Initialize AI Bot chat if configured
+                self.initAIBotChat();
+
                 // Start polling for new messages
                 if (self.config.polling && self.config.polling.enabled) {
                     self.startPolling();
@@ -420,6 +423,82 @@
             });
         },
 
+        /**
+         * Initialize AI Bot chat from config
+         */
+        initAIBotChat: function() {
+            var self = this;
+
+            // Check if AI Bot is enabled for messenger
+            if (!self.config.aiBot || !self.config.aiBot.enabled) {
+                return;
+            }
+
+            // Create the AI Bot circle after a short delay
+            setTimeout(function() {
+                self.createAIBotCircle();
+            }, 600);
+        },
+
+        /**
+         * Create the AI Bot chat circle in the chat list
+         */
+        createAIBotCircle: function() {
+            var self = this;
+
+            if (!self.config.aiBot || !self.config.aiBot.enabled) return;
+
+            var $list = self.popup.find('.vt-messenger-chat-list');
+
+            // Check if already exists
+            if ($list.find('.vt-ai-bot-chat-circle').length > 0) {
+                return;
+            }
+
+            // Get AI Bot avatar
+            var avatarUrl = self.config.aiBot.avatar || self.config.defaultAvatar || '';
+            var avatarHtml = avatarUrl
+                ? '<img src="' + self.escapeHtml(avatarUrl) + '" alt="AI Assistant">'
+                : '<span class="vt-ai-bot-icon">AI</span>';
+
+            var circleHtml = '<div class="vt-messenger-chat-item vt-ai-bot-chat-circle" ';
+            circleHtml += 'data-chat-key="ai-bot" ';
+            circleHtml += 'data-name="AI Assistant" ';
+            circleHtml += 'data-ai-bot="true">';
+            circleHtml += '  <div class="vt-chat-avatar vt-ai-bot-avatar">' + avatarHtml + '</div>';
+            circleHtml += '  <span class="vt-ai-bot-badge"></span>';
+            circleHtml += '</div>';
+
+            // Insert after persistent admin if exists, otherwise at top
+            var $persistentAdmin = $list.find('.vt-persistent-admin-chat');
+            if ($persistentAdmin.length > 0) {
+                $persistentAdmin.after(circleHtml);
+            } else {
+                $list.prepend(circleHtml);
+            }
+        },
+
+        /**
+         * Open AI Bot panel (triggers the main AI Bot widget)
+         */
+        openAIBotPanel: function() {
+            // Trigger the AI Bot panel via the existing trigger class
+            var $trigger = $('.vt-ai-bot-trigger').first();
+            if ($trigger.length > 0) {
+                $trigger.trigger('click');
+            } else {
+                // Fallback: directly open the AI Bot container
+                var $container = $('.vt-ai-bot-container');
+                if ($container.length > 0) {
+                    $container.addClass('is-open');
+                    $('body').addClass('vt-ai-bot-panel-open');
+                }
+            }
+
+            // Close messenger popup
+            this.closePopup();
+        },
+
         bindEvents: function() {
             var self = this;
 
@@ -465,6 +544,12 @@
 
                 var $item = $(this);
                 var chatKey = $item.data('chat-key');
+
+                // Check if this is an AI Bot circle
+                if ($item.hasClass('vt-ai-bot-chat-circle') || $item.data('ai-bot') === true) {
+                    self.openAIBotPanel();
+                    return;
+                }
 
                 // Check if this is a persistent admin chat
                 if ($item.hasClass('vt-persistent-admin-chat') || $item.data('persistent') === true) {

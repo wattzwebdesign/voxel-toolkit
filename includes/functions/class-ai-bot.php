@@ -78,11 +78,24 @@ class Voxel_Toolkit_AI_Bot {
             'welcome_message' => __('Hi! How can I help you find what you\'re looking for?', 'voxel-toolkit'),
             'placeholder_text' => __('Ask me anything...', 'voxel-toolkit'),
             'panel_title' => __('AI Assistant', 'voxel-toolkit'),
+            'suggested_queries' => array(), // Example questions to show as clickable chips
             'conversation_memory' => true,
             'max_memory_messages' => 10,
             'rate_limit_enabled' => true,
             'rate_limit_requests' => 10,
             'rate_limit_period' => 60,
+            'messenger_integration' => false, // Enable AI Bot in messenger widget
+            'ai_bot_avatar' => '', // Avatar URL for AI Bot in messenger
+            // Styling options
+            'style_primary_color' => '#0084ff',
+            'style_header_text_color' => '#ffffff',
+            'style_ai_bubble_color' => '#f0f2f5',
+            'style_ai_text_color' => '#050505',
+            'style_user_bubble_color' => '#0084ff',
+            'style_user_text_color' => '#ffffff',
+            'style_panel_width' => 400,
+            'style_font_size' => 14,
+            'style_border_radius' => 18,
         );
 
         $settings = Voxel_Toolkit_Settings::instance()->get_function_settings('ai_bot', array());
@@ -100,9 +113,11 @@ class Voxel_Toolkit_AI_Bot {
             'welcomeMessage' => $settings['welcome_message'],
             'placeholderText' => $settings['placeholder_text'],
             'panelTitle' => $settings['panel_title'],
+            'suggestedQueries' => (array) $settings['suggested_queries'],
             'conversationMemory' => (bool) $settings['conversation_memory'],
             'maxMemoryMessages' => absint($settings['max_memory_messages']),
             'accessControl' => $settings['access_control'],
+            'messengerIntegration' => (bool) $settings['messenger_integration'],
         );
     }
 
@@ -463,6 +478,58 @@ class Voxel_Toolkit_AI_Bot {
         $sanitized['rate_limit_period'] = isset($input['rate_limit_period'])
             ? max(10, min(3600, absint($input['rate_limit_period'])))
             : 60;
+
+        // Suggested queries
+        $sanitized['suggested_queries'] = array();
+        if (isset($input['suggested_queries']) && is_array($input['suggested_queries'])) {
+            $sanitized['suggested_queries'] = array_filter(array_map('sanitize_text_field', $input['suggested_queries']));
+        }
+
+        // Messenger integration
+        $sanitized['messenger_integration'] = isset($input['messenger_integration']) && $input['messenger_integration'];
+
+        // AI Bot avatar
+        $sanitized['ai_bot_avatar'] = isset($input['ai_bot_avatar'])
+            ? esc_url_raw($input['ai_bot_avatar'])
+            : '';
+
+        // Styling options - colors
+        $sanitized['style_primary_color'] = isset($input['style_primary_color'])
+            ? sanitize_hex_color($input['style_primary_color']) ?: '#0084ff'
+            : '#0084ff';
+
+        $sanitized['style_header_text_color'] = isset($input['style_header_text_color'])
+            ? sanitize_hex_color($input['style_header_text_color']) ?: '#ffffff'
+            : '#ffffff';
+
+        $sanitized['style_ai_bubble_color'] = isset($input['style_ai_bubble_color'])
+            ? sanitize_hex_color($input['style_ai_bubble_color']) ?: '#f0f2f5'
+            : '#f0f2f5';
+
+        $sanitized['style_ai_text_color'] = isset($input['style_ai_text_color'])
+            ? sanitize_hex_color($input['style_ai_text_color']) ?: '#050505'
+            : '#050505';
+
+        $sanitized['style_user_bubble_color'] = isset($input['style_user_bubble_color'])
+            ? sanitize_hex_color($input['style_user_bubble_color']) ?: '#0084ff'
+            : '#0084ff';
+
+        $sanitized['style_user_text_color'] = isset($input['style_user_text_color'])
+            ? sanitize_hex_color($input['style_user_text_color']) ?: '#ffffff'
+            : '#ffffff';
+
+        // Styling options - sizing
+        $sanitized['style_panel_width'] = isset($input['style_panel_width'])
+            ? max(300, min(600, absint($input['style_panel_width'])))
+            : 400;
+
+        $sanitized['style_font_size'] = isset($input['style_font_size'])
+            ? max(12, min(18, absint($input['style_font_size'])))
+            : 14;
+
+        $sanitized['style_border_radius'] = isset($input['style_border_radius'])
+            ? max(0, min(30, absint($input['style_border_radius'])))
+            : 18;
 
         return $sanitized;
     }

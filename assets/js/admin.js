@@ -939,6 +939,25 @@ jQuery(document).ready(function($) {
                     return;
                 }
 
+                // Handle array text inputs: voxel_toolkit_options[func][setting][]
+                const matchArray = key.match(/^voxel_toolkit_options\[([^\]]+)\]\[([^\]]+)\]\[\]$/);
+                if (matchArray) {
+                    const fKey = matchArray[1];
+                    const settingKey = matchArray[2];
+
+                    if (!settings[fKey]) {
+                        settings[fKey] = {};
+                    }
+                    if (!settings[fKey][settingKey]) {
+                        settings[fKey][settingKey] = [];
+                    }
+                    // Only add non-empty values
+                    if (value.trim() !== '') {
+                        settings[fKey][settingKey].push(value);
+                    }
+                    return;
+                }
+
                 // Handle 5-level nesting: voxel_toolkit_options[func][nested1][nested2][nested3][key]
                 const match5Level = key.match(/^voxel_toolkit_options\[([^\]]+)\]\[([^\]]+)\]\[([^\]]+)\]\[([^\]]+)\]\[([^\]]+)\]$/);
                 if (match5Level) {

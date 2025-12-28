@@ -876,3 +876,57 @@
 .vt-messenger-chat-window.vt-persistent-admin-window.minimized .vt-messenger-chat-footer {
     display: none !important;
 }
+
+/* ============================================
+   AI Bot Chat Circle Styles
+   ============================================ */
+
+/* AI Bot circle in messenger popup */
+.vt-messenger-chat-item.vt-ai-bot-chat-circle {
+    position: relative;
+}
+
+/* AI Bot avatar styling */
+.vt-ai-bot-chat-circle .vt-ai-bot-avatar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* AI Bot icon fallback when no avatar image */
+.vt-ai-bot-chat-circle .vt-ai-bot-icon {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* AI Bot badge - sparkle indicator */
+.vt-ai-bot-chat-circle .vt-ai-bot-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 14px;
+    height: 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+/* AI Bot badge sparkle animation */
+.vt-ai-bot-chat-circle .vt-ai-bot-badge::after {
+    content: '✨';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8px;
+    line-height: 1;
+}
+
+/* Hover effect on AI Bot circle */
+.vt-ai-bot-chat-circle:hover .vt-ai-bot-avatar {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}

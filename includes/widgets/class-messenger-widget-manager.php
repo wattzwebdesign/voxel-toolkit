@@ -65,6 +65,20 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
         $messenger_settings = get_option('voxel_toolkit_messenger_settings', array());
         $default_avatar = !empty($messenger_settings['default_avatar']) ? $messenger_settings['default_avatar'] : '';
 
+        // Get AI Bot settings for messenger integration
+        $ai_bot_config = array(
+            'enabled' => false,
+            'avatar' => '',
+        );
+        if (class_exists('Voxel_Toolkit_AI_Bot')) {
+            $ai_bot = Voxel_Toolkit_AI_Bot::instance();
+            $ai_bot_settings = $ai_bot->get_settings();
+            if (!empty($ai_bot_settings['messenger_integration'])) {
+                $ai_bot_config['enabled'] = true;
+                $ai_bot_config['avatar'] = !empty($ai_bot_settings['ai_bot_avatar']) ? $ai_bot_settings['ai_bot_avatar'] : '';
+            }
+        }
+
         wp_localize_script('voxel-toolkit-messenger', 'vtMessenger', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('vx_chat'),
@@ -77,6 +91,7 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
                 'frequency' => 30000, // milliseconds - 30 seconds (conservative)
             ),
             'maxOpenChats' => 3,
+            'aiBot' => $ai_bot_config,
             'i18n' => array(
                 'searchPlaceholder' => __('Search messages...', 'voxel-toolkit'),
                 'noChats' => __('No conversations yet', 'voxel-toolkit'),

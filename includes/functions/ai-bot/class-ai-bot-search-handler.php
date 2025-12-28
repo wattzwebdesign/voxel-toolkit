@@ -780,11 +780,69 @@ Example response:
                 if (function_exists('Voxel\print_template')) {
                     \Voxel\print_template($template_id);
                 }
+                // Add action buttons
+                echo $this->render_action_buttons($post);
                 echo '</div>';
             }
         }
 
         return ob_get_clean();
+    }
+
+    /**
+     * Render action buttons for a post (Directions, Call, View)
+     *
+     * @param \Voxel\Post $post The post object
+     * @return string HTML for action buttons
+     */
+    private function render_action_buttons($post) {
+        $html = '<div class="vt-ai-bot-card-actions">';
+        $has_buttons = false;
+
+        // Get Directions - if post has location field
+        $location = $post->get_field('location');
+        if ($location) {
+            $value = $location->get_value();
+            if (!empty($value['latitude']) && !empty($value['longitude'])) {
+                $maps_url = 'https://www.google.com/maps/dir/?api=1&destination=' . $value['latitude'] . ',' . $value['longitude'];
+                $html .= '<a href="' . esc_url($maps_url) . '" target="_blank" rel="noopener" class="vt-ai-bot-action-btn">';
+                $html .= '<i class="las la-directions"></i> <span>Directions</span>';
+                $html .= '</a>';
+                $has_buttons = true;
+            }
+        }
+
+        // Call - check common phone field names
+        $phone_value = null;
+        $phone_fields = array('phone', 'phone_number', 'telephone', 'tel', 'contact_phone');
+        foreach ($phone_fields as $field_name) {
+            $phone_field = $post->get_field($field_name);
+            if ($phone_field) {
+                $phone_value = $phone_field->get_value();
+                if (!empty($phone_value)) {
+                    break;
+                }
+            }
+        }
+
+        if (!empty($phone_value)) {
+            // Clean phone number for tel: link
+            $phone_clean = preg_replace('/[^0-9+]/', '', $phone_value);
+            $html .= '<a href="tel:' . esc_attr($phone_clean) . '" class="vt-ai-bot-action-btn">';
+            $html .= '<i class="las la-phone"></i> <span>Call</span>';
+            $html .= '</a>';
+            $has_buttons = true;
+        }
+
+        // View Details - always show
+        $html .= '<a href="' . esc_url(get_permalink($post->get_id())) . '" class="vt-ai-bot-action-btn">';
+        $html .= '<i class="las la-external-link-alt"></i> <span>View</span>';
+        $html .= '</a>';
+        $has_buttons = true;
+
+        $html .= '</div>';
+
+        return $has_buttons ? $html : '';
     }
 
     /**

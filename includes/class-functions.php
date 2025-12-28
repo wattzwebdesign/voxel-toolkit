@@ -6956,6 +6956,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         $rate_limit_enabled = isset($settings['rate_limit_enabled']) ? (bool) $settings['rate_limit_enabled'] : true;
         $rate_limit_requests = isset($settings['rate_limit_requests']) ? absint($settings['rate_limit_requests']) : 10;
         $rate_limit_period = isset($settings['rate_limit_period']) ? absint($settings['rate_limit_period']) : 60;
+        $messenger_integration = isset($settings['messenger_integration']) ? (bool) $settings['messenger_integration'] : false;
+        $ai_bot_avatar = isset($settings['ai_bot_avatar']) ? $settings['ai_bot_avatar'] : '';
+
+        // Styling options
+        $style_primary_color = isset($settings['style_primary_color']) ? $settings['style_primary_color'] : '#0084ff';
+        $style_header_text_color = isset($settings['style_header_text_color']) ? $settings['style_header_text_color'] : '#ffffff';
+        $style_ai_bubble_color = isset($settings['style_ai_bubble_color']) ? $settings['style_ai_bubble_color'] : '#f0f2f5';
+        $style_ai_text_color = isset($settings['style_ai_text_color']) ? $settings['style_ai_text_color'] : '#050505';
+        $style_user_bubble_color = isset($settings['style_user_bubble_color']) ? $settings['style_user_bubble_color'] : '#0084ff';
+        $style_user_text_color = isset($settings['style_user_text_color']) ? $settings['style_user_text_color'] : '#ffffff';
+        $style_panel_width = isset($settings['style_panel_width']) ? absint($settings['style_panel_width']) : 400;
+        $style_font_size = isset($settings['style_font_size']) ? absint($settings['style_font_size']) : 14;
+        $style_border_radius = isset($settings['style_border_radius']) ? absint($settings['style_border_radius']) : 18;
         ?>
 
         <div class="vt-settings-info" style="margin-bottom: 20px; padding: 15px; background: #f0f6fc; border-radius: 6px; border-left: 4px solid #0073aa;">
@@ -7017,6 +7030,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                            value="<?php echo esc_attr($placeholder_text); ?>"
                            class="regular-text">
                     <p class="description"><?php _e('Placeholder text in the message input field.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Suggested Questions', 'voxel-toolkit'); ?></th>
+                <td>
+                    <?php
+                    $suggested_queries = isset($settings['suggested_queries']) ? (array) $settings['suggested_queries'] : array();
+                    // Ensure we have at least 3 empty slots
+                    while (count($suggested_queries) < 3) {
+                        $suggested_queries[] = '';
+                    }
+                    ?>
+                    <div class="vt-suggested-queries-list">
+                        <?php foreach ($suggested_queries as $index => $query): ?>
+                            <input type="text"
+                                   name="voxel_toolkit_options[ai_bot][suggested_queries][]"
+                                   value="<?php echo esc_attr($query); ?>"
+                                   class="regular-text"
+                                   placeholder="<?php echo esc_attr(sprintf(__('Example: %s', 'voxel-toolkit'), $index === 0 ? 'Find places near me' : ($index === 1 ? 'Best rated restaurants' : 'Events this weekend'))); ?>"
+                                   style="margin-bottom: 8px; display: block;">
+                        <?php endforeach; ?>
+                    </div>
+                    <p class="description"><?php _e('Clickable example questions shown after the welcome message. Leave empty to hide.', 'voxel-toolkit'); ?></p>
                 </td>
             </tr>
             <tr>
@@ -7181,6 +7217,241 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </td>
             </tr>
         </table>
+
+        <h3><?php _e('Messenger Integration', 'voxel-toolkit'); ?></h3>
+        <table class="form-table">
+            <tr>
+                <th scope="row"><?php _e('Show in Messenger', 'voxel-toolkit'); ?></th>
+                <td>
+                    <label>
+                        <input type="checkbox"
+                               name="voxel_toolkit_options[ai_bot][messenger_integration]"
+                               value="1"
+                               <?php checked($messenger_integration); ?>>
+                        <?php _e('Show AI Bot circle in messenger widget', 'voxel-toolkit'); ?>
+                    </label>
+                    <p class="description"><?php _e('Adds an AI Assistant circle to the messenger popup. Clicking it opens the AI Bot panel.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('AI Bot Avatar', 'voxel-toolkit'); ?></th>
+                <td>
+                    <input type="text"
+                           id="ai_bot_avatar"
+                           name="voxel_toolkit_options[ai_bot][ai_bot_avatar]"
+                           value="<?php echo esc_url($ai_bot_avatar); ?>"
+                           class="regular-text">
+                    <button type="button" class="button vt-upload-button" data-target="ai_bot_avatar"><?php _e('Upload', 'voxel-toolkit'); ?></button>
+                    <?php if ($ai_bot_avatar): ?>
+                        <div style="margin-top: 10px;">
+                            <img src="<?php echo esc_url($ai_bot_avatar); ?>" style="max-width: 60px; max-height: 60px; border-radius: 50%;">
+                        </div>
+                    <?php endif; ?>
+                    <p class="description"><?php _e('Custom avatar image for AI Bot in messenger. Leave empty to use a gradient icon.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+        </table>
+
+        <h3><?php _e('Appearance', 'voxel-toolkit'); ?></h3>
+        <div class="vt-ai-bot-styling-wrapper" style="display: flex; gap: 30px; flex-wrap: wrap;">
+            <!-- Styling Options -->
+            <div class="vt-ai-bot-styling-options" style="flex: 1; min-width: 300px;">
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><?php _e('Primary Color', 'voxel-toolkit'); ?></th>
+                        <td>
+                            <input type="color"
+                                   name="voxel_toolkit_options[ai_bot][style_primary_color]"
+                                   value="<?php echo esc_attr($style_primary_color); ?>"
+                                   class="vt-ai-bot-style-input"
+                                   data-style="primary-color">
+                            <span class="description"><?php _e('Header, send button, user bubbles', 'voxel-toolkit'); ?></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Header Text Color', 'voxel-toolkit'); ?></th>
+                        <td>
+                            <input type="color"
+                                   name="voxel_toolkit_options[ai_bot][style_header_text_color]"
+                                   value="<?php echo esc_attr($style_header_text_color); ?>"
+                                   class="vt-ai-bot-style-input"
+                                   data-style="header-text-color">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('AI Bubble Color', 'voxel-toolkit'); ?></th>
+                        <td>
+                            <input type="color"
+                                   name="voxel_toolkit_options[ai_bot][style_ai_bubble_color]"
+                                   value="<?php echo esc_attr($style_ai_bubble_color); ?>"
+                                   class="vt-ai-bot-style-input"
+                                   data-style="ai-bubble-color">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('AI Text Color', 'voxel-toolkit'); ?></th>
+                        <td>
+                            <input type="color"
+                                   name="voxel_toolkit_options[ai_bot][style_ai_text_color]"
+                                   value="<?php echo esc_attr($style_ai_text_color); ?>"
+                                   class="vt-ai-bot-style-input"
+                                   data-style="ai-text-color">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('User Bubble Color', 'voxel-toolkit'); ?></th>
+                        <td>
+                            <input type="color"
+                                   name="voxel_toolkit_options[ai_bot][style_user_bubble_color]"
+                                   value="<?php echo esc_attr($style_user_bubble_color); ?>"
+                                   class="vt-ai-bot-style-input"
+                                   data-style="user-bubble-color">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('User Text Color', 'voxel-toolkit'); ?></th>
+                        <td>
+                            <input type="color"
+                                   name="voxel_toolkit_options[ai_bot][style_user_text_color]"
+                                   value="<?php echo esc_attr($style_user_text_color); ?>"
+                                   class="vt-ai-bot-style-input"
+                                   data-style="user-text-color">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Panel Width', 'voxel-toolkit'); ?></th>
+                        <td>
+                            <input type="number"
+                                   name="voxel_toolkit_options[ai_bot][style_panel_width]"
+                                   value="<?php echo esc_attr($style_panel_width); ?>"
+                                   min="300"
+                                   max="600"
+                                   class="small-text vt-ai-bot-style-input"
+                                   data-style="panel-width"> px
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Font Size', 'voxel-toolkit'); ?></th>
+                        <td>
+                            <input type="number"
+                                   name="voxel_toolkit_options[ai_bot][style_font_size]"
+                                   value="<?php echo esc_attr($style_font_size); ?>"
+                                   min="12"
+                                   max="18"
+                                   class="small-text vt-ai-bot-style-input"
+                                   data-style="font-size"> px
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Border Radius', 'voxel-toolkit'); ?></th>
+                        <td>
+                            <input type="number"
+                                   name="voxel_toolkit_options[ai_bot][style_border_radius]"
+                                   value="<?php echo esc_attr($style_border_radius); ?>"
+                                   min="0"
+                                   max="30"
+                                   class="small-text vt-ai-bot-style-input"
+                                   data-style="border-radius"> px
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Live Preview -->
+            <div class="vt-ai-bot-preview-container" style="flex: 0 0 320px;">
+                <div class="vt-ai-bot-preview"
+                     style="--preview-primary: <?php echo esc_attr($style_primary_color); ?>;
+                            --preview-header-text: <?php echo esc_attr($style_header_text_color); ?>;
+                            --preview-ai-bubble: <?php echo esc_attr($style_ai_bubble_color); ?>;
+                            --preview-ai-text: <?php echo esc_attr($style_ai_text_color); ?>;
+                            --preview-user-bubble: <?php echo esc_attr($style_user_bubble_color); ?>;
+                            --preview-user-text: <?php echo esc_attr($style_user_text_color); ?>;
+                            --preview-font-size: <?php echo esc_attr($style_font_size); ?>px;
+                            --preview-border-radius: <?php echo esc_attr($style_border_radius); ?>px;
+                            width: 100%;
+                            max-width: 320px;
+                            border: 1px solid #ddd;
+                            border-radius: 8px;
+                            overflow: hidden;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                    <!-- Header -->
+                    <div class="vt-preview-header" style="background: var(--preview-primary); color: var(--preview-header-text); padding: 12px 16px; font-weight: 600; font-size: 15px;">
+                        <?php _e('AI Assistant', 'voxel-toolkit'); ?>
+                    </div>
+                    <!-- Messages -->
+                    <div class="vt-preview-messages" style="padding: 16px; background: #fff; min-height: 180px; display: flex; flex-direction: column; gap: 12px;">
+                        <!-- AI Message -->
+                        <div style="align-self: flex-start; max-width: 80%;">
+                            <div class="vt-preview-ai-bubble" style="background: var(--preview-ai-bubble); color: var(--preview-ai-text); padding: 10px 14px; border-radius: var(--preview-border-radius) var(--preview-border-radius) var(--preview-border-radius) 4px; font-size: var(--preview-font-size);">
+                                <?php _e('Hi! How can I help?', 'voxel-toolkit'); ?>
+                            </div>
+                        </div>
+                        <!-- User Message -->
+                        <div style="align-self: flex-end; max-width: 80%;">
+                            <div class="vt-preview-user-bubble" style="background: var(--preview-user-bubble); color: var(--preview-user-text); padding: 10px 14px; border-radius: var(--preview-border-radius) var(--preview-border-radius) 4px var(--preview-border-radius); font-size: var(--preview-font-size);">
+                                <?php _e('Find restaurants nearby', 'voxel-toolkit'); ?>
+                            </div>
+                        </div>
+                        <!-- AI Response -->
+                        <div style="align-self: flex-start; max-width: 80%;">
+                            <div class="vt-preview-ai-bubble" style="background: var(--preview-ai-bubble); color: var(--preview-ai-text); padding: 10px 14px; border-radius: var(--preview-border-radius) var(--preview-border-radius) var(--preview-border-radius) 4px; font-size: var(--preview-font-size);">
+                                <?php _e('Here are some options...', 'voxel-toolkit'); ?>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Input -->
+                    <div style="padding: 12px 16px; border-top: 1px solid #e4e6eb; display: flex; gap: 8px; align-items: center;">
+                        <div style="flex: 1; background: #f0f2f5; border-radius: 20px; padding: 8px 14px; font-size: 13px; color: #999;">
+                            <?php _e('Ask me anything...', 'voxel-toolkit'); ?>
+                        </div>
+                        <div class="vt-preview-send-btn" style="width: 36px; height: 36px; background: var(--preview-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <span style="color: #fff; font-size: 14px;">➤</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="description" style="margin-top: 10px; text-align: center;"><?php _e('Live Preview', 'voxel-toolkit'); ?></p>
+            </div>
+        </div>
+
+        <script>
+        jQuery(document).ready(function($) {
+            // Live preview update
+            $('.vt-ai-bot-style-input').on('input change', function() {
+                var $input = $(this);
+                var styleKey = $input.data('style');
+                var value = $input.val();
+                var $preview = $('.vt-ai-bot-preview');
+
+                switch(styleKey) {
+                    case 'primary-color':
+                        $preview.css('--preview-primary', value);
+                        break;
+                    case 'header-text-color':
+                        $preview.css('--preview-header-text', value);
+                        break;
+                    case 'ai-bubble-color':
+                        $preview.css('--preview-ai-bubble', value);
+                        break;
+                    case 'ai-text-color':
+                        $preview.css('--preview-ai-text', value);
+                        break;
+                    case 'user-bubble-color':
+                        $preview.css('--preview-user-bubble', value);
+                        break;
+                    case 'user-text-color':
+                        $preview.css('--preview-user-text', value);
+                        break;
+                    case 'font-size':
+                        $preview.css('--preview-font-size', value + 'px');
+                        break;
+                    case 'border-radius':
+                        $preview.css('--preview-border-radius', value + 'px');
+                        break;
+                }
+            });
+        });
+        </script>
         <?php
     }
 

@@ -72,6 +72,7 @@ class Voxel_Toolkit_AI_Bot_Widget_Manager {
                 'welcomeMessage' => $ai_bot_settings['welcome_message'],
                 'placeholderText' => $ai_bot_settings['placeholder_text'],
                 'panelTitle' => $ai_bot_settings['panel_title'],
+                'suggestedQueries' => isset($ai_bot_settings['suggested_queries']) ? (array) $ai_bot_settings['suggested_queries'] : array(),
                 'conversationMemory' => (bool) $ai_bot_settings['conversation_memory'],
                 'maxMemoryMessages' => absint($ai_bot_settings['max_memory_messages']),
                 'accessControl' => $ai_bot_settings['access_control'],
@@ -160,11 +161,31 @@ class Voxel_Toolkit_AI_Bot_Widget_Manager {
         $panel_position = $settings['panel_position'];
         $panel_title = $settings['panel_title'];
         $placeholder = $settings['placeholder_text'];
+
+        // Styling options
+        $style_primary_color = isset($settings['style_primary_color']) ? $settings['style_primary_color'] : '#0084ff';
+        $style_header_text_color = isset($settings['style_header_text_color']) ? $settings['style_header_text_color'] : '#ffffff';
+        $style_ai_bubble_color = isset($settings['style_ai_bubble_color']) ? $settings['style_ai_bubble_color'] : '#f0f2f5';
+        $style_ai_text_color = isset($settings['style_ai_text_color']) ? $settings['style_ai_text_color'] : '#050505';
+        $style_user_bubble_color = isset($settings['style_user_bubble_color']) ? $settings['style_user_bubble_color'] : '#0084ff';
+        $style_user_text_color = isset($settings['style_user_text_color']) ? $settings['style_user_text_color'] : '#ffffff';
+        $style_panel_width = isset($settings['style_panel_width']) ? absint($settings['style_panel_width']) : 400;
+        $style_font_size = isset($settings['style_font_size']) ? absint($settings['style_font_size']) : 14;
+        $style_border_radius = isset($settings['style_border_radius']) ? absint($settings['style_border_radius']) : 18;
         ?>
         <div class="vt-ai-bot-container position-<?php echo esc_attr($panel_position); ?>"
              data-position="<?php echo esc_attr($panel_position); ?>"
              data-welcome="<?php echo esc_attr($settings['welcome_message']); ?>"
-             data-placeholder="<?php echo esc_attr($placeholder); ?>">
+             data-placeholder="<?php echo esc_attr($placeholder); ?>"
+             style="--vt-ai-primary: <?php echo esc_attr($style_primary_color); ?>;
+                    --vt-ai-header-text: <?php echo esc_attr($style_header_text_color); ?>;
+                    --vt-ai-bubble: <?php echo esc_attr($style_ai_bubble_color); ?>;
+                    --vt-ai-text: <?php echo esc_attr($style_ai_text_color); ?>;
+                    --vt-ai-user-bubble: <?php echo esc_attr($style_user_bubble_color); ?>;
+                    --vt-ai-user-text: <?php echo esc_attr($style_user_text_color); ?>;
+                    --vt-ai-panel-width: <?php echo esc_attr($style_panel_width); ?>px;
+                    --vt-ai-font-size: <?php echo esc_attr($style_font_size); ?>px;
+                    --vt-ai-border-radius: <?php echo esc_attr($style_border_radius); ?>px;">
 
             <!-- Panel -->
             <div class="vt-ai-bot-panel">

@@ -11,6 +11,8 @@
             isOpen: false,
             isLoading: false,
             messages: [],
+            lastQuery: '', // Store last query for quick filters
+            activeFilters: [], // Track active quick filters
         },
 
         init: function() {
@@ -118,6 +120,33 @@
                              'Hi! How can I help you find what you\'re looking for?';
 
             this.addMessage('ai', welcomeMsg);
+            this.showSuggestedQueries();
+        },
+
+        showSuggestedQueries: function() {
+            var self = this;
+            var queries = this.config.settings?.suggestedQueries || [];
+            if (!queries.length) return;
+
+            var html = '<div class="vt-ai-bot-suggestions">';
+            queries.forEach(function(query) {
+                html += '<button type="button" class="vt-ai-bot-suggestion-chip">' + self.escapeHtml(query) + '</button>';
+            });
+            html += '</div>';
+
+            var $suggestions = $(html);
+            $suggestions.find('.vt-ai-bot-suggestion-chip').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var query = $(this).text();
+                self.input.val(query);
+                // Remove suggestions after clicking one
+                $('.vt-ai-bot-suggestions').remove();
+                self.sendMessage();
+            });
+
+            // Place suggestions above the input form
+            this.container.find('.vt-ai-bot-input-area').prepend($suggestions);
         },
 
         sendMessage: function() {
@@ -134,6 +163,12 @@
             // Add user message to UI
             this.addMessage('user', message);
             this.input.val('');
+
+            // Store for quick filters (only if not already a filter refinement)
+            if (!message.startsWith('Refine:')) {
+                this.state.lastQuery = message;
+                this.state.activeFilters = [];
+            }
 
             // Show loading
             this.state.isLoading = true;
@@ -224,6 +259,11 @@
             var self = this;
             var html = '<div class="vt-ai-bot-results">';
 
+            // Add quick filter chips if we have a stored query
+            if (this.state.lastQuery) {
+                html += this.renderQuickFilters();
+            }
+
             results.forEach(function(result) {
                 if (result.count === 0) return;
 
@@ -246,16 +286,83 @@
 
             html += '</div>';
 
-            this.messagesContainer.append(html);
+            var $results = $(html);
+            this.bindQuickFilterEvents($results);
+            this.messagesContainer.append($results);
             this.scrollToBottom();
+        },
+
+        renderQuickFilters: function() {
+            var self = this;
+            var filters = [
+                { key: 'rating', label: '4+ Stars', query: 'with 4 stars or higher rating' },
+                { key: 'reviews', label: 'Has Reviews', query: 'that have at least 1 review' }
+            ];
+
+            var html = '<div class="vt-ai-bot-quick-filters">';
+            filters.forEach(function(filter) {
+                var isActive = self.state.activeFilters.indexOf(filter.key) !== -1;
+                html += '<button type="button" class="vt-ai-bot-filter-chip' + (isActive ? ' active' : '') + '" ';
+                html += 'data-filter="' + filter.key + '" data-query="' + self.escapeHtml(filter.query) + '">';
+                html += self.escapeHtml(filter.label);
+                html += '</button>';
+            });
+            html += '</div>';
+
+            return html;
+        },
+
+        bindQuickFilterEvents: function($container) {
+            var self = this;
+            $container.find('.vt-ai-bot-filter-chip').on('click', function() {
+                var $chip = $(this);
+                var filterKey = $chip.data('filter');
+                var filterQuery = $chip.data('query');
+
+                if (self.state.isLoading) return;
+
+                // Toggle active state
+                var isActive = self.state.activeFilters.indexOf(filterKey) !== -1;
+                if (isActive) {
+                    // Remove filter
+                    self.state.activeFilters = self.state.activeFilters.filter(function(f) {
+                        return f !== filterKey;
+                    });
+                } else {
+                    // Add filter
+                    self.state.activeFilters.push(filterKey);
+                }
+
+                // Build refined query
+                var refinedQuery = self.state.lastQuery;
+                if (self.state.activeFilters.length > 0) {
+                    var filterParts = [];
+                    $container.find('.vt-ai-bot-filter-chip').each(function() {
+                        var key = $(this).data('filter');
+                        var query = $(this).data('query');
+                        if (self.state.activeFilters.indexOf(key) !== -1) {
+                            filterParts.push(query);
+                        }
+                    });
+                    refinedQuery = 'Refine: ' + self.state.lastQuery + ' ' + filterParts.join(' and ');
+                }
+
+                // Remove old results
+                self.messagesContainer.find('.vt-ai-bot-results').last().remove();
+
+                // Send refined query
+                self.input.val(refinedQuery);
+                self.sendMessage();
+            });
         },
 
         showLoading: function() {
             var html = '<div class="vt-ai-bot-message vt-ai-bot-message-ai vt-ai-bot-loading-message">';
             html += '<div class="vt-ai-bot-loading">';
-            html += '<div class="vt-ai-bot-loading-dot"></div>';
-            html += '<div class="vt-ai-bot-loading-dot"></div>';
-            html += '<div class="vt-ai-bot-loading-dot"></div>';
+            html += '<span class="vt-ai-bot-loading-text">AI is thinking</span>';
+            html += '<span class="vt-ai-bot-loading-dots">';
+            html += '<span></span><span></span><span></span>';
+            html += '</span>';
             html += '</div>';
             html += '</div>';
 

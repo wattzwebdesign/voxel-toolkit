@@ -1974,6 +1974,13 @@ class Voxel_Toolkit_Admin {
                             : '';
                         break;
 
+                    case 'ai_bot':
+                        // Use the AI Bot's own sanitization method
+                        if (class_exists('Voxel_Toolkit_AI_Bot')) {
+                            $sanitized_function = Voxel_Toolkit_AI_Bot::sanitize_settings($function_input);
+                        }
+                        break;
+
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(

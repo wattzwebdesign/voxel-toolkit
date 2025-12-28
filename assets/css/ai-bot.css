@@ -22,7 +22,7 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 400px;
+    width: var(--vt-ai-panel-width, 400px);
     max-width: 100vw;
     background: #fff;
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
@@ -56,8 +56,8 @@ body.vt-ai-bot-panel-open {
 /* Panel Header */
 .vt-ai-bot-header {
     padding: 16px 20px;
-    background: #0084ff;
-    color: #fff;
+    background: var(--vt-ai-primary, #0084ff);
+    color: var(--vt-ai-header-text, #fff);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -115,11 +115,12 @@ body.vt-ai-bot-panel-open {
 }
 
 .vt-ai-bot-message-user .vt-ai-bot-message-content {
-    background: #0084ff;
-    color: #fff;
+    background: var(--vt-ai-user-bubble, #0084ff);
+    color: var(--vt-ai-user-text, #fff);
     padding: 12px 16px;
-    border-radius: 18px 18px 4px 18px;
+    border-radius: var(--vt-ai-border-radius, 18px) var(--vt-ai-border-radius, 18px) 4px var(--vt-ai-border-radius, 18px);
     word-break: break-word;
+    font-size: var(--vt-ai-font-size, 14px);
 }
 
 .vt-ai-bot-message-ai {
@@ -127,11 +128,12 @@ body.vt-ai-bot-panel-open {
 }
 
 .vt-ai-bot-message-ai .vt-ai-bot-message-content {
-    background: #f0f2f5;
-    color: #050505;
+    background: var(--vt-ai-bubble, #f0f2f5);
+    color: var(--vt-ai-text, #050505);
     padding: 12px 16px;
-    border-radius: 18px 18px 18px 4px;
+    border-radius: var(--vt-ai-border-radius, 18px) var(--vt-ai-border-radius, 18px) var(--vt-ai-border-radius, 18px) 4px;
     word-break: break-word;
+    font-size: var(--vt-ai-font-size, 14px);
 }
 
 .vt-ai-bot-message-error {
@@ -245,6 +247,94 @@ body.vt-ai-bot-panel-open {
     color: #0066cc;
 }
 
+/* Quick Filters */
+.vt-ai-bot-quick-filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.vt-ai-bot-filter-chip {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    background: #fff;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.vt-ai-bot-filter-chip:hover {
+    border-color: #0084ff;
+    color: #0084ff;
+}
+
+.vt-ai-bot-filter-chip.active {
+    background: #0084ff;
+    color: #fff;
+    border-color: #0084ff;
+}
+
+/* Card Action Buttons */
+.vt-ai-bot-card-actions {
+    display: flex;
+    gap: 8px;
+    padding: 10px 12px;
+    border-top: 1px solid #eee;
+    background: #fafafa;
+    margin-top: -1px;
+}
+
+.vt-ai-bot-action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #0084ff;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.vt-ai-bot-action-btn:hover {
+    background: #0084ff;
+    color: #fff;
+    border-color: #0084ff;
+}
+
+.vt-ai-bot-action-btn i {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.vt-ai-bot-action-btn span {
+    display: inline;
+}
+
+/* Hide text on smaller panels, show only icons */
+@media (max-width: 360px) {
+    .vt-ai-bot-action-btn span {
+        display: none;
+    }
+
+    .vt-ai-bot-action-btn {
+        padding: 10px;
+    }
+
+    .vt-ai-bot-action-btn i {
+        font-size: 16px;
+    }
+}
+
 /* Input Area */
 .vt-ai-bot-input-area {
     padding: 16px 20px;
@@ -264,14 +354,14 @@ body.vt-ai-bot-panel-open {
     padding: 12px 16px;
     border: 1px solid #ddd;
     border-radius: 24px;
-    font-size: 14px;
+    font-size: var(--vt-ai-font-size, 14px);
     outline: none;
     transition: border-color 0.2s;
     font-family: inherit;
 }
 
 .vt-ai-bot-input:focus {
-    border-color: #0084ff;
+    border-color: var(--vt-ai-primary, #0084ff);
 }
 
 .vt-ai-bot-input::placeholder {
@@ -283,19 +373,19 @@ body.vt-ai-bot-panel-open {
     height: 44px;
     min-width: 44px;
     border-radius: 50%;
-    background: #0084ff;
+    background: var(--vt-ai-primary, #0084ff);
     color: #fff;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s ease, transform 0.1s ease;
+    transition: background 0.2s ease, transform 0.1s ease, filter 0.2s ease;
     padding: 0;
 }
 
 .vt-ai-bot-send:hover {
-    background: #0073e6;
+    filter: brightness(0.9);
 }
 
 .vt-ai-bot-send:active {
@@ -312,29 +402,70 @@ body.vt-ai-bot-panel-open {
     height: 18px;
 }
 
+/* Suggested Queries */
+.vt-ai-bot-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 0 20px;
+    animation: vt-ai-bot-fade-in 0.3s ease;
+}
+
+.vt-ai-bot-suggestion-chip {
+    padding: 8px 14px;
+    background: #f0f2f5;
+    border: none;
+    border-radius: 16px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    font-family: inherit;
+}
+
+.vt-ai-bot-suggestion-chip:hover {
+    background: #e4e6eb;
+}
+
+.vt-ai-bot-suggestion-chip:active {
+    transform: scale(0.95);
+}
+
 /* Loading Animation */
 .vt-ai-bot-loading {
     display: flex;
-    gap: 4px;
-    padding: 8px 16px;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 16px;
     background: #f0f2f5;
     border-radius: 18px 18px 18px 4px;
     width: fit-content;
 }
 
-.vt-ai-bot-loading-dot {
-    width: 8px;
-    height: 8px;
+.vt-ai-bot-loading-text {
+    font-size: 14px;
+    color: #666;
+}
+
+.vt-ai-bot-loading-dots {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+}
+
+.vt-ai-bot-loading-dots span {
+    width: 5px;
+    height: 5px;
+    background: #666;
     border-radius: 50%;
-    background: #999;
     animation: vt-ai-bot-bounce 1.4s infinite ease-in-out both;
 }
 
-.vt-ai-bot-loading-dot:nth-child(1) {
+.vt-ai-bot-loading-dots span:nth-child(1) {
     animation-delay: -0.32s;
 }
 
-.vt-ai-bot-loading-dot:nth-child(2) {
+.vt-ai-bot-loading-dots span:nth-child(2) {
     animation-delay: -0.16s;
 }
 
