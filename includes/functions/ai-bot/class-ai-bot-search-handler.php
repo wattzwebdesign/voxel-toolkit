@@ -150,7 +150,10 @@ class Voxel_Toolkit_AI_Bot_Search_Handler {
 
             // Add hint for location filters
             if ($type === 'location') {
-                $filter_data['hint'] = 'Use format: {"address": "city or address", "lat": number, "lng": number, "radius": number_in_km}';
+                $radius_units = $filter->get_prop('radius_units');
+                $units_label = ($radius_units === 'mi') ? 'miles' : 'kilometers';
+                $filter_data['radius_units'] = $radius_units ?: 'km';
+                $filter_data['hint'] = 'Use format: {"address": "city, state, country or full address", "radius": number_in_' . $units_label . '}. The address will be geocoded automatically.';
             }
 
             // Add hint for date filters
@@ -831,10 +834,14 @@ Example response:
     }
 
     /**
-     * Process location filters - geocode addresses if needed
+     * Process location filters - geocode addresses and format for Voxel
+     *
+     * Voxel expects location filter values in string format:
+     * - Radius search: "address;lat,lng,radius"
+     * - Area search: "address;swlat,swlng..nelat,nelng"
      *
      * @param array $filters Filter array
-     * @return array Processed filters with geocoded locations
+     * @return array Processed filters with formatted location strings
      */
     private function process_location_filters($filters) {
         // Check for common location filter keys
@@ -846,31 +853,60 @@ Example response:
             }
 
             $location = $filters[$key];
+            $address_text = '';
+            $lat = null;
+            $lng = null;
+            $radius = 10; // Default radius
 
-            // If it's just a string, treat it as an address
+            // If it's just a string, treat it as an address to geocode
             if (is_string($location)) {
+                $address_text = $location;
                 $geocoded = $this->geocode_address($location);
                 if ($geocoded) {
-                    $filters[$key] = $geocoded;
+                    $lat = $geocoded['lat'];
+                    $lng = $geocoded['lng'];
+                    $address_text = $geocoded['address'];
                 }
-                continue;
             }
+            // If it's an array, extract components
+            elseif (is_array($location)) {
+                // Get address
+                $address_text = isset($location['address']) ? $location['address'] : '';
 
-            // If it's an array with 'address' but no lat/lng, geocode it
-            if (is_array($location)) {
-                $has_coords = (isset($location['lat']) && isset($location['lng'])) ||
-                              (isset($location['latitude']) && isset($location['longitude']));
+                // Get radius if provided
+                if (isset($location['radius'])) {
+                    $radius = floatval($location['radius']);
+                }
 
-                if (!$has_coords && isset($location['address'])) {
-                    $geocoded = $this->geocode_address($location['address']);
+                // Check for existing coordinates
+                if (isset($location['lat']) && isset($location['lng'])) {
+                    $lat = floatval($location['lat']);
+                    $lng = floatval($location['lng']);
+                } elseif (isset($location['latitude']) && isset($location['longitude'])) {
+                    $lat = floatval($location['latitude']);
+                    $lng = floatval($location['longitude']);
+                }
+                // Geocode if we have address but no coordinates
+                elseif (!empty($address_text)) {
+                    $geocoded = $this->geocode_address($address_text);
                     if ($geocoded) {
-                        // Preserve radius if set
-                        if (isset($location['radius'])) {
-                            $geocoded['radius'] = $location['radius'];
-                        }
-                        $filters[$key] = $geocoded;
+                        $lat = $geocoded['lat'];
+                        $lng = $geocoded['lng'];
+                        $address_text = $geocoded['address'];
                     }
                 }
+            }
+
+            // If we have valid coordinates, format for Voxel
+            if ($lat !== null && $lng !== null) {
+                // Voxel format for radius search: "address;lat,lng,radius"
+                $formatted = sprintf('%s;%s,%s,%s', $address_text, $lat, $lng, $radius);
+                $filters[$key] = $formatted;
+                error_log('VT AI Bot Search - Formatted location filter: ' . $formatted);
+            } else {
+                // Remove invalid location filter
+                unset($filters[$key]);
+                error_log('VT AI Bot Search - Could not geocode location, removing filter');
             }
         }
 
