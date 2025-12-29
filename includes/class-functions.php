@@ -579,6 +579,14 @@ class Voxel_Toolkit_Functions {
                 'icon' => 'dashicons-format-chat',
                 'required_widgets' => array('ai_bot_widget'),
             ),
+            'recurring_events' => array(
+                'name' => __('Recurring Events - Multiple Instances', 'voxel-toolkit'),
+                'description' => __('Show recurring events multiple times in archives (once per upcoming occurrence). Each card displays only its specific date.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Recurring_Events',
+                'file' => 'functions/class-recurring-events.php',
+                'icon' => 'dashicons-calendar-alt',
+                'settings_callback' => array($this, 'render_recurring_events_settings'),
+            ),
         );
 
         // Allow other plugins/themes to register functions
@@ -7444,6 +7452,78 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             });
         });
         </script>
+        <?php
+    }
+
+    /**
+     * Render settings for Recurring Events function
+     *
+     * @param array $settings Current settings
+     */
+    public function render_recurring_events_settings($settings) {
+        ?>
+        <div class="vt-info-box">
+            <?php _e('This function displays recurring events multiple times in archives and search results - once for each upcoming occurrence. Each card shows only its specific date, making it easy for users to see all upcoming event dates.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('How It Works', 'voxel-toolkit'); ?></h4>
+            <ul class="vt-feature-list">
+                <li><?php _e('Events with multiple upcoming dates automatically appear multiple times in post feeds', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Each card displays only that specific occurrence\'s date', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Cards are sorted by occurrence date (soonest first)', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Respects the "Posts per page" setting in your Post Feed widget', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Results count updates to reflect total occurrences shown', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Card Template Setup', 'voxel-toolkit'); ?></h4>
+            <div class="vt-tip-box">
+                <strong><?php _e('Important:', 'voxel-toolkit'); ?></strong>
+                <?php _e('For dates to display correctly on each card, use these dynamic tags in your card template:', 'voxel-toolkit'); ?>
+            </div>
+
+            <table class="form-table" style="margin-top: 15px;">
+                <tr>
+                    <th scope="row"><?php _e('Start Date', 'voxel-toolkit'); ?></th>
+                    <td>
+                        <code style="background: #f0f0f1; padding: 8px 12px; display: inline-block; border-radius: 4px;">@post(recurring-date.upcoming.start)</code>
+                        <p class="description"><?php _e('Displays the start date/time of the occurrence', 'voxel-toolkit'); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php _e('End Date', 'voxel-toolkit'); ?></th>
+                    <td>
+                        <code style="background: #f0f0f1; padding: 8px 12px; display: inline-block; border-radius: 4px;">@post(recurring-date.upcoming.end)</code>
+                        <p class="description"><?php _e('Displays the end date/time of the occurrence', 'voxel-toolkit'); ?></p>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="vt-warning-box" style="margin-top: 15px;">
+                <strong><?php _e('Note:', 'voxel-toolkit'); ?></strong>
+                <?php _e('Replace "recurring-date" with your actual recurring date field key if different.', 'voxel-toolkit'); ?>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Requirements', 'voxel-toolkit'); ?></h4>
+            <ul class="vt-feature-list">
+                <li><?php _e('Post type must have a <strong>Recurring Date</strong> field', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Events must have future occurrences configured', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Works with Post Feed widgets using "Search Form" or "Filters" data source', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Example', 'voxel-toolkit'); ?></h4>
+            <p><?php _e('If you have a weekly yoga class with dates on Jan 6, Jan 13, and Jan 20:', 'voxel-toolkit'); ?></p>
+            <ul class="vt-feature-list">
+                <li><?php _e('<strong>Before:</strong> Shows 1 card with all dates listed', 'voxel-toolkit'); ?></li>
+                <li><?php _e('<strong>After:</strong> Shows 3 separate cards - one for each date', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
         <?php
     }
 

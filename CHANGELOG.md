@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.6.0] - 2025-12-16
 
 ### Added
+- **Recurring Events - Multiple Instances**: Show recurring events multiple times in archives
+  - Events with multiple upcoming dates appear as separate cards (one per occurrence)
+  - Each card displays only its specific occurrence date
+  - Cards sorted by occurrence date (soonest first)
+  - Respects "Posts per page" setting in Post Feed widget
+  - Results count updates to reflect total occurrences
+  - Works with Post Feed widgets using "Search Form" or "Filters" data source
+  - Use `@post(recurring-date.upcoming.start)` dynamic tag in card template
 - **Field Columns**: Column width picker for post field settings
   - Dropdown appears below CSS Classes field in post type field editor
   - Quick selection of Voxel utility classes (vx-1-1, vx-1-2, vx-1-3, etc.)

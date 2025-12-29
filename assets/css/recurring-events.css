@@ -1,0 +1,21 @@
+/**
+ * Voxel Toolkit - Recurring Events Styles
+ *
+ * Prevents flash of all dates before JavaScript processes them
+ */
+
+/* Hide occurrence items by default until processed */
+[data-vt-occurrence-index]:not([data-vt-occurrence-processed="true"]) .ts-object-list-item:not(:first-child),
+[data-vt-occurrence-index]:not([data-vt-occurrence-processed="true"]) .ts-repeater-item:not(:first-child) {
+    display: none;
+}
+
+/* Ensure hidden items stay hidden */
+.vt-occurrence-hidden {
+    display: none !important;
+}
+
+/* Active occurrence styling (optional - can be customized) */
+.vt-occurrence-active {
+    /* No special styling by default */
+}
