@@ -560,6 +560,7 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-ai-settings.php',
                 'settings_callback' => array($this, 'render_ai_settings'),
                 'always_enabled' => true,
+                'hidden' => true,
                 'icon' => 'dashicons-admin-generic',
             ),
             'ai_post_summary' => array(
