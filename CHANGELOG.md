@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.6.0] - 2025-12-16
 
 ### Added
+- **AI Bot**: AI-powered search assistant for natural language queries
+  - Ask questions like "Find Italian restaurants near me" or "Events this weekend"
+  - Configurable suggested queries shown as clickable chips above input
+  - Quick filter chips after results (4+ Stars, Has Reviews)
+  - Follow-up action buttons on result cards (Directions, Call, View)
+  - Full appearance customization with live preview (colors, panel width, font size, border radius)
+  - Messenger widget integration option - AI circle opens the assistant panel
+  - Supports location-based searches with Google Geocoding
+  - Conversation memory for follow-up questions
+  - Rate limiting to control API usage
+  - Per-post-type card template selection
 - **Social Proof (Beta)**: Display toast notifications showing recent Voxel app events
   - Real-time event capture for bookings, orders, signups, reviews, posts, and more
   - Auto-rotation through recent events with configurable timing
