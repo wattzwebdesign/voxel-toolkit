@@ -243,50 +243,17 @@ class Voxel_Toolkit_AI_Review_Summary {
     }
     
     /**
-     * Get response from ChatGPT API
+     * Get response from AI API using central AI Settings
      */
     private function get_chatgpt_response($prompt, $system_message = 'You are a helpful assistant.', $temperature = 0.7) {
-        // Get settings
-        $settings = get_option('voxel_toolkit_options', array());
-        $ai_settings = isset($settings['ai_review_summary']) ? $settings['ai_review_summary'] : array();
-        $api_key = isset($ai_settings['api_key']) ? $ai_settings['api_key'] : '';
-        
-        if (empty($api_key)) {
-            return new WP_Error('no_api_key', 'ChatGPT API key is not configured. Please set it in the Voxel Toolkit settings.');
+        // Use central AI Settings
+        $ai_settings = Voxel_Toolkit_AI_Settings::instance();
+
+        if (!$ai_settings->is_configured()) {
+            return new WP_Error('no_api_key', 'AI API key is not configured. Please set it in Voxel Toolkit > AI Settings.');
         }
-        
-        $request_body = array(
-            'model' => 'gpt-3.5-turbo',
-            'messages' => array(
-                array('role' => 'system', 'content' => $system_message),
-                array('role' => 'user', 'content' => $prompt),
-            ),
-            'temperature' => $temperature,
-        );
-        
-        $args = array(
-            'headers' => array(
-                'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $api_key,
-            ),
-            'body' => json_encode($request_body),
-            'timeout' => 15,
-        );
-        
-        $response = wp_remote_post('https://api.openai.com/v1/chat/completions', $args);
-        
-        if (is_wp_error($response)) {
-            return new WP_Error('api_error', 'Error contacting ChatGPT API: ' . $response->get_error_message());
-        }
-        
-        $body = wp_remote_retrieve_body($response);
-        $data = json_decode($body, true);
-        
-        if (empty($data) || !isset($data['choices'][0]['message']['content'])) {
-            return new WP_Error('unexpected_response', 'Unexpected response from ChatGPT API.');
-        }
-        
-        return $data['choices'][0]['message']['content'];
+
+        return $ai_settings->generate_completion($prompt, 500, $temperature, $system_message);
     }
     
     /**

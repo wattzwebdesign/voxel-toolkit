@@ -543,7 +543,7 @@ class Voxel_Toolkit_Admin {
         </div>
         <?php
     }
-    
+
     /**
      * Render settings page
      */
@@ -553,13 +553,18 @@ class Voxel_Toolkit_Admin {
         // Get only enabled functions that have settings
         $enabled_functions = array();
         foreach ($available_functions as $function_key => $function_data) {
-            // Skip hidden functions
-            if (!empty($function_data['hidden'])) {
+            // Skip functions without settings_callback - they have nothing to configure
+            if (empty($function_data['settings_callback'])) {
                 continue;
             }
 
             $is_enabled = $this->settings->is_function_enabled($function_key);
             $is_always_enabled = isset($function_data['always_enabled']) && $function_data['always_enabled'];
+
+            // Skip hidden functions unless they are always_enabled (like AI Settings)
+            if (!empty($function_data['hidden']) && !$is_always_enabled) {
+                continue;
+            }
 
             if ($is_enabled || $is_always_enabled) {
                 $enabled_functions[$function_key] = $function_data;
@@ -849,28 +854,7 @@ class Voxel_Toolkit_Admin {
         
         // Get current options to preserve everything
         $current_options = get_option('voxel_toolkit_options', array());
-        
-        // Handle AI Review Summary API key specifically
-        if (isset($post_data['ai_api_key']) && !empty(trim($post_data['ai_api_key']))) {
-            $api_key = sanitize_text_field(trim($post_data['ai_api_key']));
-            
-            // Initialize ai_review_summary settings if not exists
-            if (!isset($current_options['ai_review_summary'])) {
-                $current_options['ai_review_summary'] = array();
-            }
-            
-            // Always ensure the function is enabled when saving API key
-            $current_options['ai_review_summary']['enabled'] = true;
-            $current_options['ai_review_summary']['api_key'] = $api_key;
-            
-            // Update the options
-            update_option('voxel_toolkit_options', $current_options);
-            
-            // Refresh the settings cache
-            $this->settings->refresh_options();
-        }
-        
-        
+
         // Process any other voxel_toolkit_options if they exist
         if (isset($post_data['voxel_toolkit_options'])) {
             // Use sanitize_options to properly sanitize function-specific settings
@@ -945,14 +929,6 @@ class Voxel_Toolkit_Admin {
 
         // Get the settings data from POST
         $settings_data = isset($_POST['settings']) ? $_POST['settings'] : array();
-
-        // Handle AI Review Summary API key specifically
-        if ($function_key === 'ai_review_summary' && isset($_POST['ai_api_key'])) {
-            $api_key = sanitize_text_field(trim($_POST['ai_api_key']));
-            if (!empty($api_key)) {
-                $current_options[$function_key]['api_key'] = $api_key;
-            }
-        }
 
         // Process settings - always run sanitization even if settings appear empty
         // This ensures unchecked checkboxes (empty arrays) are properly saved
@@ -1273,18 +1249,7 @@ class Voxel_Toolkit_Admin {
                         break;
                     
                     case 'ai_review_summary':
-                        // Get current settings to preserve API key
-                        $current_ai_settings = Voxel_Toolkit_Settings::instance()->get_function_settings('ai_review_summary', array());
-
-                        // API key - preserve existing if not provided in form
-                        // Note: API key is sent separately via 'ai_api_key' field, not through voxel_toolkit_options
-                        if (!empty($function_input['api_key'])) {
-                            $sanitized_function['api_key'] = sanitize_text_field($function_input['api_key']);
-                        } elseif (isset($current_ai_settings['api_key'])) {
-                            $sanitized_function['api_key'] = $current_ai_settings['api_key'];
-                        }
-
-                        // Language setting
+                        // Language setting (API key is now managed via central AI Settings)
                         if (isset($function_input['language'])) {
                             $sanitized_function['language'] = sanitize_text_field($function_input['language']);
                         }
@@ -1881,15 +1846,7 @@ class Voxel_Toolkit_Admin {
                         break;
 
                     case 'timeline_reply_summary':
-                        // AI Provider
-                        $sanitized_function['ai_provider'] = isset($function_input['ai_provider']) && in_array($function_input['ai_provider'], array('openai', 'anthropic'), true)
-                            ? $function_input['ai_provider']
-                            : 'openai';
-
-                        // API Key
-                        $sanitized_function['api_key'] = isset($function_input['api_key'])
-                            ? sanitize_text_field($function_input['api_key'])
-                            : '';
+                        // AI provider/key is now managed via central AI Settings
 
                         // Reply threshold (min 1)
                         $sanitized_function['reply_threshold'] = isset($function_input['reply_threshold'])

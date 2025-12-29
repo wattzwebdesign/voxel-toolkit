@@ -314,7 +314,10 @@ class Voxel_Toolkit {
         // Load plugin components
         $this->load_includes();
         $this->init_hooks();
-        
+
+        // Run migrations
+        $this->maybe_migrate_ai_settings();
+
         // Clear Elementor cache if needed
         $this->maybe_clear_elementor_cache();
         
@@ -715,7 +718,71 @@ class Voxel_Toolkit {
             update_option('voxel_toolkit_widget_cache_version', VOXEL_TOOLKIT_VERSION);
         }
     }
-    
+
+    /**
+     * Migrate legacy AI settings to central AI Settings
+     *
+     * Runs once on upgrade to 1.6.0+ to migrate API keys from:
+     * - AI Review Summary (ai_review_summary.api_key)
+     * - Timeline Reply Summary (timeline_reply_summary.api_key)
+     *
+     * To the central AI Settings (ai_settings.api_key)
+     */
+    private function maybe_migrate_ai_settings() {
+        $migration_version = get_option('vt_ai_settings_migration', '0');
+
+        // Only run migration once
+        if (version_compare($migration_version, '1.6.0', '>=')) {
+            return;
+        }
+
+        $options = get_option('voxel_toolkit_options', array());
+
+        // Check if central AI Settings already has an API key
+        $central_key = isset($options['ai_settings']['api_key']) ? trim($options['ai_settings']['api_key']) : '';
+
+        if (empty($central_key)) {
+            // Try to migrate from AI Review Summary
+            $review_summary_key = isset($options['ai_review_summary']['api_key']) ? trim($options['ai_review_summary']['api_key']) : '';
+
+            if (!empty($review_summary_key)) {
+                // Migrate the key
+                if (!isset($options['ai_settings'])) {
+                    $options['ai_settings'] = array();
+                }
+                $options['ai_settings']['api_key'] = $review_summary_key;
+                $options['ai_settings']['provider'] = 'openai'; // AI Review Summary only supported OpenAI
+                $options['ai_settings']['openai_model'] = 'gpt-4o-mini'; // Default model
+
+                update_option('voxel_toolkit_options', $options);
+            } else {
+                // Try to migrate from Timeline Reply Summary
+                $timeline_key = isset($options['timeline_reply_summary']['api_key']) ? trim($options['timeline_reply_summary']['api_key']) : '';
+
+                if (!empty($timeline_key)) {
+                    // Migrate the key
+                    if (!isset($options['ai_settings'])) {
+                        $options['ai_settings'] = array();
+                    }
+                    $options['ai_settings']['api_key'] = $timeline_key;
+
+                    // Check if Timeline Reply Summary had a provider set
+                    $provider = isset($options['timeline_reply_summary']['ai_provider']) ? $options['timeline_reply_summary']['ai_provider'] : 'openai';
+                    $options['ai_settings']['provider'] = $provider;
+
+                    // Set default models
+                    $options['ai_settings']['openai_model'] = 'gpt-4o-mini';
+                    $options['ai_settings']['anthropic_model'] = 'claude-3-5-haiku-20241022';
+
+                    update_option('voxel_toolkit_options', $options);
+                }
+            }
+        }
+
+        // Mark migration as complete
+        update_option('vt_ai_settings_migration', '1.6.0');
+    }
+
     /**
      * Plugin deactivation
      */

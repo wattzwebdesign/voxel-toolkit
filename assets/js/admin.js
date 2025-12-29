@@ -1030,8 +1030,7 @@ jQuery(document).ready(function($) {
                     action: 'vt_save_function_settings',
                     nonce: $form.find('input[name="vt_settings_nonce"]').val(),
                     function_key: functionKey,
-                    settings: settings,
-                    ai_api_key: $form.find('input[name="ai_api_key"]').val() || ''
+                    settings: settings
                 },
                 success: function(response) {
                     if (response.success) {
@@ -1086,10 +1085,22 @@ jQuery(document).ready(function($) {
             const hash = window.location.hash.replace('#', '');
 
             if (hash) {
-                const $tab = $(`.vt-settings-tab[data-tab="${hash}"]`);
-                if ($tab.length) {
-                    $tab.click();
-                }
+                // Small delay to ensure tabs are fully rendered
+                setTimeout(function() {
+                    const $tab = $(`.vt-settings-tab[data-tab="${hash}"]`);
+                    if ($tab.length) {
+                        // Update active tab
+                        $('.vt-settings-tab').removeClass('active');
+                        $tab.addClass('active');
+
+                        // Update active panel
+                        $('.vt-settings-panel').removeClass('active');
+                        $(`.vt-settings-panel[data-panel="${hash}"]`).addClass('active');
+
+                        // Scroll tab into view if needed
+                        $tab[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }, 150);
             }
         }
     };

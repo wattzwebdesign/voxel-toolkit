@@ -104,12 +104,13 @@ class Voxel_Toolkit_AI_Settings {
     /**
      * Generate AI completion with unified interface
      *
-     * @param string $prompt      The prompt to send
-     * @param int    $max_tokens  Maximum tokens in response (default 500)
-     * @param float  $temperature Creativity level 0-1 (default 0.7)
+     * @param string $prompt         The prompt to send
+     * @param int    $max_tokens     Maximum tokens in response (default 500)
+     * @param float  $temperature    Creativity level 0-1 (default 0.7)
+     * @param string $system_message Optional system message for context
      * @return string|WP_Error Generated text or error
      */
-    public function generate_completion($prompt, $max_tokens = 500, $temperature = 0.7) {
+    public function generate_completion($prompt, $max_tokens = 500, $temperature = 0.7, $system_message = '') {
         $provider = $this->get_provider();
         $api_key = $this->get_api_key();
 
@@ -122,23 +123,31 @@ class Voxel_Toolkit_AI_Settings {
         $temperature = max(0, min(1, floatval($temperature)));
 
         if ($provider === 'anthropic') {
-            return $this->call_anthropic_api($prompt, $api_key, $max_tokens, $temperature);
+            return $this->call_anthropic_api($prompt, $api_key, $max_tokens, $temperature, $system_message);
         }
 
-        return $this->call_openai_api($prompt, $api_key, $max_tokens, $temperature);
+        return $this->call_openai_api($prompt, $api_key, $max_tokens, $temperature, $system_message);
     }
 
     /**
      * Call OpenAI API
      *
-     * @param string $prompt      The prompt
-     * @param string $api_key     API key
-     * @param int    $max_tokens  Max tokens
-     * @param float  $temperature Temperature
+     * @param string $prompt         The prompt
+     * @param string $api_key        API key
+     * @param int    $max_tokens     Max tokens
+     * @param float  $temperature    Temperature
+     * @param string $system_message Optional system message
      * @return string|WP_Error Response or error
      */
-    private function call_openai_api($prompt, $api_key, $max_tokens, $temperature) {
+    private function call_openai_api($prompt, $api_key, $max_tokens, $temperature, $system_message = '') {
         $model = $this->get_model();
+
+        // Build messages array
+        $messages = array();
+        if (!empty($system_message)) {
+            $messages[] = array('role' => 'system', 'content' => $system_message);
+        }
+        $messages[] = array('role' => 'user', 'content' => $prompt);
 
         $response = wp_remote_post('https://api.openai.com/v1/chat/completions', array(
             'timeout' => 60,
@@ -148,9 +157,7 @@ class Voxel_Toolkit_AI_Settings {
             ),
             'body' => wp_json_encode(array(
                 'model' => $model,
-                'messages' => array(
-                    array('role' => 'user', 'content' => $prompt),
-                ),
+                'messages' => $messages,
                 'max_tokens' => $max_tokens,
                 'temperature' => $temperature,
             )),
@@ -178,14 +185,29 @@ class Voxel_Toolkit_AI_Settings {
     /**
      * Call Anthropic API
      *
-     * @param string $prompt      The prompt
-     * @param string $api_key     API key
-     * @param int    $max_tokens  Max tokens
-     * @param float  $temperature Temperature
+     * @param string $prompt         The prompt
+     * @param string $api_key        API key
+     * @param int    $max_tokens     Max tokens
+     * @param float  $temperature    Temperature
+     * @param string $system_message Optional system message
      * @return string|WP_Error Response or error
      */
-    private function call_anthropic_api($prompt, $api_key, $max_tokens, $temperature) {
+    private function call_anthropic_api($prompt, $api_key, $max_tokens, $temperature, $system_message = '') {
         $model = $this->get_model();
+
+        // Build request body
+        $body = array(
+            'model' => $model,
+            'max_tokens' => $max_tokens,
+            'messages' => array(
+                array('role' => 'user', 'content' => $prompt),
+            ),
+        );
+
+        // Add system message if provided (Anthropic uses separate 'system' parameter)
+        if (!empty($system_message)) {
+            $body['system'] = $system_message;
+        }
 
         $response = wp_remote_post('https://api.anthropic.com/v1/messages', array(
             'timeout' => 60,
@@ -194,13 +216,7 @@ class Voxel_Toolkit_AI_Settings {
                 'anthropic-version' => '2023-06-01',
                 'Content-Type' => 'application/json',
             ),
-            'body' => wp_json_encode(array(
-                'model' => $model,
-                'max_tokens' => $max_tokens,
-                'messages' => array(
-                    array('role' => 'user', 'content' => $prompt),
-                ),
-            )),
+            'body' => wp_json_encode($body),
         ));
 
         if (is_wp_error($response)) {

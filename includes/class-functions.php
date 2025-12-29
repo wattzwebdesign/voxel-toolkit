@@ -454,7 +454,6 @@ class Voxel_Toolkit_Functions {
                 'description' => __('Add CSS Class and ID fields to Voxel widgets (Navbar, User Bar, Advanced List) for custom styling of individual items.', 'voxel-toolkit'),
                 'class' => 'Voxel_Toolkit_Widget_CSS_Injector',
                 'file' => 'functions/class-widget-css-injector.php',
-                'settings_callback' => array('Voxel_Toolkit_Widget_CSS_Injector', 'render_settings'),
                 'always_enabled' => true,
                 'hidden' => true,
             ),
@@ -2099,9 +2098,8 @@ class Voxel_Toolkit_Functions {
      */
     public function render_ai_review_summary_settings($settings) {
         $cache_refreshed = isset($_GET['ai_cache_refreshed']) ? intval($_GET['ai_cache_refreshed']) : 0;
-        $api_key = isset($settings['api_key']) ? $settings['api_key'] : '';
-        $has_api_key = !empty($api_key) && strlen($api_key) > 10;
         $current_language = isset($settings['language']) ? $settings['language'] : 'en';
+        $ai_configured = class_exists('Voxel_Toolkit_AI_Settings') && Voxel_Toolkit_AI_Settings::instance()->is_configured();
 
         $languages = array(
             'en' => __('English', 'voxel-toolkit'), 'it' => __('Italian', 'voxel-toolkit'),
@@ -2126,30 +2124,22 @@ class Voxel_Toolkit_Functions {
         ?>
         <div class="vt-warning-box">
             <strong><?php _e('Important:', 'voxel-toolkit'); ?></strong>
-            <?php _e('Summaries are cached until new reviews are added. API calls are only made when cache is empty or outdated. OpenAI API usage costs apply.', 'voxel-toolkit'); ?>
+            <?php _e('Summaries are cached until new reviews are added. API calls are only made when cache is empty or outdated. API usage costs apply.', 'voxel-toolkit'); ?>
         </div>
 
         <div class="vt-settings-section">
-            <h4 class="vt-settings-section-title"><?php _e('ChatGPT API Configuration', 'voxel-toolkit'); ?></h4>
+            <h4 class="vt-settings-section-title"><?php _e('AI Configuration', 'voxel-toolkit'); ?></h4>
             <div class="vt-field-group">
-                <label class="vt-field-label"><?php _e('OpenAI API Key', 'voxel-toolkit'); ?></label>
-                <?php if ($has_api_key): ?>
-                    <div class="vt-tip-box" style="margin-bottom: 12px;">
-                        <span style="font-family: monospace;"><?php echo esc_html(substr($api_key, 0, 7) . str_repeat('*', 20)); ?></span>
-                        <span style="background: #065f46; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 10px;"><?php _e('Active', 'voxel-toolkit'); ?></span>
+                <?php if ($ai_configured): ?>
+                    <div class="vt-tip-box">
+                        <span style="background: #065f46; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-right: 10px;"><?php _e('Configured', 'voxel-toolkit'); ?></span>
+                        <?php _e('AI is configured via AI Settings tab.', 'voxel-toolkit'); ?>
+                    </div>
+                <?php else: ?>
+                    <div class="vt-warning-box">
+                        <?php _e('Please configure your AI API key in the AI Settings tab to enable this feature.', 'voxel-toolkit'); ?>
                     </div>
                 <?php endif; ?>
-                <input type="text"
-                       name="ai_api_key"
-                       value=""
-                       placeholder="<?php echo $has_api_key ? __('Enter new API key to replace existing one', 'voxel-toolkit') : 'sk-proj-...'; ?>"
-                       autocomplete="off"
-                       class="vt-text-input"
-                       style="max-width: 500px; font-family: monospace;" />
-                <p class="vt-field-description">
-                    <?php _e('Get your OpenAI API key from', 'voxel-toolkit'); ?>
-                    <a href="https://platform.openai.com/api-keys" target="_blank"><?php _e('OpenAI Platform', 'voxel-toolkit'); ?></a>
-                </p>
             </div>
         </div>
 
@@ -6534,47 +6524,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
      * Render Timeline Reply Summary settings
      */
     public function render_timeline_reply_summary_settings($settings) {
-        $ai_provider = isset($settings['ai_provider']) ? $settings['ai_provider'] : 'openai';
-        $api_key = isset($settings['api_key']) ? $settings['api_key'] : '';
         $reply_threshold = isset($settings['reply_threshold']) ? absint($settings['reply_threshold']) : 3;
         $max_summary_length = isset($settings['max_summary_length']) ? absint($settings['max_summary_length']) : 300;
         $label_text = isset($settings['label_text']) ? $settings['label_text'] : '';
         $prompt_template = isset($settings['prompt_template']) ? $settings['prompt_template'] : '';
         $feeds = isset($settings['feeds']) ? (array) $settings['feeds'] : array('post_reviews', 'post_wall', 'post_timeline');
+        $ai_configured = class_exists('Voxel_Toolkit_AI_Settings') && Voxel_Toolkit_AI_Settings::instance()->is_configured();
         ?>
         <div class="vt-info-box">
             <?php _e('Generate AI-powered TL;DR summaries of timeline post replies. Similar to Reddit\'s summary bot, this feature helps users quickly understand long discussions.', 'voxel-toolkit'); ?>
         </div>
 
         <div class="vt-settings-section">
-            <h4 class="vt-settings-section-title"><?php _e('AI Provider Settings', 'voxel-toolkit'); ?></h4>
-
+            <h4 class="vt-settings-section-title"><?php _e('AI Configuration', 'voxel-toolkit'); ?></h4>
             <div class="vt-field-group">
-                <label class="vt-field-label"><?php _e('AI Provider', 'voxel-toolkit'); ?></label>
-                <select name="voxel_toolkit_options[timeline_reply_summary][ai_provider]" class="vt-select" style="width: 300px;">
-                    <option value="openai" <?php selected($ai_provider, 'openai'); ?>><?php _e('OpenAI (GPT-4o-mini)', 'voxel-toolkit'); ?></option>
-                    <option value="anthropic" <?php selected($ai_provider, 'anthropic'); ?>><?php _e('Anthropic (Claude 3 Haiku)', 'voxel-toolkit'); ?></option>
-                </select>
-                <p class="vt-field-description">
-                    <?php _e('Choose which AI service to use for generating summaries. Both use cost-effective models optimized for summarization.', 'voxel-toolkit'); ?>
-                </p>
-            </div>
-
-            <div class="vt-field-group">
-                <label class="vt-field-label"><?php _e('API Key', 'voxel-toolkit'); ?></label>
-                <input type="password"
-                       name="voxel_toolkit_options[timeline_reply_summary][api_key]"
-                       value="<?php echo esc_attr($api_key); ?>"
-                       class="vt-input"
-                       placeholder="<?php esc_attr_e('Enter your API key', 'voxel-toolkit'); ?>"
-                       style="width: 400px;"
-                       autocomplete="off">
-                <p class="vt-field-description">
-                    <?php _e('Your API key for the selected provider. Get your key from:', 'voxel-toolkit'); ?>
-                    <br>
-                    <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI API Keys</a> |
-                    <a href="https://console.anthropic.com/settings/keys" target="_blank">Anthropic API Keys</a>
-                </p>
+                <?php if ($ai_configured): ?>
+                    <div class="vt-tip-box">
+                        <span style="background: #065f46; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-right: 10px;"><?php _e('Configured', 'voxel-toolkit'); ?></span>
+                        <?php _e('AI is configured via AI Settings tab.', 'voxel-toolkit'); ?>
+                    </div>
+                <?php else: ?>
+                    <div class="vt-warning-box">
+                        <?php _e('Please configure your AI API key in the AI Settings tab to enable this feature.', 'voxel-toolkit'); ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -6766,17 +6739,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     public function render_ai_post_summary_settings($settings) {
         // Check if AI Settings is configured
         $ai_configured = class_exists('Voxel_Toolkit_AI_Settings') && Voxel_Toolkit_AI_Settings::instance()->is_configured();
+        ?>
 
-        if (!$ai_configured) {
-            ?>
-            <div class="vt-settings-notice vt-settings-notice-warning">
-                <span class="dashicons dashicons-warning"></span>
-                <?php _e('AI Settings must be configured first. Please enable and configure AI Settings before using this feature.', 'voxel-toolkit'); ?>
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('AI Configuration', 'voxel-toolkit'); ?></h4>
+            <div class="vt-field-group">
+                <?php if ($ai_configured): ?>
+                    <div class="vt-tip-box">
+                        <span style="background: #065f46; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-right: 10px;"><?php _e('Configured', 'voxel-toolkit'); ?></span>
+                        <?php _e('AI is configured via AI Settings tab.', 'voxel-toolkit'); ?>
+                    </div>
+                <?php else: ?>
+                    <div class="vt-warning-box">
+                        <?php _e('Please configure your AI API key in the AI Settings tab to enable this feature.', 'voxel-toolkit'); ?>
+                    </div>
+                    <?php return; ?>
+                <?php endif; ?>
             </div>
-            <?php
-            return;
-        }
+        </div>
 
+        <?php
         // Get Voxel post types
         $voxel_post_types = array();
         if (class_exists('\Voxel\Post_Type')) {
@@ -6926,17 +6908,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     public function render_ai_bot_settings($settings) {
         // Check if AI Settings is configured
         $ai_configured = class_exists('Voxel_Toolkit_AI_Settings') && Voxel_Toolkit_AI_Settings::instance()->is_configured();
+        ?>
 
-        if (!$ai_configured) {
-            ?>
-            <div class="vt-settings-notice vt-settings-notice-warning">
-                <span class="dashicons dashicons-warning"></span>
-                <?php _e('AI Settings must be configured first. Please enable and configure AI Settings before using this feature.', 'voxel-toolkit'); ?>
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('AI Configuration', 'voxel-toolkit'); ?></h4>
+            <div class="vt-field-group">
+                <?php if ($ai_configured): ?>
+                    <div class="vt-tip-box">
+                        <span style="background: #065f46; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-right: 10px;"><?php _e('Configured', 'voxel-toolkit'); ?></span>
+                        <?php _e('AI is configured via AI Settings tab.', 'voxel-toolkit'); ?>
+                    </div>
+                <?php else: ?>
+                    <div class="vt-warning-box">
+                        <?php _e('Please configure your AI API key in the AI Settings tab to enable this feature.', 'voxel-toolkit'); ?>
+                    </div>
+                    <?php return; ?>
+                <?php endif; ?>
             </div>
-            <?php
-            return;
-        }
+        </div>
 
+        <?php
         // Get Voxel post types
         $voxel_post_types = array();
         if (class_exists('\Voxel\Post_Type')) {

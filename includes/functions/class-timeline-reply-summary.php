@@ -108,8 +108,8 @@ class Voxel_Toolkit_Timeline_Reply_Summary {
     public function on_reply_stats_updated($post_id, $stats) {
         $settings = $this->get_settings();
 
-        // Check if feature is properly configured
-        if (empty($settings['api_key'])) {
+        // Check if AI is properly configured
+        if (!Voxel_Toolkit_AI_Settings::instance()->is_configured()) {
             return;
         }
 
@@ -159,9 +159,9 @@ class Voxel_Toolkit_Timeline_Reply_Summary {
      * Generate and store summary for a status
      */
     private function generate_and_store_summary($status_id) {
-        $settings = $this->get_settings();
+        $ai_settings = Voxel_Toolkit_AI_Settings::instance();
 
-        if (empty($settings['api_key'])) {
+        if (!$ai_settings->is_configured()) {
             return false;
         }
 
@@ -176,23 +176,27 @@ class Voxel_Toolkit_Timeline_Reply_Summary {
         $formatted_replies = $this->format_replies_for_prompt($replies);
 
         // Get prompt template
+        $settings = $this->get_settings();
         $prompt_template = !empty($settings['prompt_template'])
             ? $settings['prompt_template']
             : Voxel_Toolkit_Functions::instance()->get_default_summary_prompt();
 
         $prompt = str_replace('{{replies}}', $formatted_replies, $prompt_template);
 
-        // Generate summary with AI
-        $provider = isset($settings['ai_provider']) ? $settings['ai_provider'] : 'openai';
+        // Generate summary with central AI Settings
         $max_tokens = isset($settings['max_summary_length']) ? absint($settings['max_summary_length']) : 300;
 
-        $summary = $this->call_ai_api($prompt, $provider, $settings['api_key'], $max_tokens);
+        $summary = $ai_settings->generate_completion($prompt, $max_tokens, 0.7, '');
 
-        if (!$summary) {
+        if (is_wp_error($summary) || empty($summary)) {
+            if (is_wp_error($summary)) {
+                error_log('VT Reply Summary - AI Error: ' . $summary->get_error_message());
+            }
             return false;
         }
 
-        // Store summary
+        // Store summary with provider info
+        $provider = $ai_settings->get_provider();
         return $this->store_summary($status_id, $summary, count($replies), $provider);
     }
 
@@ -224,92 +228,6 @@ class Voxel_Toolkit_Timeline_Reply_Summary {
             }
         }
         return implode("\n", $formatted);
-    }
-
-    /**
-     * Call AI API to generate summary
-     */
-    private function call_ai_api($prompt, $provider, $api_key, $max_tokens) {
-        if ($provider === 'anthropic') {
-            return $this->call_anthropic_api($prompt, $api_key, $max_tokens);
-        }
-        return $this->call_openai_api($prompt, $api_key, $max_tokens);
-    }
-
-    /**
-     * Call OpenAI API
-     */
-    private function call_openai_api($prompt, $api_key, $max_tokens) {
-        $response = wp_remote_post('https://api.openai.com/v1/chat/completions', array(
-            'timeout' => 30,
-            'headers' => array(
-                'Authorization' => 'Bearer ' . $api_key,
-                'Content-Type' => 'application/json',
-            ),
-            'body' => wp_json_encode(array(
-                'model' => 'gpt-4o-mini',
-                'messages' => array(
-                    array('role' => 'user', 'content' => $prompt),
-                ),
-                'max_tokens' => $max_tokens,
-                'temperature' => 0.7,
-            )),
-        ));
-
-        if (is_wp_error($response)) {
-            error_log('VT Reply Summary - OpenAI Error: ' . $response->get_error_message());
-            return false;
-        }
-
-        $body = json_decode(wp_remote_retrieve_body($response), true);
-
-        if (isset($body['choices'][0]['message']['content'])) {
-            return trim($body['choices'][0]['message']['content']);
-        }
-
-        if (isset($body['error']['message'])) {
-            error_log('VT Reply Summary - OpenAI API Error: ' . $body['error']['message']);
-        }
-
-        return false;
-    }
-
-    /**
-     * Call Anthropic API
-     */
-    private function call_anthropic_api($prompt, $api_key, $max_tokens) {
-        $response = wp_remote_post('https://api.anthropic.com/v1/messages', array(
-            'timeout' => 30,
-            'headers' => array(
-                'x-api-key' => $api_key,
-                'anthropic-version' => '2023-06-01',
-                'Content-Type' => 'application/json',
-            ),
-            'body' => wp_json_encode(array(
-                'model' => 'claude-3-haiku-20240307',
-                'max_tokens' => $max_tokens,
-                'messages' => array(
-                    array('role' => 'user', 'content' => $prompt),
-                ),
-            )),
-        ));
-
-        if (is_wp_error($response)) {
-            error_log('VT Reply Summary - Anthropic Error: ' . $response->get_error_message());
-            return false;
-        }
-
-        $body = json_decode(wp_remote_retrieve_body($response), true);
-
-        if (isset($body['content'][0]['text'])) {
-            return trim($body['content'][0]['text']);
-        }
-
-        if (isset($body['error']['message'])) {
-            error_log('VT Reply Summary - Anthropic API Error: ' . $body['error']['message']);
-        }
-
-        return false;
     }
 
     /**
@@ -445,12 +363,12 @@ class Voxel_Toolkit_Timeline_Reply_Summary {
      * Enqueue frontend scripts
      */
     public function enqueue_scripts() {
-        $settings = $this->get_settings();
-
-        // Only enqueue if API key is configured
-        if (empty($settings['api_key'])) {
+        // Only enqueue if AI is configured
+        if (!Voxel_Toolkit_AI_Settings::instance()->is_configured()) {
             return;
         }
+
+        $settings = $this->get_settings();
 
         $js_file = VOXEL_TOOLKIT_PLUGIN_DIR . 'assets/js/timeline-reply-summary.js';
         $css_file = VOXEL_TOOLKIT_PLUGIN_DIR . 'assets/css/timeline-reply-summary.css';
@@ -486,11 +404,12 @@ class Voxel_Toolkit_Timeline_Reply_Summary {
      * Output config in footer
      */
     public function output_config() {
-        $settings = $this->get_settings();
-
-        if (empty($settings['api_key'])) {
+        // Only output if AI is configured
+        if (!Voxel_Toolkit_AI_Settings::instance()->is_configured()) {
             return;
         }
+
+        $settings = $this->get_settings();
 
         $enabled_feeds = isset($settings['feeds']) ? $settings['feeds'] : array('post_reviews', 'post_wall', 'post_timeline');
         ?>
