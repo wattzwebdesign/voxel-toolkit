@@ -244,6 +244,41 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'button_icon_color',
+            [
+                'label' => __('Icon Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-suggest-edit-btn i' => 'color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-suggest-edit-btn svg' => 'fill: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'button_icon_size',
+            [
+                'label' => __('Icon Size', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px', 'em'],
+                'range' => [
+                    'px' => [
+                        'min' => 8,
+                        'max' => 50,
+                    ],
+                    'em' => [
+                        'min' => 0.5,
+                        'max' => 3,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-suggest-edit-btn i' => 'font-size: {{SIZE}}{{UNIT}}',
+                    '{{WRAPPER}} .vt-suggest-edit-btn svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
             'button_color',
             [
                 'label' => __('Text Color', 'voxel-toolkit'),
@@ -261,6 +296,7 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
                     '{{WRAPPER}} .vt-suggest-edit-btn' => 'background-color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-modal-submit' => 'background-color: {{VALUE}} !important',
                 ],
             ]
         );
@@ -944,7 +980,7 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                     <button type="button" class="vt-modal-cancel">
                         <?php _e('Cancel', 'voxel-toolkit'); ?>
                     </button>
-                    <button type="button" class="vt-modal-submit">
+                    <button type="button" class="vt-modal-submit"<?php echo !empty($settings['button_background']) ? ' style="background-color: ' . esc_attr($settings['button_background']) . ' !important;"' : ''; ?>>
                         <?php echo esc_html($settings['submit_button_text'] ?? __('Submit', 'voxel-toolkit')); ?>
                     </button>
                 </div>
