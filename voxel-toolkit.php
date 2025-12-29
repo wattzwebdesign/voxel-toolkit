@@ -383,6 +383,7 @@ class Voxel_Toolkit {
             'includes/functions/class-admin-notifications.php',
             'includes/functions/class-featured-posts.php',
             'includes/functions/class-sms-notifications.php', // Loads AJAX handlers early
+            'includes/functions/class-field-columns.php', // Field column picker (always on)
             'includes/dynamic-tags/class-dynamic-tags.php'
             // Note: order-by-manager is loaded at top level before theme config
         );
@@ -427,6 +428,11 @@ class Voxel_Toolkit {
             // Always initialize Profile Progress Widget for dynamic tag support
             if (class_exists('Voxel_Toolkit_Profile_Progress_Widget')) {
                 new Voxel_Toolkit_Profile_Progress_Widget();
+            }
+
+            // Initialize Field Columns (always on - adds column picker to post field settings)
+            if (class_exists('Voxel_Toolkit_Field_Columns')) {
+                new Voxel_Toolkit_Field_Columns();
             }
 
             // Add hook to refresh Elementor widget cache on init
