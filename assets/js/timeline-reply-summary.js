@@ -9,11 +9,8 @@
 
     // Check if config is available
     if (typeof vtReplySummary === 'undefined') {
-        console.log('[VT Reply Summary] Config not found, exiting');
         return;
     }
-
-    console.log('[VT Reply Summary] Initializing...', vtReplySummary);
 
     var ajaxUrl = vtReplySummary.ajaxUrl;
     var threshold = vtReplySummary.threshold || 3;
@@ -176,7 +173,6 @@
         }
 
         if (!statusId) {
-            console.log('[VT Reply Summary] Could not find status ID for post');
             return;
         }
 
@@ -188,18 +184,14 @@
         // Mark as processing
         processedStatuses[statusId] = 'checking';
 
-        console.log('[VT Reply Summary] Checking status:', statusId);
-
         // Check with server if this status qualifies (DB has reply count)
         checkStatusEligibility(statusId, function(eligible, data) {
             if (!eligible) {
-                console.log('[VT Reply Summary] Status', statusId, 'not eligible:', data);
                 processedStatuses[statusId] = 'ineligible';
                 return;
             }
 
             processedStatuses[statusId] = 'eligible';
-            console.log('[VT Reply Summary] Status', statusId, 'is eligible, inserting container');
 
             // Create and insert summary container
             var summaryContainer = createSummaryContainer(statusId);
@@ -249,7 +241,6 @@
             return response.json();
         })
         .then(function(response) {
-            console.log('[VT Reply Summary] Server response for status', statusId, ':', response);
             if (response.success && response.eligible) {
                 callback(true, response);
             } else {
@@ -266,12 +257,8 @@
      * Scan the page for timeline posts and add summaries
      */
     function scanForPosts() {
-        console.log('[VT Reply Summary] Scanning for posts...');
-
         // Find all main posts (not comments)
         var posts = document.querySelectorAll('.vxf-subgrid > .vxf-post:not(.vxf-comment)');
-
-        console.log('[VT Reply Summary] Found', posts.length, 'posts');
 
         posts.forEach(function(postEl) {
             processPostElement(postEl);
@@ -287,8 +274,6 @@
      * Listen for timeline init events
      */
     document.addEventListener('voxel/timeline/init', function(e) {
-        console.log('[VT Reply Summary] Timeline init event received');
-
         // Delay to let Vue render
         setTimeout(scanForPosts, 500);
         setTimeout(scanForPosts, 1500);
@@ -405,8 +390,6 @@
      * Initialize on DOM ready
      */
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('[VT Reply Summary] DOM ready');
-
         // Initial scan after a delay
         setTimeout(scanForPosts, 1000);
         setTimeout(scanForPosts, 2000);
@@ -420,7 +403,6 @@
 
     // Also run if DOM is already loaded
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        console.log('[VT Reply Summary] DOM already ready');
         setTimeout(scanForPosts, 500);
         setupObserver();
         setupReplyCountListeners();

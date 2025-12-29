@@ -7,7 +7,6 @@
     'use strict';
 
     if (typeof vt_add_category === 'undefined') {
-        console.log('VT Add Category: Config not found');
         return;
     }
 
@@ -15,8 +14,6 @@
     const i18n = config.i18n || {};
     const fieldConfigs = config.field_configs || {};
 
-    // Debug: Log configs
-    console.log('VT Add Category: Loaded with configs', fieldConfigs);
 
     /**
      * Check if any taxonomy field allows adding terms
@@ -50,11 +47,8 @@
      */
     function init() {
         if (!hasAnyAddTermsEnabled()) {
-            console.log('VT Add Category: No fields with add_terms enabled');
             return;
         }
-
-        console.log('VT Add Category: Initializing...');
 
         // Track clicks on popup triggers inside create post forms
         document.addEventListener('click', function(e) {
@@ -70,7 +64,6 @@
 
             if (createPostForm && taxonomyField) {
                 lastCreatePostTrigger = trigger;
-                console.log('VT Add Category: Tracked taxonomy trigger in create post form');
             } else {
                 lastCreatePostTrigger = null;
             }
@@ -125,7 +118,6 @@
 
         // CRITICAL: Only inject if the popup was triggered from a taxonomy field in create post form
         if (!lastCreatePostTrigger) {
-            console.log('VT Add Category: Skipping - not triggered from create post taxonomy field');
             return;
         }
 
@@ -135,17 +127,13 @@
             return;
         }
 
-        console.log('VT Add Category: Found term dropdown triggered from create post form');
-
         // Try to determine the taxonomy config
         const taxonomyConfig = detectTaxonomyConfig(null, dropdown);
 
         if (!taxonomyConfig) {
-            console.log('VT Add Category: Could not detect taxonomy config');
             return;
         }
 
-        console.log('VT Add Category: Injecting UI for', taxonomyConfig.taxonomy);
         injectAddTermUI(dropdown, taxonomyConfig);
     }
 
@@ -207,12 +195,7 @@
             el = el.parentElement;
         }
 
-        // Method 3: Try to detect taxonomy from dropdown content
-        // Look at the terms in the dropdown to identify the taxonomy
-        const termItems = dropdown.querySelectorAll('.ts-term-dropdown-list li');
-        console.log('VT Add Category: Found', termItems.length, 'term items in dropdown');
-
-        // Method 4: Fallback - only if there's exactly ONE taxonomy field with add enabled
+        // Method 3: Fallback - only if there's exactly ONE taxonomy field with add enabled
         let enabledCount = 0;
         let enabledConfig = null;
         for (const key in fieldConfigs) {
@@ -223,7 +206,6 @@
         }
 
         if (enabledCount === 1 && enabledConfig) {
-            console.log('VT Add Category: Using single enabled config for', enabledConfig.taxonomy);
             return {
                 taxonomy: enabledConfig.taxonomy,
                 fieldKey: enabledConfig.field_key || Object.keys(fieldConfigs).find(k => fieldConfigs[k] === enabledConfig),
@@ -232,7 +214,6 @@
             };
         }
 
-        console.log('VT Add Category: Multiple or no configs enabled, cannot determine which taxonomy');
         return null;
     }
 
@@ -380,14 +361,6 @@
             submitBtn.disabled = true;
             submitBtn.textContent = i18n.adding || 'Adding...';
 
-            console.log('VT Add Category: Submitting term', {
-                name: name,
-                taxonomy: taxonomyConfig.taxonomy,
-                fieldKey: taxonomyConfig.fieldKey,
-                postType: taxonomyConfig.postType,
-                parent: parent
-            });
-
             // Make AJAX request
             $.ajax({
                 url: config.ajax_url,
@@ -405,8 +378,6 @@
                 success: function(response) {
                     submitBtn.disabled = false;
                     submitBtn.textContent = i18n.add_button || 'Add';
-
-                    console.log('VT Add Category: Response', response);
 
                     if (response.success) {
                         const term = response.data.term;
@@ -482,7 +453,6 @@
                     label: term.name,
                     icon: ''
                 });
-                console.log('VT Add Category: Term selected via Vue');
                 return;
             }
             if (el.__vue__ && el.__vue__.value) {
@@ -493,13 +463,10 @@
                     slug: term.slug,
                     icon: ''
                 };
-                console.log('VT Add Category: Term added to value');
                 return;
             }
             el = el.parentElement;
         }
-
-        console.log('VT Add Category: Could not select term automatically');
     }
 
     // Initialize when DOM is ready
