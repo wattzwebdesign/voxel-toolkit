@@ -47,3 +47,33 @@
     color: #fff;
     padding: 10px;
 }
+
+/**
+ * Column Badge Styles
+ * Badge shown in field-head indicating column width percentage
+ */
+.vt-column-badge {
+    cursor: default;
+}
+
+.vt-column-badge-text {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    background: transparent;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+/* Match the field-action border color */
+.field-action.vt-column-badge .vt-column-badge-text {
+    color: hsla(0,0%,100%,.2);
+}
+
+.field-action.vt-column-badge:hover .vt-column-badge-text {
+    color: hsla(0,0%,100%,.3);
+}
