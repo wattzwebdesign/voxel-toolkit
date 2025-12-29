@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Auto-detects existing column class and pre-selects in dropdown
   - Replaces existing column class when selecting new width
   - Options: 100%, 75%, 66%, 50%, 33%, 25%, 16%
+  - Column width badge in field list shows percentage at a glance
 - **AI Bot**: AI-powered search assistant for natural language queries
   - Ask questions like "Find Italian restaurants near me" or "Events this weekend"
   - Configurable suggested queries shown as clickable chips above input
