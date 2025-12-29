@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.6.0] - 2025-12-16
 
 ### Added
+- **Field Columns**: Column width picker for post field settings
+  - Dropdown appears below CSS Classes field in post type field editor
+  - Quick selection of Voxel utility classes (vx-1-1, vx-1-2, vx-1-3, etc.)
+  - Auto-detects existing column class and pre-selects in dropdown
+  - Replaces existing column class when selecting new width
+  - Options: 100%, 75%, 66%, 50%, 33%, 25%, 16%
 - **AI Bot**: AI-powered search assistant for natural language queries
   - Ask questions like "Find Italian restaurants near me" or "Events this weekend"
   - Configurable suggested queries shown as clickable chips above input
