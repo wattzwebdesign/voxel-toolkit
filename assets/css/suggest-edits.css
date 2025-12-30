@@ -277,6 +277,11 @@ body.vt-modal-open {
     margin-bottom: 0;
 }
 
+.vt-current-value .vt-no-value {
+    color: #999;
+    font-style: italic;
+}
+
 .vt-field-suggested {
     margin-bottom: 12px;
 }

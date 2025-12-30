@@ -168,6 +168,19 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'show_empty_fields',
+            [
+                'label' => __('Show Fields Without Values', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => '',
+                'description' => __('Show fields even if they have no value, allowing users to suggest new content', 'voxel-toolkit'),
+            ]
+        );
+
         // Translation Section
         $this->add_control(
             'translations_heading',
@@ -229,6 +242,16 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                 'label' => __('Permanently Closed Label', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => __('Mark as Permanently Closed', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'label_no_value',
+            [
+                'label' => __('No Value Label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('No value set', 'voxel-toolkit'),
+                'description' => __('Shown when a field has no current value', 'voxel-toolkit'),
             ]
         );
 
@@ -697,7 +720,7 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                             $value = $field_obj;
                         }
 
-                        // Skip fields with empty values
+                        // Check if value is empty
                         $is_empty = false;
                         if (empty($value)) {
                             $is_empty = true;
@@ -708,7 +731,8 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                             }));
                         }
 
-                        if ($is_empty) {
+                        // Skip empty fields unless show_empty_fields is enabled
+                        if ($is_empty && $settings['show_empty_fields'] !== 'yes') {
                             continue;
                         }
 
@@ -717,6 +741,7 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                             'value' => $value,
                             'type' => $field_type,
                             'field' => $field,
+                            'is_empty' => $is_empty,
                         );
 
                         // For taxonomy fields, get all available terms
@@ -847,43 +872,49 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                                         <label><?php echo esc_html(!empty($settings['label_current_value']) ? $settings['label_current_value'] : __('Current value:', 'voxel-toolkit')); ?></label>
                                         <div class="vt-current-value">
                                             <?php
-                                            // Check field type for special rendering
-                                            $is_image_field = ($field_data['type'] === 'image');
-                                            $is_work_hours = ($field_data['type'] === 'work-hours');
+                                            // Check if field is empty - show custom label
+                                            if (!empty($field_data['is_empty'])) {
+                                                $no_value_label = !empty($settings['label_no_value']) ? $settings['label_no_value'] : __('No value set', 'voxel-toolkit');
+                                                echo '<span class="vt-no-value">' . esc_html($no_value_label) . '</span>';
+                                            } else {
+                                                // Check field type for special rendering
+                                                $is_image_field = ($field_data['type'] === 'image');
+                                                $is_work_hours = ($field_data['type'] === 'work-hours');
 
-                                            if ($is_work_hours && !empty($field_data['formatted_display'])) {
-                                                // Display formatted work hours
-                                                echo '<div class="vt-wh-current-value">' . $field_data['formatted_display'] . '</div>';
-                                            } elseif ($is_image_field && !empty($field_data['value'])) {
-                                                // Handle both single image ID and array of image IDs
-                                                $image_id = 0;
-                                                if (is_array($field_data['value']) && !empty($field_data['value'])) {
-                                                    // Get first image from array
-                                                    $first_item = reset($field_data['value']);
-                                                    $image_id = is_numeric($first_item) ? intval($first_item) : 0;
-                                                } elseif (is_numeric($field_data['value'])) {
-                                                    $image_id = intval($field_data['value']);
-                                                }
+                                                if ($is_work_hours && !empty($field_data['formatted_display'])) {
+                                                    // Display formatted work hours
+                                                    echo '<div class="vt-wh-current-value">' . $field_data['formatted_display'] . '</div>';
+                                                } elseif ($is_image_field && !empty($field_data['value'])) {
+                                                    // Handle both single image ID and array of image IDs
+                                                    $image_id = 0;
+                                                    if (is_array($field_data['value']) && !empty($field_data['value'])) {
+                                                        // Get first image from array
+                                                        $first_item = reset($field_data['value']);
+                                                        $image_id = is_numeric($first_item) ? intval($first_item) : 0;
+                                                    } elseif (is_numeric($field_data['value'])) {
+                                                        $image_id = intval($field_data['value']);
+                                                    }
 
-                                                if ($image_id > 0) {
-                                                    $image_url = wp_get_attachment_image_url($image_id, 'thumbnail');
-                                                    if ($image_url) {
-                                                        echo '<img src="' . esc_url($image_url) . '" alt="" style="max-width: 100px; max-height: 100px; border-radius: 4px; display: block;">';
+                                                    if ($image_id > 0) {
+                                                        $image_url = wp_get_attachment_image_url($image_id, 'thumbnail');
+                                                        if ($image_url) {
+                                                            echo '<img src="' . esc_url($image_url) . '" alt="" style="max-width: 100px; max-height: 100px; border-radius: 4px; display: block;">';
+                                                        } else {
+                                                            echo esc_html($this->format_value($field_data['value'], $field_data['type'], $field_data['field'] ?? null));
+                                                        }
                                                     } else {
                                                         echo esc_html($this->format_value($field_data['value'], $field_data['type'], $field_data['field'] ?? null));
                                                     }
                                                 } else {
-                                                    echo esc_html($this->format_value($field_data['value'], $field_data['type'], $field_data['field'] ?? null));
-                                                }
-                                            } else {
-                                                $field_type = $field_data['type'] ?? '';
-                                                $formatted_value = $this->format_value($field_data['value'], $field_data['type'], $field_data['field'] ?? null);
+                                                    $field_type = $field_data['type'] ?? '';
+                                                    $formatted_value = $this->format_value($field_data['value'], $field_data['type'], $field_data['field'] ?? null);
 
-                                                // Allow safe HTML for rich text fields
-                                                if (in_array($field_type, ['texteditor', 'description'])) {
-                                                    echo '<div class="vt-html-content">' . wp_kses_post($formatted_value) . '</div>';
-                                                } else {
-                                                    echo esc_html($formatted_value);
+                                                    // Allow safe HTML for rich text fields
+                                                    if (in_array($field_type, ['texteditor', 'description'])) {
+                                                        echo '<div class="vt-html-content">' . wp_kses_post($formatted_value) . '</div>';
+                                                    } else {
+                                                        echo esc_html($formatted_value);
+                                                    }
                                                 }
                                             }
                                             ?>
