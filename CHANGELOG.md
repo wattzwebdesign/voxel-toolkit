@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.6.0] - 2025-12-16
 
 ### Added
+- **Suggest Edits - Show Empty Fields**: Option to display fields without values in the suggest edit modal
+  - New "Show Fields Without Values" toggle in widget settings
+  - Customizable "No Value Label" translation (default: "No value set")
+  - Allows users to suggest content for fields that have no current value
 - **Recurring Events - Multiple Instances**: Show recurring events multiple times in archives
   - Events with multiple upcoming dates appear as separate cards (one per occurrence)
   - Each card displays only its specific occurrence date
