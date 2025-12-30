@@ -279,8 +279,8 @@ class Voxel_Toolkit_Duplicate_Post {
             }
         }
         
-        // Elementor compatibility - using exact duplicate-page approach
-        if (is_plugin_active('elementor/elementor.php')) {
+        // Elementor compatibility - only for actual Elementor pages
+        if ($is_elementor_page && is_plugin_active('elementor/elementor.php')) {
             // Ensure Elementor recognizes this as an Elementor page immediately
             update_post_meta($new_post_id, '_elementor_edit_mode', 'builder');
             if (defined('ELEMENTOR_VERSION')) {
