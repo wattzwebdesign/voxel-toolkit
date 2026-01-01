@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Admin Columns - Title Display**: Fixed double-escaping causing titles (especially Cyrillic) to display as "..."
 - **Admin Columns - Title HTML**: Strip HTML tags from title values before display
 - **Admin Columns - Post Relations**: Fixed belongs_to_one/belongs_to_many relations not showing related posts
+- **Admin Columns - Author Filter**: Filter now shows all users who have posts, not just those with author role or higher
 
 ### Added
 - **Suggest Edits - Show Empty Fields**: Option to display fields without values in the suggest edit modal
