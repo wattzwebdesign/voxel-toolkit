@@ -2160,7 +2160,7 @@ class Voxel_Toolkit_Admin_Columns {
                 $field['options'] = $this->get_status_options();
             } elseif ($col['field_key'] === ':author') {
                 $field['filter_type'] = 'select';
-                $field['options'] = $this->get_author_options();
+                $field['options'] = $this->get_author_options($post_type);
             } elseif ($col['field_key'] === ':listing_plan') {
                 $field['filter_type'] = 'select';
                 $field['options'] = $this->get_listing_plan_options($post_type);
@@ -2284,11 +2284,27 @@ class Voxel_Toolkit_Admin_Columns {
 
     /**
      * Get author options for filter
+     * Queries actual post authors for the specific post type (includes all users, not just those with author role)
      */
-    private function get_author_options() {
+    private function get_author_options($post_type = '') {
+        global $wpdb;
+
+        // Query distinct post authors for this post type
+        $query = "SELECT DISTINCT p.post_author
+                  FROM {$wpdb->posts} p
+                  WHERE p.post_type = %s
+                  AND p.post_status != 'auto-draft'
+                  AND p.post_author > 0";
+
+        $author_ids = $wpdb->get_col($wpdb->prepare($query, $post_type));
+
+        if (empty($author_ids)) {
+            return array();
+        }
+
+        // Get user data for these authors
         $authors = get_users(array(
-            'who' => 'authors',
-            'has_published_posts' => true,
+            'include' => $author_ids,
             'orderby' => 'display_name',
             'order' => 'ASC',
         ));
