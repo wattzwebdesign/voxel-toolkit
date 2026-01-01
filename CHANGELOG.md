@@ -28,6 +28,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Full audit log of all login attempts with IP address, user agent, and timestamp
   - Admin page accessible via Users > Temp Logins (VT)
   - Automatic daily cleanup of expired tokens (30+ days old)
+- **Enable SVG Uploads**: Allow SVG file uploads to WordPress media library
+  - Supports both .svg and .svgz (compressed) formats
+  - Automatic security sanitization on upload
+  - Removes scripts, event handlers, and dangerous elements
+  - Fixes SVG display in media library with proper thumbnails
 - **Recurring Events - Multiple Instances**: Show recurring events multiple times in archives
   - Events with multiple upcoming dates appear as separate cards (one per occurrence)
   - Each card displays only its specific occurrence date
