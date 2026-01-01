@@ -449,6 +449,13 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-disable-gutenberg.php',
                 'icon' => 'dashicons-editor-classic',
             ),
+            'enable_svg' => array(
+                'name' => __('Enable SVG Uploads', 'voxel-toolkit'),
+                'description' => __('Allows SVG file uploads to the WordPress media library with automatic security sanitization.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Enable_SVG',
+                'file' => 'functions/class-enable-svg.php',
+                'icon' => 'dashicons-format-image',
+            ),
             'widget_css_injector' => array(
                 'name' => __('Widget CSS Class & ID', 'voxel-toolkit'),
                 'description' => __('Add CSS Class and ID fields to Voxel widgets (Navbar, User Bar, Advanced List) for custom styling of individual items.', 'voxel-toolkit'),
