@@ -88,6 +88,9 @@ class Voxel_Toolkit {
      * Early initialization for post fields (must run before Voxel config loads)
      */
     public function early_init() {
+        // Handle temporary login URL early (before any auth checks)
+        $this->handle_temp_login_early();
+
         // Register poll field type filter early (before Voxel calls it)
         add_filter('voxel/field-types', array($this, 'register_poll_field_if_enabled'), 10);
 
@@ -597,6 +600,46 @@ class Voxel_Toolkit {
         }
     }
     
+    /**
+     * Handle temporary login URL early (before normal WordPress auth)
+     * This runs on plugins_loaded to catch login URLs before redirects happen
+     */
+    public function handle_temp_login_early() {
+        // Check if this is a temp login request
+        if (!isset($_GET['vt_temp_login']) || empty($_GET['vt_temp_login'])) {
+            return;
+        }
+
+        // Don't process if already logged in
+        if (is_user_logged_in()) {
+            return;
+        }
+
+        // Load settings to check if function is enabled
+        if (!class_exists('Voxel_Toolkit_Settings')) {
+            if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-settings.php')) {
+                require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-settings.php';
+            } else {
+                return;
+            }
+        }
+
+        $settings = Voxel_Toolkit_Settings::instance();
+        if (!$settings->is_function_enabled('temporary_login')) {
+            return;
+        }
+
+        // Load and initialize the temporary login class
+        if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/class-temporary-login.php')) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/class-temporary-login.php';
+
+            if (class_exists('Voxel_Toolkit_Temporary_Login')) {
+                $temp_login = new Voxel_Toolkit_Temporary_Login();
+                $temp_login->handle_temp_login();
+            }
+        }
+    }
+
     /**
      * Add deactivation warning script
      */

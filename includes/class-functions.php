@@ -587,6 +587,13 @@ class Voxel_Toolkit_Functions {
                 'icon' => 'dashicons-calendar-alt',
                 'settings_callback' => array($this, 'render_recurring_events_settings'),
             ),
+            'temporary_login' => array(
+                'name' => __('Temporary Login', 'voxel-toolkit'),
+                'description' => __('Generate secure one-click login URLs for temporary access. Perfect for giving developers or support staff temporary access without sharing passwords.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Temporary_Login',
+                'file' => 'functions/class-temporary-login.php',
+                'icon' => 'dashicons-admin-users',
+            ),
         );
 
         // Allow other plugins/themes to register functions
