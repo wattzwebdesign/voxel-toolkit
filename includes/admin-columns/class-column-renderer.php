@@ -841,6 +841,9 @@ class Voxel_Toolkit_Column_Renderer {
         $post_id = $post->get_id();
         $wp_post = get_post($post_id);
 
+        // Strip any HTML from the title value
+        $value = wp_strip_all_tags($value);
+
         if (!$wp_post) {
             return $this->truncate($value);
         }
@@ -862,11 +865,12 @@ class Voxel_Toolkit_Column_Renderer {
         $output = '';
 
         // Title with or without edit link
+        // Note: $title is already escaped by truncate()
         if ($show_link && current_user_can('edit_post', $post_id)) {
             $edit_url = get_edit_post_link($post_id);
-            $output .= '<strong><a class="row-title" href="' . esc_url($edit_url) . '">' . esc_html($title) . '</a></strong>';
+            $output .= '<strong><a class="row-title" href="' . esc_url($edit_url) . '">' . $title . '</a></strong>';
         } else {
-            $output .= '<strong>' . esc_html($title) . '</strong>';
+            $output .= '<strong>' . $title . '</strong>';
         }
 
         // Row actions
@@ -2759,12 +2763,31 @@ class Voxel_Toolkit_Column_Renderer {
             return $this->empty_value();
         }
 
-        // Get related child posts
-        $related_ids = $wpdb->get_col($wpdb->prepare(
-            "SELECT child_id FROM $table_name WHERE parent_id = %d AND relation_key = %s ORDER BY `order` ASC",
-            $post_id,
-            $field_key
-        ));
+        // Determine relation type to query correctly
+        // has_one/has_many: current post is parent, select children
+        // belongs_to_one/belongs_to_many: current post is child, select parents
+        $relation_type = '';
+        if (method_exists($field, 'get_prop')) {
+            $relation_type = $field->get_prop('relation_type');
+        }
+
+        $is_parent = in_array($relation_type, array('has_one', 'has_many'), true);
+
+        if ($is_parent) {
+            // Current post is parent, get child posts
+            $related_ids = $wpdb->get_col($wpdb->prepare(
+                "SELECT child_id FROM $table_name WHERE parent_id = %d AND relation_key = %s ORDER BY `order` ASC",
+                $post_id,
+                $field_key
+            ));
+        } else {
+            // Current post is child (belongs_to), get parent posts
+            $related_ids = $wpdb->get_col($wpdb->prepare(
+                "SELECT parent_id FROM $table_name WHERE child_id = %d AND relation_key = %s ORDER BY `order` ASC",
+                $post_id,
+                $field_key
+            ));
+        }
 
         if (empty($related_ids)) {
             return $this->empty_value();
