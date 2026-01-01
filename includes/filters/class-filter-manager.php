@@ -424,6 +424,14 @@ add_filter('voxel/filter-types', function($filter_types) {
             }
             $filter_types['user'] = \Voxel_Toolkit\Filters\Author_Extended_Filter::class;
         }
+
+        // Override Voxel's Keywords filter to include synonyms when synonym_search is enabled
+        if ($settings->is_function_enabled('synonym_search')) {
+            if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/filters/class-keywords-extended-filter.php')) {
+                require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/filters/class-keywords-extended-filter.php';
+            }
+            $filter_types['keywords'] = \Voxel_Toolkit\Filters\Keywords_Extended_Filter::class;
+        }
     }
 
     return $filter_types;

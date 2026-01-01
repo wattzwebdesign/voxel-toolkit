@@ -322,6 +322,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-admin-taxonomy-search.php',
                 'settings_callback' => array($this, 'render_admin_taxonomy_search_settings'),
             ),
+            'synonym_search' => array(
+                'name' => __('Synonym Search', 'voxel-toolkit'),
+                'description' => __('Add synonyms to taxonomy terms for enhanced keyword search. Includes AI-powered synonym generation. Requires re-indexing posts after adding synonyms.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Synonym_Search',
+                'file' => 'functions/class-synonym-search.php',
+                'settings_callback' => array($this, 'render_synonym_search_settings'),
+                'icon' => 'dashicons-search',
+            ),
             'pending_posts_badge' => array(
                 'name' => __('Pending Posts Badge', 'voxel-toolkit'),
                 'description' => __('Add badges with pending post counts to admin menu items for selected post types with customizable styling.', 'voxel-toolkit'),
@@ -2661,8 +2669,80 @@ class Voxel_Toolkit_Functions {
         </div>
         <?php
     }
-    
-    
+
+    /**
+     * Render Synonym Search settings
+     */
+    public function render_synonym_search_settings($settings) {
+        $synonym_count = isset($settings['synonym_count']) ? intval($settings['synonym_count']) : 5;
+
+        // Check if AI is configured
+        $ai_configured = false;
+        if (class_exists('Voxel_Toolkit_AI_Settings')) {
+            $ai_configured = Voxel_Toolkit_AI_Settings::instance()->is_configured();
+        }
+        ?>
+        <div class="vt-info-box">
+            <?php _e('Add synonyms to taxonomy terms to enhance keyword search results. When enabled, the Keywords filter will also search for matching synonyms.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('AI Synonym Generation', 'voxel-toolkit'); ?></h4>
+
+            <?php if ($ai_configured): ?>
+                <div class="vt-success-box" style="margin-bottom: 16px;">
+                    <span class="dashicons dashicons-yes-alt" style="color: #46b450;"></span>
+                    <?php _e('AI is configured. You can use the "Generate Synonyms with AI" button when editing taxonomy terms.', 'voxel-toolkit'); ?>
+                </div>
+            <?php else: ?>
+                <div class="vt-warning-box" style="margin-bottom: 16px;">
+                    <span class="dashicons dashicons-warning" style="color: #dba617;"></span>
+                    <?php
+                    printf(
+                        /* translators: %s: link to AI settings */
+                        __('AI is not configured. %s to enable AI synonym generation.', 'voxel-toolkit'),
+                        '<a href="' . esc_url(admin_url('admin.php?page=voxel-toolkit')) . '">' . __('Configure AI Settings', 'voxel-toolkit') . '</a>'
+                    );
+                    ?>
+                </div>
+            <?php endif; ?>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label" for="synonym_count">
+                    <?php _e('Number of Synonyms to Generate', 'voxel-toolkit'); ?>
+                </label>
+                <input type="number"
+                       id="synonym_count"
+                       name="voxel_toolkit_options[synonym_search][synonym_count]"
+                       value="<?php echo esc_attr($synonym_count); ?>"
+                       min="1"
+                       max="20"
+                       style="width: 80px;" />
+                <p class="vt-field-description">
+                    <?php _e('How many synonyms to generate when using the AI button (1-20).', 'voxel-toolkit'); ?>
+                </p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('How to Use', 'voxel-toolkit'); ?></h4>
+            <ol class="vt-feature-list">
+                <li><?php _e('Go to any taxonomy term edit page (e.g., Categories, Tags)', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Find the "Synonyms" field and enter comma-separated synonyms', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Optionally use the "Generate Synonyms with AI" button for suggestions', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Save the term', 'voxel-toolkit'); ?></li>
+                <li><strong><?php _e('Re-index your posts', 'voxel-toolkit'); ?></strong> <?php _e('for the synonyms to take effect in search', 'voxel-toolkit'); ?></li>
+            </ol>
+        </div>
+
+        <div class="vt-tip-box">
+            <strong><?php _e('Important:', 'voxel-toolkit'); ?></strong>
+            <?php _e('After adding or modifying synonyms, you must re-index your posts for the changes to appear in keyword search results. Go to Voxel > Post Types > [Your Post Type] > Index and run the indexer.', 'voxel-toolkit'); ?>
+        </div>
+        <?php
+    }
+
+
     /**
      * Render Reading Time widget settings
      */

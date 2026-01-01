@@ -1,0 +1,350 @@
+<?php
+/**
+ * Synonym Search - Add synonyms to taxonomy terms for enhanced keyword search
+ *
+ * Features:
+ * - Adds "Synonyms" field to taxonomy term edit screens
+ * - AI-powered synonym generation via configured AI provider
+ * - Extends Voxel's keywords filter to include synonyms in search indexing
+ * - Requires re-indexing posts after adding/editing synonyms
+ *
+ * @package Voxel_Toolkit
+ */
+
+// Prevent direct access
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+class Voxel_Toolkit_Synonym_Search {
+
+    /**
+     * Singleton instance
+     */
+    private static $instance = null;
+
+    /**
+     * Meta key for storing synonyms
+     */
+    const META_KEY = 'vt_synonyms';
+
+    /**
+     * Get singleton instance
+     */
+    public static function instance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        // Add synonyms field to all taxonomy term forms
+        // Call directly since we're instantiated after init has started
+        $this->setup_taxonomy_fields();
+
+        // Enqueue admin scripts
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
+
+        // AJAX handlers
+        add_action('wp_ajax_vt_generate_synonyms', array($this, 'ajax_generate_synonyms'));
+        add_action('wp_ajax_vt_save_synonyms', array($this, 'ajax_save_synonyms'));
+    }
+
+    /**
+     * Setup taxonomy fields for all Voxel taxonomies
+     */
+    public function setup_taxonomy_fields() {
+        // Get all registered taxonomies
+        $taxonomies = get_taxonomies(array('public' => true), 'names');
+
+        foreach ($taxonomies as $taxonomy) {
+            // Add field to "Add New Term" form
+            add_action("{$taxonomy}_add_form_fields", array($this, 'add_synonyms_field'));
+
+            // Add field to "Edit Term" form
+            add_action("{$taxonomy}_edit_form_fields", array($this, 'edit_synonyms_field'), 10, 2);
+
+            // Save the field value
+            add_action("created_{$taxonomy}", array($this, 'save_synonyms_field'));
+            add_action("edited_{$taxonomy}", array($this, 'save_synonyms_field'));
+        }
+    }
+
+    /**
+     * Add synonyms field to "Add New Term" form
+     *
+     * @param string $taxonomy Taxonomy slug
+     */
+    public function add_synonyms_field($taxonomy) {
+        ?>
+        <div class="form-field term-synonyms-wrap">
+            <label for="vt_synonyms"><?php esc_html_e('Synonyms', 'voxel-toolkit'); ?></label>
+            <textarea name="vt_synonyms" id="vt_synonyms" rows="3" cols="40"></textarea>
+            <p class="description">
+                <?php esc_html_e('Enter synonyms separated by commas. These will be included in keyword searches. Remember to re-index posts after saving.', 'voxel-toolkit'); ?>
+            </p>
+            <?php $this->render_ai_button(); ?>
+        </div>
+        <?php
+    }
+
+    /**
+     * Add synonyms field to "Edit Term" form
+     *
+     * @param WP_Term $term     Current term object
+     * @param string  $taxonomy Taxonomy slug
+     */
+    public function edit_synonyms_field($term, $taxonomy) {
+        $synonyms = get_term_meta($term->term_id, self::META_KEY, true);
+        ?>
+        <tr class="form-field term-synonyms-wrap">
+            <th scope="row">
+                <label for="vt_synonyms"><?php esc_html_e('Synonyms', 'voxel-toolkit'); ?></label>
+            </th>
+            <td>
+                <textarea name="vt_synonyms" id="vt_synonyms" rows="3" cols="50"><?php echo esc_textarea($synonyms); ?></textarea>
+                <p class="description">
+                    <?php esc_html_e('Enter synonyms separated by commas. These will be included in keyword searches. Remember to re-index posts after saving.', 'voxel-toolkit'); ?>
+                </p>
+                <?php $this->render_ai_button($term->term_id, $term->name); ?>
+            </td>
+        </tr>
+        <?php
+    }
+
+    /**
+     * Render AI generate button
+     *
+     * @param int    $term_id   Term ID (optional, for edit form)
+     * @param string $term_name Term name (optional, for edit form)
+     */
+    private function render_ai_button($term_id = 0, $term_name = '') {
+        // Check if AI is configured
+        if (!class_exists('Voxel_Toolkit_AI_Settings')) {
+            return;
+        }
+
+        $ai_settings = Voxel_Toolkit_AI_Settings::instance();
+        if (!$ai_settings->is_configured()) {
+            ?>
+            <p class="vt-ai-not-configured" style="color: #999; font-style: italic; margin-top: 8px;">
+                <?php
+                printf(
+                    /* translators: %s: link to AI settings */
+                    esc_html__('AI synonym generation available. %s to enable.', 'voxel-toolkit'),
+                    '<a href="' . esc_url(admin_url('admin.php?page=voxel-toolkit')) . '">' . esc_html__('Configure AI Settings', 'voxel-toolkit') . '</a>'
+                );
+                ?>
+            </p>
+            <?php
+            return;
+        }
+
+        // Get function settings for synonym count
+        $settings = Voxel_Toolkit_Settings::instance()->get_function_settings('synonym_search', array(
+            'synonym_count' => 5,
+        ));
+        $synonym_count = isset($settings['synonym_count']) ? intval($settings['synonym_count']) : 5;
+        ?>
+        <div class="vt-ai-synonyms-wrapper" style="margin-top: 10px;">
+            <button type="button"
+                    class="button vt-generate-synonyms-btn"
+                    data-term-id="<?php echo esc_attr($term_id); ?>"
+                    data-term-name="<?php echo esc_attr($term_name); ?>"
+                    data-count="<?php echo esc_attr($synonym_count); ?>">
+                <span class="dashicons dashicons-admin-generic" style="vertical-align: middle; margin-right: 4px;"></span>
+                <?php esc_html_e('Generate Synonyms with AI', 'voxel-toolkit'); ?>
+            </button>
+            <span class="spinner" style="float: none; margin-top: 0;"></span>
+            <span class="vt-ai-status" style="margin-left: 10px; color: #666;"></span>
+        </div>
+        <?php
+    }
+
+    /**
+     * Save synonyms field value
+     *
+     * @param int $term_id Term ID
+     */
+    public function save_synonyms_field($term_id) {
+        if (!isset($_POST['vt_synonyms'])) {
+            return;
+        }
+
+        $synonyms = sanitize_textarea_field($_POST['vt_synonyms']);
+        update_term_meta($term_id, self::META_KEY, $synonyms);
+    }
+
+    /**
+     * Enqueue admin scripts
+     *
+     * @param string $hook Current admin page hook
+     */
+    public function enqueue_admin_scripts($hook) {
+        // Only on term edit pages
+        if (!in_array($hook, array('term.php', 'edit-tags.php'))) {
+            return;
+        }
+
+        wp_enqueue_script(
+            'vt-synonym-search-admin',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/synonym-search-admin.js',
+            array('jquery'),
+            VOXEL_TOOLKIT_VERSION,
+            true
+        );
+
+        wp_localize_script('vt-synonym-search-admin', 'vtSynonymSearch', array(
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('vt_synonym_search'),
+            'strings' => array(
+                'generating' => __('Generating synonyms...', 'voxel-toolkit'),
+                'generated' => __('Synonyms generated!', 'voxel-toolkit'),
+                'error' => __('Error generating synonyms', 'voxel-toolkit'),
+                'noTermName' => __('Please enter a term name first', 'voxel-toolkit'),
+            ),
+        ));
+
+        // Admin styles
+        wp_add_inline_style('common', '
+            .vt-generate-synonyms-btn {
+                display: inline-flex !important;
+                align-items: center;
+            }
+            .vt-generate-synonyms-btn .dashicons {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+            }
+            .vt-ai-synonyms-wrapper .spinner.is-active {
+                visibility: visible;
+            }
+        ');
+    }
+
+    /**
+     * AJAX handler for generating synonyms
+     */
+    public function ajax_generate_synonyms() {
+        check_ajax_referer('vt_synonym_search', 'nonce');
+
+        if (!current_user_can('manage_categories')) {
+            wp_send_json_error(array('message' => __('Permission denied.', 'voxel-toolkit')));
+        }
+
+        $term_name = isset($_POST['term_name']) ? sanitize_text_field($_POST['term_name']) : '';
+        $count = isset($_POST['count']) ? intval($_POST['count']) : 5;
+        $existing = isset($_POST['existing']) ? sanitize_textarea_field($_POST['existing']) : '';
+
+        if (empty($term_name)) {
+            wp_send_json_error(array('message' => __('Term name is required.', 'voxel-toolkit')));
+        }
+
+        // Get AI settings
+        if (!class_exists('Voxel_Toolkit_AI_Settings')) {
+            wp_send_json_error(array('message' => __('AI Settings not available.', 'voxel-toolkit')));
+        }
+
+        $ai_settings = Voxel_Toolkit_AI_Settings::instance();
+        if (!$ai_settings->is_configured()) {
+            wp_send_json_error(array('message' => __('AI is not configured. Please set up AI Settings first.', 'voxel-toolkit')));
+        }
+
+        // Build the prompt
+        $prompt = sprintf(
+            'Generate exactly %d synonyms, alternative terms, and related phrases for the term "%s". These synonyms will be used for search functionality, so include common variations, abbreviations, and related terms that users might search for.
+
+Return ONLY the synonyms as a comma-separated list, nothing else. Do not include the original term. Do not include numbering or explanations.',
+            $count,
+            $term_name
+        );
+
+        // If there are existing synonyms, ask to add more
+        if (!empty($existing)) {
+            $prompt .= sprintf(
+                "\n\nExisting synonyms (do not repeat these): %s",
+                $existing
+            );
+        }
+
+        $system_message = 'You are a helpful assistant that generates search synonyms. Respond only with comma-separated synonyms, no explanations or formatting.';
+
+        // Generate via AI
+        $result = $ai_settings->generate_completion($prompt, 200, 0.7, $system_message);
+
+        if (is_wp_error($result)) {
+            wp_send_json_error(array('message' => $result->get_error_message()));
+        }
+
+        // Clean up the result
+        $synonyms = trim($result);
+        // Remove any quotes or extra formatting
+        $synonyms = str_replace(array('"', "'"), '', $synonyms);
+        // Remove any trailing periods
+        $synonyms = rtrim($synonyms, '.');
+
+        // If there are existing synonyms, append the new ones
+        if (!empty($existing)) {
+            $existing_array = array_map('trim', explode(',', $existing));
+            $new_array = array_map('trim', explode(',', $synonyms));
+            $merged = array_unique(array_merge($existing_array, $new_array));
+            $synonyms = implode(', ', $merged);
+        }
+
+        wp_send_json_success(array(
+            'synonyms' => $synonyms,
+        ));
+    }
+
+    /**
+     * AJAX handler for saving synonyms (for quick save without full form submit)
+     */
+    public function ajax_save_synonyms() {
+        check_ajax_referer('vt_synonym_search', 'nonce');
+
+        if (!current_user_can('manage_categories')) {
+            wp_send_json_error(array('message' => __('Permission denied.', 'voxel-toolkit')));
+        }
+
+        $term_id = isset($_POST['term_id']) ? intval($_POST['term_id']) : 0;
+        $synonyms = isset($_POST['synonyms']) ? sanitize_textarea_field($_POST['synonyms']) : '';
+
+        if (!$term_id) {
+            wp_send_json_error(array('message' => __('Term ID is required.', 'voxel-toolkit')));
+        }
+
+        update_term_meta($term_id, self::META_KEY, $synonyms);
+
+        wp_send_json_success(array(
+            'message' => __('Synonyms saved. Remember to re-index posts for changes to take effect.', 'voxel-toolkit'),
+        ));
+    }
+
+    /**
+     * Get synonyms for a term
+     *
+     * @param int $term_id Term ID
+     * @return string Synonyms string (comma-separated)
+     */
+    public static function get_synonyms($term_id) {
+        return get_term_meta($term_id, self::META_KEY, true);
+    }
+
+    /**
+     * Get synonyms as array
+     *
+     * @param int $term_id Term ID
+     * @return array Synonyms array
+     */
+    public static function get_synonyms_array($term_id) {
+        $synonyms = self::get_synonyms($term_id);
+        if (empty($synonyms)) {
+            return array();
+        }
+        return array_map('trim', explode(',', $synonyms));
+    }
+}
