@@ -18,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New "Show Fields Without Values" toggle in widget settings
   - Customizable "No Value Label" translation (default: "No value set")
   - Allows users to suggest content for fields that have no current value
+- **Temporary Login**: Generate secure one-click login URLs for temporary site access
+  - Perfect for giving developers or support staff temporary access without sharing passwords
+  - Secure selector/validator token pattern with hashed storage
+  - Multi-use tokens with configurable expiration (hours or days)
+  - Create tokens for existing users or generate new temporary user accounts
+  - Configurable redirect URL per token (dashboard, specific page, etc.)
+  - Enable/disable tokens without deleting them
+  - Full audit log of all login attempts with IP address, user agent, and timestamp
+  - Admin page accessible via Users > Temp Logins (VT)
+  - Automatic daily cleanup of expired tokens (30+ days old)
 - **Recurring Events - Multiple Instances**: Show recurring events multiple times in archives
   - Events with multiple upcoming dates appear as separate cards (one per occurrence)
   - Each card displays only its specific occurrence date
