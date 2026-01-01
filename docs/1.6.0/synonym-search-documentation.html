@@ -1,0 +1,568 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Synonym Search</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Synonym Search function enhances Voxel's keyword search by allowing you to add synonyms to taxonomy terms. When users search for a term, results will also include posts tagged with synonyms of that term.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users often search using different words than what you've used for categories. "Bars" might be searched as "pubs," "nightclubs," or "lounges." This function lets you add these synonyms to your taxonomy terms so searches match regardless of the exact word used.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Add synonyms to any taxonomy term</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>AI-powered synonym generation</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Bulk generate synonyms for entire taxonomies</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Automatic post re-indexing when synonyms change</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Synonyms column in taxonomy admin tables</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle synonyms on/off per Keywords filter</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Synonym Search</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure AI Settings (Optional)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To use AI-powered synonym generation:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Voxel Toolkit &gt; Functions</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find and enable <strong>AI Settings</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Choose your AI provider (OpenAI or Anthropic)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter your API key</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select your preferred model</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save changes</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Enable in Keywords Filter</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Voxel &gt; Post Types</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Edit your post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Go to the <strong>Filters</strong> tab</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Edit the <strong>Keywords</strong> filter</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>In "Look for matches in," check <strong>Taxonomy Synonyms</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the post type</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Adding Synonyms to Terms</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Manual Entry</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to any taxonomy in WordPress (e.g., <strong>Posts &gt; Categories</strong>)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click on a term to edit it</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find the <strong>Synonyms</strong> field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter synonyms separated by commas (e.g., "pub, nightclub, lounge, tavern")</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Update</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Posts with this term are automatically re-indexed when you save.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">AI-Powered Generation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When AI Settings are configured, you'll see a <strong>Generate Synonyms with AI</strong> button on the term edit page:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit a taxonomy term</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Generate Synonyms with AI</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>AI generates relevant synonyms automatically</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Review and edit if needed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Update</strong> to save</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Clicking the button again will add more synonyms without replacing existing ones.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Bulk Generate Synonyms</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Generate synonyms for all terms in a taxonomy at once:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Voxel Toolkit &gt; Functions</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click the settings icon on <strong>Synonym Search</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>In the <strong>Bulk Generate Synonyms</strong> section, select a taxonomy</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Optionally check "Skip terms that already have synonyms"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Bulk Generate Synonyms</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Watch the progress bar as each term is processed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Posts are automatically re-indexed as synonyms are added</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>You can cancel the process at any time. Progress is shown for each term being processed.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Function Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Number of Synonyms</strong></td><td>How many synonyms AI generates per term</td><td>5</td></tr><tr><td><strong>Skip Existing</strong></td><td>Skip terms that already have synonyms during bulk generation</td><td>Enabled</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Synonyms Column</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When the function is enabled, a <strong>Synonyms</strong> column appears in all taxonomy list tables:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Shows synonyms for each term at a glance</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Displays "—" for terms without synonyms</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Long synonym lists are truncated with full text on hover</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When a user searches using the Keywords filter:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>User enters a search term (e.g., "pub")</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel searches the index for matching keywords</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Because "pub" is a synonym of "Bars," posts in the "Bars" category match</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User sees relevant results even though they didn't search for "bars"</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Synonyms are stored in the search index alongside the term name, so searches are fast and efficient.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Directory Categories</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add synonyms to business categories: "Restaurant" → "eatery, diner, bistro, cafe, dining"</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Location Names</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add alternative names for places: "New York City" → "NYC, Big Apple, Manhattan, New York"</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Service Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Cover different terms for services: "Plumber" → "plumbing, pipe repair, drain cleaning, water heater"</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Product Categories</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Match common search terms: "Laptop" → "notebook, computer, portable PC, MacBook"</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Best Practices</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Synonym Guidelines</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Include common misspellings</strong> - "barbeque, barbecue, BBQ"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Add abbreviations</strong> - "doctor, dr, physician"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Use regional variations</strong> - "apartment, flat, unit, condo"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Include related terms</strong> - "gym, fitness center, health club, workout"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Think like your users</strong> - What words would they search for?</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">AI Generation Tips</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Review AI-generated synonyms before saving</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Remove irrelevant suggestions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add industry-specific terms AI might miss</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use bulk generation for large taxonomies, then review individually</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Synonyms Not Appearing in Search</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure "Taxonomy Synonyms" is checked in the Keywords filter settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify posts have been re-indexed after adding synonyms</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the function is enabled</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">AI Generation Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify AI Settings is enabled and configured</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check your API key is valid</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure you have API credits remaining</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Synonyms Field Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Confirm Synonym Search function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any caching plugins</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for JavaScript errors in browser console</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Bulk Generation Stops</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check for API rate limits</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify server timeout settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try again - the process continues from where it stopped</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Keywords filter on your post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>AI Settings configured (for AI generation features)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

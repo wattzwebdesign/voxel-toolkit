@@ -46,12 +46,16 @@ class Voxel_Toolkit_Synonym_Search {
         // Call directly since we're instantiated after init has started
         $this->setup_taxonomy_fields();
 
+        // Add synonyms column to taxonomy list tables
+        $this->setup_taxonomy_columns();
+
         // Enqueue admin scripts
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
 
         // AJAX handlers
         add_action('wp_ajax_vt_generate_synonyms', array($this, 'ajax_generate_synonyms'));
         add_action('wp_ajax_vt_save_synonyms', array($this, 'ajax_save_synonyms'));
+        add_action('wp_ajax_vt_bulk_generate_synonyms', array($this, 'ajax_bulk_generate_synonyms'));
     }
 
     /**
@@ -75,6 +79,80 @@ class Voxel_Toolkit_Synonym_Search {
     }
 
     /**
+     * Setup taxonomy columns for all taxonomies
+     */
+    public function setup_taxonomy_columns() {
+        // Get all registered taxonomies
+        $taxonomies = get_taxonomies(array('public' => true), 'names');
+
+        foreach ($taxonomies as $taxonomy) {
+            // Add column header
+            add_filter("manage_edit-{$taxonomy}_columns", array($this, 'add_synonyms_column'));
+
+            // Populate column content
+            add_filter("manage_{$taxonomy}_custom_column", array($this, 'render_synonyms_column'), 10, 3);
+        }
+    }
+
+    /**
+     * Add synonyms column to taxonomy list table
+     *
+     * @param array $columns Existing columns
+     * @return array Modified columns
+     */
+    public function add_synonyms_column($columns) {
+        // Insert after description or at the end
+        $new_columns = array();
+        foreach ($columns as $key => $label) {
+            $new_columns[$key] = $label;
+            if ($key === 'description') {
+                $new_columns['vt_synonyms'] = __('Synonyms', 'voxel-toolkit');
+            }
+        }
+
+        // If description column doesn't exist, add at end (before posts count)
+        if (!isset($new_columns['vt_synonyms'])) {
+            $posts_column = isset($new_columns['posts']) ? $new_columns['posts'] : null;
+            unset($new_columns['posts']);
+            $new_columns['vt_synonyms'] = __('Synonyms', 'voxel-toolkit');
+            if ($posts_column) {
+                $new_columns['posts'] = $posts_column;
+            }
+        }
+
+        return $new_columns;
+    }
+
+    /**
+     * Render synonyms column content
+     *
+     * @param string $content     Column content
+     * @param string $column_name Column name
+     * @param int    $term_id     Term ID
+     * @return string Column content
+     */
+    public function render_synonyms_column($content, $column_name, $term_id) {
+        if ($column_name !== 'vt_synonyms') {
+            return $content;
+        }
+
+        $synonyms = get_term_meta($term_id, self::META_KEY, true);
+
+        if (empty($synonyms)) {
+            return '<span style="color: #999;">—</span>';
+        }
+
+        // Truncate if too long
+        $max_length = 50;
+        if (strlen($synonyms) > $max_length) {
+            $truncated = substr($synonyms, 0, $max_length) . '...';
+            return '<span title="' . esc_attr($synonyms) . '">' . esc_html($truncated) . '</span>';
+        }
+
+        return esc_html($synonyms);
+    }
+
+    /**
      * Add synonyms field to "Add New Term" form
      *
      * @param string $taxonomy Taxonomy slug
@@ -85,7 +163,7 @@ class Voxel_Toolkit_Synonym_Search {
             <label for="vt_synonyms"><?php esc_html_e('Synonyms', 'voxel-toolkit'); ?></label>
             <textarea name="vt_synonyms" id="vt_synonyms" rows="3" cols="40"></textarea>
             <p class="description">
-                <?php esc_html_e('Enter synonyms separated by commas. These will be included in keyword searches. Remember to re-index posts after saving.', 'voxel-toolkit'); ?>
+                <?php esc_html_e('Enter synonyms separated by commas. These will be included in keyword searches. Posts are automatically re-indexed when saved.', 'voxel-toolkit'); ?>
             </p>
             <?php $this->render_ai_button(); ?>
         </div>
@@ -108,7 +186,7 @@ class Voxel_Toolkit_Synonym_Search {
             <td>
                 <textarea name="vt_synonyms" id="vt_synonyms" rows="3" cols="50"><?php echo esc_textarea($synonyms); ?></textarea>
                 <p class="description">
-                    <?php esc_html_e('Enter synonyms separated by commas. These will be included in keyword searches. Remember to re-index posts after saving.', 'voxel-toolkit'); ?>
+                    <?php esc_html_e('Enter synonyms separated by commas. These will be included in keyword searches. Posts are automatically re-indexed when saved.', 'voxel-toolkit'); ?>
                 </p>
                 <?php $this->render_ai_button($term->term_id, $term->name); ?>
             </td>
@@ -166,7 +244,7 @@ class Voxel_Toolkit_Synonym_Search {
     }
 
     /**
-     * Save synonyms field value
+     * Save synonyms field value and trigger re-indexing
      *
      * @param int $term_id Term ID
      */
@@ -175,8 +253,85 @@ class Voxel_Toolkit_Synonym_Search {
             return;
         }
 
-        $synonyms = sanitize_textarea_field($_POST['vt_synonyms']);
-        update_term_meta($term_id, self::META_KEY, $synonyms);
+        // Get old value to check if it changed
+        $old_synonyms = get_term_meta($term_id, self::META_KEY, true);
+        $new_synonyms = sanitize_textarea_field($_POST['vt_synonyms']);
+
+        // Save the new value
+        update_term_meta($term_id, self::META_KEY, $new_synonyms);
+
+        // Only re-index if synonyms actually changed
+        if ($old_synonyms !== $new_synonyms) {
+            $this->reindex_posts_by_term($term_id);
+        }
+    }
+
+    /**
+     * Re-index all posts that have a specific term
+     *
+     * @param int $term_id Term ID
+     */
+    protected function reindex_posts_by_term($term_id) {
+        // Check if Voxel classes are available
+        if (!class_exists('\Voxel\Post_Type') || !class_exists('\Voxel\Post')) {
+            return;
+        }
+
+        $term = get_term($term_id);
+        if (!$term || is_wp_error($term)) {
+            return;
+        }
+
+        // Get all posts with this term
+        $post_ids = get_posts(array(
+            'post_type' => 'any',
+            'post_status' => array('publish', 'pending', 'draft'),
+            'numberposts' => -1,
+            'fields' => 'ids',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => $term->taxonomy,
+                    'field' => 'term_id',
+                    'terms' => $term_id,
+                ),
+            ),
+        ));
+
+        if (empty($post_ids)) {
+            return;
+        }
+
+        // Group posts by post type
+        $posts_by_type = array();
+        foreach ($post_ids as $post_id) {
+            $post_type = get_post_type($post_id);
+            if (!isset($posts_by_type[$post_type])) {
+                $posts_by_type[$post_type] = array();
+            }
+            $posts_by_type[$post_type][] = $post_id;
+        }
+
+        // Re-index each post type's posts
+        foreach ($posts_by_type as $post_type_key => $type_post_ids) {
+            $post_type = \Voxel\Post_Type::get($post_type_key);
+            if (!$post_type) {
+                continue;
+            }
+
+            // Check if index table exists
+            $index_table = $post_type->get_index_table();
+            if (!$index_table || !$index_table->exists()) {
+                continue;
+            }
+
+            // Re-index in batches to avoid memory issues
+            $batch_size = 50;
+            $batches = array_chunk($type_post_ids, $batch_size);
+
+            foreach ($batches as $batch) {
+                $index_table->index($batch);
+            }
+        }
     }
 
     /**
@@ -321,6 +476,150 @@ Return ONLY the synonyms as a comma-separated list, nothing else. Do not include
 
         wp_send_json_success(array(
             'message' => __('Synonyms saved. Remember to re-index posts for changes to take effect.', 'voxel-toolkit'),
+        ));
+    }
+
+    /**
+     * AJAX handler for bulk generating synonyms
+     */
+    public function ajax_bulk_generate_synonyms() {
+        check_ajax_referer('vt_bulk_synonyms', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Permission denied.', 'voxel-toolkit')));
+        }
+
+        $taxonomy = isset($_POST['taxonomy']) ? sanitize_text_field($_POST['taxonomy']) : '';
+        $offset = isset($_POST['offset']) ? intval($_POST['offset']) : 0;
+        $skip_existing = isset($_POST['skip_existing']) ? (bool) $_POST['skip_existing'] : true;
+        $count = isset($_POST['count']) ? intval($_POST['count']) : 5;
+
+        if (empty($taxonomy) || !taxonomy_exists($taxonomy)) {
+            wp_send_json_error(array('message' => __('Invalid taxonomy.', 'voxel-toolkit')));
+        }
+
+        // Get AI settings
+        if (!class_exists('Voxel_Toolkit_AI_Settings')) {
+            wp_send_json_error(array('message' => __('AI Settings not available.', 'voxel-toolkit')));
+        }
+
+        $ai_settings = Voxel_Toolkit_AI_Settings::instance();
+        if (!$ai_settings->is_configured()) {
+            wp_send_json_error(array('message' => __('AI is not configured.', 'voxel-toolkit')));
+        }
+
+        // Get all terms for this taxonomy
+        $all_terms = get_terms(array(
+            'taxonomy' => $taxonomy,
+            'hide_empty' => false,
+            'orderby' => 'name',
+            'order' => 'ASC',
+        ));
+
+        if (is_wp_error($all_terms) || empty($all_terms)) {
+            wp_send_json_error(array('message' => __('No terms found in this taxonomy.', 'voxel-toolkit')));
+        }
+
+        $total = count($all_terms);
+
+        // Get term at current offset
+        if ($offset >= $total) {
+            // We're done - get stats from transient
+            $stats = get_transient('vt_bulk_synonyms_stats');
+            delete_transient('vt_bulk_synonyms_stats');
+
+            wp_send_json_success(array(
+                'has_more' => false,
+                'processed' => $total,
+                'total' => $total,
+                'offset' => $offset,
+                'current_term' => '',
+                'generated' => $stats['generated'] ?? 0,
+                'skipped' => $stats['skipped'] ?? 0,
+            ));
+        }
+
+        // Initialize stats on first run
+        if ($offset === 0) {
+            set_transient('vt_bulk_synonyms_stats', array('generated' => 0, 'skipped' => 0), HOUR_IN_SECONDS);
+        }
+
+        $stats = get_transient('vt_bulk_synonyms_stats') ?: array('generated' => 0, 'skipped' => 0);
+
+        $term = $all_terms[$offset];
+        $term_name = $term->name;
+        $term_id = $term->term_id;
+
+        // Check if term already has synonyms
+        $existing_synonyms = get_term_meta($term_id, self::META_KEY, true);
+
+        if ($skip_existing && !empty($existing_synonyms)) {
+            // Skip this term
+            $stats['skipped']++;
+            set_transient('vt_bulk_synonyms_stats', $stats, HOUR_IN_SECONDS);
+
+            wp_send_json_success(array(
+                'has_more' => ($offset + 1) < $total,
+                'processed' => $offset + 1,
+                'total' => $total,
+                'offset' => $offset + 1,
+                'current_term' => $term_name . ' ' . __('(skipped)', 'voxel-toolkit'),
+                'generated' => $stats['generated'],
+                'skipped' => $stats['skipped'],
+            ));
+        }
+
+        // Generate synonyms for this term
+        $prompt = sprintf(
+            'Generate exactly %d synonyms, alternative terms, and related phrases for the term "%s". These synonyms will be used for search functionality, so include common variations, abbreviations, and related terms that users might search for.
+
+Return ONLY the synonyms as a comma-separated list, nothing else. Do not include the original term. Do not include numbering or explanations.',
+            $count,
+            $term_name
+        );
+
+        $system_message = 'You are a helpful assistant that generates search synonyms. Respond only with comma-separated synonyms, no explanations or formatting.';
+
+        $result = $ai_settings->generate_completion($prompt, 200, 0.7, $system_message);
+
+        if (is_wp_error($result)) {
+            // Log error but continue with next term
+            $stats['skipped']++;
+            set_transient('vt_bulk_synonyms_stats', $stats, HOUR_IN_SECONDS);
+
+            wp_send_json_success(array(
+                'has_more' => ($offset + 1) < $total,
+                'processed' => $offset + 1,
+                'total' => $total,
+                'offset' => $offset + 1,
+                'current_term' => $term_name . ' ' . __('(error)', 'voxel-toolkit'),
+                'generated' => $stats['generated'],
+                'skipped' => $stats['skipped'],
+            ));
+        }
+
+        // Clean up the result
+        $synonyms = trim($result);
+        $synonyms = str_replace(array('"', "'"), '', $synonyms);
+        $synonyms = rtrim($synonyms, '.');
+
+        // Save synonyms
+        update_term_meta($term_id, self::META_KEY, $synonyms);
+
+        // Re-index posts with this term
+        $this->reindex_posts_by_term($term_id);
+
+        $stats['generated']++;
+        set_transient('vt_bulk_synonyms_stats', $stats, HOUR_IN_SECONDS);
+
+        wp_send_json_success(array(
+            'has_more' => ($offset + 1) < $total,
+            'processed' => $offset + 1,
+            'total' => $total,
+            'offset' => $offset + 1,
+            'current_term' => $term_name,
+            'generated' => $stats['generated'],
+            'skipped' => $stats['skipped'],
         ));
     }
 

@@ -222,6 +222,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Access summaries via `@post(ai.summary)` dynamic tag
   - Bulk generate tool for existing posts without summaries
   - Summaries stored in post meta, regenerated on content changes
+- **Synonym Search**: Add synonyms to taxonomy terms for enhanced keyword search
+  - Synonyms field on all taxonomy term edit pages
+  - AI-powered synonym generation with one click
+  - Bulk generate synonyms for entire taxonomies with progress tracking
+  - Automatic post re-indexing when synonyms are saved
+  - Synonyms column in admin taxonomy list tables
+  - Toggle "Taxonomy Synonyms" checkbox in Keywords filter settings
+  - Skip existing option for bulk generation
+  - Configurable number of synonyms to generate (1-20)
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options

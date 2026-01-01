@@ -2681,6 +2681,9 @@ class Voxel_Toolkit_Functions {
         if (class_exists('Voxel_Toolkit_AI_Settings')) {
             $ai_configured = Voxel_Toolkit_AI_Settings::instance()->is_configured();
         }
+
+        // Get all public taxonomies
+        $taxonomies = get_taxonomies(array('public' => true), 'objects');
         ?>
         <div class="vt-info-box">
             <?php _e('Add synonyms to taxonomy terms to enhance keyword search results. When enabled, the Keywords filter will also search for matching synonyms.', 'voxel-toolkit'); ?>
@@ -2724,20 +2727,167 @@ class Voxel_Toolkit_Functions {
             </div>
         </div>
 
+        <?php if ($ai_configured): ?>
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Bulk Generate Synonyms', 'voxel-toolkit'); ?></h4>
+            <p class="vt-field-description" style="margin-bottom: 16px;">
+                <?php _e('Generate synonyms for all terms in a taxonomy at once using AI.', 'voxel-toolkit'); ?>
+            </p>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label" for="vt_bulk_taxonomy">
+                    <?php _e('Select Taxonomy', 'voxel-toolkit'); ?>
+                </label>
+                <select id="vt_bulk_taxonomy" style="min-width: 200px;">
+                    <option value=""><?php _e('— Select Taxonomy —', 'voxel-toolkit'); ?></option>
+                    <?php foreach ($taxonomies as $tax_key => $tax_obj): ?>
+                        <?php
+                        $term_count = wp_count_terms(array('taxonomy' => $tax_key, 'hide_empty' => false));
+                        if (is_wp_error($term_count)) $term_count = 0;
+                        ?>
+                        <option value="<?php echo esc_attr($tax_key); ?>">
+                            <?php echo esc_html($tax_obj->label); ?> (<?php echo intval($term_count); ?> <?php _e('terms', 'voxel-toolkit'); ?>)
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="vt-field-group">
+                <label style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="vt_bulk_skip_existing" checked />
+                    <?php _e('Skip terms that already have synonyms', 'voxel-toolkit'); ?>
+                </label>
+            </div>
+
+            <div class="vt-field-group">
+                <button type="button" id="vt_bulk_generate_btn" class="button button-primary" disabled>
+                    <span class="dashicons dashicons-admin-generic" style="vertical-align: middle; margin-right: 4px;"></span>
+                    <?php _e('Bulk Generate Synonyms', 'voxel-toolkit'); ?>
+                </button>
+                <button type="button" id="vt_bulk_cancel_btn" class="button" style="display: none; margin-left: 8px;">
+                    <?php _e('Cancel', 'voxel-toolkit'); ?>
+                </button>
+            </div>
+
+            <div id="vt_bulk_progress_wrap" style="display: none; margin-top: 16px;">
+                <div class="vt-progress-bar" style="background: #e0e0e0; border-radius: 4px; height: 24px; overflow: hidden; position: relative;">
+                    <div id="vt_bulk_progress_bar" style="background: linear-gradient(90deg, #4f46e5, #7c3aed); height: 100%; width: 0%; transition: width 0.3s ease;"></div>
+                    <span id="vt_bulk_progress_text" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; font-weight: 600; color: #333;">0%</span>
+                </div>
+                <div id="vt_bulk_status" style="margin-top: 8px; font-size: 13px; color: #666;"></div>
+            </div>
+
+            <div id="vt_bulk_results" style="display: none; margin-top: 16px;"></div>
+        </div>
+
+        <script>
+        jQuery(document).ready(function($) {
+            var bulkGenerating = false;
+            var bulkCancelled = false;
+
+            $('#vt_bulk_taxonomy').on('change', function() {
+                $('#vt_bulk_generate_btn').prop('disabled', !$(this).val());
+            });
+
+            $('#vt_bulk_generate_btn').on('click', function() {
+                var taxonomy = $('#vt_bulk_taxonomy').val();
+                if (!taxonomy) return;
+
+                bulkGenerating = true;
+                bulkCancelled = false;
+
+                $(this).prop('disabled', true).text('<?php _e('Processing...', 'voxel-toolkit'); ?>');
+                $('#vt_bulk_cancel_btn').show();
+                $('#vt_bulk_progress_wrap').show();
+                $('#vt_bulk_results').hide().empty();
+                $('#vt_bulk_progress_bar').css('width', '0%');
+                $('#vt_bulk_progress_text').text('0%');
+                $('#vt_bulk_status').text('<?php _e('Starting...', 'voxel-toolkit'); ?>');
+
+                processBulkGeneration(taxonomy, 0);
+            });
+
+            $('#vt_bulk_cancel_btn').on('click', function() {
+                bulkCancelled = true;
+                $(this).prop('disabled', true).text('<?php _e('Cancelling...', 'voxel-toolkit'); ?>');
+            });
+
+            function processBulkGeneration(taxonomy, offset) {
+                if (bulkCancelled) {
+                    finishBulkGeneration('<?php _e('Cancelled by user.', 'voxel-toolkit'); ?>', 'warning');
+                    return;
+                }
+
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'vt_bulk_generate_synonyms',
+                        nonce: '<?php echo wp_create_nonce('vt_bulk_synonyms'); ?>',
+                        taxonomy: taxonomy,
+                        offset: offset,
+                        skip_existing: $('#vt_bulk_skip_existing').is(':checked') ? 1 : 0,
+                        count: <?php echo intval($synonym_count); ?>
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            var data = response.data;
+                            var percent = Math.round((data.processed / data.total) * 100);
+
+                            $('#vt_bulk_progress_bar').css('width', percent + '%');
+                            $('#vt_bulk_progress_text').text(percent + '%');
+                            $('#vt_bulk_status').html(
+                                '<?php _e('Processing:', 'voxel-toolkit'); ?> <strong>' + data.current_term + '</strong> (' + data.processed + '/' + data.total + ')'
+                            );
+
+                            if (data.has_more && !bulkCancelled) {
+                                setTimeout(function() {
+                                    processBulkGeneration(taxonomy, data.offset);
+                                }, 500);
+                            } else {
+                                finishBulkGeneration(
+                                    '<?php _e('Complete!', 'voxel-toolkit'); ?> ' + data.generated + ' <?php _e('synonyms generated,', 'voxel-toolkit'); ?> ' + data.skipped + ' <?php _e('skipped.', 'voxel-toolkit'); ?>',
+                                    'success'
+                                );
+                            }
+                        } else {
+                            finishBulkGeneration(response.data.message || '<?php _e('An error occurred.', 'voxel-toolkit'); ?>', 'error');
+                        }
+                    },
+                    error: function() {
+                        finishBulkGeneration('<?php _e('Connection error. Please try again.', 'voxel-toolkit'); ?>', 'error');
+                    }
+                });
+            }
+
+            function finishBulkGeneration(message, type) {
+                bulkGenerating = false;
+
+                $('#vt_bulk_generate_btn')
+                    .prop('disabled', false)
+                    .html('<span class="dashicons dashicons-admin-generic" style="vertical-align: middle; margin-right: 4px;"></span> <?php _e('Bulk Generate Synonyms', 'voxel-toolkit'); ?>');
+                $('#vt_bulk_cancel_btn').hide().prop('disabled', false).text('<?php _e('Cancel', 'voxel-toolkit'); ?>');
+
+                var resultClass = type === 'success' ? 'vt-success-box' : (type === 'warning' ? 'vt-warning-box' : 'vt-error-box');
+                $('#vt_bulk_results').html('<div class="' + resultClass + '">' + message + '</div>').show();
+
+                if (type === 'success') {
+                    $('#vt_bulk_progress_bar').css('width', '100%');
+                    $('#vt_bulk_progress_text').text('100%');
+                }
+            }
+        });
+        </script>
+        <?php endif; ?>
+
         <div class="vt-settings-section">
             <h4 class="vt-settings-section-title"><?php _e('How to Use', 'voxel-toolkit'); ?></h4>
             <ol class="vt-feature-list">
                 <li><?php _e('Go to any taxonomy term edit page (e.g., Categories, Tags)', 'voxel-toolkit'); ?></li>
                 <li><?php _e('Find the "Synonyms" field and enter comma-separated synonyms', 'voxel-toolkit'); ?></li>
                 <li><?php _e('Optionally use the "Generate Synonyms with AI" button for suggestions', 'voxel-toolkit'); ?></li>
-                <li><?php _e('Save the term', 'voxel-toolkit'); ?></li>
-                <li><strong><?php _e('Re-index your posts', 'voxel-toolkit'); ?></strong> <?php _e('for the synonyms to take effect in search', 'voxel-toolkit'); ?></li>
+                <li><?php _e('Save the term — posts are automatically re-indexed', 'voxel-toolkit'); ?></li>
             </ol>
-        </div>
-
-        <div class="vt-tip-box">
-            <strong><?php _e('Important:', 'voxel-toolkit'); ?></strong>
-            <?php _e('After adding or modifying synonyms, you must re-index your posts for the changes to appear in keyword search results. Go to Voxel > Post Types > [Your Post Type] > Index and run the indexer.', 'voxel-toolkit'); ?>
         </div>
         <?php
     }
