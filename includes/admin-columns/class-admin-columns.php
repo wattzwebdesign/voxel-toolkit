@@ -104,6 +104,11 @@ class Voxel_Toolkit_Admin_Columns {
         add_action('wp_ajax_vt_admin_columns_restore_defaults', array($this, 'ajax_restore_defaults'));
         add_action('wp_ajax_vt_admin_columns_export', array($this, 'ajax_export_data'));
 
+        // Bulk edit AJAX endpoints
+        add_action('wp_ajax_vt_admin_columns_bulk_get_terms', array($this, 'ajax_bulk_get_terms'));
+        add_action('wp_ajax_vt_admin_columns_bulk_get_posts', array($this, 'ajax_bulk_get_posts'));
+        add_action('wp_ajax_vt_admin_columns_bulk_apply', array($this, 'ajax_bulk_apply'));
+
         // Register column hooks for configured post types
         add_action('admin_init', array($this, 'register_column_hooks'));
     }
@@ -232,6 +237,226 @@ class Voxel_Toolkit_Admin_Columns {
 
         // Add inline script for dropdown positioning
         add_action('admin_footer', array($this, 'output_dropdown_positioning_script'));
+
+        // Bulk edit assets (only if user has manage_options capability)
+        if (current_user_can('manage_options')) {
+            $this->enqueue_bulk_edit_assets($typenow, $configs[$typenow]);
+        }
+    }
+
+    /**
+     * Enqueue bulk edit assets for editable columns
+     */
+    private function enqueue_bulk_edit_assets($post_type, $config) {
+        // Get all bulk-editable columns with their indices
+        $bulk_edit_columns = $this->get_bulk_edit_columns($config, $post_type);
+
+        if (empty($bulk_edit_columns)) {
+            return;
+        }
+
+        // Bulk Edit CSS
+        wp_enqueue_style(
+            'vt-admin-bulk-edit',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'includes/admin-columns/assets/css/admin-bulk-edit.css',
+            array('vt-admin-columns'),
+            VOXEL_TOOLKIT_VERSION
+        );
+
+        // Bulk Edit JS
+        wp_enqueue_script(
+            'vt-admin-bulk-edit',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'includes/admin-columns/assets/js/admin-bulk-edit.js',
+            array('jquery'),
+            VOXEL_TOOLKIT_VERSION,
+            true
+        );
+
+        // Pass config to JavaScript
+        wp_localize_script('vt-admin-bulk-edit', 'vtBulkEdit', array(
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('vt_admin_columns_bulk_nonce'),
+            'postType' => $post_type,
+            'bulkEditColumns' => $bulk_edit_columns,
+            'i18n' => array(
+                'bulkEdit' => __('Bulk Edit', 'voxel-toolkit'),
+                'addTo' => __('Add to existing', 'voxel-toolkit'),
+                'replace' => __('Replace all', 'voxel-toolkit'),
+                'remove' => __('Remove', 'voxel-toolkit'),
+                'setValue' => __('Set value', 'voxel-toolkit'),
+                'setTrue' => __('Set to Yes', 'voxel-toolkit'),
+                'setFalse' => __('Set to No', 'voxel-toolkit'),
+                'searchTerms' => __('Search terms...', 'voxel-toolkit'),
+                'searchPosts' => __('Search posts...', 'voxel-toolkit'),
+                'noTermsFound' => __('No terms found', 'voxel-toolkit'),
+                'noPostsFound' => __('No posts found', 'voxel-toolkit'),
+                'noOptionsFound' => __('No options available', 'voxel-toolkit'),
+                'selectedPosts' => __('%d posts selected', 'voxel-toolkit'),
+                'selectPosts' => __('Select posts to bulk edit', 'voxel-toolkit'),
+                'selectValue' => __('Select a value', 'voxel-toolkit'),
+                'enterValue' => __('Enter a value', 'voxel-toolkit'),
+                'saveChanges' => __('Save Changes', 'voxel-toolkit'),
+                'cancel' => __('Cancel', 'voxel-toolkit'),
+                'confirm' => __('Confirm', 'voxel-toolkit'),
+                'confirmAction' => __('Apply "%s" to %d posts?', 'voxel-toolkit'),
+                'processing' => __('Processing... %d/%d', 'voxel-toolkit'),
+                'complete' => __('Complete! %d posts updated.', 'voxel-toolkit'),
+                'error' => __('Error: %s', 'voxel-toolkit'),
+                'close' => __('Close', 'voxel-toolkit'),
+            ),
+        ));
+    }
+
+    /**
+     * Get all bulk-editable columns from config with their indices
+     * Supports: taxonomy, post-relation, select, multiselect, switcher, text, number
+     */
+    private function get_bulk_edit_columns($config, $post_type) {
+        if (empty($config['columns'])) {
+            return array();
+        }
+
+        if (!class_exists('\Voxel\Post_Type')) {
+            return array();
+        }
+
+        $voxel_post_type = \Voxel\Post_Type::get($post_type);
+        if (!$voxel_post_type) {
+            return array();
+        }
+
+        $bulk_edit_columns = array();
+        // Field types that support bulk editing - taxonomy only for now
+        $editable_types = array('taxonomy');
+        // Explicitly exclude complex field types that cannot be bulk edited
+        $excluded_types = array('repeater', 'product', 'work-hours', 'file', 'image', 'location', 'ui-step', 'ui-heading', 'ui-image', 'ui-html');
+
+        $column_index = 0;
+
+        foreach ($config['columns'] as $col) {
+            $column_index++;
+
+            if (empty($col['field_key'])) {
+                continue;
+            }
+
+            $field_key = $col['field_key'];
+
+            // Skip WordPress core fields (prefixed with :)
+            if (strpos($field_key, ':') === 0) {
+                continue;
+            }
+
+            $field = $voxel_post_type->get_field($field_key);
+            if (!$field) {
+                continue;
+            }
+
+            $field_type = $field->get_type();
+
+            // Check if this field type is editable
+            if (!in_array($field_type, $editable_types) || in_array($field_type, $excluded_types)) {
+                continue;
+            }
+
+            $column_data = array(
+                'index' => $column_index,
+                'id' => $col['id'],
+                'field_key' => $field_key,
+                'label' => isset($col['label']) ? $col['label'] : $field_key,
+                'type' => $field_type,
+            );
+
+            // Add type-specific data
+            switch ($field_type) {
+                case 'taxonomy':
+                    $taxonomy = $this->get_field_taxonomy($field, $field_key);
+                    if (!$taxonomy) {
+                        continue 2; // Skip if no valid taxonomy
+                    }
+                    $column_data['taxonomy'] = $taxonomy;
+                    break;
+
+                case 'post-relation':
+                    $related_post_type = null;
+                    if (method_exists($field, 'get_prop')) {
+                        $related_post_type = $field->get_prop('post_type');
+                        // Also try 'post_types' (plural)
+                        if (empty($related_post_type)) {
+                            $related_post_type = $field->get_prop('post_types');
+                        }
+                    }
+                    if (empty($related_post_type)) {
+                        continue 2; // Skip if no related post type
+                    }
+                    // Handle if it's an array
+                    if (is_array($related_post_type)) {
+                        $related_post_type = reset($related_post_type);
+                    }
+                    $column_data['relatedPostType'] = $related_post_type;
+                    break;
+
+                case 'select':
+                case 'multiselect':
+                    $options = array();
+                    if (method_exists($field, 'get_prop')) {
+                        $choices = $field->get_prop('choices');
+                        if (is_array($choices)) {
+                            foreach ($choices as $choice) {
+                                if (isset($choice['value']) && isset($choice['label'])) {
+                                    $options[] = array(
+                                        'value' => $choice['value'],
+                                        'label' => $choice['label'],
+                                    );
+                                }
+                            }
+                        }
+                    }
+                    $column_data['options'] = $options;
+                    break;
+
+                case 'switcher':
+                    // No additional data needed
+                    break;
+
+                case 'text':
+                case 'number':
+                    // No additional data needed
+                    break;
+            }
+
+            $bulk_edit_columns[] = $column_data;
+        }
+
+        return $bulk_edit_columns;
+    }
+
+    /**
+     * Get taxonomy slug from a field
+     */
+    private function get_field_taxonomy($field, $field_key) {
+        // Get taxonomy from field props
+        if (method_exists($field, 'get_prop')) {
+            $taxonomy = $field->get_prop('taxonomy');
+            if ($taxonomy && taxonomy_exists($taxonomy)) {
+                return $taxonomy;
+            }
+        }
+
+        // Try get_taxonomy method
+        if (method_exists($field, 'get_taxonomy')) {
+            $taxonomy = $field->get_taxonomy();
+            if ($taxonomy && taxonomy_exists($taxonomy)) {
+                return $taxonomy;
+            }
+        }
+
+        // Fall back to field key as taxonomy slug
+        if (taxonomy_exists($field_key)) {
+            return $field_key;
+        }
+
+        return null;
     }
 
     /**
@@ -858,7 +1083,7 @@ class Voxel_Toolkit_Admin_Columns {
                 // Check if it's a taxonomy filter
                 $field_type = $this->get_field_type($field_key, $post_type);
                 if ($field_type === 'taxonomy') {
-                    $taxonomy = $this->get_field_taxonomy($field_key, $post_type);
+                    $taxonomy = $this->get_taxonomy_for_field($field_key, $post_type);
                     if ($taxonomy) {
                         $tax_query[] = array(
                             'taxonomy' => $taxonomy,
@@ -2174,7 +2399,7 @@ class Voxel_Toolkit_Admin_Columns {
 
                 // Get options for select/taxonomy fields
                 if ($voxel_type === 'taxonomy') {
-                    $taxonomy = $this->get_field_taxonomy($col['field_key'], $post_type);
+                    $taxonomy = $this->get_taxonomy_for_field($col['field_key'], $post_type);
                     if ($taxonomy) {
                         $field['taxonomy'] = $taxonomy;
                         $field['options'] = $this->get_taxonomy_options($taxonomy);
@@ -2511,7 +2736,7 @@ class Voxel_Toolkit_Admin_Columns {
             );
 
             if ($field_type === 'taxonomy') {
-                $taxonomy = $this->get_field_taxonomy($col['field_key'], $post_type);
+                $taxonomy = $this->get_taxonomy_for_field($col['field_key'], $post_type);
                 if ($taxonomy) {
                     $field_config[$col['field_key']]['taxonomy'] = $taxonomy;
                 }
@@ -3287,9 +3512,9 @@ class Voxel_Toolkit_Admin_Columns {
     }
 
     /**
-     * Get taxonomy key from a taxonomy field
+     * Get taxonomy key from a taxonomy field by field key and post type
      */
-    private function get_field_taxonomy($field_key, $post_type) {
+    private function get_taxonomy_for_field($field_key, $post_type) {
         if (!class_exists('\Voxel\Post_Type')) {
             return null;
         }
@@ -3330,5 +3555,308 @@ class Voxel_Toolkit_Admin_Columns {
         }
 
         return $field->get_type();
+    }
+
+    /**
+     * AJAX: Get terms for a taxonomy (bulk edit)
+     */
+    public function ajax_bulk_get_terms() {
+        check_ajax_referer('vt_admin_columns_bulk_nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Unauthorized', 'voxel-toolkit')));
+        }
+
+        $taxonomy = isset($_POST['taxonomy']) ? sanitize_text_field($_POST['taxonomy']) : '';
+        $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
+
+        if (empty($taxonomy) || !taxonomy_exists($taxonomy)) {
+            wp_send_json_error(array('message' => __('Invalid taxonomy', 'voxel-toolkit')));
+        }
+
+        $args = array(
+            'taxonomy' => $taxonomy,
+            'hide_empty' => false,
+            'number' => 100,
+            'orderby' => 'name',
+            'order' => 'ASC',
+        );
+
+        if (!empty($search)) {
+            $args['search'] = $search;
+        }
+
+        $terms = get_terms($args);
+
+        if (is_wp_error($terms)) {
+            wp_send_json_error(array('message' => $terms->get_error_message()));
+        }
+
+        $result = array();
+        foreach ($terms as $term) {
+            $result[] = array(
+                'term_id' => $term->term_id,
+                'name' => $term->name,
+                'slug' => $term->slug,
+                'count' => $term->count,
+                'parent' => $term->parent,
+            );
+        }
+
+        wp_send_json_success($result);
+    }
+
+    /**
+     * AJAX: Get posts for post-relation field bulk edit
+     */
+    public function ajax_bulk_get_posts() {
+        check_ajax_referer('vt_admin_columns_bulk_nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Unauthorized', 'voxel-toolkit')));
+        }
+
+        $related_post_type = isset($_POST['related_post_type']) ? sanitize_text_field($_POST['related_post_type']) : '';
+        $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
+
+        if (empty($related_post_type) || !post_type_exists($related_post_type)) {
+            wp_send_json_error(array('message' => __('Invalid post type', 'voxel-toolkit')));
+        }
+
+        $args = array(
+            'post_type' => $related_post_type,
+            'post_status' => 'publish',
+            'posts_per_page' => 50,
+            'orderby' => 'title',
+            'order' => 'ASC',
+        );
+
+        if (!empty($search)) {
+            $args['s'] = $search;
+        }
+
+        $posts = get_posts($args);
+
+        $result = array();
+        foreach ($posts as $post) {
+            $result[] = array(
+                'id' => $post->ID,
+                'title' => $post->post_title,
+            );
+        }
+
+        wp_send_json_success($result);
+    }
+
+    /**
+     * AJAX: Apply bulk edit to posts
+     */
+    public function ajax_bulk_apply() {
+        check_ajax_referer('vt_admin_columns_bulk_nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Unauthorized', 'voxel-toolkit')));
+        }
+
+        $post_ids = isset($_POST['post_ids']) ? array_map('intval', (array) $_POST['post_ids']) : array();
+        $field_type = isset($_POST['field_type']) ? sanitize_text_field($_POST['field_type']) : '';
+        $field_key = isset($_POST['field_key']) ? sanitize_text_field($_POST['field_key']) : '';
+        $action = isset($_POST['bulk_action']) ? sanitize_text_field($_POST['bulk_action']) : '';
+        $post_type = isset($_POST['post_type']) ? sanitize_text_field($_POST['post_type']) : '';
+        $values = isset($_POST['values']) ? $_POST['values'] : array();
+
+        // Legacy support for taxonomy-only calls
+        $taxonomy = isset($_POST['taxonomy']) ? sanitize_text_field($_POST['taxonomy']) : '';
+        $term_ids = isset($_POST['term_ids']) ? array_map('intval', (array) $_POST['term_ids']) : array();
+
+        // Validate inputs
+        if (empty($post_ids)) {
+            wp_send_json_error(array('message' => __('No posts selected', 'voxel-toolkit')));
+        }
+
+        // Determine field type (backward compatibility)
+        if (empty($field_type) && !empty($taxonomy)) {
+            $field_type = 'taxonomy';
+        }
+
+        if (empty($field_type)) {
+            wp_send_json_error(array('message' => __('Invalid field type', 'voxel-toolkit')));
+        }
+
+        $processed = 0;
+        $errors = array();
+
+        foreach ($post_ids as $post_id) {
+            // Verify post exists and is the correct post type
+            $post = get_post($post_id);
+            if (!$post) {
+                $errors[] = sprintf(__('Post %d not found', 'voxel-toolkit'), $post_id);
+                continue;
+            }
+
+            if (!empty($post_type) && $post->post_type !== $post_type) {
+                $errors[] = sprintf(__('Post %d is not of type %s', 'voxel-toolkit'), $post_id, $post_type);
+                continue;
+            }
+
+            $update_success = false;
+
+            switch ($field_type) {
+                case 'taxonomy':
+                    // Use legacy term_ids if values is empty
+                    $term_values = !empty($values) ? array_map('intval', (array) $values) : $term_ids;
+                    $tax = !empty($taxonomy) ? $taxonomy : (isset($_POST['taxonomy']) ? sanitize_text_field($_POST['taxonomy']) : '');
+
+                    if (empty($tax) || !taxonomy_exists($tax)) {
+                        $errors[] = sprintf(__('Invalid taxonomy for post %d', 'voxel-toolkit'), $post_id);
+                        continue 2;
+                    }
+
+                    switch ($action) {
+                        case 'add':
+                            $result = wp_set_object_terms($post_id, $term_values, $tax, true);
+                            break;
+                        case 'replace':
+                            $result = wp_set_object_terms($post_id, $term_values, $tax, false);
+                            break;
+                        case 'remove':
+                            if (!empty($term_values)) {
+                                $current_terms = wp_get_object_terms($post_id, $tax, array('fields' => 'ids'));
+                                if (!is_wp_error($current_terms)) {
+                                    $new_terms = array_diff($current_terms, $term_values);
+                                    $result = wp_set_object_terms($post_id, $new_terms, $tax, false);
+                                }
+                            } else {
+                                $result = wp_set_object_terms($post_id, array(), $tax, false);
+                            }
+                            break;
+                    }
+                    $update_success = !is_wp_error($result);
+                    break;
+
+                case 'post-relation':
+                    $related_ids = array_map('intval', (array) $values);
+                    $meta_key = $field_key;
+
+                    $current_value = get_post_meta($post_id, $meta_key, true);
+                    $current_ids = !empty($current_value) ? array_map('intval', (array) $current_value) : array();
+
+                    switch ($action) {
+                        case 'add':
+                            $new_ids = array_unique(array_merge($current_ids, $related_ids));
+                            break;
+                        case 'replace':
+                            $new_ids = $related_ids;
+                            break;
+                        case 'remove':
+                            $new_ids = array_diff($current_ids, $related_ids);
+                            break;
+                    }
+
+                    $update_success = update_post_meta($post_id, $meta_key, $new_ids);
+                    break;
+
+                case 'multiselect':
+                    $selected_values = (array) $values;
+                    $meta_key = $field_key;
+
+                    $current_value = get_post_meta($post_id, $meta_key, true);
+                    $current_values = !empty($current_value) ? (array) $current_value : array();
+
+                    switch ($action) {
+                        case 'add':
+                            $new_values = array_unique(array_merge($current_values, $selected_values));
+                            break;
+                        case 'replace':
+                            $new_values = $selected_values;
+                            break;
+                        case 'remove':
+                            $new_values = array_diff($current_values, $selected_values);
+                            break;
+                    }
+
+                    $update_success = update_post_meta($post_id, $meta_key, array_values($new_values));
+                    break;
+
+                case 'select':
+                    $meta_key = $field_key;
+                    $value = is_array($values) ? reset($values) : sanitize_text_field($values);
+                    $update_success = update_post_meta($post_id, $meta_key, $value);
+                    break;
+
+                case 'switcher':
+                    $meta_key = $field_key;
+                    $value = is_array($values) ? reset($values) : $values;
+                    // Convert to boolean-like value
+                    $bool_value = ($value === 'true' || $value === '1' || $value === 1) ? 1 : 0;
+                    $update_success = update_post_meta($post_id, $meta_key, $bool_value);
+                    break;
+
+                case 'text':
+                    $meta_key = $field_key;
+                    $value = is_array($values) ? reset($values) : sanitize_text_field($values);
+                    $update_success = update_post_meta($post_id, $meta_key, $value);
+                    break;
+
+                case 'number':
+                    $meta_key = $field_key;
+                    $value = is_array($values) ? reset($values) : $values;
+                    $numeric_value = is_numeric($value) ? floatval($value) : 0;
+                    $update_success = update_post_meta($post_id, $meta_key, $numeric_value);
+                    break;
+
+                case 'textarea':
+                case 'texteditor':
+                    $meta_key = $field_key;
+                    $value = is_array($values) ? reset($values) : $values;
+                    // Allow HTML but sanitize it
+                    $update_success = update_post_meta($post_id, $meta_key, wp_kses_post($value));
+                    break;
+
+                case 'email':
+                    $meta_key = $field_key;
+                    $value = is_array($values) ? reset($values) : $values;
+                    $email_value = sanitize_email($value);
+                    $update_success = update_post_meta($post_id, $meta_key, $email_value);
+                    break;
+
+                case 'phone':
+                    $meta_key = $field_key;
+                    $value = is_array($values) ? reset($values) : $values;
+                    // Sanitize phone - allow numbers, spaces, dashes, parentheses, plus
+                    $phone_value = preg_replace('/[^0-9\s\-\(\)\+]/', '', $value);
+                    $update_success = update_post_meta($post_id, $meta_key, $phone_value);
+                    break;
+
+                case 'url':
+                    $meta_key = $field_key;
+                    $value = is_array($values) ? reset($values) : $values;
+                    $url_value = esc_url_raw($value);
+                    $update_success = update_post_meta($post_id, $meta_key, $url_value);
+                    break;
+
+                case 'date':
+                    $meta_key = $field_key;
+                    $value = is_array($values) ? reset($values) : sanitize_text_field($values);
+                    $update_success = update_post_meta($post_id, $meta_key, $value);
+                    break;
+
+                default:
+                    $errors[] = sprintf(__('Unsupported field type: %s', 'voxel-toolkit'), $field_type);
+                    continue 2;
+            }
+
+            if ($update_success !== false) {
+                $processed++;
+            } else {
+                $errors[] = sprintf(__('Failed to update post %d', 'voxel-toolkit'), $post_id);
+            }
+        }
+
+        wp_send_json_success(array(
+            'processed' => $processed,
+            'total' => count($post_ids),
+            'errors' => $errors,
+        ));
     }
 }
