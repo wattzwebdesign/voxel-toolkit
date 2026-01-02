@@ -15,6 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Confirmation dialog before applying changes
   - Progress bar with batch processing (10 posts at a time)
   - Cancel support during processing
+- **Promotion Create Form**: Add promotion package selection to Voxel's Create Form widget
+  - Enable promotions per widget via "Promotions (VT)" section in Elementor
+  - Displays available promotion packages on the last step before submit
+  - Packages automatically filtered by post type
+  - Users can optionally select a package or skip with "No thanks, just submit"
+  - Direct checkout integration via Voxel's AJAX system
+  - Automatic redirect to payment after post submission
+  - Fallback to cart-summary page with auto-selected package if direct checkout unavailable
+  - Customizable section title, description, and skip button text
 
 ## [1.6.0] - 2025-12-16
 
