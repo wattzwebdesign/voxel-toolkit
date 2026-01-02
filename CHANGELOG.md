@@ -251,6 +251,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Toggle "Taxonomy Synonyms" checkbox in Keywords filter settings
   - Skip existing option for bulk generation
   - Configurable number of synonyms to generate (1-20)
+- **Anonymous Usage Stats**: Opt-in by default anonymous telemetry to help improve the plugin (only collects which functions, widgets, and post fields are enabled - no personal or site data)
 
 ### Changed
 - **Admin Menu Hide**: Updated with new menu item options

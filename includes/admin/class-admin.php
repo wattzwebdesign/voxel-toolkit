@@ -710,6 +710,13 @@ class Voxel_Toolkit_Admin {
                     </div>
                 </div>
             <?php endif; ?>
+
+            <?php
+            /**
+             * Hook for adding content to the footer of the settings page
+             */
+            do_action('voxel_toolkit/settings_page_footer');
+            ?>
         </div>
         <?php
     }

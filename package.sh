@@ -88,6 +88,10 @@ rsync -a \
     --exclude="node_modules/" \
     --exclude="package.sh" \
     --exclude="*.md" \
+    --exclude="vt-stats-receiver/" \
+    --exclude="docs/" \
+    --exclude="1.6.0 Screenshots/" \
+    --exclude="blog-post-*.html" \
     "$SCRIPT_DIR/" "$TEMP_PLUGIN_DIR/"
 
 # Create the ZIP file from temp directory
