@@ -5,6 +5,26 @@ All notable changes to Voxel Toolkit will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] - 2026-01-01
+
+### Added
+- **Admin Columns - Bulk Edit**: Bulk edit taxonomy/category fields directly from the post list table
+  - Select multiple posts and click "Bulk Edit" button below taxonomy columns
+  - Dropdown-style selector with search functionality for finding terms
+  - Three actions: Add to existing, Replace all, or Remove terms
+  - Confirmation dialog before applying changes
+  - Progress bar with batch processing (10 posts at a time)
+  - Cancel support during processing
+- **Promotion Create Form**: Add promotion package selection to Voxel's Create Form widget
+  - Enable promotions per widget via "Promotions (VT)" section in Elementor
+  - Displays available promotion packages on the last step before submit
+  - Packages automatically filtered by post type
+  - Users can optionally select a package or skip with "No thanks, just submit"
+  - Direct checkout integration via Voxel's AJAX system
+  - Automatic redirect to payment after post submission
+  - Fallback to cart-summary page with auto-selected package if direct checkout unavailable
+  - Customizable section title, description, and skip button text
+
 ## [1.6.0] - 2025-12-16
 
 ### Fixed

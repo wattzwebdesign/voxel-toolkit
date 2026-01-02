@@ -1,0 +1,231 @@
+/**
+ * Promotion Create Form Styles
+ *
+ * Matches Voxel's Create Form widget styling
+ */
+
+/* Container */
+.vt-promotion-selector-container {
+    width: 100%;
+    margin: 20px 0;
+}
+
+.vt-promotion-selector {
+    background: transparent;
+    padding: 0;
+}
+
+/* Header */
+.vt-promotion-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.vt-promotion-icon-header {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #f59e0b, #eab308);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vt-promotion-icon-header svg {
+    width: 22px;
+    height: 22px;
+    color: #000;
+}
+
+.vt-promotion-header-text h3 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ts-heading-color);
+}
+
+.vt-promotion-header-text p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ts-content-color);
+}
+
+/* Packages Grid */
+.vt-promotion-packages {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* Promotion Card */
+.vt-promotion-card {
+    --vt-accent-color: #3b82f6;
+    position: relative;
+    background: var(--ts-group-2);
+    border: 1px solid var(--ts-border-color);
+    border-radius: var(--ts-border-radius);
+    padding: 18px;
+    padding-right: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.vt-promotion-card:hover {
+    border-color: var(--vt-accent-color);
+}
+
+.vt-promotion-card.is-selected {
+    border-color: var(--vt-accent-color);
+    box-shadow: 0 0 0 1px var(--vt-accent-color);
+}
+
+/* Card Icon */
+.vt-promotion-card-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--vt-accent-color), color-mix(in srgb, var(--vt-accent-color) 80%, #000));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vt-promotion-card-icon svg {
+    width: 24px;
+    height: 24px;
+    color: #fff;
+}
+
+/* Card Info */
+.vt-promotion-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.vt-promotion-card-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ts-heading-color);
+    margin-bottom: 4px;
+}
+
+.vt-promotion-card-desc {
+    font-size: 13px;
+    color: var(--ts-content-color);
+    line-height: 1.4;
+    margin-bottom: 6px;
+}
+
+.vt-promotion-card-duration {
+    font-size: 12px;
+    color: var(--vt-accent-color);
+    font-weight: 500;
+}
+
+/* Card Price */
+.vt-promotion-card-price {
+    flex-shrink: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ts-heading-color);
+    white-space: nowrap;
+}
+
+/* Check Mark - hidden by default */
+.vt-promotion-card-check {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background: var(--vt-accent-color);
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.vt-promotion-card.is-selected .vt-promotion-card-check {
+    display: flex;
+}
+
+.vt-promotion-card-check svg {
+    width: 14px;
+    height: 14px;
+    color: #fff;
+}
+
+/* Skip Link */
+.vt-promotion-skip {
+    display: inline-block;
+    font-size: 14px;
+    color: var(--ts-content-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.vt-promotion-skip:hover {
+    color: var(--ts-heading-color);
+    text-decoration: underline;
+}
+
+/* Loading State */
+.vt-promotion-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 30px;
+    color: var(--ts-content-color);
+    font-size: 14px;
+}
+
+.vt-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--ts-border-color);
+    border-top-color: var(--ts-accent-1);
+    border-radius: 50%;
+    animation: vt-spin 0.8s linear infinite;
+}
+
+@keyframes vt-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .vt-promotion-packages {
+        grid-template-columns: 1fr;
+    }
+
+    .vt-promotion-card {
+        flex-wrap: wrap;
+        padding-right: 18px;
+    }
+
+    .vt-promotion-card-price {
+        width: 100%;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid var(--ts-border-color);
+        text-align: right;
+    }
+
+    .vt-promotion-card-check {
+        top: 15px;
+        right: 15px;
+        transform: none;
+    }
+}

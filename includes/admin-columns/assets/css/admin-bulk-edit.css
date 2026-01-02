@@ -1,0 +1,938 @@
+/**
+ * Bulk Edit Styles
+ *
+ * Styles for the bulk edit modal and buttons in admin columns.
+ */
+
+/* ======================
+   Bulk Edit Buttons Container
+   ====================== */
+
+.vt-bulk-edit-container {
+    position: relative;
+    background: #f6f7f7;
+    border: 1px solid #c3c4c7;
+    border-bottom: none;
+    padding: 8px 0;
+    min-height: 36px;
+    margin-bottom: 0;
+}
+
+.vt-bulk-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #2271b1;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.vt-bulk-edit-btn:hover {
+    background: #f0f6fc;
+    border-color: #2271b1;
+    color: #135e96;
+}
+
+.vt-bulk-edit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.vt-bulk-edit-btn .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+/* ======================
+   Modal Overlay
+   ====================== */
+
+.vt-bulk-edit-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.vt-bulk-edit-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ======================
+   Modal Container
+   ====================== */
+
+.vt-bulk-edit-modal {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    width: 500px;
+    max-width: 90vw;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(-20px);
+    transition: transform 0.2s ease;
+    overflow: visible;
+}
+
+.vt-bulk-edit-overlay.active .vt-bulk-edit-modal {
+    transform: translateY(0);
+}
+
+/* ======================
+   Modal Header
+   ====================== */
+
+.vt-bulk-edit-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: #1d2327;
+    color: #fff;
+    border-radius: 8px 8px 0 0;
+}
+
+.vt-bulk-edit-header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.vt-bulk-edit-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.15s ease;
+}
+
+.vt-bulk-edit-close:hover {
+    color: #fff;
+}
+
+/* ======================
+   Modal Body
+   ====================== */
+
+.vt-bulk-edit-body {
+    padding: 20px;
+    overflow: visible;
+    position: relative;
+    z-index: 10;
+}
+
+/* ======================
+   Action Selector
+   ====================== */
+
+.vt-bulk-edit-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.vt-bulk-edit-actions label {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 12px;
+    background: #f6f7f7;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: #50575e;
+    transition: all 0.15s ease;
+}
+
+.vt-bulk-edit-actions label:hover {
+    background: #f0f0f1;
+    border-color: #8c8f94;
+}
+
+.vt-bulk-edit-actions label.active {
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+}
+
+.vt-bulk-edit-actions input[type="radio"] {
+    display: none;
+}
+
+/* ======================
+   Dropdown Selector
+   ====================== */
+
+.vt-bulk-edit-dropdown-container {
+    position: relative;
+}
+
+.vt-bulk-edit-selected-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+    min-height: 0;
+}
+
+.vt-bulk-edit-selected-chips:empty {
+    display: none;
+    margin-bottom: 0;
+}
+
+.vt-bulk-edit-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.vt-bulk-edit-dropdown-trigger:hover {
+    border-color: #8c8f94;
+}
+
+.vt-bulk-edit-dropdown-trigger.open {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.vt-bulk-edit-dropdown-trigger .dashicons {
+    color: #8c8f94;
+    transition: transform 0.15s ease;
+}
+
+.vt-bulk-edit-dropdown-trigger.open .dashicons {
+    transform: rotate(180deg);
+    color: #2271b1;
+}
+
+.vt-bulk-edit-dropdown-placeholder {
+    color: #757575;
+    font-size: 14px;
+}
+
+.vt-bulk-edit-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #2271b1;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 100001;
+    max-height: 250px;
+    display: flex;
+    flex-direction: column;
+}
+
+.vt-bulk-edit-dropdown-search {
+    padding: 10px;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.vt-bulk-edit-search {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.vt-bulk-edit-search:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+.vt-bulk-edit-item-list {
+    max-height: 220px;
+    overflow-y: auto;
+    background: #fff;
+}
+
+.vt-bulk-edit-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0f0f1;
+    cursor: pointer;
+    transition: background 0.1s ease;
+}
+
+.vt-bulk-edit-item:last-child {
+    border-bottom: none;
+}
+
+.vt-bulk-edit-item:hover {
+    background: #f6f7f7;
+}
+
+.vt-bulk-edit-item.selected {
+    background: #f0f6fc;
+}
+
+.vt-bulk-edit-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.vt-bulk-edit-item-name {
+    flex: 1;
+    font-size: 14px;
+    color: #1d2327;
+}
+
+.vt-bulk-edit-item-count {
+    font-size: 12px;
+    color: #999;
+    background: #f0f0f1;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.vt-bulk-edit-no-items {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+    font-style: italic;
+}
+
+.vt-bulk-edit-loading {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+}
+
+.vt-bulk-edit-loading .spinner {
+    float: none;
+    margin: 0 8px 0 0;
+}
+
+/* ======================
+   Selected Items (Chips)
+   ====================== */
+
+.vt-bulk-edit-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px 4px 10px;
+    background: #2271b1;
+    color: #fff;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.vt-bulk-edit-chip-remove {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    padding: 0;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    transition: all 0.15s ease;
+}
+
+.vt-bulk-edit-chip-remove:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+/* ======================
+   Modal Footer
+   ====================== */
+
+.vt-bulk-edit-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: #f6f7f7;
+    border-top: 1px solid #dcdcde;
+    border-radius: 0 0 8px 8px;
+    position: relative;
+    z-index: 1;
+}
+
+.vt-bulk-edit-count {
+    font-size: 13px;
+    color: #50575e;
+}
+
+.vt-bulk-edit-count strong {
+    color: #1d2327;
+}
+
+.vt-bulk-edit-footer .button {
+    min-width: 120px;
+}
+
+/* ======================
+   Confirmation State
+   ====================== */
+
+.vt-bulk-edit-confirm {
+    display: none;
+    padding: 20px;
+    text-align: center;
+}
+
+.vt-bulk-edit-modal.confirming .vt-bulk-edit-body {
+    display: none;
+}
+
+.vt-bulk-edit-modal.confirming .vt-bulk-edit-footer {
+    display: none;
+}
+
+.vt-bulk-edit-modal.confirming .vt-bulk-edit-confirm {
+    display: block;
+}
+
+.vt-bulk-edit-confirm-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 16px;
+    background: #fef3c7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vt-bulk-edit-confirm-icon .dashicons {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #d97706;
+}
+
+.vt-bulk-edit-confirm p {
+    margin: 0 0 20px 0;
+    font-size: 15px;
+    color: #1d2327;
+}
+
+.vt-bulk-edit-confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.vt-bulk-edit-confirm-actions .button {
+    min-width: 100px;
+}
+
+/* ======================
+   Progress State
+   ====================== */
+
+.vt-bulk-edit-progress {
+    display: none;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.vt-bulk-edit-modal.processing .vt-bulk-edit-body {
+    display: none;
+}
+
+.vt-bulk-edit-modal.processing .vt-bulk-edit-footer {
+    display: none;
+}
+
+.vt-bulk-edit-modal.processing .vt-bulk-edit-confirm {
+    display: none;
+}
+
+.vt-bulk-edit-modal.processing .vt-bulk-edit-progress {
+    display: block;
+}
+
+.vt-bulk-edit-progress-bar {
+    height: 12px;
+    background: #f0f0f1;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.vt-bulk-edit-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2271b1 0%, #135e96 100%);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.vt-bulk-edit-progress-text {
+    font-size: 14px;
+    color: #50575e;
+}
+
+.vt-bulk-edit-progress-cancel {
+    margin-top: 16px;
+}
+
+/* ======================
+   Complete State
+   ====================== */
+
+.vt-bulk-edit-complete {
+    display: none;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.vt-bulk-edit-modal.complete .vt-bulk-edit-body {
+    display: none;
+}
+
+.vt-bulk-edit-modal.complete .vt-bulk-edit-footer {
+    display: none;
+}
+
+.vt-bulk-edit-modal.complete .vt-bulk-edit-progress {
+    display: none;
+}
+
+.vt-bulk-edit-modal.complete .vt-bulk-edit-complete {
+    display: block;
+}
+
+.vt-bulk-edit-complete-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 16px;
+    background: #d4edda;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vt-bulk-edit-complete-icon .dashicons {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #155724;
+}
+
+.vt-bulk-edit-complete-icon.error {
+    background: #f8d7da;
+}
+
+.vt-bulk-edit-complete-icon.error .dashicons {
+    color: #721c24;
+}
+
+.vt-bulk-edit-complete p {
+    margin: 0 0 20px 0;
+    font-size: 15px;
+    color: #1d2327;
+}
+
+.vt-bulk-edit-complete .button {
+    min-width: 100px;
+}
+
+/* ======================
+   Error Messages
+   ====================== */
+
+.vt-bulk-edit-errors {
+    margin-top: 16px;
+    padding: 12px;
+    background: #fef3c7;
+    border-radius: 4px;
+    text-align: left;
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+.vt-bulk-edit-errors-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #856404;
+    margin-bottom: 8px;
+}
+
+.vt-bulk-edit-errors ul {
+    margin: 0;
+    padding: 0 0 0 16px;
+    font-size: 12px;
+    color: #856404;
+}
+
+.vt-bulk-edit-errors li {
+    margin-bottom: 4px;
+}
+
+/* ======================
+   Selection Count Banner
+   ====================== */
+
+.vt-bulk-edit-banner {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: #f0f6fc;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.vt-bulk-edit-banner.visible {
+    display: flex;
+}
+
+.vt-bulk-edit-banner-text {
+    flex: 1;
+    font-size: 13px;
+    color: #1d2327;
+}
+
+.vt-bulk-edit-banner-text strong {
+    color: #2271b1;
+}
+
+.vt-bulk-edit-select-all {
+    color: #2271b1;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.vt-bulk-edit-select-all:hover {
+    text-decoration: underline;
+}
+
+/* ======================
+   Post Selector (for post-relation)
+   ====================== */
+
+.vt-bulk-edit-post-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.vt-bulk-edit-post-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0f0f1;
+    cursor: pointer;
+    transition: background 0.1s ease;
+}
+
+.vt-bulk-edit-post-item:last-child {
+    border-bottom: none;
+}
+
+.vt-bulk-edit-post-item:hover {
+    background: #f6f7f7;
+}
+
+.vt-bulk-edit-post-item.selected {
+    background: #f0f6fc;
+}
+
+.vt-bulk-edit-post-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.vt-bulk-edit-post-title {
+    flex: 1;
+    font-size: 14px;
+    color: #1d2327;
+}
+
+.vt-bulk-edit-post-id {
+    font-size: 11px;
+    color: #999;
+    background: #f0f0f1;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+/* ======================
+   Radio Options (for select)
+   ====================== */
+
+.vt-bulk-edit-radio-container {
+    margin-top: 0;
+}
+
+.vt-bulk-edit-radio-container .vt-bulk-edit-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 12px;
+    color: #1d2327;
+    font-size: 13px;
+}
+
+.vt-bulk-edit-radio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: #fff;
+}
+
+.vt-bulk-edit-radio:last-child {
+    margin-bottom: 0;
+}
+
+.vt-bulk-edit-radio:hover {
+    border-color: #8c8f94;
+    background: #f6f7f7;
+}
+
+.vt-bulk-edit-radio input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.vt-bulk-edit-radio input[type="radio"]:checked + span {
+    color: #2271b1;
+    font-weight: 500;
+}
+
+.vt-bulk-edit-radio span {
+    font-size: 14px;
+    color: #1d2327;
+}
+
+/* ======================
+   Switcher Buttons
+   ====================== */
+
+.vt-bulk-edit-switcher-container {
+    margin-top: 0;
+}
+
+.vt-bulk-edit-switcher-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 12px;
+    color: #1d2327;
+    font-size: 13px;
+}
+
+.vt-bulk-edit-switcher-options {
+    display: flex;
+    gap: 12px;
+}
+
+.vt-bulk-edit-switcher-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    border: 2px solid #c3c4c7;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: #fff;
+    color: #50575e;
+}
+
+.vt-bulk-edit-switcher-btn:hover {
+    border-color: #8c8f94;
+    background: #f6f7f7;
+}
+
+.vt-bulk-edit-switcher-btn.selected {
+    border-color: #2271b1;
+    background: #f0f6fc;
+    color: #2271b1;
+}
+
+.vt-bulk-edit-switcher-btn.true-btn.selected {
+    border-color: #00a32a;
+    background: #edfaef;
+    color: #00a32a;
+}
+
+.vt-bulk-edit-switcher-btn.false-btn.selected {
+    border-color: #d63638;
+    background: #fcf0f1;
+    color: #d63638;
+}
+
+.vt-bulk-edit-switcher-btn .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+/* ======================
+   Text/Number Input Fields
+   ====================== */
+
+.vt-bulk-edit-input-container {
+    margin-top: 0;
+}
+
+.vt-bulk-edit-input-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #1d2327;
+    font-size: 13px;
+}
+
+.vt-bulk-edit-input-field {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.15s ease;
+}
+
+.vt-bulk-edit-input-field:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+.vt-bulk-edit-input-field::-webkit-outer-spin-button,
+.vt-bulk-edit-input-field::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.vt-bulk-edit-input-field[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.vt-bulk-edit-input-hint {
+    font-size: 12px;
+    color: #757575;
+    margin-top: 6px;
+}
+
+/* ======================
+   Textarea Fields
+   ====================== */
+
+.vt-bulk-edit-textarea-container {
+    margin-top: 0;
+}
+
+.vt-bulk-edit-textarea-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #1d2327;
+    font-size: 13px;
+}
+
+.vt-bulk-edit-textarea-field {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 120px;
+    transition: all 0.15s ease;
+}
+
+.vt-bulk-edit-textarea-field:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+/* ======================
+   Responsive
+   ====================== */
+
+@media screen and (max-width: 600px) {
+    .vt-bulk-edit-modal {
+        width: 95vw;
+        max-height: 90vh;
+    }
+
+    .vt-bulk-edit-actions {
+        flex-direction: column;
+    }
+
+    .vt-bulk-edit-footer {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .vt-bulk-edit-footer .button {
+        width: 100%;
+    }
+}
