@@ -45,6 +45,9 @@ class Voxel_Toolkit_Promotion_Create_Form {
         // Inject frontend JavaScript/Vue component
         add_action('wp_footer', array($this, 'render_frontend_script'), 20);
 
+        // Auto-select package on cart-summary page
+        add_action('wp_footer', array($this, 'render_cart_summary_autoselect'), 30);
+
         // Enqueue CSS
         add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
 
@@ -294,7 +297,10 @@ class Voxel_Toolkit_Promotion_Create_Form {
         }
 
         $nonce = wp_create_nonce('vt_promotion_packages');
+        $vx_checkout_nonce = wp_create_nonce('vx_checkout');
         $ajax_url = admin_url('admin-ajax.php');
+        // Voxel uses its own AJAX system at /?vx=1
+        $voxel_ajax_url = add_query_arg('vx', '1', home_url('/'));
         $widgets_config = wp_json_encode($this->promotion_widgets);
         ?>
         <script>
@@ -593,14 +599,42 @@ class Voxel_Toolkit_Promotion_Create_Form {
             }
 
             function redirectToPromoCheckout(postId, promotionKey) {
-                // Redirect to cart-summary page with promotion parameters
-                // Voxel will handle the checkout flow from there
-                const cartUrl = new URL('<?php echo esc_js(home_url('/cart-summary/')); ?>');
-                cartUrl.searchParams.set('screen', 'promote');
-                cartUrl.searchParams.set('post_id', postId);
-                cartUrl.searchParams.set('package', promotionKey);
+                // Voxel uses its own AJAX system at /?vx=1&action=...
+                const voxelAjaxUrl = '<?php echo esc_js($voxel_ajax_url); ?>';
+                const checkoutUrl = voxelAjaxUrl + '&action=products.promotions.checkout&_wpnonce=<?php echo esc_js($vx_checkout_nonce); ?>';
 
-                window.location.href = cartUrl.toString();
+                const formData = new FormData();
+                formData.append('post_id', postId);
+                formData.append('promotion_package', promotionKey);
+
+                fetch(checkoutUrl, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.redirect_url) {
+                        window.location.href = data.redirect_url;
+                    } else if (data.redirect_url) {
+                        window.location.href = data.redirect_url;
+                    } else {
+                        // Fallback to cart-summary page with package param for auto-select
+                        const cartUrl = new URL('<?php echo esc_js(home_url('/cart-summary/')); ?>');
+                        cartUrl.searchParams.set('screen', 'promote');
+                        cartUrl.searchParams.set('post_id', postId);
+                        cartUrl.searchParams.set('vt_package', promotionKey);
+                        window.location.href = cartUrl.toString();
+                    }
+                })
+                .catch(() => {
+                    // Fallback to cart-summary page with package param for auto-select
+                    const cartUrl = new URL('<?php echo esc_js(home_url('/cart-summary/')); ?>');
+                    cartUrl.searchParams.set('screen', 'promote');
+                    cartUrl.searchParams.set('post_id', postId);
+                    cartUrl.searchParams.set('vt_package', promotionKey);
+                    window.location.href = cartUrl.toString();
+                });
             }
 
             // Initialize
@@ -616,6 +650,104 @@ class Voxel_Toolkit_Promotion_Create_Form {
 
             // Also re-init on Elementor frontend init (for preview)
             document.addEventListener('elementor/init', initPromotionSelector);
+        })();
+        </script>
+        <?php
+    }
+
+    /**
+     * Auto-select package on cart-summary promotion screen
+     * This runs when user is redirected to cart-summary with vt_package URL param
+     */
+    public function render_cart_summary_autoselect() {
+        // Only on frontend
+        if (is_admin()) {
+            return;
+        }
+
+        // Check if we have the required URL parameters
+        $screen = isset($_GET['screen']) ? sanitize_text_field($_GET['screen']) : '';
+        $vt_package = isset($_GET['vt_package']) ? sanitize_text_field($_GET['vt_package']) : '';
+
+        // Only output if on promote screen with our package parameter
+        if ($screen !== 'promote' || empty($vt_package)) {
+            return;
+        }
+        ?>
+        <script>
+        (function() {
+            'use strict';
+
+            const packageKey = '<?php echo esc_js($vt_package); ?>';
+            let attempts = 0;
+            const maxAttempts = 50; // 5 seconds max
+
+            function autoSelectPackage() {
+                attempts++;
+
+                // Find the promotion checkout container
+                const promotionEl = document.querySelector('.ts-checkout-promotion');
+                if (!promotionEl) {
+                    if (attempts < maxAttempts) {
+                        setTimeout(autoSelectPackage, 100);
+                    }
+                    return;
+                }
+
+                // Find the vxconfig script with package data
+                const configScript = promotionEl.closest('.elementor-element')?.querySelector('script.vxconfig');
+                if (!configScript) {
+                    if (attempts < maxAttempts) {
+                        setTimeout(autoSelectPackage, 100);
+                    }
+                    return;
+                }
+
+                let config;
+                try {
+                    config = JSON.parse(configScript.textContent);
+                } catch(e) {
+                    return;
+                }
+
+                // Find the package cards (li elements in addon-cards)
+                const packageCards = promotionEl.querySelectorAll('.addon-cards li');
+                if (packageCards.length === 0) {
+                    if (attempts < maxAttempts) {
+                        setTimeout(autoSelectPackage, 100);
+                    }
+                    return;
+                }
+
+                // Find which index matches our package key
+                const packages = config.packages || {};
+                const packageKeys = Object.keys(packages);
+                let targetIndex = -1;
+
+                for (let i = 0; i < packageKeys.length; i++) {
+                    if (packages[packageKeys[i]].key === packageKey) {
+                        targetIndex = i;
+                        break;
+                    }
+                }
+
+                if (targetIndex >= 0 && packageCards[targetIndex]) {
+                    // Click on the correct package card to select it
+                    packageCards[targetIndex].click();
+                }
+            }
+
+            // Start trying after DOM is ready and Vue has time to render
+            function init() {
+                // Wait a bit for Vue to mount and render
+                setTimeout(autoSelectPackage, 300);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
         })();
         </script>
         <?php
