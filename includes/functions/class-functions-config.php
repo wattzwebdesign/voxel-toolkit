@@ -162,6 +162,13 @@ class Voxel_Toolkit_Functions_Config {
                         'description' => __('Select which post types this auto-approval applies to. Leave empty for all post types.', 'voxel-toolkit')
                     )
                 )
+            ),
+
+            'promotion_create_form' => array(
+                'name' => __('Promotion Create Form', 'voxel-toolkit'),
+                'description' => __('Add promotion package selection to the Create Form widget. Users can optionally select a promotion before submitting and get redirected to checkout.', 'voxel-toolkit'),
+                'enabled_by_default' => false,
+                'class' => 'Voxel_Toolkit_Promotion_Create_Form'
             )
         );
     }

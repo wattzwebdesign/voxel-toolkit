@@ -496,6 +496,13 @@ class Voxel_Toolkit_Functions {
                 'settings_callback' => array($this, 'render_social_proof_settings'),
                 'beta' => true,
             ),
+            'promotion_create_form' => array(
+                'name' => __('Promotion Create Form', 'voxel-toolkit'),
+                'description' => __('Add promotion package selection to the Create Form widget. Users can optionally select a promotion before submitting and get redirected to checkout.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Promotion_Create_Form',
+                'file' => 'functions/class-promotion-create-form.php',
+                'icon' => 'dashicons-megaphone',
+            ),
             'enhanced_editor' => array(
                 'name' => __('Enhanced TinyMCE Editor', 'voxel-toolkit'),
                 'description' => __('Adds media upload, text color, background color, and character map to WP Editor Advanced mode.', 'voxel-toolkit'),
