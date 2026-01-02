@@ -42,6 +42,9 @@ class Voxel_Toolkit_Promotion_Create_Form {
         // Capture widget settings when rendered
         add_action('elementor/frontend/widget/before_render', array($this, 'capture_widget_settings'), 10, 1);
 
+        // Render preview HTML directly after widget in Elementor editor
+        add_action('elementor/frontend/widget/after_render', array($this, 'render_elementor_preview'), 10, 1);
+
         // Inject frontend JavaScript/Vue component
         add_action('wp_footer', array($this, 'render_frontend_script'), 20);
 
@@ -50,6 +53,9 @@ class Voxel_Toolkit_Promotion_Create_Form {
 
         // Enqueue CSS
         add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
+
+        // Also enqueue CSS in Elementor editor preview
+        add_action('elementor/preview/enqueue_styles', array($this, 'enqueue_styles'));
 
         // AJAX handler to get promotion packages for a post type
         add_action('wp_ajax_vt_get_promotion_packages', array($this, 'ajax_get_packages'));
@@ -72,8 +78,19 @@ class Voxel_Toolkit_Promotion_Create_Form {
                 'title' => isset($settings['vt_promotions_title']) ? $settings['vt_promotions_title'] : __('Boost your listing', 'voxel-toolkit'),
                 'description' => isset($settings['vt_promotions_description']) ? $settings['vt_promotions_description'] : __('Get more visibility with a promotion package (optional)', 'voxel-toolkit'),
                 'skip_text' => isset($settings['vt_promotions_skip_text']) ? $settings['vt_promotions_skip_text'] : __('No thanks, just submit', 'voxel-toolkit'),
+                'preview' => isset($settings['vt_promotions_preview']) && $settings['vt_promotions_preview'] === 'yes',
             );
         }
+    }
+
+    /**
+     * Render preview HTML directly in Elementor editor
+     * Note: This hook doesn't fire for Voxel widgets, so preview is handled via JavaScript
+     */
+    public function render_elementor_preview($widget) {
+        // Voxel's Create Post widget doesn't trigger standard Elementor hooks
+        // Preview is handled via JavaScript in render_frontend_script() instead
+        return;
     }
 
     /**
@@ -137,6 +154,256 @@ class Voxel_Toolkit_Promotion_Create_Form {
             )
         );
 
+        $element->add_control(
+            'vt_promotions_preview',
+            array(
+                'label' => __('Preview Mode', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => '',
+                'description' => __('Show preview with dummy packages for styling in the editor.', 'voxel-toolkit'),
+                'condition' => array(
+                    'vt_enable_promotions' => 'yes',
+                ),
+            )
+        );
+
+        $element->end_controls_section();
+
+        // Style Section
+        $element->start_controls_section(
+            'vt_promotions_style_section',
+            array(
+                'label' => __('Promotions Style (VT)', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+                'condition' => array(
+                    'vt_enable_promotions' => 'yes',
+                ),
+            )
+        );
+
+        // Header Styles
+        $element->add_control(
+            'vt_promo_header_heading',
+            array(
+                'label' => __('Header', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+            )
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            array(
+                'name' => 'vt_promo_title_typography',
+                'label' => __('Title Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt-promotion-header-text h3',
+            )
+        );
+
+        $element->add_control(
+            'vt_promo_title_color',
+            array(
+                'label' => __('Title Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promotion-header-text h3' => 'color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            array(
+                'name' => 'vt_promo_desc_typography',
+                'label' => __('Description Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt-promotion-header-text p',
+            )
+        );
+
+        $element->add_control(
+            'vt_promo_desc_color',
+            array(
+                'label' => __('Description Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promotion-header-text p' => 'color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $element->add_control(
+            'vt_promo_icon_bg',
+            array(
+                'label' => __('Icon Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promotion-icon-header' => 'background: {{VALUE}};',
+                ),
+            )
+        );
+
+        // Card Styles
+        $element->add_control(
+            'vt_promo_card_heading',
+            array(
+                'label' => __('Package Cards', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            )
+        );
+
+        $element->add_control(
+            'vt_promo_card_bg',
+            array(
+                'label' => __('Card Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promotion-card' => 'background: {{VALUE}};',
+                ),
+            )
+        );
+
+        $element->add_control(
+            'vt_promo_card_border_color',
+            array(
+                'label' => __('Card Border Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promotion-card' => 'border-color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $element->add_control(
+            'vt_promo_card_border_radius',
+            array(
+                'label' => __('Card Border Radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => array('px'),
+                'range' => array(
+                    'px' => array(
+                        'min' => 0,
+                        'max' => 30,
+                    ),
+                ),
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promotion-card' => 'border-radius: {{SIZE}}{{UNIT}};',
+                ),
+            )
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            array(
+                'name' => 'vt_promo_card_label_typography',
+                'label' => __('Label Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt-promotion-card-label',
+            )
+        );
+
+        $element->add_control(
+            'vt_promo_card_label_color',
+            array(
+                'label' => __('Label Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promotion-card-label' => 'color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            array(
+                'name' => 'vt_promo_card_desc_typography',
+                'label' => __('Card Description Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt-promotion-card-desc',
+            )
+        );
+
+        $element->add_control(
+            'vt_promo_card_desc_color',
+            array(
+                'label' => __('Card Description Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promotion-card-desc' => 'color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            array(
+                'name' => 'vt_promo_card_price_typography',
+                'label' => __('Price Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt-promotion-card-price',
+            )
+        );
+
+        $element->add_control(
+            'vt_promo_card_price_color',
+            array(
+                'label' => __('Price Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promotion-card-price' => 'color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            array(
+                'name' => 'vt_promo_card_duration_typography',
+                'label' => __('Duration Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt-promotion-card-duration',
+            )
+        );
+
+        // Skip Link
+        $element->add_control(
+            'vt_promo_skip_heading',
+            array(
+                'label' => __('Skip Link', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            )
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            array(
+                'name' => 'vt_promo_skip_typography',
+                'label' => __('Skip Link Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt-promotion-skip',
+            )
+        );
+
+        $element->add_control(
+            'vt_promo_skip_color',
+            array(
+                'label' => __('Skip Link Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promotion-skip' => 'color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $element->add_control(
+            'vt_promo_skip_hover_color',
+            array(
+                'label' => __('Skip Link Hover Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promotion-skip:hover' => 'color: {{VALUE}};',
+                ),
+            )
+        );
+
         $element->end_controls_section();
     }
 
@@ -144,8 +411,16 @@ class Voxel_Toolkit_Promotion_Create_Form {
      * Enqueue styles
      */
     public function enqueue_styles() {
-        // Only enqueue on pages that might have create-post widget
-        if (!is_singular() && !is_page()) {
+        // Check if we're in Elementor editor
+        $is_elementor = (
+            (isset($_GET['action']) && $_GET['action'] === 'elementor') ||
+            (isset($_GET['elementor-preview'])) ||
+            (class_exists('\Elementor\Plugin') && \Elementor\Plugin::$instance->editor->is_edit_mode()) ||
+            (class_exists('\Elementor\Plugin') && \Elementor\Plugin::$instance->preview->is_preview_mode())
+        );
+
+        // Only enqueue on pages that might have create-post widget or in Elementor
+        if (!$is_elementor && !is_singular() && !is_page()) {
             return;
         }
 
@@ -291,8 +566,18 @@ class Voxel_Toolkit_Promotion_Create_Form {
             return;
         }
 
-        // Don't output if no widgets with promotions enabled
-        if (empty($this->promotion_widgets)) {
+        // Check if we're in Elementor editor
+        $is_elementor = (
+            isset($_GET['elementor-preview']) ||
+            (isset($_GET['action']) && $_GET['action'] === 'elementor') ||
+            (class_exists('\Elementor\Plugin') && (
+                \Elementor\Plugin::$instance->editor->is_edit_mode() ||
+                \Elementor\Plugin::$instance->preview->is_preview_mode()
+            ))
+        );
+
+        // Don't output if no widgets with promotions enabled (unless in Elementor for debugging)
+        if (empty($this->promotion_widgets) && !$is_elementor) {
             return;
         }
 
@@ -315,20 +600,143 @@ class Voxel_Toolkit_Promotion_Create_Form {
 
             // Initialize when DOM is ready
             function initPromotionSelector() {
-                // Find all create-post widgets
-                const widgets = document.querySelectorAll('.elementor-widget-ts-create-post');
+                // Check if we're in Elementor editor
+                const isElementorEditor = window.location.href.includes('elementor-preview') ||
+                                          window.location.href.includes('action=elementor') ||
+                                          document.body.classList.contains('elementor-editor-active');
+
+                // Get the correct document (may be in iframe for Elementor editor)
+                let targetDoc = document;
+                if (window.location.href.includes('action=elementor')) {
+                    // We're in the main editor, look for preview iframe
+                    const previewFrame = document.getElementById('elementor-preview-iframe');
+                    if (previewFrame && previewFrame.contentDocument) {
+                        targetDoc = previewFrame.contentDocument;
+                    }
+                }
+
+                // Find all create-post widgets - try multiple selectors
+                let widgets = targetDoc.querySelectorAll('.elementor-widget-ts-create-post');
+                if (widgets.length === 0) {
+                    widgets = targetDoc.querySelectorAll('[data-widget_type="ts-create-post.default"]');
+                }
+                if (widgets.length === 0) {
+                    // Try finding by the form class
+                    const forms = targetDoc.querySelectorAll('.ts-create-post');
+                    widgets = [];
+                    forms.forEach(form => {
+                        const widget = form.closest('.elementor-widget');
+                        if (widget) widgets.push(widget);
+                    });
+                }
+
+                // Elementor editor preview mode - inject dummy preview for styling
+                if (isElementorEditor && Object.keys(vtPromotionWidgets).length === 0) {
+                    // Find widget containers in targetDoc
+                    const widgetContainers = targetDoc.querySelectorAll('.elementor-widget-ts-create-post, [data-widget_type*="ts-create-post"]');
+
+                    widgetContainers.forEach(container => {
+                        const widgetId = container.dataset.id;
+
+                        // Check if promotions AND preview mode are enabled in widget settings via Elementor API
+                        let shouldShowPreview = false;
+                        if (window.elementor && widgetId) {
+                            try {
+                                const widgetContainer = elementor.getContainer(widgetId);
+                                if (widgetContainer && widgetContainer.settings) {
+                                    const settings = widgetContainer.settings.attributes;
+                                    const promotionsEnabled = settings.vt_enable_promotions === 'yes';
+                                    const previewEnabled = settings.vt_promotions_preview === 'yes';
+                                    shouldShowPreview = promotionsEnabled && previewEnabled;
+                                }
+                            } catch (e) {
+                                // Could not get widget settings
+                            }
+                        }
+
+                        // Only inject if both promotions AND preview mode are enabled
+                        if (!shouldShowPreview) {
+                            // Remove existing preview if preview was disabled
+                            const existingPreview = container.querySelector('.vt-promotion-selector-container');
+                            if (existingPreview) {
+                                existingPreview.remove();
+                            }
+                            return;
+                        }
+
+                        // Don't inject if already exists
+                        if (container.querySelector('.vt-promotion-selector-container')) {
+                            return;
+                        }
+
+                        const previewConfig = {
+                            title: '<?php echo esc_js(__('Boost your listing', 'voxel-toolkit')); ?>',
+                            description: '<?php echo esc_js(__('Get more visibility with a promotion package (optional)', 'voxel-toolkit')); ?>',
+                            skipText: '<?php echo esc_js(__('No thanks, just submit', 'voxel-toolkit')); ?>',
+                            preview: true
+                        };
+
+                        const selector = createPromotionSelector(previewConfig, 'preview', targetDoc);
+                        selector.style.display = 'block';
+
+                        // Look for form inside and insert before footer
+                        const innerForm = container.querySelector('.ts-create-post');
+                        const footer = container.querySelector('.ts-form-footer');
+                        if (footer) {
+                            footer.parentNode.insertBefore(selector, footer);
+                        } else if (innerForm) {
+                            innerForm.appendChild(selector);
+                        } else {
+                            container.appendChild(selector);
+                        }
+                        loadPackages(selector, 'preview', true);
+                    });
+
+                    return;
+                }
 
                 widgets.forEach(widget => {
                     // Get the widget ID from the element
                     const widgetId = widget.dataset.id;
-                    const vtSettings = vtPromotionWidgets[widgetId];
+                    let vtSettings = vtPromotionWidgets[widgetId];
 
                     if (!vtSettings || !vtSettings.enabled) {
                         return;
                     }
 
+                    // Configuration from PHP-captured settings
+                    const vtConfig = {
+                        title: vtSettings.title || '<?php echo esc_js(__('Boost your listing', 'voxel-toolkit')); ?>',
+                        description: vtSettings.description || '<?php echo esc_js(__('Get more visibility with a promotion package (optional)', 'voxel-toolkit')); ?>',
+                        skipText: vtSettings.skip_text || '<?php echo esc_js(__('No thanks, just submit', 'voxel-toolkit')); ?>',
+                        preview: vtSettings.preview || false,
+                    };
+
                     // Get the form element
                     const form = widget.querySelector('.ts-create-post');
+
+                    // In preview mode without form, inject directly into widget
+                    if (vtConfig.preview && !form) {
+                        if (!widget.querySelector('.vt-promotion-selector-container')) {
+                            const selector = createPromotionSelector(vtConfig, 'preview');
+                            selector.style.display = 'block';
+                            widget.appendChild(selector);
+                            loadPackages(selector, 'preview', true);
+                        }
+                        return;
+                    }
+
+                    // In preview mode WITH form, still inject
+                    if (vtConfig.preview) {
+                        if (!widget.querySelector('.vt-promotion-selector-container')) {
+                            const selector = createPromotionSelector(vtConfig, 'preview');
+                            selector.style.display = 'block';
+                            form.appendChild(selector);
+                            loadPackages(selector, 'preview', true);
+                        }
+                        return;
+                    }
+
                     if (!form) return;
 
                     // Get config from vxconfig script
@@ -341,33 +749,38 @@ class Voxel_Toolkit_Promotion_Create_Form {
                     }
 
                     const postType = config.post_type?.key || '';
-                    if (!postType) return;
 
-                    // Configuration from PHP-captured settings
-                    const vtConfig = {
-                        title: vtSettings.title || '<?php echo esc_js(__('Boost your listing', 'voxel-toolkit')); ?>',
-                        description: vtSettings.description || '<?php echo esc_js(__('Get more visibility with a promotion package (optional)', 'voxel-toolkit')); ?>',
-                        skipText: vtSettings.skip_text || '<?php echo esc_js(__('No thanks, just submit', 'voxel-toolkit')); ?>',
-                    };
+                    // In preview mode, we don't need a real post type
+                    if (!postType && !vtConfig.preview) return;
 
                     // Create and inject the promotion selector
-                    const selector = createPromotionSelector(vtConfig, postType);
+                    const selector = createPromotionSelector(vtConfig, postType || 'preview');
                     const formFooter = form.querySelector('.ts-form-footer');
 
                     if (formFooter && !form.querySelector('.vt-promotion-selector-container')) {
                         formFooter.parentNode.insertBefore(selector, formFooter);
 
-                        // Load packages
-                        loadPackages(selector, postType);
+                        // Load packages (or dummy data in preview mode)
+                        loadPackages(selector, postType, vtConfig.preview);
 
-                        // Watch for step changes to show/hide
-                        observeStepChanges(form, selector, config);
+                        // In preview mode, always show the selector
+                        if (vtConfig.preview) {
+                            selector.style.display = 'block';
+                        } else {
+                            // Watch for step changes to show/hide
+                            observeStepChanges(form, selector, config);
+                        }
+                    } else if (vtConfig.preview && !widget.querySelector('.vt-promotion-selector-container')) {
+                        // Preview mode fallback - append to form if no footer found
+                        selector.style.display = 'block';
+                        form.appendChild(selector);
+                        loadPackages(selector, 'preview', true);
                     }
                 });
             }
 
-            function createPromotionSelector(vtConfig, postType) {
-                const container = document.createElement('div');
+            function createPromotionSelector(vtConfig, postType, targetDocument = document) {
+                const container = targetDocument.createElement('div');
                 container.className = 'vt-promotion-selector-container';
                 container.style.display = 'none'; // Hidden by default until last step
                 container.dataset.postType = postType;
@@ -410,8 +823,45 @@ class Voxel_Toolkit_Promotion_Create_Form {
                 return container;
             }
 
-            function loadPackages(container, postType) {
+            function loadPackages(container, postType, isPreview) {
                 const packagesContainer = container.querySelector('.vt-promotion-packages');
+
+                // Preview mode - use dummy packages for styling
+                if (isPreview) {
+                    const dummyPackages = [
+                        {
+                            key: 'preview-basic',
+                            label: '<?php echo esc_js(__('Basic', 'voxel-toolkit')); ?>',
+                            description: '<?php echo esc_js(__('Great for getting started', 'voxel-toolkit')); ?>',
+                            duration: { type: 'days', amount: 7 },
+                            formatted_price: '$9.99',
+                            color: '#3b82f6'
+                        },
+                        {
+                            key: 'preview-pro',
+                            label: '<?php echo esc_js(__('Pro', 'voxel-toolkit')); ?>',
+                            description: '<?php echo esc_js(__('Maximum visibility for your listing', 'voxel-toolkit')); ?>',
+                            duration: { type: 'days', amount: 30 },
+                            formatted_price: '$29.99',
+                            color: '#8b5cf6'
+                        },
+                        {
+                            key: 'preview-premium',
+                            label: '<?php echo esc_js(__('Premium', 'voxel-toolkit')); ?>',
+                            description: '<?php echo esc_js(__('Best value for serious sellers', 'voxel-toolkit')); ?>',
+                            duration: { type: 'days', amount: 90 },
+                            formatted_price: '$79.99',
+                            color: '#f59e0b'
+                        }
+                    ];
+
+                    packagesContainer.innerHTML = '';
+                    dummyPackages.forEach(pkg => {
+                        const card = createPackageCard(pkg);
+                        packagesContainer.appendChild(card);
+                    });
+                    return;
+                }
 
                 const formData = new FormData();
                 formData.append('action', 'vt_get_promotion_packages');
@@ -637,19 +1087,72 @@ class Voxel_Toolkit_Promotion_Create_Form {
                 });
             }
 
-            // Initialize
+            // Initialize with retries for Elementor editor
+            let initAttempts = 0;
+            const maxAttempts = 10;
+
+            function tryInit() {
+                initAttempts++;
+                initPromotionSelector();
+
+                // Check if we successfully injected (in Elementor editor mode)
+                const isElementorEditor = window.location.href.includes('elementor-preview') ||
+                                          document.body.classList.contains('elementor-editor-active');
+                const hasInjected = document.querySelector('.vt-promotion-selector-container');
+
+                if (isElementorEditor && !hasInjected && initAttempts < maxAttempts) {
+                    // Retry with increasing delay
+                    setTimeout(tryInit, 500 * initAttempts);
+                }
+            }
+
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', () => {
-                    initPromotionSelector();
+                    tryInit();
                     setupSubmitInterception();
                 });
             } else {
-                initPromotionSelector();
+                tryInit();
                 setupSubmitInterception();
             }
 
             // Also re-init on Elementor frontend init (for preview)
             document.addEventListener('elementor/init', initPromotionSelector);
+
+            // Watch for DOM changes in Elementor editor
+            if (window.location.href.includes('elementor-preview')) {
+                const observer = new MutationObserver((mutations) => {
+                    // Check if ts-create-post was added
+                    const hasCreatePost = document.querySelector('.ts-create-post, .elementor-widget-ts-create-post');
+                    const hasInjected = document.querySelector('.vt-promotion-selector-container');
+                    if (hasCreatePost && !hasInjected) {
+                        initPromotionSelector();
+                    }
+                });
+                observer.observe(document.body, { childList: true, subtree: true });
+            }
+
+            // For Elementor main editor - watch iframe for content changes
+            if (window.location.href.includes('action=elementor')) {
+                // Wait for iframe to be ready and observe it
+                const checkIframe = setInterval(() => {
+                    const previewFrame = document.getElementById('elementor-preview-iframe');
+                    if (previewFrame && previewFrame.contentDocument && previewFrame.contentDocument.body) {
+                        clearInterval(checkIframe);
+                        const iframeObserver = new MutationObserver((mutations) => {
+                            const iframeDoc = previewFrame.contentDocument;
+                            const hasCreatePost = iframeDoc.querySelector('.ts-create-post, .elementor-widget-ts-create-post');
+                            const hasInjected = iframeDoc.querySelector('.vt-promotion-selector-container');
+                            if (hasCreatePost && !hasInjected) {
+                                initPromotionSelector();
+                            }
+                        });
+                        iframeObserver.observe(previewFrame.contentDocument.body, { childList: true, subtree: true });
+                        // Also run init once iframe is ready
+                        initPromotionSelector();
+                    }
+                }, 500);
+            }
         })();
         </script>
         <?php
