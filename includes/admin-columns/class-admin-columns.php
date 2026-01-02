@@ -1591,11 +1591,13 @@ class Voxel_Toolkit_Admin_Columns {
                     return $self->modify_columns($columns, $columns_config);
                 }, PHP_INT_MAX);
 
-                // Disable WordPress's default row actions completely
-                // We handle row actions ourselves in the title field renderer
-                add_filter('list_table_primary_column', function($primary, $screen_id) use ($post_type) {
+                // Set our title column as the primary column
+                // This ensures WordPress bulk edit can find post titles correctly
+                // Row actions are filtered out separately via post_row_actions filter
+                add_filter('list_table_primary_column', function($primary, $screen_id) use ($post_type, $columns_config) {
                     if ($screen_id === "edit-{$post_type}") {
-                        return '_vt_no_primary_column';
+                        // Return our title column ID so WordPress bulk edit works correctly
+                        return 'col_title';
                     }
                     return $primary;
                 }, PHP_INT_MAX, 2);

@@ -878,6 +878,68 @@ class Voxel_Toolkit_Column_Renderer {
             $output .= $this->get_row_actions($wp_post);
         }
 
+        // Add inline edit data for WordPress bulk/quick edit
+        $output .= $this->get_inline_edit_data($wp_post);
+
+        return $output;
+    }
+
+    /**
+     * Generate hidden inline edit data for WordPress bulk/quick edit
+     * This data is required for bulk edit to show post titles
+     */
+    private function get_inline_edit_data($post) {
+        $post_type_object = get_post_type_object($post->post_type);
+
+        if (!$post_type_object || !current_user_can('edit_post', $post->ID)) {
+            return '';
+        }
+
+        $output = '<div class="hidden" id="inline_' . $post->ID . '">';
+        $output .= '<div class="post_title">' . esc_html($post->post_title) . '</div>';
+        $output .= '<div class="post_name">' . esc_html($post->post_name) . '</div>';
+        $output .= '<div class="post_author">' . esc_html($post->post_author) . '</div>';
+        $output .= '<div class="comment_status">' . esc_html($post->comment_status) . '</div>';
+        $output .= '<div class="ping_status">' . esc_html($post->ping_status) . '</div>';
+        $output .= '<div class="_status">' . esc_html($post->post_status) . '</div>';
+        $output .= '<div class="jj">' . mysql2date('d', $post->post_date, false) . '</div>';
+        $output .= '<div class="mm">' . mysql2date('m', $post->post_date, false) . '</div>';
+        $output .= '<div class="aa">' . mysql2date('Y', $post->post_date, false) . '</div>';
+        $output .= '<div class="hh">' . mysql2date('H', $post->post_date, false) . '</div>';
+        $output .= '<div class="mn">' . mysql2date('i', $post->post_date, false) . '</div>';
+        $output .= '<div class="ss">' . mysql2date('s', $post->post_date, false) . '</div>';
+        $output .= '<div class="post_password">' . esc_html($post->post_password) . '</div>';
+
+        if ($post_type_object->hierarchical) {
+            $output .= '<div class="post_parent">' . $post->post_parent . '</div>';
+        }
+
+        if ($post->post_type === 'page') {
+            $output .= '<div class="page_template">' . esc_html(get_post_meta($post->ID, '_wp_page_template', true)) . '</div>';
+        }
+
+        if (post_type_supports($post->post_type, 'page-attributes')) {
+            $output .= '<div class="menu_order">' . $post->menu_order . '</div>';
+        }
+
+        // Taxonomies
+        $taxonomies = get_object_taxonomies($post->post_type);
+        foreach ($taxonomies as $taxonomy) {
+            $taxonomy_object = get_taxonomy($taxonomy);
+            if ($taxonomy_object && $taxonomy_object->show_ui) {
+                $terms = get_the_terms($post->ID, $taxonomy);
+                $term_ids = $terms && !is_wp_error($terms) ? wp_list_pluck($terms, 'term_id') : array();
+                $output .= '<div class="post_category" id="' . $taxonomy . '_' . $post->ID . '">' . implode(',', $term_ids) . '</div>';
+            }
+        }
+
+        // Is sticky
+        if (is_post_type_viewable($post_type_object)) {
+            $output .= '<div class="sticky">' . (is_sticky($post->ID) ? 'sticky' : '') . '</div>';
+        }
+
+        $output .= '</div>';
+
         return $output;
     }
 
