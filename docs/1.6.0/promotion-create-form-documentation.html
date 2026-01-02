@@ -1,0 +1,421 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Promotion Create Form</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Promotion Create Form function adds promotion package selection to Voxel's Create Form widget. Users can optionally select a promotion package before submitting their post, then get redirected directly to checkout after submission.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When users create a new listing, they often want to promote it immediately for better visibility. This function streamlines the process by presenting promotion packages right in the Create Form, eliminating the need for users to navigate to a separate promotion page after publishing.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Display promotion packages on the last step of the Create Form</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Packages automatically filtered by post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Optional selection – users can skip if they don't want to promote</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Direct checkout integration via Voxel's payment system</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Automatic redirect to payment after post submission</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customizable section title, description, and skip button text</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Styling matches Voxel's native form design</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Promotion Create Form</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Promotion Packages in Voxel</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Before using this function, you need to have promotion packages configured in Voxel:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Voxel &gt; Products &gt; Promotions</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Create one or more promotion packages</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>For each package, configure:
+<ul>
+<li>Label and description</li>
+<li>Price</li>
+<li>Duration (days, weeks, or months)</li>
+<li>Priority level</li>
+<li>Applicable post types</li>
+<li>Optional accent color and icon</li>
+</ul>
+</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save your promotion settings</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Enable in Create Post Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit the page containing your Create Post widget in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select the <strong>Create Post (VX)</strong> widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>In the widget settings, find the <strong>Promotions (VT)</strong> section</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle <strong>Enable Promotions</strong> to Yes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customize the section title, description, and skip button text (optional)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save and publish the page</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">User Flow</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Here's what happens when a user creates a post with promotions enabled:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Fill Out Form</strong> – User completes all steps of the Create Post form</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>View Promotions</strong> – On the last step, before the submit button, available promotion packages are displayed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Select or Skip</strong> – User can click a package to select it, or click "No thanks, just submit" to skip</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Submit Form</strong> – User clicks the submit button to create the post</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Redirect to Payment</strong> – If a promotion was selected, user is automatically redirected to the Stripe checkout page</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Complete Payment</strong> – User completes payment and the promotion is applied to their new post</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Enable Promotions</strong></td><td>Toggle to show/hide promotion packages on the form</td><td>No</td></tr><tr><td><strong>Section Title</strong></td><td>Heading text above the promotion packages</td><td>"Boost your listing"</td></tr><tr><td><strong>Section Description</strong></td><td>Subheading text explaining the promotion option</td><td>"Get more visibility with a promotion package (optional)"</td></tr><tr><td><strong>Skip Button Text</strong></td><td>Text for the link to skip promotion selection</td><td>"No thanks, just submit"</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Package Display</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Each promotion package card displays:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Icon</strong> – Lightning bolt icon (or custom icon if configured in Voxel)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Label</strong> – Package name (e.g., "Basic", "Pro", "Premium")</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Description</strong> – Brief explanation of the package benefits</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Duration</strong> – How long the promotion lasts (e.g., "7 days", "1 month")</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Price</strong> – Cost of the promotion</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Accent Color</strong> – Custom color from Voxel package settings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>When a package is selected, it displays a checkmark and highlighted border using the package's accent color.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Post Type Filtering</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Packages are automatically filtered based on the post type being created. If you configure a promotion package to only apply to "Places" in Voxel, it will only appear on the Create Post form for Places – not for Events, Profiles, or other post types.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>If a post type has no applicable promotion packages configured, the promotion section will be hidden automatically.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Business Directory</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When businesses create their listing, offer them immediate promotion options to appear at the top of search results.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Job Board</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let employers boost their job postings right when they create them to attract more applicants quickly.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Real Estate</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Property listings can be promoted immediately upon creation to get more visibility during the critical first days on market.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Marketplace</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Sellers can promote their products right when listing them, increasing the chance of quick sales.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Promotion Section Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled in Voxel Toolkit settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that "Enable Promotions" is toggled on in the widget settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure promotion packages exist in Voxel &gt; Products &gt; Promotions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Confirm at least one package is configured for the current post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any caching and refresh the page</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Not Redirecting to Checkout</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure Stripe is properly configured in Voxel</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the user is logged in (promotions require authentication)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the post was created successfully before the redirect</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for any JavaScript errors</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Packages Showing "Loading..."</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>This indicates the AJAX request to fetch packages is still running or failed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for AJAX errors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify your site's AJAX functionality is working correctly</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Stripe payment gateway configured in Voxel</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>At least one promotion package configured</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Create Post (VX) widget on a page</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
