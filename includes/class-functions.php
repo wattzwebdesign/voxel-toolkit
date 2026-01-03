@@ -3703,23 +3703,23 @@ class Voxel_Toolkit_Functions {
                 <textarea id="custom_head_tags" 
                           name="voxel_toolkit_options[google_analytics][custom_head_tags]" 
                           placeholder="<script>&#10;// Your custom head scripts&#10;</script>"><?php echo esc_textarea($custom_head_tags); ?></textarea>
-                <p class="vt-ga-help-text"><?php _e('Add custom scripts/tags to the <head> section. Include <script> tags for JavaScript code.', 'voxel-toolkit'); ?></p>
+                <p class="vt-ga-help-text"><?php _e('Add custom scripts/tags to the &lt;head&gt; section. Include &lt;script&gt; tags for JavaScript code.', 'voxel-toolkit'); ?></p>
             </div>
-            
+
             <div class="vt-ga-input-group">
-                <label for="custom_body_tags"><?php _e('Custom Body Tags (After <body>)', 'voxel-toolkit'); ?></label>
-                <textarea id="custom_body_tags" 
-                          name="voxel_toolkit_options[google_analytics][custom_body_tags]" 
+                <label for="custom_body_tags"><?php _e('Custom Body Tags (After &lt;body&gt;)', 'voxel-toolkit'); ?></label>
+                <textarea id="custom_body_tags"
+                          name="voxel_toolkit_options[google_analytics][custom_body_tags]"
                           placeholder="<script>&#10;// Your custom body scripts&#10;</script>"><?php echo esc_textarea($custom_body_tags); ?></textarea>
-                <p class="vt-ga-help-text"><?php _e('Add custom scripts/tags immediately after the opening <body> tag.', 'voxel-toolkit'); ?></p>
+                <p class="vt-ga-help-text"><?php _e('Add custom scripts/tags immediately after the opening &lt;body&gt; tag.', 'voxel-toolkit'); ?></p>
             </div>
-            
+
             <div class="vt-ga-input-group">
-                <label for="custom_footer_tags"><?php _e('Custom Footer Tags (Before </body>)', 'voxel-toolkit'); ?></label>
-                <textarea id="custom_footer_tags" 
-                          name="voxel_toolkit_options[google_analytics][custom_footer_tags]" 
+                <label for="custom_footer_tags"><?php _e('Custom Footer Tags (Before &lt;/body&gt;)', 'voxel-toolkit'); ?></label>
+                <textarea id="custom_footer_tags"
+                          name="voxel_toolkit_options[google_analytics][custom_footer_tags]"
                           placeholder="<script>&#10;// Your custom footer scripts&#10;</script>"><?php echo esc_textarea($custom_footer_tags); ?></textarea>
-                <p class="vt-ga-help-text"><?php _e('Add custom scripts/tags before the closing </body> tag.', 'voxel-toolkit'); ?></p>
+                <p class="vt-ga-help-text"><?php _e('Add custom scripts/tags before the closing &lt;/body&gt; tag.', 'voxel-toolkit'); ?></p>
             </div>
         </div>
         
