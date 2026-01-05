@@ -1,0 +1,588 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Temporary Login</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Temporary Login function allows administrators to generate secure, one-click login URLs for temporary access to your WordPress site.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Sometimes you need to grant temporary access to your site for support technicians, developers, or collaborators without sharing permanent credentials. The Temporary Login function creates secure, time-limited login URLs that automatically expire, providing a safe way to share access.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Generate secure one-click login URLs</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set custom expiry times (hours or days)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Create logins for existing users or temporary user accounts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Custom redirect URL after login</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enable/disable tokens without deleting</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Full audit logging of all login attempts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Automatic cleanup of expired tokens</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add notes to track purpose of each login</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Temporary Login</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Once enabled, a new <strong>Temp Logins (VT)</strong> menu item will appear under the Users menu in your WordPress admin sidebar.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Creating a Temporary Login</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">For Existing Users</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Users &gt; Temp Logins (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>In the "Create New Temporary Login" section, select <strong>Existing User</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Choose the user from the dropdown</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set the expiry time (e.g., 7 days)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Optionally set a redirect URL (defaults to admin dashboard)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add optional notes (e.g., "For developer John - debugging issue #123")</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Create Temporary Login</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">For New Temporary Users</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If you don't want to grant access to an existing account, you can create a temporary user account:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Select <strong>Create New Temporary User</strong> from the User Type dropdown</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter a username (e.g., "temp_support_jan")</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter an email address</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select the role for the temporary user (e.g., Editor, Administrator)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set expiry and other options as needed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Create Temporary Login</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Temporary users are marked with a "Temp User" badge in the login table and can be automatically deleted when their token is removed.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Copy and Share the URL</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>After creating a temporary login, the secure URL will be displayed. Click <strong>Copy</strong> to copy it to your clipboard, then share it securely with the intended recipient.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>Important:</strong> The login URL is only shown once when created. For security reasons, it cannot be retrieved later. If you need to grant access again, create a new temporary login.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Managing Temporary Logins</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Active Temporary Logins Table</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The table displays all temporary logins with the following information:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>User</strong> - The user account the login provides access to</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Created</strong> - When the login was created and by whom</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Expires</strong> - Expiration date and time remaining</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Status</strong> - Active, Disabled, or Expired</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Uses</strong> - Number of successful logins with this URL</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Notes</strong> - Any notes you added when creating the login</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Actions</strong> - Copy, Enable/Disable, Delete buttons</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Available Actions</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Copy URL</strong> - Copy the login URL to clipboard (active tokens only)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Disable</strong> - Temporarily disable a login without deleting it</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Enable</strong> - Re-enable a previously disabled login</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Delete</strong> - Permanently remove the login (optionally delete temp user too)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Login Activity Log</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Login Activity Log section shows the last 50 login attempts, including:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Date/Time</strong> - When the login attempt occurred</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>User</strong> - Which user account was accessed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>IP Address</strong> - The IP address of the login attempt</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>User Agent</strong> - Browser/device information</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Status</strong> - Success or Failed (with failure reason)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Failed attempts are logged with reasons such as "Token expired", "Token disabled", "Token not found", or "Invalid token format".</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Developer Access</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Grant a developer temporary admin access to debug an issue without sharing your password. Set a short expiry (24-48 hours) and add notes about the specific issue they're working on.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Support Team Access</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allow a support technician to log in and troubleshoot problems. Create a temporary user with limited role permissions rather than granting admin access.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Client Demo Access</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Share access with a client to preview changes before launch. Use the custom redirect URL to send them directly to the relevant page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Content Collaboration</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allow guest writers or collaborators temporary Editor access to submit content without creating permanent accounts.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Security</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Secure Token Design</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Temporary login URLs use a selector/validator pattern for maximum security:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>The token is split into a <strong>selector</strong> (for lookup) and <strong>validator</strong> (for verification)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Only the bcrypt hash of the validator is stored in the database</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Even if the database is compromised, attackers cannot reconstruct valid login URLs</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Tokens are generated using cryptographically secure random bytes</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Best Practices</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Set the shortest reasonable expiry time for the task</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use temporary users with limited roles when possible</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Share URLs through secure channels (encrypted email, secure messaging)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Delete or disable logins when no longer needed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Regularly review the activity log for unexpected access</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add descriptive notes to track why each login was created</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Automatic Cleanup</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function automatically cleans up old data to keep your database tidy:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Tokens expired more than 30 days ago are automatically deleted</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Login logs older than 30 days are removed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Temporary users with no remaining tokens are automatically deleted</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Cleanup runs daily via WordPress cron</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Permissions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Temp Logins (VT) admin page requires the <code>create_users</code> capability, which is available to:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Administrators (single site)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Super Admins (multisite)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>This ensures only trusted users can create login URLs that grant access to other accounts.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Database Tables</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This function creates two database tables:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>wp_vt_temp_login_tokens</strong> - Stores token data, user associations, expiry times, and settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>wp_vt_temp_login_logs</strong> - Stores login attempt history for auditing</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Tables are automatically created when the function is first enabled.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Login URL Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check if the token has expired</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the token hasn't been disabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the URL wasn't truncated when copying</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check the activity log for specific failure reasons</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Menu Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled in Voxel Toolkit &gt; Functions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Confirm your user has the <code>create_users</code> capability (Administrator role)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try clearing your browser cache and refreshing</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">User Shows as "Deleted"</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This indicates the WordPress user account was deleted after the temporary login was created. The token is no longer usable. Delete it and create a new one for a different user if needed.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Already Logged In</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If someone clicks a temporary login URL while already logged in to WordPress, they will be redirected to the admin dashboard. They must log out first to use the temporary login URL.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>WordPress 5.0 or later</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>PHP 7.0 or later (for random_bytes function)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
