@@ -218,10 +218,27 @@ document.addEventListener("voxel/search-form/init", (e) => {
 
                 // Only redirect if page loaded without filters
                 if (!hasFilters) {
-                    // Small delay to prevent blocking page load
-                    setTimeout(() => {
-                        this.redirectWithFilters(stored.params);
-                    }, 100);
+                    // Build the target URL to check if it would actually change
+                    const postType = this.$root.post_type;
+                    let baseUrl = postType?.archive_link || window.location.pathname;
+                    const urlParams = new URLSearchParams();
+
+                    Object.keys(stored.params).forEach(key => {
+                        if (key === 'post_type') return;
+                        const value = stored.params[key];
+                        if (value !== null && value !== undefined && value !== '') {
+                            urlParams.set(key, value);
+                        }
+                    });
+
+                    const queryString = urlParams.toString();
+
+                    // Only redirect if we actually have filter params to apply
+                    if (queryString) {
+                        setTimeout(() => {
+                            this.redirectWithFilters(stored.params);
+                        }, 100);
+                    }
                 }
             },
             onPopupSave() {
