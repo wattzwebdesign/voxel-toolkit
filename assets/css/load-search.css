@@ -2,6 +2,17 @@
  * Load Search Button & Dropdown Styles
  */
 
+/* Match Save Search button styling */
+.ts-form-group.vt_load_search .ts-filter.ts-popup-target {
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: center;
+}
+
+.ts-form-group.vt_load_search .ts-filter.ts-popup-target svg {
+    fill: currentColor;
+}
+
 /* Button with active indicator */
 .vt_load_search .ts-filter.vt-has-active,
 .vt-load-search-link.vt-has-active {
@@ -152,6 +163,11 @@
     padding: 30px 15px;
     display: flex;
     align-items: center;
+    justify-content: center;
+}
+
+/* Center align button content */
+.ts-form-group.vt_load_search .ts-filter.ts-popup-target {
     justify-content: center;
 }
 

@@ -375,7 +375,7 @@ class Voxel_Toolkit_Saved_Search {
                         'icon' => 'eicon-text-align-right',
                     ],
                 ],
-                'default' => 'flex-start',
+                'default' => 'center',
                 'toggle' => true,
                 'selectors' => [
                     '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'justify-content: {{VALUE}}!important;',
@@ -642,11 +642,11 @@ class Voxel_Toolkit_Saved_Search {
             ]
         );
 
-        // Main button heading
+        // Save Search button heading
         $element->add_control(
             'vt_ss_main_btn_heading',
             [
-                'label' => __('Main button', 'voxel-toolkit'),
+                'label' => __('Save Search Button', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::HEADING,
                 'separator' => 'before',
                 'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
@@ -710,7 +710,7 @@ class Voxel_Toolkit_Saved_Search {
                     'vw' => ['min' => 0, 'max' => 100, 'step' => 1],
                 ],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_save_search' => 'width: {{SIZE}}%!important;',
+                    '{{WRAPPER}} .vt_save_search' => 'width: {{SIZE}}{{UNIT}}!important;',
                 ],
                 'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
             ]
@@ -883,11 +883,11 @@ class Voxel_Toolkit_Saved_Search {
             ]
         );
 
-        // Load Search - Main button
+        // Load Search button heading
         $element->add_control(
             'vt_ls_main_btn_heading',
             [
-                'label' => __('Main button', 'voxel-toolkit'),
+                'label' => __('Load Search Button', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::HEADING,
                 'separator' => 'before',
                 'condition' => ['vt_ls_enable' => 'yes'],
@@ -927,6 +927,233 @@ class Voxel_Toolkit_Saved_Search {
             ]
         );
 
+        $element->add_control(
+            'vt_ls_btn_width',
+            [
+                'label' => __('Button Width', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['%', 'px', 'vw'],
+                'default' => ['unit' => '%', 'size' => 100],
+                'range' => [
+                    '%' => ['min' => 0, 'max' => 100, 'step' => 1],
+                    'px' => ['min' => 0, 'max' => 1000, 'step' => 1],
+                    'vw' => ['min' => 0, 'max' => 100, 'step' => 1],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_load_search' => 'width: {{SIZE}}{{UNIT}}!important;',
+                ],
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        $element->end_controls_section();
+
+        // Load Search Button Style Section
+        $element->start_controls_section(
+            'vt_ls_button_style',
+            [
+                'label' => __('Load Search Button Style (VT)', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+                'condition' => ['vt_ls_enable' => 'yes'],
+            ]
+        );
+
+        $element->start_controls_tabs('vt_ls_button_tabs');
+
+        // Normal tab
+        $element->start_controls_tab(
+            'vt_ls_button_normal',
+            ['label' => __('Normal', 'voxel-toolkit')]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_text_align',
+            [
+                'label' => __('Alignment', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => [
+                    'flex-start' => [
+                        'title' => __('Left', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => __('Center', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-center',
+                    ],
+                    'flex-end' => [
+                        'title' => __('Right', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-right',
+                    ],
+                ],
+                'default' => 'center',
+                'toggle' => true,
+                'selectors' => [
+                    '{{WRAPPER}} .vt_load_search .ts-popup-target' => 'justify-content: {{VALUE}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_icon_size',
+            [
+                'label' => __('Icon size', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_load_search .ts-popup-target i' => 'font-size: {{SIZE}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vt_load_search .ts-popup-target svg' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_height',
+            [
+                'label' => __('Button Height', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_load_search .ts-popup-target' => 'height: {{SIZE}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_radius',
+            [
+                'label' => __('Border radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px', '%'],
+                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1], '%' => ['min' => 0, 'max' => 100]],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_load_search .ts-popup-target' => 'border-radius: {{SIZE}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'vt_ls_btn_typo',
+                'label' => __('Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt_load_search .ts-popup-target',
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_color',
+            [
+                'label' => __('Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#000000',
+                'selectors' => [
+                    '{{WRAPPER}} .vt_load_search .ts-popup-target' => 'color: {{VALUE}}!important',
+                    '{{WRAPPER}} .vt_load_search .ts-popup-target svg' => 'fill: {{VALUE}}!important',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_bg',
+            [
+                'label' => __('Background color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt_load_search div.ts-popup-target' => 'background-color: {{VALUE}}!important',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_padding',
+            [
+                'label' => __('Button padding', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%', 'em'],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_load_search .ts-popup-target' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_margin',
+            [
+                'label' => __('Button margin', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%', 'em'],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_load_search .ts-popup-target' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Border::get_type(),
+            [
+                'name' => 'vt_ls_btn_border',
+                'label' => __('Border', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt_load_search .ts-popup-target',
+            ]
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Box_Shadow::get_type(),
+            [
+                'name' => 'vt_ls_btn_shadow',
+                'label' => __('Box Shadow', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt_load_search .ts-popup-target',
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_icon_spacing',
+            [
+                'label' => __('Icon/Text spacing', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_load_search .ts-popup-target' => 'grid-gap: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $element->end_controls_tab();
+
+        // Hover tab
+        $element->start_controls_tab(
+            'vt_ls_button_hover',
+            ['label' => __('Hover', 'voxel-toolkit')]
+        );
+
+        $element->add_control(
+            'vt_ls_btn_color_hover',
+            [
+                'label' => __('Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt_load_search:hover .ts-popup-target' => 'color: {{VALUE}}!important',
+                    '{{WRAPPER}} .vt_load_search:hover .ts-popup-target svg' => 'fill: {{VALUE}}!important',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_btn_bg_hover',
+            [
+                'label' => __('Background color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt_load_search:hover .ts-popup-target' => 'background: {{VALUE}}!important',
+                ],
+            ]
+        );
+
+        $element->end_controls_tab();
+        $element->end_controls_tabs();
         $element->end_controls_section();
     }
 

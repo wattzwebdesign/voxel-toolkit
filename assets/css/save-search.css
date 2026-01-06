@@ -10,6 +10,11 @@
 .ts-form-group.vt_save_search .ts-filter.ts-popup-target {
     width: 100% !important;
     max-width: 100% !important;
+    justify-content: center;
+}
+
+.ts-form-group.vt_save_search .ts-filter.ts-popup-target svg {
+    fill: currentColor;
 }
 
 .vt_save_search.hidden {
