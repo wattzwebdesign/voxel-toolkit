@@ -283,6 +283,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Saved Search**: Fixed infinite page refresh loop when loading a saved search
 - **Load Search Popup Styling**: Fixed popup to use Voxel CSS variables for proper theming (dark mode support)
 - **Add Category**: Fixed "Add new" button not showing in popup mode on some sites, improved detection logic
+- **Advanced Phone Input**: Fixed breaking Mapbox maps on archive pages (url.includes error)
 
 ### Added
 - **AI Bot Panel Behavior**: New setting to choose between "Push content" (default) or "Overlay content" when panel opens
