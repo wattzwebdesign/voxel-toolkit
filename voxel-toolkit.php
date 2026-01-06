@@ -387,6 +387,7 @@ class Voxel_Toolkit {
             'includes/functions/class-featured-posts.php',
             'includes/functions/class-sms-notifications.php', // Loads AJAX handlers early
             'includes/functions/class-field-columns.php', // Field column picker (always on)
+            'includes/functions/class-plugin-stats.php', // Anonymous usage stats (opt-out available)
             'includes/dynamic-tags/class-dynamic-tags.php'
             // Note: order-by-manager is loaded at top level before theme config
         );
@@ -436,6 +437,11 @@ class Voxel_Toolkit {
             // Initialize Field Columns (always on - adds column picker to post field settings)
             if (class_exists('Voxel_Toolkit_Field_Columns')) {
                 new Voxel_Toolkit_Field_Columns();
+            }
+
+            // Initialize Plugin Stats (anonymous usage stats - opt-out available)
+            if (class_exists('Voxel_Toolkit_Plugin_Stats')) {
+                Voxel_Toolkit_Plugin_Stats::instance();
             }
 
             // Add hook to refresh Elementor widget cache on init
