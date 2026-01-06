@@ -491,13 +491,82 @@ class Voxel_Toolkit_Promotion_Create_Form {
      * Get currency from Voxel settings
      */
     private function get_currency() {
-        // Try to get from Voxel settings
-        if (function_exists('\Voxel\get') && method_exists('\Voxel\Stripe', 'get_currency')) {
-            return \Voxel\Stripe::get_currency();
+        // Use Voxel's get_primary_currency function
+        if (function_exists('\Voxel\get_primary_currency')) {
+            $currency = \Voxel\get_primary_currency();
+            if ($currency) {
+                return $currency;
+            }
         }
 
-        // Fallback
+        // Fallback: try to read from voxel:payments option directly
+        $payments = get_option('voxel:payments', '');
+        if (is_string($payments) && !empty($payments)) {
+            $payments = json_decode($payments, true);
+        }
+        if (is_array($payments) && isset($payments['stripe']['currency'])) {
+            return $payments['stripe']['currency'];
+        }
+
+        // Ultimate fallback
         return 'USD';
+    }
+
+    /**
+     * Get currency symbol
+     */
+    private function get_currency_symbol() {
+        // Try Voxel's currency class first
+        if (class_exists('\Voxel\Utils\Currency')) {
+            $currency = $this->get_currency();
+            $currency_data = \Voxel\Utils\Currency::get($currency);
+            if ($currency_data && isset($currency_data['symbol'])) {
+                return $currency_data['symbol'];
+            }
+        }
+
+        // Fallback symbols
+        $currency = $this->get_currency();
+        $symbols = array(
+            'USD' => '$',
+            'EUR' => '€',
+            'GBP' => '£',
+            'AUD' => 'A$',
+            'CAD' => 'C$',
+            'JPY' => '¥',
+            'CNY' => '¥',
+            'CHF' => 'CHF',
+            'SEK' => 'kr',
+            'NOK' => 'kr',
+            'DKK' => 'kr',
+            'NZD' => 'NZ$',
+            'SGD' => 'S$',
+            'HKD' => 'HK$',
+            'MXN' => 'MX$',
+            'BRL' => 'R$',
+            'INR' => '₹',
+            'RUB' => '₽',
+            'ZAR' => 'R',
+            'PLN' => 'zł',
+            'CZK' => 'Kč',
+            'HUF' => 'Ft',
+            'ILS' => '₪',
+            'THB' => '฿',
+            'MYR' => 'RM',
+            'PHP' => '₱',
+            'TWD' => 'NT$',
+            'KRW' => '₩',
+            'TRY' => '₺',
+            'AED' => 'د.إ',
+            'SAR' => '﷼',
+        );
+
+        if (isset($symbols[strtoupper($currency)])) {
+            return $symbols[strtoupper($currency)];
+        }
+
+        // Return currency code as fallback
+        return strtoupper($currency);
     }
 
     /**
@@ -508,23 +577,24 @@ class Voxel_Toolkit_Promotion_Create_Form {
             $currency = $this->get_currency();
         }
 
-        // Use Voxel's price formatting if available
-        if (function_exists('\Voxel\Stripe::format_amount')) {
-            return \Voxel\Stripe::format_amount($amount);
+        // Use Voxel's currency_format function (amount is NOT in cents)
+        if (function_exists('\Voxel\currency_format')) {
+            return \Voxel\currency_format($amount, $currency, false);
         }
 
-        // Simple fallback formatting
-        $symbol = '$';
-        $symbols = array(
-            'USD' => '$',
-            'EUR' => '€',
-            'GBP' => '£',
-            'AUD' => 'A$',
-            'CAD' => 'C$',
+        // Fallback: Check if zero-decimal currency
+        $zero_decimal_currencies = array(
+            'BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA',
+            'PYG', 'RWF', 'UGX', 'VND', 'VUV', 'XAF', 'XOF', 'XPF'
         );
+        $is_zero_decimal = in_array(strtoupper($currency), $zero_decimal_currencies);
 
-        if (isset($symbols[strtoupper($currency)])) {
-            $symbol = $symbols[strtoupper($currency)];
+        // Get symbol
+        $symbol = $this->get_currency_symbol();
+
+        // Format based on currency type
+        if ($is_zero_decimal) {
+            return $symbol . ' ' . number_format($amount, 0);
         }
 
         return $symbol . number_format($amount, 2);
@@ -587,6 +657,10 @@ class Voxel_Toolkit_Promotion_Create_Form {
         // Voxel uses its own AJAX system at /?vx=1
         $voxel_ajax_url = add_query_arg('vx', '1', home_url('/'));
         $widgets_config = wp_json_encode($this->promotion_widgets);
+        $currency = $this->get_currency();
+        $currency_symbol = $this->get_currency_symbol();
+        $zero_decimal_currencies = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'UGX', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+        $is_zero_decimal = in_array(strtoupper($currency), $zero_decimal_currencies);
         ?>
         <script>
         (function() {
@@ -594,6 +668,8 @@ class Voxel_Toolkit_Promotion_Create_Form {
 
             // Widget configurations from PHP
             const vtPromotionWidgets = <?php echo $widgets_config; ?>;
+            const vtCurrencySymbol = '<?php echo esc_js($currency_symbol); ?>';
+            const vtIsZeroDecimal = <?php echo $is_zero_decimal ? 'true' : 'false'; ?>;
 
             // Store selected promotion globally
             window.vtSelectedPromotion = null;
@@ -828,13 +904,21 @@ class Voxel_Toolkit_Promotion_Create_Form {
 
                 // Preview mode - use dummy packages for styling
                 if (isPreview) {
+                    // Format price based on currency type
+                    function formatPreviewPrice(amount) {
+                        if (vtIsZeroDecimal) {
+                            return vtCurrencySymbol + ' ' + Math.round(amount);
+                        }
+                        return vtCurrencySymbol + amount.toFixed(2);
+                    }
+
                     const dummyPackages = [
                         {
                             key: 'preview-basic',
                             label: '<?php echo esc_js(__('Basic', 'voxel-toolkit')); ?>',
                             description: '<?php echo esc_js(__('Great for getting started', 'voxel-toolkit')); ?>',
                             duration: { type: 'days', amount: 7 },
-                            formatted_price: '$9.99',
+                            formatted_price: formatPreviewPrice(10),
                             color: '#3b82f6'
                         },
                         {
@@ -842,7 +926,7 @@ class Voxel_Toolkit_Promotion_Create_Form {
                             label: '<?php echo esc_js(__('Pro', 'voxel-toolkit')); ?>',
                             description: '<?php echo esc_js(__('Maximum visibility for your listing', 'voxel-toolkit')); ?>',
                             duration: { type: 'days', amount: 30 },
-                            formatted_price: '$29.99',
+                            formatted_price: formatPreviewPrice(30),
                             color: '#8b5cf6'
                         },
                         {
@@ -850,7 +934,7 @@ class Voxel_Toolkit_Promotion_Create_Form {
                             label: '<?php echo esc_js(__('Premium', 'voxel-toolkit')); ?>',
                             description: '<?php echo esc_js(__('Best value for serious sellers', 'voxel-toolkit')); ?>',
                             duration: { type: 'days', amount: 90 },
-                            formatted_price: '$79.99',
+                            formatted_price: formatPreviewPrice(80),
                             color: '#f59e0b'
                         }
                     ];
