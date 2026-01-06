@@ -1193,6 +1193,126 @@ class Voxel_Toolkit_Saved_Search {
             ]
         );
 
+        // Popup Styling
+        $element->add_control(
+            'vt_ls_popup_heading',
+            [
+                'label' => __('Popup Styling', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_bg',
+            [
+                'label' => __('Popup Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-load-search-popup .ts-sticky-top' => 'background: {{VALUE}};',
+                    '{{WRAPPER}} .vt-load-search-list' => 'background: {{VALUE}};',
+                    '{{WRAPPER}} .vt-load-search-item' => 'background: {{VALUE}};',
+                    '{{WRAPPER}} .vt-load-search-empty' => 'background: {{VALUE}};',
+                    '{{WRAPPER}} .vt-load-search-loading' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_text_color',
+            [
+                'label' => __('Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-load-search-title' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .vt-load-search-popup .ts-sticky-top input' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_meta_color',
+            [
+                'label' => __('Meta Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-load-search-meta' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .vt-load-search-empty' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .vt-load-search-popup .ts-sticky-top input::placeholder' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_border_color',
+            [
+                'label' => __('Border Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-load-search-popup .ts-sticky-top' => 'border-bottom-color: {{VALUE}};',
+                    '{{WRAPPER}} .vt-load-search-item' => 'border-bottom-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_hover_bg',
+            [
+                'label' => __('Item Hover Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-load-search-item:hover' => 'background: {{VALUE}};',
+                    '{{WRAPPER}} .vt-load-search-item.vt-active' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_input_bg',
+            [
+                'label' => __('Search Input Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-load-search-popup .ts-sticky-top .ts-input-icon' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_icon_bg',
+            [
+                'label' => __('Icon Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-load-search-icon' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_icon_color',
+            [
+                'label' => __('Icon Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-load-search-icon' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .vt-load-search-icon svg' => 'fill: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_check_color',
+            [
+                'label' => __('Active Check Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-load-search-check' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .vt-load-search-check svg' => 'fill: {{VALUE}};',
+                ],
+            ]
+        );
+
         $element->end_controls_section();
     }
 

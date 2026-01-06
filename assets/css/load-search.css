@@ -48,15 +48,45 @@
     flex-shrink: 0;
 }
 
-/* Popup styles */
+/* Popup styles - use Voxel CSS variables for theming */
 .vt-load-search-popup {
     min-width: 280px;
     max-width: 320px;
 }
 
+/* Sticky search header */
+.vt-load-search-popup .ts-sticky-top {
+    background: var(--ts-shade-8, #fff);
+    border-bottom: 1px solid var(--ts-shade-5, #e5e7eb);
+}
+
+.vt-load-search-popup .ts-sticky-top .ts-input-icon {
+    background: var(--ts-shade-7, #f5f5f5);
+    border-radius: 8px;
+    margin: 0;
+    padding: 0 12px;
+}
+
+.vt-load-search-popup .ts-sticky-top .ts-input-icon svg {
+    fill: var(--ts-shade-3, #888);
+    width: 18px;
+    height: 18px;
+}
+
+.vt-load-search-popup .ts-sticky-top input {
+    background: transparent;
+    color: var(--ts-shade-1, #333);
+    font-size: 14px;
+}
+
+.vt-load-search-popup .ts-sticky-top input::placeholder {
+    color: var(--ts-shade-3, #888);
+}
+
 .vt-load-search-list {
     max-height: 300px;
     overflow-y: auto;
+    background: var(--ts-shade-8, #fff);
 }
 
 /* Search items */
@@ -68,6 +98,7 @@
     cursor: pointer;
     transition: background 0.15s ease;
     border-bottom: 1px solid var(--ts-shade-6, #eee);
+    background: var(--ts-shade-8, #fff);
 }
 
 .vt-load-search-item:last-child {
@@ -85,10 +116,12 @@
 .vt-load-search-item.vt-clear-item {
     border-bottom: 2px solid var(--ts-shade-5, #ddd);
     color: var(--ts-shade-2, #666);
+    background: var(--ts-shade-8, #fff);
 }
 
 .vt-load-search-item.vt-clear-item:hover {
     color: var(--ts-shade-1, #333);
+    background: var(--ts-shade-7, #f5f5f5);
 }
 
 /* Icon */
@@ -101,6 +134,7 @@
     justify-content: center;
     background: var(--ts-shade-7, #f5f5f5);
     border-radius: 8px;
+    color: var(--ts-shade-2, #666);
 }
 
 .vt-load-search-icon svg {
@@ -111,6 +145,7 @@
 
 .vt-clear-item .vt-load-search-icon {
     background: var(--ts-shade-6, #eee);
+    color: var(--ts-shade-2, #666);
 }
 
 /* Content */
@@ -156,6 +191,7 @@
     text-align: center;
     color: var(--ts-shade-3, #888);
     font-size: 14px;
+    background: var(--ts-shade-8, #fff);
 }
 
 /* Loading state */
@@ -164,6 +200,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    background: var(--ts-shade-8, #fff);
 }
 
 /* Center align button content */
