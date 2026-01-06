@@ -64,6 +64,9 @@ class Voxel_Toolkit_Add_Category {
 
         // Hook into ALL database queries to filter Voxel's direct SQL queries
         add_filter('query', array($this, 'filter_voxel_term_queries'));
+
+        // Elementor controls for styling - add new section after post types section
+        add_action('elementor/element/ts-create-post/ts_sf_post_types/after_section_end', array($this, 'register_elementor_controls'), 10, 2);
     }
 
     /**
@@ -776,6 +779,230 @@ class Voxel_Toolkit_Add_Category {
         $events[$term_approved->get_key()] = $term_approved;
 
         return $events;
+    }
+
+    /**
+     * Register Elementor controls for Add Category button styling
+     */
+    public function register_elementor_controls($element, $args) {
+        $element->start_controls_section(
+            'vt_add_category_section',
+            [
+                'label' => __('Add Category (VT)', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $element->add_control(
+            'vt_add_category_heading',
+            [
+                'label' => __('Add New Button', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+            ]
+        );
+
+        $element->add_control(
+            'vt_add_category_bg',
+            [
+                'label' => __('Background Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-add-term-trigger .vt-add-term-btn' => 'background: {{VALUE}};',
+                    '.vt-add-term-trigger .vt-add-term-btn' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_add_category_text_color',
+            [
+                'label' => __('Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-add-term-trigger .vt-add-term-btn' => 'color: {{VALUE}};',
+                    '.vt-add-term-trigger .vt-add-term-btn' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_add_category_icon_bg',
+            [
+                'label' => __('Icon Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-add-term-trigger .vt-add-icon' => 'background: {{VALUE}};',
+                    '.vt-add-term-trigger .vt-add-icon' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_add_category_icon_color',
+            [
+                'label' => __('Icon Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-add-term-trigger .vt-add-icon' => 'color: {{VALUE}};',
+                    '.vt-add-term-trigger .vt-add-icon' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_add_category_hover_bg',
+            [
+                'label' => __('Hover Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-add-term-trigger .vt-add-term-btn:hover' => 'background: {{VALUE}};',
+                    '.vt-add-term-trigger .vt-add-term-btn:hover' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_add_category_padding',
+            [
+                'label' => __('Padding', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', 'em'],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-add-term-trigger .vt-add-term-btn' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                    '.vt-add-term-trigger .vt-add-term-btn' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_add_category_border_radius',
+            [
+                'label' => __('Border Radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 50,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-add-term-trigger .vt-add-term-btn' => 'border-radius: {{SIZE}}{{UNIT}};',
+                    '.vt-add-term-trigger .vt-add-term-btn' => 'border-radius: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'vt_add_category_typography',
+                'label' => __('Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt-add-term-trigger .vt-add-term-btn, .vt-add-term-trigger .vt-add-term-btn',
+            ]
+        );
+
+        // Form styling
+        $element->add_control(
+            'vt_add_category_form_heading',
+            [
+                'label' => __('Add Category Form', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $element->add_control(
+            'vt_add_category_input_bg',
+            [
+                'label' => __('Input Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-add-term-form input[type="text"]' => 'background: {{VALUE}} !important;',
+                    '{{WRAPPER}} .vt-add-term-form textarea' => 'background: {{VALUE}} !important;',
+                    '.vt-add-term-form input[type="text"]' => 'background: {{VALUE}} !important;',
+                    '.vt-add-term-form textarea' => 'background: {{VALUE}} !important;',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_add_category_input_text',
+            [
+                'label' => __('Input Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-add-term-form input[type="text"]' => 'color: {{VALUE}} !important;',
+                    '{{WRAPPER}} .vt-add-term-form textarea' => 'color: {{VALUE}} !important;',
+                    '.vt-add-term-form input[type="text"]' => 'color: {{VALUE}} !important;',
+                    '.vt-add-term-form textarea' => 'color: {{VALUE}} !important;',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_add_category_input_border',
+            [
+                'label' => __('Input Border Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-add-term-form input[type="text"]' => 'border-color: {{VALUE}} !important;',
+                    '{{WRAPPER}} .vt-add-term-form textarea' => 'border-color: {{VALUE}} !important;',
+                    '.vt-add-term-form input[type="text"]' => 'border-color: {{VALUE}} !important;',
+                    '.vt-add-term-form textarea' => 'border-color: {{VALUE}} !important;',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_add_category_submit_bg',
+            [
+                'label' => __('Submit Button Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-add-term-submit' => 'background: {{VALUE}};',
+                    '.vt-add-term-submit' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_add_category_submit_color',
+            [
+                'label' => __('Submit Button Text', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-add-term-submit' => 'color: {{VALUE}};',
+                    '.vt-add-term-submit' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_add_category_cancel_bg',
+            [
+                'label' => __('Cancel Button Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-add-term-cancel' => 'background: {{VALUE}};',
+                    '.vt-add-term-cancel' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_add_category_cancel_color',
+            [
+                'label' => __('Cancel Button Text', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-add-term-cancel' => 'color: {{VALUE}};',
+                    '.vt-add-term-cancel' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->end_controls_section();
     }
 }
 

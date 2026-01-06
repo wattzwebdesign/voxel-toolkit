@@ -141,6 +141,34 @@
 }
 
 /* Inline mode adjustments */
+.vt-add-term-inline {
+    margin-top: 12px;
+    padding: 0;
+    border-top: 1px solid var(--ts-shade-5, #e5e7eb);
+    padding-top: 12px;
+}
+
+.vt-add-term-inline .vt-add-term-trigger .vt-add-term-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+    background: var(--ts-shade-7, #f5f5f7);
+}
+
+.vt-add-term-inline .vt-add-term-trigger .vt-add-term-btn:hover {
+    background: var(--ts-shade-6, #eeeef0);
+}
+
+.vt-add-term-inline .vt-add-term-trigger .vt-add-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+}
+
+.vt-add-term-inline .vt-add-term-form-inner {
+    padding: 0;
+}
+
+/* Legacy inline terms wrapper support */
 .inline-terms-wrapper .vt-add-term-wrapper {
     margin-bottom: 10px;
     padding: 0;
@@ -156,6 +184,45 @@
     width: 18px;
     height: 18px;
     font-size: 12px;
+}
+
+/* Dark mode support */
+.vt-add-term-trigger .vt-add-term-btn {
+    background: var(--ts-shade-7, #f5f5f7);
+    color: var(--ts-accent-1, #4361ee);
+}
+
+.vt-add-term-trigger .vt-add-term-btn:hover {
+    background: var(--ts-shade-6, #eeeef0);
+}
+
+.vt-add-term-trigger .vt-add-icon {
+    background: var(--ts-accent-1, #4361ee);
+}
+
+.vt-add-term-form input[type="text"],
+.vt-add-term-form textarea {
+    background: var(--ts-shade-8, #fff) !important;
+    border-color: var(--ts-shade-5, #e0e0e0) !important;
+    color: var(--ts-shade-1, #1a1a2e) !important;
+}
+
+.vt-add-term-form input[type="text"]::placeholder,
+.vt-add-term-form textarea::placeholder {
+    color: var(--ts-shade-3, #999) !important;
+}
+
+.vt-add-term-cancel {
+    background: var(--ts-shade-7, #f5f5f7);
+    color: var(--ts-shade-2, #666);
+}
+
+.vt-add-term-cancel:hover {
+    background: var(--ts-shade-6, #eeeef0);
+}
+
+.vt-add-term-submit {
+    background: var(--ts-accent-1, #4361ee);
 }
 
 
