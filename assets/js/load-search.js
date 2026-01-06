@@ -44,6 +44,9 @@ document.addEventListener("voxel/search-form/init", (e) => {
             };
         },
         computed: {
+            widget_id() {
+                return this.config?.widgetId || 'vt_load_search';
+            },
             filteredSearches() {
                 if (!this.searchQuery) {
                     return this.searches.filter(s => s.post_type?.id === this.$root.post_type?.key);

@@ -36,6 +36,11 @@ document.addEventListener("voxel/search-form/init", (e) => {
                 breakpoint: this.$root.breakpoint,
             };
         },
+        computed: {
+            widget_id() {
+                return this.config?.widgetId || 'vt_save_search';
+            }
+        },
         mounted() {
             if (!this.config?.enable) return;
 
