@@ -298,7 +298,17 @@
         // Hook fetch
         var originalFetch = window.fetch;
         window.fetch = function(url, options) {
-            if (url && (url.includes('vx=create_post') || url.includes('action=create_post'))) {
+            // Convert url to string for checking (url can be string, URL object, or Request object)
+            var urlString = '';
+            if (typeof url === 'string') {
+                urlString = url;
+            } else if (url instanceof URL) {
+                urlString = url.href;
+            } else if (url instanceof Request) {
+                urlString = url.url;
+            }
+
+            if (urlString && (urlString.includes('vx=create_post') || urlString.includes('action=create_post'))) {
                 if (options && options.body) {
                     options.body = injectCountryCodes(options.body);
                 }
