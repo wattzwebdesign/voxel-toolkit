@@ -14,6 +14,56 @@
     const i18n = config.i18n || {};
     const fieldConfigs = config.field_configs || {};
 
+    // Track the last clicked taxonomy form group (for teleported popups)
+    let lastClickedTaxonomyFormGroup = null;
+
+    /**
+     * Setup click tracking for taxonomy popup triggers
+     * This helps us identify which form group opened a teleported popup
+     */
+    function setupClickTracking() {
+        // Delegate click event on popup triggers within create post forms
+        document.addEventListener('click', function(e) {
+            // Check if clicked element or its parent is a popup trigger
+            const popupTrigger = e.target.closest('.ts-popup-target, [data-popup], .ts-filter-trigger');
+            if (!popupTrigger) return;
+
+            // Find the form group containing this trigger
+            const formGroup = popupTrigger.closest('.ts-form-group');
+            if (!formGroup) return;
+
+            // Check if this is in a create post form
+            const createPostForm = formGroup.closest('.ts-create-post, .ts-form.create-post-form, [data-post-type]');
+            if (!createPostForm) return;
+
+            // Get field key and check if it's a taxonomy field with add_terms enabled
+            const fieldKey = getFieldKeyFromFormGroup(formGroup);
+            const postType = getFormPostType(formGroup);
+
+            if (fieldKey) {
+                // Check if this field has add_terms enabled (using compound key or fallback)
+                const configKey = getConfigKey(postType, fieldKey);
+                let hasAddTerms = false;
+
+                if (configKey && fieldConfigs[configKey] && fieldConfigs[configKey].allow_add_terms) {
+                    hasAddTerms = true;
+                } else {
+                    // Fallback: search all configs for matching field_key
+                    for (const key in fieldConfigs) {
+                        if (fieldConfigs[key].field_key === fieldKey && fieldConfigs[key].allow_add_terms) {
+                            hasAddTerms = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (hasAddTerms) {
+                    lastClickedTaxonomyFormGroup = formGroup;
+                }
+            }
+        }, true); // Use capture phase to catch clicks early
+    }
+
     /**
      * Check if any taxonomy field allows adding terms
      */
@@ -33,6 +83,9 @@
         if (!hasAnyAddTermsEnabled()) {
             return;
         }
+
+        // Setup click tracking for teleported popups
+        setupClickTracking();
 
         // Watch for taxonomy popups and inline displays
         observeTaxonomyFields();
@@ -64,12 +117,12 @@
                         }, 100);
                     });
 
-                    // Check for inline term lists
+                    // Check for inline term lists (inline-terms-wrapper or ts-inline-filter)
                     let inlineFields = [];
-                    if (node.classList && node.classList.contains('ts-term-field-inline')) {
+                    if (node.classList && (node.classList.contains('inline-terms-wrapper') || node.classList.contains('ts-inline-filter'))) {
                         inlineFields = [node];
                     } else if (node.querySelectorAll) {
-                        inlineFields = node.querySelectorAll('.ts-term-field-inline');
+                        inlineFields = node.querySelectorAll('.inline-terms-wrapper, .ts-inline-filter');
                     }
 
                     inlineFields.forEach(function(inlineField) {
@@ -91,19 +144,40 @@
      * Scan for existing fields on page
      */
     function scanExistingFields() {
-        // Scan popups
-        document.querySelectorAll('.ts-term-dropdown').forEach(function(dropdown) {
-            handlePopupDropdown(dropdown);
-        });
+        // Only scan within create post forms
+        const createForms = document.querySelectorAll('.ts-create-post, .ts-form.create-post-form');
 
-        // Scan inline fields
-        document.querySelectorAll('.ts-term-field-inline').forEach(function(inlineField) {
-            handleInlineField(inlineField);
-        });
+        if (createForms.length === 0) {
+            return;
+        }
 
-        // Scan form groups that might contain taxonomy fields
-        document.querySelectorAll('.ts-form-group').forEach(function(formGroup) {
-            checkFormGroupForTaxonomy(formGroup);
+        createForms.forEach(function(form) {
+            // Scan popups within form
+            form.querySelectorAll('.ts-term-dropdown').forEach(function(dropdown) {
+                handlePopupDropdown(dropdown);
+            });
+
+            // Scan inline fields with expanded selectors
+            const inlineSelectors = [
+                '.inline-terms-wrapper',
+                '.ts-inline-filter',
+                '.ts-checkbox-container',
+                '.ts-radio-container',
+                '.ts-term-list',
+                '.ts-filter-options',
+                '[data-field-type="taxonomy"]'
+            ].join(', ');
+
+            const inlineFields = form.querySelectorAll(inlineSelectors);
+            inlineFields.forEach(function(inlineField) {
+                handleInlineField(inlineField);
+            });
+
+            // Scan ALL form groups to find taxonomy fields
+            const formGroups = form.querySelectorAll('.ts-form-group');
+            formGroups.forEach(function(formGroup) {
+                checkFormGroupForTaxonomy(formGroup);
+            });
         });
     }
 
@@ -111,25 +185,30 @@
      * Check if a form group contains a taxonomy field that allows adding
      */
     function checkFormGroupForTaxonomy(formGroup) {
+        const fieldKey = getFieldKeyFromFormGroup(formGroup);
+
         // Skip if already processed
         if (formGroup.querySelector('.vt-add-term-wrapper')) {
             return;
         }
 
         // Check if this is inside a create post form
-        const createPostForm = formGroup.closest('.ts-create-post, .ts-form.create-post-form, [data-post-type]');
+        const createPostForm = formGroup.closest('.ts-create-post, .ts-form.create-post-form');
         if (!createPostForm) {
             return;
         }
 
-        // Try to get taxonomy config from Vue component
+        // Try to get taxonomy config
         const taxonomyConfig = getTaxonomyConfigFromElement(formGroup);
+
         if (!taxonomyConfig || !taxonomyConfig.enabled) {
             return;
         }
 
-        // For inline display, inject directly into the form group
-        const termList = formGroup.querySelector('.ts-checkbox-container, .ts-radio-container, .ts-term-list');
+        // For inline display, find the term list container
+        const termListSelectors = '.ts-checkbox-container, .ts-radio-container, .ts-term-list, .inline-terms-wrapper ul, .ts-filter-options, .field-inlined-terms, ul.ts-term-list';
+        const termList = formGroup.querySelector(termListSelectors);
+
         if (termList && !termList.closest('.ts-field-popup')) {
             injectInlineAddTermUI(formGroup, termList, taxonomyConfig);
         }
@@ -156,6 +235,8 @@
             return;
         }
 
+        const fieldKey = getFieldKeyFromFormGroup(formGroup);
+
         // Check if this is inside a create post form
         const createPostForm = formGroup.closest('.ts-create-post, .ts-form.create-post-form, [data-post-type]');
         if (!createPostForm) {
@@ -175,7 +256,11 @@
      * Handle inline field display
      */
     function handleInlineField(inlineField) {
-        const formGroup = inlineField.closest('.ts-form-group');
+        // The inline field might BE the form group, or be inside one
+        let formGroup = inlineField;
+        if (!inlineField.classList.contains('ts-form-group')) {
+            formGroup = inlineField.closest('.ts-form-group');
+        }
         if (!formGroup) {
             return;
         }
@@ -187,57 +272,160 @@
      * Find the form group related to a popup dropdown
      */
     function findRelatedFormGroup(dropdown) {
-        // Check if dropdown is inside a form group
+        // Check if dropdown is inside a form group (non-teleported)
         let formGroup = dropdown.closest('.ts-form-group');
         if (formGroup) {
-            return formGroup;
+            // Verify it's in a create post form
+            const createPostForm = formGroup.closest('.ts-create-post, .ts-form.create-post-form');
+            if (createPostForm && getFieldKeyFromFormGroup(formGroup)) {
+                return formGroup;
+            }
         }
 
-        // For teleported popups, try to find by popup key or other means
+        // For teleported popups, try to find by popup key
         const popup = dropdown.closest('.ts-field-popup');
         if (popup) {
-            // Try to find the trigger element by various attributes
             const popupKey = popup.getAttribute('data-popup-key') || popup.getAttribute('data-key') || popup.id;
             if (popupKey) {
                 const trigger = document.querySelector(`[data-popup="${popupKey}"], [aria-controls="${popupKey}"], [data-target="${popupKey}"]`);
                 if (trigger) {
                     formGroup = trigger.closest('.ts-form-group');
                     if (formGroup) {
-                        return formGroup;
+                        const createPostForm = formGroup.closest('.ts-create-post, .ts-form.create-post-form');
+                        if (createPostForm && getFieldKeyFromFormGroup(formGroup)) {
+                            return formGroup;
+                        }
                     }
                 }
             }
         }
 
-        // Fallback: look for any active popup target in a taxonomy form group
-        const activeTargets = document.querySelectorAll('.ts-popup-target.ts-active, .ts-popup-target[aria-expanded="true"]');
-        for (const target of activeTargets) {
-            formGroup = target.closest('.ts-form-group');
-            if (formGroup && getTaxonomyConfigFromElement(formGroup)) {
-                return formGroup;
-            }
-        }
-
-        // Fallback: look for any form group with active state
-        const activeGroups = document.querySelectorAll('.ts-form-group.is-active, .ts-form-group:focus-within, .ts-form-group.ts-open');
-        for (const group of activeGroups) {
-            if (getTaxonomyConfigFromElement(group)) {
-                return group;
-            }
-        }
-
-        // Final fallback: find any taxonomy form group in a create post form
-        const createForms = document.querySelectorAll('.ts-create-post, .ts-form.create-post-form, [data-post-type]');
+        // Try finding by looking for open/active state on form groups
+        const createForms = document.querySelectorAll('.ts-create-post, .ts-form.create-post-form');
         for (const form of createForms) {
-            const groups = form.querySelectorAll('.ts-form-group');
-            for (const group of groups) {
-                const config = getTaxonomyConfigFromElement(group);
-                if (config && config.enabled) {
-                    return group;
+            // Look for form group with active popup state
+            const activeFormGroups = form.querySelectorAll('.ts-form-group.ts-active, .ts-form-group.popup-open, .ts-form-group[data-popup-open="true"]');
+            for (const fg of activeFormGroups) {
+                const fieldKey = getFieldKeyFromFormGroup(fg);
+                if (fieldKey) {
+                    // Search through all configs for matching field_key with allow_add_terms
+                    for (const key in fieldConfigs) {
+                        const cfg = fieldConfigs[key];
+                        if (cfg.field_key === fieldKey && cfg.allow_add_terms) {
+                            return fg;
+                        }
+                    }
                 }
             }
         }
 
+        // Fallback: use the last clicked taxonomy form group (for teleported popups)
+        if (lastClickedTaxonomyFormGroup) {
+            // Verify it's still valid (in DOM and has a field key)
+            if (document.body.contains(lastClickedTaxonomyFormGroup)) {
+                const fieldKey = getFieldKeyFromFormGroup(lastClickedTaxonomyFormGroup);
+                if (fieldKey) {
+                    return lastClickedTaxonomyFormGroup;
+                }
+            }
+        }
+
+        // No aggressive fallbacks - return null if we can't definitively find the form group
+        return null;
+    }
+
+    /**
+     * Get field key from form group's class name
+     */
+    function getFieldKeyFromFormGroup(formGroup) {
+        if (!formGroup) return null;
+
+        // Look for field-key-{key} class pattern - stop at space or period
+        const match = formGroup.className.match(/field-key-([^\s.]+)/);
+        if (match) {
+            return match[1];
+        }
+
+        // Try data attribute
+        return formGroup.getAttribute('data-field-key');
+    }
+
+    /**
+     * Get post type from the create post form
+     */
+    function getFormPostType(element) {
+        if (!element) return null;
+
+        // Find the create post form
+        const form = element.closest('.ts-create-post, .ts-form.create-post-form, [data-post-type]');
+        if (!form) return null;
+
+        // Try data-post-type attribute
+        if (form.dataset.postType) {
+            return form.dataset.postType;
+        }
+
+        // Try to find Vue component with post type info
+        let el = form;
+        while (el) {
+            // Vue 3
+            if (el.__vueParentComponent) {
+                const component = el.__vueParentComponent;
+                const postType = component.props?.postType ||
+                                 component.ctx?.postType ||
+                                 component.props?.post_type ||
+                                 component.ctx?.post_type;
+                if (postType) return postType;
+
+                // Check for config object
+                const config = component.props?.config || component.ctx?.config;
+                if (config && config.post_type) return config.post_type;
+
+                // Check for postType in exposed/setupState
+                if (component.exposed?.postType) return component.exposed.postType;
+                if (component.setupState?.postType) return component.setupState.postType;
+            }
+
+            // Vue 2
+            if (el.__vue__) {
+                const vue = el.__vue__;
+                if (vue.postType) return vue.postType;
+                if (vue.post_type) return vue.post_type;
+                if (vue.$props?.postType) return vue.$props.postType;
+                if (vue.$props?.post_type) return vue.$props.post_type;
+                if (vue.config?.post_type) return vue.config.post_type;
+
+                // Check $data
+                if (vue.$data?.postType) return vue.$data.postType;
+                if (vue.$data?.post_type) return vue.$data.post_type;
+            }
+
+            el = el.parentElement;
+        }
+
+        // Try to find from form action or hidden input
+        const hiddenInput = form.querySelector('input[name="post_type"], input[name="postType"]');
+        if (hiddenInput) return hiddenInput.value;
+
+        // Try to extract from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlPostType = urlParams.get('post_type') || urlParams.get('postType');
+        if (urlPostType) return urlPostType;
+
+        // Try to find from form ID or class
+        const formIdMatch = form.id?.match(/create-(\w+)-form/);
+        if (formIdMatch) return formIdMatch[1];
+
+        return null;
+    }
+
+    /**
+     * Get config key for lookup (compound key: postType:fieldKey)
+     */
+    function getConfigKey(postType, fieldKey) {
+        if (postType && fieldKey) {
+            return postType + ':' + fieldKey;
+        }
         return null;
     }
 
@@ -247,11 +435,35 @@
     function getTaxonomyConfigFromElement(element) {
         if (!element) return null;
 
-        // Walk up to find Vue component with field data
-        let el = element;
         let fieldKey = null;
-        let taxonomy = null;
+        let postType = null;
 
+        // Get the post type from the form
+        postType = getFormPostType(element);
+
+        // FIRST: Try to get field key from form group class (most reliable)
+        const formGroup = element.closest('.ts-form-group');
+        if (formGroup) {
+            fieldKey = getFieldKeyFromFormGroup(formGroup);
+
+            // If we got a field key AND post type, use compound key lookup
+            if (fieldKey && postType) {
+                const configKey = getConfigKey(postType, fieldKey);
+                if (configKey && fieldConfigs[configKey] && fieldConfigs[configKey].allow_add_terms) {
+                    const cfg = fieldConfigs[configKey];
+                    return {
+                        enabled: true,
+                        taxonomy: cfg.taxonomy,
+                        field_key: cfg.field_key || fieldKey,
+                        post_type: cfg.post_type,
+                        require_approval: cfg.require_approval
+                    };
+                }
+            }
+        }
+
+        // SECOND: Try Vue component props for vt_add_category
+        let el = element;
         while (el) {
             // Check Vue 3 style (__vueParentComponent)
             if (el.__vueParentComponent) {
@@ -262,12 +474,9 @@
                     if (field.props && field.props.vt_add_category) {
                         return field.props.vt_add_category;
                     }
-                    // Capture field key for fallback
-                    if (field.key) {
+                    // Capture field key
+                    if (field.key && !fieldKey) {
                         fieldKey = field.key;
-                    }
-                    if (field.props && field.props.taxonomy) {
-                        taxonomy = field.props.taxonomy;
                     }
                 }
             }
@@ -281,11 +490,8 @@
                     if (vue.field.props && vue.field.props.vt_add_category) {
                         return vue.field.props.vt_add_category;
                     }
-                    if (vue.field.key) {
+                    if (vue.field.key && !fieldKey) {
                         fieldKey = vue.field.key;
-                    }
-                    if (vue.field.props && vue.field.props.taxonomy) {
-                        taxonomy = vue.field.props.taxonomy;
                     }
                 }
 
@@ -294,76 +500,57 @@
                     if (vue.$props.field.props && vue.$props.field.props.vt_add_category) {
                         return vue.$props.field.props.vt_add_category;
                     }
-                    if (vue.$props.field.key) {
+                    if (vue.$props.field.key && !fieldKey) {
                         fieldKey = vue.$props.field.key;
                     }
                 }
 
-                // Check for field directly on component (some Voxel components)
-                if (vue.$data && vue.$data.field) {
-                    if (vue.$data.field.key) {
-                        fieldKey = vue.$data.field.key;
-                    }
+                // Check for field directly on component
+                if (vue.$data && vue.$data.field && vue.$data.field.key && !fieldKey) {
+                    fieldKey = vue.$data.field.key;
                 }
             }
 
             el = el.parentElement;
         }
 
-        // Fallback: try to match by form group data attributes or classes
-        const formGroup = element.closest('.ts-form-group');
-        if (formGroup) {
-            // Try various ways to get field key
-            if (!fieldKey) {
-                // Method 1: data-field-key attribute
-                fieldKey = formGroup.getAttribute('data-field-key');
-            }
-            if (!fieldKey) {
-                // Method 2: class pattern field-key-{key}
-                const fieldKeyMatch = formGroup.className.match(/field-key-([^\s]+)/);
-                if (fieldKeyMatch) {
-                    fieldKey = fieldKeyMatch[1];
+        // If we found a field key, check our configs with compound key
+        if (fieldKey) {
+            // Try compound key first (with post type)
+            if (postType) {
+                const configKey = getConfigKey(postType, fieldKey);
+                if (configKey && fieldConfigs[configKey] && fieldConfigs[configKey].allow_add_terms) {
+                    const cfg = fieldConfigs[configKey];
+                    return {
+                        enabled: true,
+                        taxonomy: cfg.taxonomy,
+                        field_key: cfg.field_key || fieldKey,
+                        post_type: cfg.post_type,
+                        require_approval: cfg.require_approval
+                    };
                 }
             }
-            if (!fieldKey) {
-                // Method 3: Look for input with name containing field key
-                const input = formGroup.querySelector('input[name], select[name]');
-                if (input && input.name) {
-                    const nameMatch = input.name.match(/\[([^\]]+)\]/);
-                    if (nameMatch) {
-                        fieldKey = nameMatch[1];
+
+            // Fallback: search all configs for matching field_key (for backwards compat)
+            for (const key in fieldConfigs) {
+                const cfg = fieldConfigs[key];
+                if (cfg.field_key === fieldKey && cfg.allow_add_terms) {
+                    // If we have a post type, verify it matches
+                    if (postType && cfg.post_type !== postType) {
+                        continue;
                     }
+                    return {
+                        enabled: true,
+                        taxonomy: cfg.taxonomy,
+                        field_key: cfg.field_key || fieldKey,
+                        post_type: cfg.post_type,
+                        require_approval: cfg.require_approval
+                    };
                 }
             }
         }
 
-        // If we found a field key, check our configs
-        if (fieldKey && fieldConfigs[fieldKey] && fieldConfigs[fieldKey].allow_add_terms) {
-            const cfg = fieldConfigs[fieldKey];
-            return {
-                enabled: true,
-                taxonomy: cfg.taxonomy,
-                field_key: fieldKey,
-                post_type: cfg.post_type,
-                require_approval: cfg.require_approval
-            };
-        }
-
-        // Final fallback: if there's only one taxonomy field with add terms enabled,
-        // assume this is the one
-        const enabledFields = Object.keys(fieldConfigs).filter(k => fieldConfigs[k].allow_add_terms);
-        if (enabledFields.length === 1) {
-            const key = enabledFields[0];
-            const cfg = fieldConfigs[key];
-            return {
-                enabled: true,
-                taxonomy: cfg.taxonomy,
-                field_key: key,
-                post_type: cfg.post_type,
-                require_approval: cfg.require_approval
-            };
-        }
-
+        // No aggressive fallbacks - require definitive field key match
         return null;
     }
 
@@ -577,8 +764,7 @@
                         showMessage(response.data.message || 'Error adding term', 'error');
                     }
                 },
-                error: function(xhr, status, error) {
-                    console.error('VT Add Category: AJAX error', error);
+                error: function() {
                     submitBtn.disabled = false;
                     submitBtn.textContent = i18n.add_button || 'Add';
                     showMessage('Network error. Please try again.', 'error');
@@ -651,5 +837,14 @@
     } else {
         init();
     }
+
+    // Additional delayed scans for Vue-rendered content
+    setTimeout(function() {
+        scanExistingFields();
+    }, 1500);
+
+    setTimeout(function() {
+        scanExistingFields();
+    }, 3000);
 
 })(jQuery);

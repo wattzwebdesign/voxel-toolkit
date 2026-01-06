@@ -262,6 +262,9 @@ class Voxel_Toolkit_Add_Category {
 
     /**
      * Get taxonomy field configurations from all Voxel post types
+     *
+     * Uses compound keys ({post_type}:{field_key}) to avoid collisions
+     * when multiple post types have fields with the same key.
      */
     private function get_taxonomy_field_configs() {
         $configs = [];
@@ -274,6 +277,7 @@ class Voxel_Toolkit_Add_Category {
 
         foreach ($post_types as $post_type) {
             $fields = $post_type->get_fields();
+            $post_type_key = $post_type->get_key();
 
             foreach ($fields as $field) {
                 if ($field->get_type() !== 'taxonomy') {
@@ -293,11 +297,15 @@ class Voxel_Toolkit_Add_Category {
 
                 $taxonomy = $field->get_prop('taxonomy');
 
-                $configs[$field_key] = [
+                // Use compound key to avoid collisions across post types
+                $config_key = $post_type_key . ':' . $field_key;
+
+                $configs[$config_key] = [
                     'allow_add_terms' => (bool) $allow_add_terms,
                     'require_approval' => (bool) $require_approval,
                     'taxonomy' => $taxonomy,
-                    'post_type' => $post_type->get_key(),
+                    'post_type' => $post_type_key,
+                    'field_key' => $field_key,
                 ];
             }
         }
