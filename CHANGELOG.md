@@ -282,10 +282,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **AI Bot Avatar Upload**: Fixed upload button not working in AI Bot settings
 - **Saved Search**: Fixed infinite page refresh loop when loading a saved search
 - **Load Search Popup Styling**: Fixed popup to use Voxel CSS variables for proper theming (dark mode support)
+- **Add Category**: Fixed "Add new" button not showing in popup mode on some sites, improved detection logic
 
 ### Added
 - **AI Bot Panel Behavior**: New setting to choose between "Push content" (default) or "Overlay content" when panel opens
 - **Load Search Popup Controls**: Added Elementor controls for popup customization (background, text colors, borders, hover states, icons)
+- **Add Category Inline Support**: Add Category now works with inline taxonomy display mode
+- **Add Category Styling**: Added Elementor controls in Create Post widget for styling the Add Category button and form
 
 
 ## [1.5.7] - 2025-12-07
