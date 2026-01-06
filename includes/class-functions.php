@@ -7012,11 +7012,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <div class="vt-warning-box">
                         <?php _e('Please configure your AI API key in the AI Settings tab to enable this feature.', 'voxel-toolkit'); ?>
                     </div>
-                    <?php return; ?>
                 <?php endif; ?>
             </div>
         </div>
 
+        <?php if ($ai_configured): ?>
         <?php
         // Get Voxel post types
         $voxel_post_types = array();
@@ -7151,6 +7151,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             });
         });
         </script>
+        <?php endif; ?>
         <?php
     }
 
@@ -7181,11 +7182,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <div class="vt-warning-box">
                         <?php _e('Please configure your AI API key in the AI Settings tab to enable this feature.', 'voxel-toolkit'); ?>
                     </div>
-                    <?php return; ?>
                 <?php endif; ?>
             </div>
         </div>
 
+        <?php if ($ai_configured): ?>
         <?php
         // Get Voxel post types
         $voxel_post_types = array();
@@ -7703,6 +7704,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             });
         });
         </script>
+        <?php endif; ?>
         <?php
     }
 
