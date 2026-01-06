@@ -574,6 +574,13 @@ class Voxel_Toolkit_Functions {
                 'icon' => 'dashicons-text',
                 'settings_callback' => array($this, 'render_timeline_reply_summary_settings'),
             ),
+            'timeline_pin' => array(
+                'name' => __('Pin Timeline Post', 'voxel-toolkit'),
+                'description' => __('Allow post authors to pin a timeline post to the top of their post\'s timeline feed.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Timeline_Pin',
+                'file' => 'functions/class-timeline-pin.php',
+                'icon' => 'dashicons-admin-post',
+            ),
             'ai_settings' => array(
                 'name' => __('AI Settings', 'voxel-toolkit'),
                 'description' => __('Central configuration for AI providers (OpenAI, Anthropic). Required for AI-powered features.', 'voxel-toolkit'),

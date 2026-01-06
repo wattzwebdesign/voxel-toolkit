@@ -1,0 +1,82 @@
+/**
+ * Timeline Pin Styles
+ *
+ * @package Voxel_Toolkit
+ */
+
+/* Pinned post container */
+.vxf-post.vt-pinned {
+    position: relative;
+    background-color: var(--vt-pinned-bg, rgba(var(--ts-accent-1-rgb), 0.05));
+    border: 1px solid var(--vt-pinned-border, rgba(var(--ts-accent-1-rgb), 0.2));
+    border-radius: 8px;
+}
+
+/* Pinned badge */
+.vt-pinned-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background-color: var(--ts-accent-1, #4361ee);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.vt-pinned-badge svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+}
+
+/* Pin icon next to actions */
+.vt-pin-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ts-accent-1, #4361ee);
+    margin-right: 8px;
+}
+
+.vt-pin-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Pin action in dropdown */
+.vt-pin-action a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vt-pin-action a:hover {
+    background-color: rgba(var(--ts-accent-1-rgb), 0.1);
+}
+
+/* Loading state */
+.vt-pin-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Animation for pin/unpin */
+.vxf-post.vt-pinned {
+    animation: vtPinHighlight 0.5s ease-out;
+}
+
+@keyframes vtPinHighlight {
+    0% {
+        transform: scale(1.02);
+        box-shadow: 0 0 20px rgba(var(--ts-accent-1-rgb), 0.3);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: none;
+    }
+}
