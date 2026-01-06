@@ -272,6 +272,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Load Search Button Styling**: Added full style controls for Load Search button (alignment, icon size, height, border radius, typography, colors, padding, margin, border, box shadow, hover states)
 - **Load Search Button Width**: Added button width control for Load Search button
+- **Active Search Indicator Styling**: Added size and color controls for the indicator dot that shows when a saved search is loaded
 
 
 ## [1.6.0.1] - 2026-01-05
