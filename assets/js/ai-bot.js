@@ -13,6 +13,108 @@
             messages: [],
             lastQuery: '', // Store last query for quick filters
             activeFilters: [], // Track active quick filters
+            userLocation: null, // User's location for "near me" queries
+        },
+
+        /**
+         * Get cookie value by name
+         */
+        getCookie: function(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) {
+                return parts.pop().split(";").shift();
+            }
+            return null;
+        },
+
+        /**
+         * Get user location from cookie or browser geolocation
+         */
+        getUserLocation: function(callback) {
+            var self = this;
+
+            // Already have location cached in state
+            if (this.state.userLocation) {
+                callback(this.state.userLocation);
+                return;
+            }
+
+            // Check vt_visitor_location cookie first (set by visitor-location.js)
+            var locationCookie = this.getCookie('vt_visitor_location');
+            if (locationCookie) {
+                try {
+                    var parsed = JSON.parse(decodeURIComponent(locationCookie));
+                    if (parsed && parsed.lat && parsed.lng) {
+                        self.state.userLocation = {
+                            lat: parsed.lat,
+                            lng: parsed.lng,
+                            city: parsed.city || '',
+                            state: parsed.state || '',
+                            source: 'cookie'
+                        };
+                        callback(self.state.userLocation);
+                        return;
+                    }
+                } catch (e) {
+                    // Invalid cookie, continue to browser geolocation
+                }
+            }
+
+            // Try browser geolocation
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(pos) {
+                        self.state.userLocation = {
+                            lat: pos.coords.latitude,
+                            lng: pos.coords.longitude,
+                            city: '',
+                            state: '',
+                            source: 'browser'
+                        };
+                        callback(self.state.userLocation);
+                    },
+                    function(error) {
+                        // Permission denied or error - try IP-based fallback
+                        self.getLocationByIP(callback);
+                    },
+                    { timeout: 5000, maximumAge: 300000 } // 5s timeout, cache for 5 minutes
+                );
+            } else {
+                // No geolocation support - try IP fallback
+                this.getLocationByIP(callback);
+            }
+        },
+
+        /**
+         * Get location by IP address (fallback)
+         */
+        getLocationByIP: function(callback) {
+            var self = this;
+
+            // Use ipapi.co for free IP geolocation (no API key needed, limited requests)
+            $.ajax({
+                url: 'https://ipapi.co/json/',
+                type: 'GET',
+                timeout: 5000,
+                success: function(data) {
+                    if (data && data.latitude && data.longitude) {
+                        self.state.userLocation = {
+                            lat: data.latitude,
+                            lng: data.longitude,
+                            city: data.city || '',
+                            state: data.region || '',
+                            source: 'ip'
+                        };
+                        callback(self.state.userLocation);
+                    } else {
+                        callback(null);
+                    }
+                },
+                error: function() {
+                    callback(null);
+                }
+            });
         },
 
         init: function() {
@@ -189,36 +291,52 @@
                 history = this.state.messages.slice(-maxHistory);
             }
 
-            // Send to server
+            // Send to server with location
             var self = this;
-            $.ajax({
-                url: this.config.ajaxUrl,
-                type: 'POST',
-                data: {
+
+            // Get user location and send request
+            this.getUserLocation(function(location) {
+                var requestData = {
                     action: 'vt_ai_bot_query',
-                    nonce: this.config.nonce,
+                    nonce: self.config.nonce,
                     message: message,
                     history: JSON.stringify(history),
-                },
-                success: function(response) {
-                    self.hideLoading();
-                    self.state.isLoading = false;
+                };
 
-                    if (response.success) {
-                        self.handleResponse(response.data);
-                    } else {
-                        var errorMsg = response.data?.message || self.config.i18n?.error || 'Something went wrong.';
-                        if (response.data?.rate_limited) {
-                            errorMsg = self.config.i18n?.rateLimit || 'Please wait a moment before asking again.';
-                        }
-                        self.addMessage('error', errorMsg);
-                    }
-                },
-                error: function() {
-                    self.hideLoading();
-                    self.state.isLoading = false;
-                    self.addMessage('error', self.config.i18n?.error || 'Something went wrong. Please try again.');
+                // Add location if available
+                if (location) {
+                    requestData.user_location = JSON.stringify(location);
                 }
+
+                $.ajax({
+                    url: self.config.ajaxUrl,
+                    type: 'POST',
+                    data: requestData,
+                    success: function(response) {
+                        self.hideLoading();
+                        self.state.isLoading = false;
+
+                        // Debug logging
+                        if (response.data && response.data.debug) {
+                            console.log('🤖 AI Bot Debug:', response.data.debug);
+                        }
+
+                        if (response.success) {
+                            self.handleResponse(response.data);
+                        } else {
+                            var errorMsg = response.data?.message || self.config.i18n?.error || 'Something went wrong.';
+                            if (response.data?.rate_limited) {
+                                errorMsg = self.config.i18n?.rateLimit || 'Please wait a moment before asking again.';
+                            }
+                            self.addMessage('error', errorMsg);
+                        }
+                    },
+                    error: function() {
+                        self.hideLoading();
+                        self.state.isLoading = false;
+                        self.addMessage('error', self.config.i18n?.error || 'Something went wrong. Please try again.');
+                    }
+                });
             });
         },
 
@@ -367,7 +485,7 @@
         showLoading: function() {
             var html = '<div class="vt-ai-bot-message vt-ai-bot-message-ai vt-ai-bot-loading-message">';
             html += '<div class="vt-ai-bot-loading">';
-            html += '<span class="vt-ai-bot-loading-text">AI is thinking</span>';
+            html += '<span class="vt-ai-bot-loading-text">' + (this.config.i18n?.thinking || 'AI is thinking') + '</span>';
             html += '<span class="vt-ai-bot-loading-dots">';
             html += '<span></span><span></span><span></span>';
             html += '</span>';

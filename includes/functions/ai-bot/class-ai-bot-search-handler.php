@@ -281,11 +281,17 @@ class Voxel_Toolkit_AI_Bot_Search_Handler {
 
     /**
      * Build system prompt for AI
+     *
+     * @param array|null $user_location User's location data with lat, lng, city, state
+     * @return string System prompt for AI
      */
-    public function build_system_prompt() {
+    public function build_system_prompt($user_location = null) {
         $schema = $this->get_search_schema();
         $site_name = get_bloginfo('name');
         $max_results = isset($this->settings['max_results']) ? absint($this->settings['max_results']) : 6;
+
+        // Build location context if available
+        $location_context = $this->build_location_context($user_location);
 
         // Use custom prompt if provided
         $custom_prompt = isset($this->settings['system_prompt']) ? $this->settings['system_prompt'] : '';
@@ -293,8 +299,8 @@ class Voxel_Toolkit_AI_Bot_Search_Handler {
         if (!empty($custom_prompt)) {
             // Replace placeholders in custom prompt
             $custom_prompt = str_replace(
-                array('{{site_name}}', '{{schema}}', '{{max_results}}'),
-                array($site_name, wp_json_encode($schema, JSON_PRETTY_PRINT), $max_results),
+                array('{{site_name}}', '{{schema}}', '{{max_results}}', '{{user_location}}'),
+                array($site_name, wp_json_encode($schema, JSON_PRETTY_PRINT), $max_results, $location_context),
                 $custom_prompt
             );
             return $custom_prompt;
@@ -307,7 +313,7 @@ class Voxel_Toolkit_AI_Bot_Search_Handler {
         }
 
         $prompt = "You are a helpful search assistant for {$site_name}. You help users find content including: " . implode(', ', $type_descriptions) . ".
-
+{$location_context}
 Available post types and their searchable filters:
 " . wp_json_encode($schema, JSON_PRETTY_PRINT) . "
 
@@ -335,30 +341,74 @@ Important rules:
 - For keyword searches, use the 'keywords' filter if available
 - The 'searches' array can contain multiple searches if needed
 - Maximum {$max_results} results per search
-- If you can't determine what to search, ask clarifying questions in the explanation and leave searches empty
+- CRITICAL: ALWAYS include a searches array with at least one search. NEVER leave searches empty.
+- If you're unsure which specific filter to use, use \"keywords\" or \"_content\" to search by the user's terms
 - Always respond with ONLY the JSON object, no additional text before or after
 - NEVER add comments in the JSON (no // or /* */ comments)
 - The JSON must be valid and parseable
+
+Handling \"related to\", \"about\", \"involving\" queries:
+- When users say something is \"related to X\", \"about X\", \"involving X\", or \"X-related\":
+  USE THE \"_search_all\" FILTER - it searches across ALL fields, taxonomies, and content automatically.
+- Example: \"health related\" should use \"_search_all\": \"health\"
+- Example: \"medical field\" should use \"_search_all\": \"medical\"
+- This is the most thorough way to find posts related to a topic.
 
 Special filters (prefixed with underscore):
 - \"_min_rating\": Minimum star rating (1-5). Example: 4 means \"4 stars and above\"
 - \"_min_reviews\": Minimum number of reviews. Example: 1 means \"has at least 1 review\"
 - \"_content\": Search within post title/content/excerpt. Example: \"wood fired\"
-- \"_field:field_key\": Search by any custom field value. Examples:
+- \"_search_all\": COMPREHENSIVE SEARCH - searches across ALL text fields, taxonomies, and content for matching text. Use this for \"related to\", \"about\", \"involving\" queries. Example: \"_search_all\": \"health\" will find posts where ANY field or taxonomy contains \"health\"
+- \"_field:field_key\": Search by any custom field value with advanced conditions:
+
+  Basic field searches:
   - \"_field:price\": {\"min\": 10, \"max\": 50} for number ranges
   - \"_field:is_featured\": true for boolean/switcher fields
   - \"_field:cuisine_type\": \"italian\" for text/select fields
 
+  Empty/Missing field searches (IMPORTANT for \"without\", \"missing\", \"no\", \"don't have\" queries):
+  - \"_field:website\": {\"empty\": true} - field is empty/blank/not set (use for \"without a website\", \"no website\", \"missing website\")
+  - \"_field:phone\": {\"not_empty\": true} - field has a value (use for \"has a phone\", \"with phone number\")
+
+  Negative/exclusion searches:
+  - \"_field:status\": {\"not_equals\": \"closed\"} - field does NOT equal this value
+  - \"_field:description\": {\"not_contains\": \"temporary\"} - field does NOT contain this text
+  - \"_field:name\": {\"contains\": \"medical\"} - field contains this text
+
+- \"_taxonomy:taxonomy_name\": Search by taxonomy/category/tag assignments:
+
+  Basic taxonomy searches:
+  - \"_taxonomy:category\": \"news\" - post has this specific term
+  - \"_taxonomy:insurance_types\": {\"has\": \"medicare\"} - post has this specific term
+
+  Empty/Missing taxonomy searches (for \"without any categories\", \"no tags\", \"uncategorized\"):
+  - \"_taxonomy:category\": {\"empty\": true} - post has NO terms assigned in this taxonomy
+  - \"_taxonomy:services\": {\"not_empty\": true} - post HAS at least one term assigned
+
+  Exclusion searches (for \"not in category\", \"exclude tag\"):
+  - \"_taxonomy:category\": {\"not_has\": \"archived\"} - post does NOT have this specific term
+  - \"_taxonomy:insurance\": {\"excludes\": \"out-of-network\"} - same as not_has
+
+  Multiple term searches:
+  - \"_taxonomy:amenities\": {\"any_of\": [\"wifi\", \"parking\", \"pool\"]} - has at least ONE of these terms
+  - \"_taxonomy:restrictions\": {\"none_of\": [\"members-only\", \"appointment-required\"]} - has NONE of these terms
+
+  Text matching in terms:
+  - \"_taxonomy:services\": {\"contains\": \"therapy\"} - any assigned term contains this text
+  - \"_taxonomy:tags\": {\"not_contains\": \"deprecated\"} - no assigned term contains this text
+
 Filters marked as \"indexed: true\" in the schema use fast database queries.
 Filters marked as \"indexed: false\" (special filters, custom fields) filter results after the main search.
 
-Example user question: \"Find Italian restaurants near downtown\"
-Example response:
+IMPORTANT: When users ask for items \"without\" something, \"missing\" something, or that \"don't have\" something, use {\"empty\": true} on the relevant field.
+
+Example 1 - Basic keyword and location search
+User question: \"Find Italian restaurants near downtown\"
 {
   \"explanation\": \"Looking for Italian restaurants in the downtown area.\",
   \"searches\": [
     {
-      \"post_type\": \"places\",
+      \"post_type\": \"USE_EXACT_KEY_FROM_SCHEMA\",
       \"filters\": {
         \"keywords\": \"Italian restaurant\",
         \"location\": {\"address\": \"downtown\", \"radius\": 5}
@@ -366,9 +416,176 @@ Example response:
       \"limit\": {$max_results}
     }
   ]
-}";
+}
+
+Example 2 - User question: \"Show me members without a website\"
+Response:
+{
+  \"explanation\": \"Searching for members who don't have a website listed.\",
+  \"searches\": [
+    {
+      \"post_type\": \"USE_EXACT_KEY_FROM_SCHEMA\",
+      \"filters\": {
+        \"_field:website\": {\"empty\": true}
+      },
+      \"limit\": {$max_results}
+    }
+  ]
+}
+
+CRITICAL: Always use the EXACT post_type key from the schema above. For example, if the schema shows \"member\" (singular), use \"member\" - NOT \"members\" (plural). The post_type must match exactly.
+
+Example 3 - Using empty field and taxonomy filters together
+User question: \"Find listings with phone numbers that are not closed\"
+{
+  \"explanation\": \"Searching for listings that have phone numbers and are not marked as closed.\",
+  \"searches\": [
+    {
+      \"post_type\": \"USE_EXACT_KEY_FROM_SCHEMA\",
+      \"filters\": {
+        \"_field:phone\": {\"not_empty\": true},
+        \"_field:status\": {\"not_equals\": \"closed\"}
+      },
+      \"limit\": {$max_results}
+    }
+  ]
+}
+
+Example 4 - Using taxonomy has/not_has
+User question: \"Show me listings that accept Medicare but not Medicaid\"
+{
+  \"explanation\": \"Searching for listings that accept Medicare but not Medicaid.\",
+  \"searches\": [
+    {
+      \"post_type\": \"USE_EXACT_KEY_FROM_SCHEMA\",
+      \"filters\": {
+        \"_taxonomy:insurance_types\": {\"has\": \"medicare\", \"not_has\": \"medicaid\"}
+      },
+      \"limit\": {$max_results}
+    }
+  ]
+}
+
+Example 5 - Combining rating, empty field, and location
+User question: \"Find 4 star listings near me that have no website\"
+{
+  \"explanation\": \"Searching for 4-star rated listings near your location without a website.\",
+  \"searches\": [
+    {
+      \"post_type\": \"USE_EXACT_KEY_FROM_SCHEMA\",
+      \"filters\": {
+        \"_min_rating\": 4,
+        \"_field:website\": {\"empty\": true},
+        \"location\": {\"address\": \"USER_LAT,USER_LNG\", \"radius\": 25}
+      },
+      \"limit\": {$max_results}
+    }
+  ]
+}
+
+Example 6 - Using _search_all for \"related to\" queries
+User question: \"narrow down to only listings with no websites who are health related\"
+{
+  \"explanation\": \"Searching for health-related listings without a website.\",
+  \"searches\": [
+    {
+      \"post_type\": \"USE_EXACT_KEY_FROM_SCHEMA\",
+      \"filters\": {
+        \"_field:website\": {\"empty\": true},
+        \"_search_all\": \"health\"
+      },
+      \"limit\": {$max_results}
+    }
+  ]
+}
+
+Example 7 - Combining empty field with taxonomy
+User question: \"show me organizations without a phone number\"
+{
+  \"explanation\": \"Searching for organizations without a phone number.\",
+  \"searches\": [
+    {
+      \"post_type\": \"USE_EXACT_KEY_FROM_SCHEMA\",
+      \"filters\": {
+        \"_field:phone\": {\"empty\": true},
+        \"_taxonomy:category\": {\"has\": \"organization\"}
+      },
+      \"limit\": {$max_results}
+    }
+  ]
+}
+
+Example 8 - Using _search_all with location
+User question: \"businesses in the medical field near me\"
+{
+  \"explanation\": \"Searching for medical-related businesses near your location.\",
+  \"searches\": [
+    {
+      \"post_type\": \"USE_EXACT_KEY_FROM_SCHEMA\",
+      \"filters\": {
+        \"_search_all\": \"medical\",
+        \"location\": {\"address\": \"USER_LAT,USER_LNG\", \"radius\": 25}
+      },
+      \"limit\": {$max_results}
+    }
+  ]
+}
+
+REMEMBER: Replace \"USE_EXACT_KEY_FROM_SCHEMA\" with the actual post_type key from the schema. Look at the schema above and use the exact key shown there.";
 
         return $prompt;
+    }
+
+    /**
+     * Build location context string for system prompt
+     *
+     * @param array|null $user_location User's location data
+     * @return string Location context for system prompt
+     */
+    private function build_location_context($user_location) {
+        if (empty($user_location) || empty($user_location['lat']) || empty($user_location['lng'])) {
+            return '';
+        }
+
+        $lat = $user_location['lat'];
+        $lng = $user_location['lng'];
+
+        // Build location name from city/state if available
+        $location_parts = array_filter(array(
+            isset($user_location['city']) ? $user_location['city'] : '',
+            isset($user_location['state']) ? $user_location['state'] : '',
+        ));
+
+        $location_name = !empty($location_parts)
+            ? implode(', ', $location_parts)
+            : "coordinates ({$lat}, {$lng})";
+
+        $location_source = isset($user_location['source']) ? $user_location['source'] : 'unknown';
+
+        $context = "
+USER LOCATION CONTEXT:
+The user's current location is: {$location_name} (lat: {$lat}, lng: {$lng}).
+Location source: {$location_source}
+
+When the user says 'near me', 'nearby', 'close to me', 'in my area', or similar location-relative phrases, use their location with the location filter.
+For 'near me' searches, format the location filter as: {\"address\": \"{$lat},{$lng}\", \"radius\": 25}
+You can adjust the radius based on context (e.g., smaller radius for 'very close' or 'walking distance', larger for 'in my area').
+
+Example: If user asks 'show me 4 star facilities near me', respond with:
+{
+  \"explanation\": \"Searching for 4-star rated facilities near your location in {$location_name}.\",
+  \"searches\": [
+    {
+      \"post_type\": \"facilities\",
+      \"filters\": {
+        \"location\": {\"address\": \"{$lat},{$lng}\", \"radius\": 25}
+      }
+    }
+  ]
+}
+";
+
+        return $context;
     }
 
     /**
@@ -540,6 +757,7 @@ Example response:
         $min_rating = isset($filters['_min_rating']) ? floatval($filters['_min_rating']) : 0;
         $min_reviews = isset($filters['_min_reviews']) ? intval($filters['_min_reviews']) : 0;
         $content_search = isset($filters['_content']) ? sanitize_text_field($filters['_content']) : '';
+        $search_all = isset($filters['_search_all']) ? sanitize_text_field($filters['_search_all']) : '';
 
         // Collect custom field filters
         $field_filters = array();
@@ -550,7 +768,16 @@ Example response:
             }
         }
 
-        error_log('VT AI Bot Search - Special filters: min_rating=' . $min_rating . ', min_reviews=' . $min_reviews . ', content=' . $content_search . ', field_filters=' . wp_json_encode($field_filters));
+        // Collect taxonomy filters
+        $taxonomy_filters = array();
+        foreach ($filters as $key => $value) {
+            if (strpos($key, '_taxonomy:') === 0) {
+                $taxonomy_key = substr($key, 10); // Remove '_taxonomy:' prefix
+                $taxonomy_filters[$taxonomy_key] = $value;
+            }
+        }
+
+        error_log('VT AI Bot Search - Special filters: min_rating=' . $min_rating . ', min_reviews=' . $min_reviews . ', content=' . $content_search . ', search_all=' . $search_all . ', field_filters=' . wp_json_encode($field_filters) . ', taxonomy_filters=' . wp_json_encode($taxonomy_filters));
 
         // Apply filters to each post
         $result_ids = array();
@@ -573,9 +800,19 @@ Example response:
                 $passes = $this->check_content_filter($post, $content_search);
             }
 
+            // Check search_all filter (comprehensive search across everything)
+            if ($passes && !empty($search_all)) {
+                $passes = $this->check_search_all($post_id, $post, $search_all, $post_type_key);
+            }
+
             // Check custom field filters
             if ($passes && !empty($field_filters)) {
                 $passes = $this->check_field_filters($post_id, $field_filters, $post_type_key);
+            }
+
+            // Check taxonomy filters
+            if ($passes && !empty($taxonomy_filters)) {
+                $passes = $this->check_taxonomy_filters($post_id, $taxonomy_filters);
             }
 
             if ($passes) {
@@ -584,6 +821,151 @@ Example response:
         }
 
         return $result_ids;
+    }
+
+    /**
+     * Check if post passes taxonomy filters
+     *
+     * @param int $post_id Post ID
+     * @param array $taxonomy_filters Taxonomy filters with conditions
+     * @return bool True if passes all filters
+     */
+    private function check_taxonomy_filters($post_id, $taxonomy_filters) {
+        foreach ($taxonomy_filters as $taxonomy => $filter_value) {
+            // Get terms assigned to this post for this taxonomy
+            $terms = wp_get_post_terms($post_id, $taxonomy, array('fields' => 'slugs'));
+
+            if (is_wp_error($terms)) {
+                $terms = array();
+            }
+
+            $has_terms = !empty($terms);
+
+            // Handle complex filter conditions
+            if (is_array($filter_value)) {
+                // Check for empty condition (post should have NO terms in this taxonomy)
+                if (isset($filter_value['empty'])) {
+                    $should_be_empty = ($filter_value['empty'] === true || $filter_value['empty'] === 'true' || $filter_value['empty'] === 1);
+                    if ($should_be_empty && $has_terms) {
+                        return false; // Should be empty but has terms
+                    }
+                    if (!$should_be_empty && !$has_terms) {
+                        return false; // Should have terms but is empty
+                    }
+                    continue; // Empty check passed
+                }
+
+                // Check for not_empty condition (post MUST have terms in this taxonomy)
+                if (isset($filter_value['not_empty'])) {
+                    $should_have_terms = ($filter_value['not_empty'] === true || $filter_value['not_empty'] === 'true' || $filter_value['not_empty'] === 1);
+                    if ($should_have_terms && !$has_terms) {
+                        return false; // Should have terms but doesn't
+                    }
+                }
+
+                // Check for 'has' condition (post must have this specific term)
+                if (isset($filter_value['has'])) {
+                    $required_term = strtolower(strval($filter_value['has']));
+                    $term_slugs_lower = array_map('strtolower', $terms);
+                    if (!in_array($required_term, $term_slugs_lower, true)) {
+                        return false; // Required term not found
+                    }
+                }
+
+                // Check for 'not_has' / 'excludes' condition (post must NOT have this specific term)
+                $exclude_term = isset($filter_value['not_has']) ? $filter_value['not_has'] : (isset($filter_value['excludes']) ? $filter_value['excludes'] : null);
+                if ($exclude_term !== null) {
+                    $excluded_term = strtolower(strval($exclude_term));
+                    $term_slugs_lower = array_map('strtolower', $terms);
+                    if (in_array($excluded_term, $term_slugs_lower, true)) {
+                        return false; // Excluded term found
+                    }
+                }
+
+                // Check for 'contains' condition (any term slug/name contains this text)
+                if (isset($filter_value['contains'])) {
+                    $search_text = strtolower(strval($filter_value['contains']));
+                    $found = false;
+                    foreach ($terms as $term_slug) {
+                        if (stripos($term_slug, $search_text) !== false) {
+                            $found = true;
+                            break;
+                        }
+                    }
+                    // Also check term names
+                    if (!$found) {
+                        $term_objects = wp_get_post_terms($post_id, $taxonomy);
+                        if (!is_wp_error($term_objects)) {
+                            foreach ($term_objects as $term_obj) {
+                                if (stripos($term_obj->name, $search_text) !== false) {
+                                    $found = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (!$found) {
+                        return false; // No matching term found
+                    }
+                }
+
+                // Check for 'not_contains' condition (no term should contain this text)
+                if (isset($filter_value['not_contains'])) {
+                    $search_text = strtolower(strval($filter_value['not_contains']));
+                    foreach ($terms as $term_slug) {
+                        if (stripos($term_slug, $search_text) !== false) {
+                            return false; // Found excluded text in term slug
+                        }
+                    }
+                    // Also check term names
+                    $term_objects = wp_get_post_terms($post_id, $taxonomy);
+                    if (!is_wp_error($term_objects)) {
+                        foreach ($term_objects as $term_obj) {
+                            if (stripos($term_obj->name, $search_text) !== false) {
+                                return false; // Found excluded text in term name
+                            }
+                        }
+                    }
+                }
+
+                // Check for 'any_of' condition (post has at least one of these terms)
+                if (isset($filter_value['any_of']) && is_array($filter_value['any_of'])) {
+                    $required_terms = array_map('strtolower', array_map('strval', $filter_value['any_of']));
+                    $term_slugs_lower = array_map('strtolower', $terms);
+                    $found = false;
+                    foreach ($required_terms as $req_term) {
+                        if (in_array($req_term, $term_slugs_lower, true)) {
+                            $found = true;
+                            break;
+                        }
+                    }
+                    if (!$found) {
+                        return false; // None of the required terms found
+                    }
+                }
+
+                // Check for 'none_of' condition (post has none of these terms)
+                if (isset($filter_value['none_of']) && is_array($filter_value['none_of'])) {
+                    $excluded_terms = array_map('strtolower', array_map('strval', $filter_value['none_of']));
+                    $term_slugs_lower = array_map('strtolower', $terms);
+                    foreach ($excluded_terms as $excl_term) {
+                        if (in_array($excl_term, $term_slugs_lower, true)) {
+                            return false; // Found an excluded term
+                        }
+                    }
+                }
+
+            } else {
+                // Simple value - check if post has this term
+                $required_term = strtolower(strval($filter_value));
+                $term_slugs_lower = array_map('strtolower', $terms);
+                if (!in_array($required_term, $term_slugs_lower, true)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -650,6 +1032,77 @@ Example response:
     }
 
     /**
+     * Comprehensive search across all fields, taxonomies, and content
+     *
+     * @param int $post_id Post ID
+     * @param WP_Post $post Post object
+     * @param string $search_term Search term
+     * @param string $post_type_key Post type key
+     * @return bool True if search term found anywhere
+     */
+    private function check_search_all($post_id, $post, $search_term, $post_type_key) {
+        $search_term = strtolower($search_term);
+
+        // 1. Check post title, content, excerpt
+        if (stripos($post->post_title, $search_term) !== false) {
+            return true;
+        }
+        if (stripos($post->post_content, $search_term) !== false) {
+            return true;
+        }
+        if (stripos($post->post_excerpt, $search_term) !== false) {
+            return true;
+        }
+
+        // 2. Check ALL post meta (custom fields)
+        $all_meta = get_post_meta($post_id);
+        if (!empty($all_meta)) {
+            foreach ($all_meta as $meta_key => $meta_values) {
+                // Skip internal/system meta
+                if (strpos($meta_key, '_') === 0 && strpos($meta_key, 'voxel:') !== 0) {
+                    continue;
+                }
+                foreach ($meta_values as $meta_value) {
+                    // Handle JSON values
+                    if (is_string($meta_value) && (strpos($meta_value, '[') === 0 || strpos($meta_value, '{') === 0)) {
+                        $decoded = json_decode($meta_value, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $meta_value = is_array($decoded) ? implode(' ', array_values(array_filter($decoded, 'is_string'))) : strval($decoded);
+                        }
+                    }
+                    if (is_string($meta_value) && stripos($meta_value, $search_term) !== false) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // 3. Check ALL taxonomies
+        $taxonomies = get_object_taxonomies($post_type_key);
+        foreach ($taxonomies as $taxonomy) {
+            $terms = wp_get_post_terms($post_id, $taxonomy);
+            if (!is_wp_error($terms)) {
+                foreach ($terms as $term) {
+                    // Check term name
+                    if (stripos($term->name, $search_term) !== false) {
+                        return true;
+                    }
+                    // Check term slug
+                    if (stripos($term->slug, $search_term) !== false) {
+                        return true;
+                    }
+                    // Check term description
+                    if (!empty($term->description) && stripos($term->description, $search_term) !== false) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Check if post passes custom field filters
      */
     private function check_field_filters($post_id, $field_filters, $post_type_key) {
@@ -666,7 +1119,7 @@ Example response:
 
             // Handle different filter value types
             if (is_array($filter_value)) {
-                // Complex filter (min/max/equals)
+                // Complex filter (min/max/equals/empty/not_empty/not_equals/contains/not_contains)
                 if (!$this->check_complex_field_filter($field_value, $filter_value)) {
                     return false;
                 }
@@ -698,13 +1151,89 @@ Example response:
     }
 
     /**
-     * Check complex field filter (min/max/equals)
+     * Check if a field value is considered "empty"
+     *
+     * @param mixed $value Field value
+     * @return bool True if empty
+     */
+    private function is_field_empty($value) {
+        if ($value === null || $value === '') {
+            return true;
+        }
+        if (is_array($value) && empty($value)) {
+            return true;
+        }
+        if (is_string($value)) {
+            $trimmed = trim($value);
+            // Check for empty JSON arrays/objects
+            if ($trimmed === '[]' || $trimmed === '{}' || $trimmed === 'null') {
+                return true;
+            }
+            return $trimmed === '';
+        }
+        return false;
+    }
+
+    /**
+     * Check complex field filter (min/max/equals/empty/not_empty/not_equals/contains/not_contains)
      */
     private function check_complex_field_filter($field_value, $filter_config) {
+        // Check for empty condition first (field should be empty/null/blank)
+        if (isset($filter_config['empty'])) {
+            $should_be_empty = ($filter_config['empty'] === true || $filter_config['empty'] === 'true' || $filter_config['empty'] === 1);
+            $is_empty = $this->is_field_empty($field_value);
+            if ($should_be_empty !== $is_empty) {
+                return false;
+            }
+            return true; // Empty check passed, no further checks needed
+        }
+
+        // Check for not_empty condition (field must have a value)
+        if (isset($filter_config['not_empty'])) {
+            $should_not_be_empty = ($filter_config['not_empty'] === true || $filter_config['not_empty'] === 'true' || $filter_config['not_empty'] === 1);
+            $is_empty = $this->is_field_empty($field_value);
+            if ($should_not_be_empty && $is_empty) {
+                return false;
+            }
+        }
+
+        // Check for not_equals condition (field should NOT equal this value)
+        if (isset($filter_config['not_equals'])) {
+            $not_value = strtolower(strval($filter_config['not_equals']));
+            $field_str = strtolower(strval($field_value));
+            if ($field_str === $not_value) {
+                return false;
+            }
+        }
+
+        // Check for contains condition (field should contain this text)
+        if (isset($filter_config['contains'])) {
+            $search = strtolower(strval($filter_config['contains']));
+            $field_str = strtolower(strval($field_value));
+            if (stripos($field_str, $search) === false) {
+                return false;
+            }
+        }
+
+        // Check for not_contains condition (field should NOT contain this text)
+        if (isset($filter_config['not_contains'])) {
+            $search = strtolower(strval($filter_config['not_contains']));
+            $field_str = strtolower(strval($field_value));
+            if (stripos($field_str, $search) !== false) {
+                return false;
+            }
+        }
+
+        // Numeric checks
         $field_num = is_numeric($field_value) ? floatval($field_value) : 0;
 
         if (isset($filter_config['equals'])) {
-            return $field_num == floatval($filter_config['equals']);
+            if (is_numeric($filter_config['equals'])) {
+                return $field_num == floatval($filter_config['equals']);
+            } else {
+                // String equals comparison
+                return strtolower(strval($field_value)) === strtolower(strval($filter_config['equals']));
+            }
         }
 
         if (isset($filter_config['min']) && $field_num < floatval($filter_config['min'])) {
@@ -796,6 +1325,12 @@ Example response:
      * @return string HTML for action buttons
      */
     private function render_action_buttons($post) {
+        // Check if quick actions are enabled in settings
+        $show_quick_actions = isset($this->settings['show_quick_actions']) ? (bool) $this->settings['show_quick_actions'] : true;
+        if (!$show_quick_actions) {
+            return '';
+        }
+
         $html = '<div class="vt-ai-bot-card-actions">';
         $has_buttons = false;
 

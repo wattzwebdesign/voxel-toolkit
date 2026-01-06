@@ -7211,6 +7211,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         $rate_limit_period = isset($settings['rate_limit_period']) ? absint($settings['rate_limit_period']) : 60;
         $messenger_integration = isset($settings['messenger_integration']) ? (bool) $settings['messenger_integration'] : false;
         $ai_bot_avatar = isset($settings['ai_bot_avatar']) ? $settings['ai_bot_avatar'] : '';
+        $show_quick_actions = isset($settings['show_quick_actions']) ? (bool) $settings['show_quick_actions'] : true;
+        $thinking_text = isset($settings['thinking_text']) ? $settings['thinking_text'] : __('AI is thinking', 'voxel-toolkit');
 
         // Styling options
         $style_primary_color = isset($settings['style_primary_color']) ? $settings['style_primary_color'] : '#0084ff';
@@ -7296,6 +7298,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </td>
             </tr>
             <tr>
+                <th scope="row"><?php _e('Thinking Text', 'voxel-toolkit'); ?></th>
+                <td>
+                    <input type="text"
+                           name="voxel_toolkit_options[ai_bot][thinking_text]"
+                           value="<?php echo esc_attr($thinking_text); ?>"
+                           class="regular-text">
+                    <p class="description"><?php _e('Text shown while the AI is processing a query.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
                 <th scope="row"><?php _e('Suggested Questions', 'voxel-toolkit'); ?></th>
                 <td>
                     <?php
@@ -7349,6 +7361,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                            max="20"
                            class="small-text">
                     <p class="description"><?php _e('Maximum number of results to show per search (1-20).', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Show Quick Actions', 'voxel-toolkit'); ?></th>
+                <td>
+                    <label>
+                        <input type="checkbox"
+                               name="voxel_toolkit_options[ai_bot][show_quick_actions]"
+                               value="1"
+                               <?php checked($show_quick_actions); ?>>
+                        <?php _e('Show action buttons below each result card', 'voxel-toolkit'); ?>
+                    </label>
+                    <p class="description"><?php _e('When enabled, shows quick action buttons (Directions, Call, View) below each search result.', 'voxel-toolkit'); ?></p>
                 </td>
             </tr>
         </table>

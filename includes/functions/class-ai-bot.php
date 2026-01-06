@@ -185,6 +185,24 @@ class Voxel_Toolkit_AI_Bot {
         // Get conversation history
         $history = isset($_POST['history']) ? $this->sanitize_history($_POST['history']) : array();
 
+        // Get user location if provided
+        $user_location = null;
+        if (!empty($_POST['user_location'])) {
+            $location_data = $_POST['user_location'];
+            if (is_string($location_data)) {
+                $location_data = json_decode(wp_unslash($location_data), true);
+            }
+            if (is_array($location_data) && isset($location_data['lat']) && isset($location_data['lng'])) {
+                $user_location = array(
+                    'lat' => floatval($location_data['lat']),
+                    'lng' => floatval($location_data['lng']),
+                    'city' => isset($location_data['city']) ? sanitize_text_field($location_data['city']) : '',
+                    'state' => isset($location_data['state']) ? sanitize_text_field($location_data['state']) : '',
+                    'source' => isset($location_data['source']) ? sanitize_text_field($location_data['source']) : 'unknown',
+                );
+            }
+        }
+
         // Check AI configuration
         if (!class_exists('Voxel_Toolkit_AI_Settings') || !Voxel_Toolkit_AI_Settings::instance()->is_configured()) {
             wp_send_json_error(array(
@@ -201,8 +219,8 @@ class Voxel_Toolkit_AI_Bot {
 
         $search_handler = new Voxel_Toolkit_AI_Bot_Search_Handler($settings);
 
-        // Build system prompt with schema
-        $system_prompt = $search_handler->build_system_prompt();
+        // Build system prompt with schema and user location
+        $system_prompt = $search_handler->build_system_prompt($user_location);
 
         // Build messages for AI
         $ai_messages = $this->build_ai_messages($system_prompt, $history, $message);
@@ -263,10 +281,15 @@ class Voxel_Toolkit_AI_Bot {
             $this->increment_rate_limit();
         }
 
-        // Return response
+        // Return response with debug info
         wp_send_json_success(array(
             'explanation' => isset($parsed['explanation']) ? $parsed['explanation'] : '',
             'results' => $results,
+            'debug' => array(
+                'ai_response_preview' => substr($ai_response, 0, 500),
+                'parsed_searches' => isset($parsed['searches']) ? count($parsed['searches']) : 0,
+                'results_count' => count($results),
+            ),
         ));
     }
 
@@ -460,6 +483,11 @@ class Voxel_Toolkit_AI_Bot {
             ? sanitize_text_field($input['placeholder_text'])
             : '';
 
+        // Thinking text
+        $sanitized['thinking_text'] = isset($input['thinking_text'])
+            ? sanitize_text_field($input['thinking_text'])
+            : '';
+
         // Panel title
         $sanitized['panel_title'] = isset($input['panel_title'])
             ? sanitize_text_field($input['panel_title'])
@@ -494,6 +522,9 @@ class Voxel_Toolkit_AI_Bot {
 
         // Messenger integration
         $sanitized['messenger_integration'] = isset($input['messenger_integration']) && $input['messenger_integration'];
+
+        // Show quick actions
+        $sanitized['show_quick_actions'] = isset($input['show_quick_actions']) && $input['show_quick_actions'];
 
         // AI Bot avatar
         $sanitized['ai_bot_avatar'] = isset($input['ai_bot_avatar'])

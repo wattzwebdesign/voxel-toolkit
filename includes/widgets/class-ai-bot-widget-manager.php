@@ -80,7 +80,7 @@ class Voxel_Toolkit_AI_Bot_Widget_Manager {
             ),
             'i18n' => array(
                 'send' => __('Send', 'voxel-toolkit'),
-                'thinking' => __('Thinking...', 'voxel-toolkit'),
+                'thinking' => isset($ai_bot_settings['thinking_text']) && !empty($ai_bot_settings['thinking_text']) ? $ai_bot_settings['thinking_text'] : __('AI is thinking', 'voxel-toolkit'),
                 'error' => __('Something went wrong. Please try again.', 'voxel-toolkit'),
                 'rateLimit' => __('Please wait a moment before asking again.', 'voxel-toolkit'),
                 'loginRequired' => __('Please log in to use the AI assistant.', 'voxel-toolkit'),
