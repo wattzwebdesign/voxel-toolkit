@@ -58,6 +58,14 @@ class Voxel_Toolkit_Post_Fields {
                 'file' => 'post-fields/class-auto-reply-field.php',
                 'icon' => 'dashicons-format-chat',
             ),
+            'checklist_field' => array(
+                'name' => __('Checklist (VT)', 'voxel-toolkit'),
+                'description' => __('Interactive checklist with items that can be checked off. Supports per-user or global tracking.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Checklist_Field',
+                'file' => 'post-fields/class-checklist-field.php',
+                'icon' => 'dashicons-yes-alt',
+                'required_widgets' => array('widget_checklist_display'),
+            ),
         );
 
         // Allow other plugins/themes to register post fields

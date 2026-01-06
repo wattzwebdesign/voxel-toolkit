@@ -677,6 +677,15 @@ class Voxel_Toolkit_Functions {
                 'widget_name' => 'vt-poll-display',
                 'hidden' => true, // Hidden from widgets page, auto-enabled by poll field
             ),
+            'checklist_display' => array(
+                'name' => __('Checklist Display (VT)', 'voxel-toolkit'),
+                'description' => __('Display an interactive checklist from a Checklist (VT) field with progress tracking and customizable styling.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Checklist_Display_Widget_Manager',
+                'file' => 'widgets/class-checklist-display-widget-manager.php',
+                'icon' => 'eicon-checkbox',
+                'widget_name' => 'vt-checklist-display',
+                'hidden' => true, // Hidden from widgets page, auto-enabled by checklist field
+            ),
             'timeline_photos' => array(
                 'name' => __('Timeline Photos', 'voxel-toolkit'),
                 'description' => __('Display photos from post reviews in a customizable gallery with masonry, grid, and justified layouts.', 'voxel-toolkit'),
