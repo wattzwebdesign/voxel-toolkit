@@ -1154,6 +1154,45 @@ class Voxel_Toolkit_Saved_Search {
 
         $element->end_controls_tab();
         $element->end_controls_tabs();
+
+        // Active indicator heading
+        $element->add_control(
+            'vt_ls_indicator_heading',
+            [
+                'label' => __('Active Search Indicator', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_indicator_size',
+            [
+                'label' => __('Indicator Size', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 4, 'max' => 20, 'step' => 1]],
+                'default' => ['unit' => 'px', 'size' => 8],
+                'selectors' => [
+                    '{{WRAPPER}} .vt_load_search .ts-filter.vt-has-active::after' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vt-load-search-link.vt-has-active::after' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_indicator_color',
+            [
+                'label' => __('Indicator Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#3b82f6',
+                'selectors' => [
+                    '{{WRAPPER}} .vt_load_search .ts-filter.vt-has-active::after' => 'background: {{VALUE}};',
+                    '{{WRAPPER}} .vt-load-search-link.vt-has-active::after' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
         $element->end_controls_section();
     }
 
