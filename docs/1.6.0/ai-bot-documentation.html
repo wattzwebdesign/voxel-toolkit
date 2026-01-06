@@ -1,0 +1,716 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">AI Bot</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The AI Bot function adds an intelligent search assistant to your Voxel site. Users can ask natural language questions like "find me a hotel near the beach" or "show apartments under $1000" and receive relevant results displayed as Voxel preview cards.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>AI Bot transforms how visitors search your site. Instead of navigating complex filters, users simply describe what they're looking for in plain language. The AI interprets their request, searches your Voxel post types, and displays matching results in a sleek side panel.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Natural language search across all Voxel post types</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Results displayed as Voxel preview cards</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Conversation memory for follow-up questions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Suggested query chips for quick searches</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable panel position (left/right)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Push or overlay panel behavior</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Rate limiting to control API usage</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Access control (everyone or logged-in only)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Full color and style customization</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with Voxel's Action (VX) widget</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Before enabling AI Bot, you must configure AI settings:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; AI Settings</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Choose your AI provider (OpenAI or Anthropic)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter your API key</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select your preferred model</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:group {"style":{"color":{"background":"#e7f3ff"},"border":{"left":{"color":"#0084ff","width":"4px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group has-background" style="background-color:#e7f3ff;border-left-color:#0084ff;border-left-width:4px;padding:15px">
+<!-- wp:paragraph -->
+<p><strong>Note:</strong> AI Bot uses your configured AI provider for processing queries. Each user question consumes API tokens based on your provider's pricing.</p>
+<!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>AI Bot</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Post Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Click the settings icon next to AI Bot</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Under <strong>Post Types</strong>, select which post types the AI can search</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>For each post type, optionally select a <strong>Card Template</strong> to display results</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Add Trigger Button</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The AI Bot panel is triggered using Voxel's <strong>Action (VX)</strong> widget:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit any page in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add the <strong>Action (VX)</strong> widget where you want the trigger button</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>In widget settings, find <strong>Action</strong> dropdown</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select <strong>Open AI Assistant</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Style the button as desired</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the page</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>You can place multiple trigger buttons anywhere on your site - in the header, sidebar, floating buttons, or within page content.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Configuration Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Panel Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Panel Position</strong></td><td>Which side of the screen the panel appears</td><td>Right</td></tr><tr><td><strong>Panel Behavior</strong></td><td>Push content aside or overlay on top</td><td>Push</td></tr><tr><td><strong>Panel Title</strong></td><td>Header text shown in the panel</td><td>"AI Assistant"</td></tr><tr><td><strong>Panel Width</strong></td><td>Width of the panel in pixels</td><td>400px</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Messages</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Welcome Message</strong></td><td>First message shown when panel opens</td><td>"Hi! How can I help you find what you're looking for?"</td></tr><tr><td><strong>Placeholder Text</strong></td><td>Input field placeholder</td><td>"Ask me anything..."</td></tr><tr><td><strong>Suggested Queries</strong></td><td>Clickable example questions shown as chips</td><td>Empty</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Search Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Post Types</strong></td><td>Which Voxel post types the AI can search</td><td>None (must select)</td></tr><tr><td><strong>Card Templates</strong></td><td>Preview card template for each post type</td><td>Default template</td></tr><tr><td><strong>Max Results</strong></td><td>Maximum results to show per search</td><td>6</td></tr><tr><td><strong>System Prompt</strong></td><td>Custom instructions for the AI</td><td>Built-in prompt</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Conversation Memory</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Enable Memory</strong></td><td>Remember previous messages in conversation</td><td>Enabled</td></tr><tr><td><strong>Max Messages</strong></td><td>How many previous messages to remember</td><td>10</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:paragraph -->
+<p>When conversation memory is enabled, users can ask follow-up questions like "show me cheaper options" or "what about closer to downtown?" and the AI will understand the context.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Access Control</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th></tr></thead><tbody><tr><td><strong>Everyone</strong></td><td>All visitors can use the AI Bot</td></tr><tr><td><strong>Logged In Only</strong></td><td>Only logged-in users can use the AI Bot</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Rate Limiting</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Protect your AI API usage with rate limiting:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Enable Rate Limiting</strong></td><td>Limit how often users can ask questions</td><td>Enabled</td></tr><tr><td><strong>Max Requests</strong></td><td>Number of requests allowed per period</td><td>10</td></tr><tr><td><strong>Time Period</strong></td><td>Period in seconds</td><td>60</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Style Customization</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Customize the AI Bot panel to match your site's design:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Colors</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Primary Color</strong> - Header background and send button</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Header Text Color</strong> - Text color in the header</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>AI Bubble Color</strong> - Background of AI message bubbles</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>AI Text Color</strong> - Text color in AI messages</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>User Bubble Color</strong> - Background of user message bubbles</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>User Text Color</strong> - Text color in user messages</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Sizes</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Panel Width</strong> - Width in pixels (default: 400)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Font Size</strong> - Base font size (default: 14px)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Border Radius</strong> - Roundness of message bubbles (default: 18px)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Avatar</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Upload a custom avatar image for the AI assistant to display in chat bubbles.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Suggested Queries</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add suggested queries to help users understand what they can ask. These appear as clickable chips below the welcome message.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>Example suggestions:</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>"Find hotels near the beach"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Show me apartments under $1500"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Pet-friendly rentals"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Restaurants open now"</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>To add suggestions, enter one per line in the Suggested Queries field in settings.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Custom System Prompt</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The system prompt tells the AI how to behave and what your site is about. A default prompt is generated automatically based on your post types and fields, but you can customize it for better results.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>Tips for custom prompts:</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Describe what your site offers</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Mention any specific terminology users might use</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set the AI's tone (friendly, professional, etc.)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Specify any limitations or focus areas</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>User clicks the trigger button (Action VX widget)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>AI Bot panel slides open</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User types a natural language question</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>AI analyzes the question and generates search parameters</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel's search system finds matching posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Results are displayed as preview cards in the panel</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User can click cards to view full listings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User can ask follow-up questions to refine results</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Real Estate</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>"Find me a 2-bedroom apartment in downtown with parking under $2000/month"</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Hotels &amp; Vacation Rentals</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>"Show beachfront hotels with a pool for next weekend"</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Directories</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>"Find Italian restaurants open late night"</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Marketplaces</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>"Show me vintage furniture under $500"</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Job Boards</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>"Remote developer jobs with React experience"</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">AI Bot Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify AI Settings are configured with a valid API key</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that AI Bot function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure you've added an Action (VX) widget with "Open AI Assistant" action</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any caching plugins</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">No Results Returned</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Make sure at least one post type is selected in settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify posts exist in the selected post types</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that posts are published (not draft)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try simpler queries to test</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Slow Response Times</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>AI responses depend on your provider's server speed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Consider using a faster model if available</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Reduce max results if searching returns too many posts</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Rate Limit Errors</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Increase the rate limit settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Or disable rate limiting if you trust your users</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Consider restricting to logged-in users only</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Cards Not Displaying Correctly</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Select a specific card template for each post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the template is properly configured in Voxel</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for CSS conflicts with your theme</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">API Usage &amp; Costs</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Each user question sends a request to your AI provider (OpenAI or Anthropic). Costs depend on:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Number of user queries</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Length of conversation history (if memory enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Size of your post type schema</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Your chosen AI model</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p><strong>To control costs:</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Enable rate limiting</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Restrict to logged-in users</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use a less expensive AI model</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Reduce conversation memory length</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Monitor usage in your AI provider dashboard</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>AI Settings configured with valid API key</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>OpenAI or Anthropic API account</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
