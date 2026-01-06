@@ -269,6 +269,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **AI Functions Settings**: Fixed enabling AI Post Summary or AI Bot without API key configured causing all settings tabs to appear blank
 - **AI Bot Avatar Upload**: Fixed upload button not working in AI Bot settings
+- **Saved Search**: Fixed infinite page refresh loop when loading a saved search
 
 ### Added
 - **AI Bot Panel Behavior**: New setting to choose between "Push content" (default) or "Overlay content" when panel opens
