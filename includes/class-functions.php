@@ -7196,6 +7196,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         // Get current settings with defaults
         $panel_position = isset($settings['panel_position']) ? $settings['panel_position'] : 'right';
+        $panel_behavior = isset($settings['panel_behavior']) ? $settings['panel_behavior'] : 'push';
         $access_control = isset($settings['access_control']) ? $settings['access_control'] : 'everyone';
         $enabled_post_types = isset($settings['post_types']) ? (array) $settings['post_types'] : array();
         $system_prompt = isset($settings['system_prompt']) ? $settings['system_prompt'] : '';
@@ -7242,6 +7243,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <option value="left" <?php selected($panel_position, 'left'); ?>><?php _e('Left side', 'voxel-toolkit'); ?></option>
                     </select>
                     <p class="description"><?php _e('Which side of the screen the AI panel slides in from.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Panel Behavior', 'voxel-toolkit'); ?></th>
+                <td>
+                    <select name="voxel_toolkit_options[ai_bot][panel_behavior]">
+                        <option value="push" <?php selected($panel_behavior, 'push'); ?>><?php _e('Push content', 'voxel-toolkit'); ?></option>
+                        <option value="overlay" <?php selected($panel_behavior, 'overlay'); ?>><?php _e('Overlay content', 'voxel-toolkit'); ?></option>
+                    </select>
+                    <p class="description"><?php _e('Push content aside when panel opens, or overlay on top of content.', 'voxel-toolkit'); ?></p>
                 </td>
             </tr>
             <tr>

@@ -281,9 +281,13 @@ class Voxel_Toolkit_Admin {
             )
         ));
 
-        // Enqueue media library and options page scripts for Site Options page
-        if (isset($_GET['page']) && $_GET['page'] === 'voxel-toolkit-site-options') {
+        // Enqueue media library for Site Options and Settings pages
+        if (isset($_GET['page']) && in_array($_GET['page'], array('voxel-toolkit-site-options', 'voxel-toolkit-settings'))) {
             wp_enqueue_media();
+        }
+
+        // Enqueue options page script for Site Options page
+        if (isset($_GET['page']) && $_GET['page'] === 'voxel-toolkit-site-options') {
             wp_enqueue_script(
                 'voxel-toolkit-options-page',
                 VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/options-page.js',

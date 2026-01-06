@@ -69,6 +69,7 @@ class Voxel_Toolkit_AI_Bot_Widget_Manager {
             'isLoggedIn' => is_user_logged_in(),
             'settings' => array(
                 'panelPosition' => $ai_bot_settings['panel_position'],
+                'panelBehavior' => isset($ai_bot_settings['panel_behavior']) ? $ai_bot_settings['panel_behavior'] : 'push',
                 'welcomeMessage' => $ai_bot_settings['welcome_message'],
                 'placeholderText' => $ai_bot_settings['placeholder_text'],
                 'panelTitle' => $ai_bot_settings['panel_title'],

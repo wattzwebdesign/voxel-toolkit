@@ -91,14 +91,22 @@
             this.container.addClass('is-open');
             $('body').addClass('vt-ai-bot-panel-open');
 
-            // Push body content based on panel position
-            var position = this.config.settings?.panelPosition || this.container.data('position') || 'right';
-            var panelWidth = this.panel.outerWidth();
+            // Check panel behavior - only push content if set to 'push'
+            var behavior = this.config.settings?.panelBehavior || 'push';
 
-            if (position === 'right') {
-                $('body').css('margin-right', panelWidth + 'px');
+            if (behavior === 'push') {
+                // Push body content based on panel position
+                var position = this.config.settings?.panelPosition || this.container.data('position') || 'right';
+                var panelWidth = this.panel.outerWidth();
+
+                if (position === 'right') {
+                    $('body').css('margin-right', panelWidth + 'px');
+                } else {
+                    $('body').css('margin-left', panelWidth + 'px');
+                }
             } else {
-                $('body').css('margin-left', panelWidth + 'px');
+                // Overlay mode - add class for overlay styling
+                this.container.addClass('is-overlay');
             }
 
             // Focus input
@@ -109,7 +117,7 @@
 
         closePanel: function() {
             this.state.isOpen = false;
-            this.container.removeClass('is-open');
+            this.container.removeClass('is-open is-overlay');
             $('body').removeClass('vt-ai-bot-panel-open');
             $('body').css({'margin-left': '', 'margin-right': ''});
         },

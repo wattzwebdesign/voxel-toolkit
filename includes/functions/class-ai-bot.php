@@ -70,6 +70,7 @@ class Voxel_Toolkit_AI_Bot {
     public function get_settings() {
         $defaults = array(
             'panel_position' => 'right',
+            'panel_behavior' => 'push',
             'access_control' => 'everyone',
             'post_types' => array(),
             'card_templates' => array(), // Card template IDs per post type
@@ -110,6 +111,7 @@ class Voxel_Toolkit_AI_Bot {
 
         return array(
             'panelPosition' => $settings['panel_position'],
+            'panelBehavior' => $settings['panel_behavior'],
             'welcomeMessage' => $settings['welcome_message'],
             'placeholderText' => $settings['placeholder_text'],
             'panelTitle' => $settings['panel_title'],
@@ -414,6 +416,11 @@ class Voxel_Toolkit_AI_Bot {
         $sanitized['panel_position'] = isset($input['panel_position']) && in_array($input['panel_position'], array('left', 'right'), true)
             ? $input['panel_position']
             : 'right';
+
+        // Panel behavior
+        $sanitized['panel_behavior'] = isset($input['panel_behavior']) && in_array($input['panel_behavior'], array('push', 'overlay'), true)
+            ? $input['panel_behavior']
+            : 'push';
 
         // Access control
         $sanitized['access_control'] = isset($input['access_control']) && in_array($input['access_control'], array('everyone', 'logged_in'), true)

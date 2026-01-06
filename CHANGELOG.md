@@ -25,7 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fallback to cart-summary page with auto-selected package if direct checkout unavailable
   - Customizable section title, description, and skip button text
 
-## [1.6.0] - 2025-12-16
 
 ### Fixed
 - **Duplicate Post**: Fixed blank page issue when viewing duplicated Voxel listings on frontend after publishing
@@ -263,6 +262,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Table of Contents Widget**: Field completion indicators now update in real-time as you type (previously only updated on save)
 - **Active Filters Widget**: Fixed clicking X to remove filter not refreshing search results
 - **Active Filters Widget**: Fixed widget taking up white space when no filters are active
+
+
+## [1.6.0.1] - 2026-01-05
+
+### Fixed
+- **AI Functions Settings**: Fixed enabling AI Post Summary or AI Bot without API key configured causing all settings tabs to appear blank
 
 
 ## [1.5.7] - 2025-12-07

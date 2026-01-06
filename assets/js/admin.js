@@ -1360,3 +1360,64 @@ jQuery(document).ready(function($) {
         VTTools.init();
     });
 })(jQuery);
+
+/**
+ * Media Uploader for Settings Page
+ */
+(function($) {
+    'use strict';
+
+    $(document).ready(function() {
+        // Handle upload button clicks
+        $(document).on('click', '.vt-upload-button', function(e) {
+            e.preventDefault();
+
+            var $button = $(this);
+            var targetId = $button.data('target');
+            var $input = $('#' + targetId);
+
+            // Create media frame
+            var frame = wp.media({
+                title: 'Select or Upload Image',
+                button: {
+                    text: 'Use this image'
+                },
+                multiple: false
+            });
+
+            // When an image is selected
+            frame.on('select', function() {
+                var attachment = frame.state().get('selection').first().toJSON();
+                $input.val(attachment.url).trigger('change');
+
+                // Update preview if it exists
+                var $preview = $input.siblings('div').find('img');
+                if ($preview.length) {
+                    $preview.attr('src', attachment.url);
+                } else {
+                    // Create preview if it doesn't exist
+                    $input.after('<div style="margin-top: 10px;"><img src="' + attachment.url + '" style="max-width: 60px; max-height: 60px; border-radius: 50%;"></div>');
+                }
+            });
+
+            frame.open();
+        });
+
+        // Handle URL input changes (for manual URL entry)
+        $(document).on('change', '#ai_bot_avatar', function() {
+            var $input = $(this);
+            var url = $input.val().trim();
+            var $previewContainer = $input.siblings('div').first();
+
+            if (url) {
+                if ($previewContainer.find('img').length) {
+                    $previewContainer.find('img').attr('src', url);
+                } else {
+                    $input.after('<div style="margin-top: 10px;"><img src="' + url + '" style="max-width: 60px; max-height: 60px; border-radius: 50%;"></div>');
+                }
+            } else {
+                $previewContainer.remove();
+            }
+        });
+    });
+})(jQuery);
