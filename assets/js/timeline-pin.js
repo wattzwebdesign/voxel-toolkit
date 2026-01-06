@@ -401,33 +401,26 @@
         // We need to move the parent .vxf-subgrid, not the post itself
         var postWrapper = statusEl.closest('.vxf-subgrid');
         if (!postWrapper) {
-            console.log('VT Pin: No .vxf-subgrid wrapper found');
             return;
         }
 
         // The main feed container is the parent of .vxf-subgrid (usually .vxfeed)
         var feedContainer = postWrapper.parentNode;
         if (!feedContainer) {
-            console.log('VT Pin: No feed container found');
             return;
         }
 
-        console.log('VT Pin: feedContainer class', feedContainer.className);
-
         // Find the filters section (.vxf-filters)
         var filtersEl = feedContainer.querySelector(':scope > .vxf-filters');
-        console.log('VT Pin: filtersEl', filtersEl);
 
         if (filtersEl) {
             // Insert right after the filters
-            console.log('VT Pin: Moving after filters');
             if (filtersEl.nextElementSibling !== postWrapper) {
                 feedContainer.insertBefore(postWrapper, filtersEl.nextElementSibling);
             }
         } else {
             // No filters, insert at the beginning (after any non-subgrid elements)
             var firstSubgrid = feedContainer.querySelector(':scope > .vxf-subgrid');
-            console.log('VT Pin: Moving before first subgrid', firstSubgrid);
             if (firstSubgrid && firstSubgrid !== postWrapper) {
                 feedContainer.insertBefore(postWrapper, firstSubgrid);
             }

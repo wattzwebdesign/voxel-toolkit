@@ -14,8 +14,9 @@
 
 /* Pinned badge */
 .vt-pinned-badge {
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    justify-content: center;
     gap: 5px;
     padding: 4px 10px;
     background-color: var(--ts-accent-1, #4361ee);
@@ -26,6 +27,7 @@
     letter-spacing: 0.5px;
     border-radius: 4px;
     margin-bottom: 10px;
+    width: fit-content;
 }
 
 .vt-pinned-badge svg {
