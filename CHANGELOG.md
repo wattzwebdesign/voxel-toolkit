@@ -264,6 +264,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Active Filters Widget**: Fixed widget taking up white space when no filters are active
 
 
+## [1.6.0.2] - 2026-01-05
+
+### Fixed
+- **Save Search**: Fixed save button in popup not working
+
+
 ## [1.6.0.1] - 2026-01-05
 
 ### Fixed
