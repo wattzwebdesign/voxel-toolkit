@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.6.1] - 2026-01-06
 
 ### Added
+- **Pin Timeline Post**: Allow post authors to pin a timeline post to the top of their post's timeline feed. Features include:
+  - "Pin to Top" / "Unpin" action in post dropdown menu (visible only to parent post author)
+  - Pinned badge displayed on pinned posts
+  - Pin icon next to the actions button on pinned posts
+  - Pinned post automatically moves to top of timeline (below filters)
+  - Per-widget toggle to enable/disable pin functionality in Timeline widget settings
+  - Styling controls in Timeline Style Kit widget for border color, badge (alignment, background, text color, typography, padding, border radius), and pin icon (color, size)
 - **Checklist Field**: New custom post field type for creating checklists with title (optional) and description per item. Features include:
   - Configurable permissions (post author only or any logged-in user)
   - Check scope options (global shared or per-user tracking)
