@@ -809,6 +809,14 @@ class Voxel_Toolkit_Functions {
                 'widget_name' => 'vt-ai-bot',
                 'hidden' => true,
             ),
+            'coupon_manager' => array(
+                'name' => __('Coupon Manager (VT)', 'voxel-toolkit'),
+                'description' => __('Allow logged-in users to create and manage Stripe coupons with full restriction options.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Coupon_Widget_Manager',
+                'file' => 'widgets/class-coupon-widget-manager.php',
+                'icon' => 'eicon-price-table',
+                'widget_name' => 'voxel-coupon-manager',
+            ),
         );
 
         // Allow other plugins/themes to register widgets
