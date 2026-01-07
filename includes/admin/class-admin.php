@@ -1335,6 +1335,34 @@ class Voxel_Toolkit_Admin {
                             ? sanitize_text_field($function_input['messagebird_originator'])
                             : (isset($current_settings['messagebird_originator']) ? $current_settings['messagebird_originator'] : '');
 
+                        // Telnyx credentials - only update if new value provided
+                        if (!empty($function_input['telnyx_api_key'])) {
+                            $sanitized_function['telnyx_api_key'] = sanitize_text_field($function_input['telnyx_api_key']);
+                        } elseif (isset($current_settings['telnyx_api_key'])) {
+                            $sanitized_function['telnyx_api_key'] = $current_settings['telnyx_api_key'];
+                        }
+
+                        $sanitized_function['telnyx_from_number'] = isset($function_input['telnyx_from_number'])
+                            ? sanitize_text_field($function_input['telnyx_from_number'])
+                            : (isset($current_settings['telnyx_from_number']) ? $current_settings['telnyx_from_number'] : '');
+
+                        // Solapi credentials - only update if new value provided
+                        if (!empty($function_input['solapi_api_key'])) {
+                            $sanitized_function['solapi_api_key'] = sanitize_text_field($function_input['solapi_api_key']);
+                        } elseif (isset($current_settings['solapi_api_key'])) {
+                            $sanitized_function['solapi_api_key'] = $current_settings['solapi_api_key'];
+                        }
+
+                        if (!empty($function_input['solapi_api_secret'])) {
+                            $sanitized_function['solapi_api_secret'] = sanitize_text_field($function_input['solapi_api_secret']);
+                        } elseif (isset($current_settings['solapi_api_secret'])) {
+                            $sanitized_function['solapi_api_secret'] = $current_settings['solapi_api_secret'];
+                        }
+
+                        $sanitized_function['solapi_from_number'] = isset($function_input['solapi_from_number'])
+                            ? sanitize_text_field($function_input['solapi_from_number'])
+                            : (isset($current_settings['solapi_from_number']) ? $current_settings['solapi_from_number'] : '');
+
                         // Preserve events settings (managed via AJAX)
                         if (isset($current_settings['events'])) {
                             $sanitized_function['events'] = $current_settings['events'];

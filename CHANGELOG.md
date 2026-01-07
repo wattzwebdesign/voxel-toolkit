@@ -41,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **AI Bot Comprehensive Search**: Added `_search_all` filter for searching across all fields, taxonomies, and content
 - **AI Bot Quick Actions Toggle**: New setting to enable/disable quick action buttons (Directions, Call, View) below result cards
 - **AI Bot Thinking Text**: New setting to customize the "AI is thinking" loading message
+- **Telnyx SMS Provider**: New SMS provider option with API v2 Bearer token authentication
+- **Solapi SMS Provider**: New SMS provider for Korean market with HMAC-SHA256 authentication
 
 ### Fixed
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")

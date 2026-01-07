@@ -139,6 +139,8 @@ abstract class Voxel_Toolkit_SMS_Provider_Base {
             'twilio' => 'Voxel_Toolkit_Twilio_Provider',
             'vonage' => 'Voxel_Toolkit_Vonage_Provider',
             'messagebird' => 'Voxel_Toolkit_MessageBird_Provider',
+            'telnyx' => 'Voxel_Toolkit_Telnyx_Provider',
+            'solapi' => 'Voxel_Toolkit_Solapi_Provider',
         );
 
         if (!isset($provider_classes[$provider_key])) {
@@ -152,6 +154,8 @@ abstract class Voxel_Toolkit_SMS_Provider_Base {
             'twilio' => 'class-twilio-provider.php',
             'vonage' => 'class-vonage-provider.php',
             'messagebird' => 'class-messagebird-provider.php',
+            'telnyx' => 'class-telnyx-provider.php',
+            'solapi' => 'class-solapi-provider.php',
         );
 
         $file_path = VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/integrations/sms/' . $provider_files[$provider_key];
@@ -185,6 +189,14 @@ abstract class Voxel_Toolkit_SMS_Provider_Base {
             'messagebird' => array(
                 'name' => __('MessageBird', 'voxel-toolkit'),
                 'description' => __('European-based omnichannel platform', 'voxel-toolkit'),
+            ),
+            'telnyx' => array(
+                'name' => __('Telnyx', 'voxel-toolkit'),
+                'description' => __('Developer-friendly SMS with competitive pricing', 'voxel-toolkit'),
+            ),
+            'solapi' => array(
+                'name' => __('Solapi', 'voxel-toolkit'),
+                'description' => __('Korean SMS platform with domestic coverage', 'voxel-toolkit'),
             ),
         );
     }

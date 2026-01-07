@@ -1350,10 +1350,21 @@ class Voxel_Toolkit_Functions {
         $messagebird_api_key = isset($settings['messagebird_api_key']) ? $settings['messagebird_api_key'] : '';
         $messagebird_originator = isset($settings['messagebird_originator']) ? $settings['messagebird_originator'] : '';
 
+        // Telnyx credentials
+        $telnyx_api_key = isset($settings['telnyx_api_key']) ? $settings['telnyx_api_key'] : '';
+        $telnyx_from_number = isset($settings['telnyx_from_number']) ? $settings['telnyx_from_number'] : '';
+
+        // Solapi credentials
+        $solapi_api_key = isset($settings['solapi_api_key']) ? $settings['solapi_api_key'] : '';
+        $solapi_api_secret = isset($settings['solapi_api_secret']) ? $settings['solapi_api_secret'] : '';
+        $solapi_from_number = isset($settings['solapi_from_number']) ? $settings['solapi_from_number'] : '';
+
         // Check if any provider is configured
         $has_twilio = !empty($twilio_account_sid) && !empty($twilio_auth_token);
         $has_vonage = !empty($vonage_api_key) && !empty($vonage_api_secret);
         $has_messagebird = !empty($messagebird_api_key);
+        $has_telnyx = !empty($telnyx_api_key);
+        $has_solapi = !empty($solapi_api_key) && !empty($solapi_api_secret);
         ?>
         <tr>
             <th scope="row">
@@ -1373,6 +1384,8 @@ class Voxel_Toolkit_Functions {
                             <option value="twilio" <?php selected($provider, 'twilio'); ?>><?php _e('Twilio', 'voxel-toolkit'); ?></option>
                             <option value="vonage" <?php selected($provider, 'vonage'); ?>><?php _e('Vonage (Nexmo)', 'voxel-toolkit'); ?></option>
                             <option value="messagebird" <?php selected($provider, 'messagebird'); ?>><?php _e('MessageBird', 'voxel-toolkit'); ?></option>
+                            <option value="telnyx" <?php selected($provider, 'telnyx'); ?>><?php _e('Telnyx', 'voxel-toolkit'); ?></option>
+                            <option value="solapi" <?php selected($provider, 'solapi'); ?>><?php _e('Solapi', 'voxel-toolkit'); ?></option>
                         </select>
                         <p style="margin: 10px 0 0 0; font-size: 13px; color: #666;">
                             <?php _e('Select your preferred SMS provider. Configure the credentials below.', 'voxel-toolkit'); ?>
@@ -1530,6 +1543,110 @@ class Voxel_Toolkit_Functions {
                         <p style="margin: 15px 0 0 0; font-size: 13px; color: #666;">
                             <?php _e('Get your credentials from', 'voxel-toolkit'); ?>
                             <a href="https://dashboard.messagebird.com/" target="_blank" style="color: #2271b1;"><?php _e('MessageBird Dashboard', 'voxel-toolkit'); ?></a>
+                        </p>
+                    </div>
+
+                    <!-- Telnyx Configuration -->
+                    <div id="telnyx_config" class="sms-provider-config" style="margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 6px; <?php echo $provider !== 'telnyx' ? 'display: none;' : ''; ?>">
+                        <h4 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 15px;">
+                            <?php _e('Telnyx Configuration', 'voxel-toolkit'); ?>
+                            <?php if ($has_telnyx): ?>
+                                <span style="background: #d4edda; color: #155724; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 10px;"><?php _e('Configured', 'voxel-toolkit'); ?></span>
+                            <?php endif; ?>
+                        </h4>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('API Key', 'voxel-toolkit'); ?></label>
+                            <?php if (!empty($telnyx_api_key)): ?>
+                                <div style="background: #f1f1f1; padding: 8px 12px; border-radius: 4px; margin-bottom: 8px; font-family: monospace; font-size: 13px;">
+                                    <?php echo esc_html(substr($telnyx_api_key, 0, 8) . str_repeat('*', 20)); ?>
+                                </div>
+                            <?php endif; ?>
+                            <input type="password"
+                                   name="voxel_toolkit_options[sms_notifications][telnyx_api_key]"
+                                   value=""
+                                   placeholder="<?php echo !empty($telnyx_api_key) ? __('Enter new key to replace', 'voxel-toolkit') : 'KEY...'; ?>"
+                                   autocomplete="off"
+                                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" />
+                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                                <?php _e('Your Telnyx API v2 Key from the portal', 'voxel-toolkit'); ?>
+                            </p>
+                        </div>
+
+                        <div>
+                            <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('From Phone Number', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[sms_notifications][telnyx_from_number]"
+                                   value="<?php echo esc_attr($telnyx_from_number); ?>"
+                                   placeholder="+15551234567"
+                                   style="width: 100%; max-width: 250px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;" />
+                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                                <?php _e('Your Telnyx phone number in E.164 format', 'voxel-toolkit'); ?>
+                            </p>
+                        </div>
+
+                        <p style="margin: 15px 0 0 0; font-size: 13px; color: #666;">
+                            <?php _e('Get your credentials from', 'voxel-toolkit'); ?>
+                            <a href="https://portal.telnyx.com/" target="_blank" style="color: #2271b1;"><?php _e('Telnyx Portal', 'voxel-toolkit'); ?></a>
+                        </p>
+                    </div>
+
+                    <!-- Solapi Configuration -->
+                    <div id="solapi_config" class="sms-provider-config" style="margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 6px; <?php echo $provider !== 'solapi' ? 'display: none;' : ''; ?>">
+                        <h4 style="margin: 0 0 15px 0; color: #1e1e1e; font-size: 15px;">
+                            <?php _e('Solapi Configuration', 'voxel-toolkit'); ?>
+                            <?php if ($has_solapi): ?>
+                                <span style="background: #d4edda; color: #155724; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 10px;"><?php _e('Configured', 'voxel-toolkit'); ?></span>
+                            <?php endif; ?>
+                        </h4>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('API Key', 'voxel-toolkit'); ?></label>
+                            <?php if (!empty($solapi_api_key)): ?>
+                                <div style="background: #f1f1f1; padding: 8px 12px; border-radius: 4px; margin-bottom: 8px; font-family: monospace; font-size: 13px;">
+                                    <?php echo esc_html(substr($solapi_api_key, 0, 8) . str_repeat('*', 20)); ?>
+                                </div>
+                            <?php endif; ?>
+                            <input type="text"
+                                   name="voxel_toolkit_options[sms_notifications][solapi_api_key]"
+                                   value=""
+                                   placeholder="<?php echo !empty($solapi_api_key) ? __('Enter new key to replace', 'voxel-toolkit') : 'NCSVT...'; ?>"
+                                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;" />
+                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                                <?php _e('Your Solapi API Key from the console', 'voxel-toolkit'); ?>
+                            </p>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('API Secret', 'voxel-toolkit'); ?></label>
+                            <?php if (!empty($solapi_api_secret)): ?>
+                                <div style="background: #f1f1f1; padding: 8px 12px; border-radius: 4px; margin-bottom: 8px; font-family: monospace; font-size: 13px;">
+                                    <?php echo str_repeat('*', 32); ?>
+                                </div>
+                            <?php endif; ?>
+                            <input type="password"
+                                   name="voxel_toolkit_options[sms_notifications][solapi_api_secret]"
+                                   value=""
+                                   placeholder="<?php echo !empty($solapi_api_secret) ? __('Enter new secret to replace', 'voxel-toolkit') : __('API Secret', 'voxel-toolkit'); ?>"
+                                   autocomplete="off"
+                                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" />
+                        </div>
+
+                        <div>
+                            <label style="display: block; font-weight: 500; margin-bottom: 5px;"><?php _e('From Phone Number', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[sms_notifications][solapi_from_number]"
+                                   value="<?php echo esc_attr($solapi_from_number); ?>"
+                                   placeholder="01012345678"
+                                   style="width: 100%; max-width: 250px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;" />
+                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                                <?php _e('Your registered sender phone number (Korean format)', 'voxel-toolkit'); ?>
+                            </p>
+                        </div>
+
+                        <p style="margin: 15px 0 0 0; font-size: 13px; color: #666;">
+                            <?php _e('Get your credentials from', 'voxel-toolkit'); ?>
+                            <a href="https://console.solapi.com/" target="_blank" style="color: #2271b1;"><?php _e('Solapi Console', 'voxel-toolkit'); ?></a>
                         </p>
                     </div>
 
