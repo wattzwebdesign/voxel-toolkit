@@ -256,7 +256,8 @@
     }
 
     /**
-     * Format date for searching (multiple common formats)
+     * Format date for searching (comprehensive PHP date format compatibility)
+     * Supports all PHP date() format characters: https://www.php.net/manual/en/datetime.format.php
      */
     function formatOccurrenceDateForSearch(dateString) {
         if (!dateString) return [];
@@ -267,21 +268,78 @@
 
             const formats = [];
 
-            // Add various date format representations that Voxel might use
+            // Helper function for ordinal suffix (1st, 2nd, 3rd, 4th, etc.)
+            const getOrdinalSuffix = (n) => {
+                const s = ['th', 'st', 'nd', 'rd'];
+                const v = n % 100;
+                return s[(v - 20) % 10] || s[v] || s[0];
+            };
+
+            // Helper to pad with leading zero
+            const pad = (n) => n.toString().padStart(2, '0');
+
+            const day = date.getDate();
+            const month = date.getMonth(); // 0-indexed
+            const year = date.getFullYear();
+            const dayOfWeek = date.getDay(); // 0=Sunday
+
+            // ===== FULL DATE FORMATS =====
             // Format: December 30, 2025
             formats.push(date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }));
             // Format: Dec 30, 2025
             formats.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }));
-            // Format: 12/30/2025
+            // Format: 12/30/2025 (en-US)
             formats.push(date.toLocaleDateString('en-US'));
-            // Format: 30/12/2025
+            // Format: 30/12/2025 (en-GB)
             formats.push(date.toLocaleDateString('en-GB'));
-            // Format: 2025-12-30
+            // Format: 2025-12-30 (ISO)
             formats.push(dateString.split(' ')[0]);
             // Format: Monday, December 30
             formats.push(date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
             // Format: Mon, Dec 30
             formats.push(date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
+
+            // ===== MONTH + DAY (no year) =====
+            // Format: January 30
+            formats.push(date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }));
+            // Format: Jan 30
+            formats.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+
+            // ===== DAY FORMATS (PHP: d, j, S, jS) =====
+            // d: Day with leading zero (01-31)
+            formats.push(pad(day));
+            // j: Day without leading zero (1-31)
+            formats.push(day.toString());
+            // S: Ordinal suffix (st, nd, rd, th)
+            formats.push(getOrdinalSuffix(day));
+            // jS: Day with ordinal (1st, 2nd, 3rd, etc.)
+            formats.push(day + getOrdinalSuffix(day));
+
+            // ===== WEEKDAY FORMATS (PHP: D, l, N, w) =====
+            // l: Full weekday name (Monday)
+            formats.push(date.toLocaleDateString('en-US', { weekday: 'long' }));
+            // D: Short weekday name (Mon)
+            formats.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+            // N: ISO-8601 day of week (1=Monday, 7=Sunday)
+            formats.push((dayOfWeek === 0 ? 7 : dayOfWeek).toString());
+            // w: Day of week (0=Sunday, 6=Saturday)
+            formats.push(dayOfWeek.toString());
+
+            // ===== MONTH FORMATS (PHP: F, M, m, n) =====
+            // F: Full month name (January)
+            formats.push(date.toLocaleDateString('en-US', { month: 'long' }));
+            // M: Short month name (Jan)
+            formats.push(date.toLocaleDateString('en-US', { month: 'short' }));
+            // m: Month with leading zero (01-12)
+            formats.push(pad(month + 1));
+            // n: Month without leading zero (1-12)
+            formats.push((month + 1).toString());
+
+            // ===== YEAR FORMATS (PHP: Y, y) =====
+            // Y: 4-digit year (2025)
+            formats.push(year.toString());
+            // y: 2-digit year (25)
+            formats.push(year.toString().slice(-2));
 
             return formats;
         } catch (e) {
