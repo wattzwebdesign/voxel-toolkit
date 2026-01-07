@@ -46,6 +46,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
+- **Compare Action Improvements**: Fixed multiple issues with the Compare action in Edit Actions widget:
+  - Blank text field now shows nothing instead of defaulting to "Compare"
+  - Tooltips now work correctly (using Voxel's tooltip-inactive/tooltip-active pattern)
+  - Active state now uses configured icon instead of showing a checkmark
+  - Added Active State controls (text, icon, tooltip) matching Save to Collection action
 
 ## [1.6.0.1] - 2026-01-05
 

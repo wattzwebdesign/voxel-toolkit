@@ -44,6 +44,55 @@ class Voxel_Toolkit_Compare_Posts_Widget_Manager {
         // Voxel Action (VX) widget integration
         add_filter('voxel/advanced-list/actions', array($this, 'register_compare_action'));
         add_action('voxel/advanced-list/action:add_to_compare', array($this, 'render_compare_action'), 10, 2);
+
+        // Add active state controls for compare action
+        add_action('elementor/element/ts-advanced-list/ts_action_content/after_section_end', array($this, 'extend_action_controls'), 10, 2);
+    }
+
+    /**
+     * Extend Advanced List action controls to include add_to_compare in active state conditions
+     *
+     * @param \Elementor\Widget_Base $element
+     * @param array $args
+     */
+    public function extend_action_controls($element, $args) {
+        $repeater_control = $element->get_controls('ts_actions');
+
+        if (!$repeater_control || empty($repeater_control['fields'])) {
+            return;
+        }
+
+        // Controls that need add_to_compare added to their conditions
+        $controls_to_update = array(
+            'ts_acw_reveal_heading',
+            'ts_acw_reveal_text',
+            'ts_acw_reveal_icon',
+            'ts_acw_enable_tooltip',
+            'ts_acw_tooltip_text',
+        );
+
+        $updated_fields = $repeater_control['fields'];
+        $needs_update = false;
+
+        foreach ($updated_fields as $field_key => &$field_data) {
+            // Check if this is one of the controls we need to update
+            if (in_array($field_key, $controls_to_update) && isset($field_data['condition']['ts_action_type'])) {
+                // Add add_to_compare to the condition if not already present
+                if (!in_array('add_to_compare', $field_data['condition']['ts_action_type'])) {
+                    $field_data['condition']['ts_action_type'][] = 'add_to_compare';
+                    $needs_update = true;
+                }
+            }
+        }
+
+        if ($needs_update) {
+            $element->update_control(
+                'ts_actions',
+                array(
+                    'fields' => $updated_fields,
+                )
+            );
+        }
     }
 
     /**
@@ -299,11 +348,21 @@ class Voxel_Toolkit_Compare_Posts_Widget_Manager {
 
         // Get icon settings from action config
         $initial_icon = !empty($action['ts_acw_initial_icon']['value']) ? $action['ts_acw_initial_icon'] : ['library' => 'fa-solid', 'value' => 'fas fa-exchange-alt'];
-        $reveal_icon = !empty($action['ts_acw_reveal_icon']['value']) ? $action['ts_acw_reveal_icon'] : ['library' => 'fa-solid', 'value' => 'fas fa-check'];
-        $initial_text = !empty($action['ts_acw_initial_text']) ? $action['ts_acw_initial_text'] : __('Compare', 'voxel-toolkit');
-        $reveal_text = !empty($action['ts_acw_reveal_text']) ? $action['ts_acw_reveal_text'] : __('Added', 'voxel-toolkit');
+        // Use reveal icon if set, otherwise fall back to initial icon (same icon in both states)
+        $reveal_icon = !empty($action['ts_acw_reveal_icon']['value']) ? $action['ts_acw_reveal_icon'] : $initial_icon;
+
+        // Get text - allow empty string (no default fallback)
+        $initial_text = isset($action['ts_acw_initial_text']) ? $action['ts_acw_initial_text'] : '';
+        $reveal_text = isset($action['ts_acw_reveal_text']) ? $action['ts_acw_reveal_text'] : '';
         ?>
-        <li class="elementor-repeater-item-<?php echo esc_attr($action['_id']); ?> flexify ts-action">
+        <li class="elementor-repeater-item-<?php echo esc_attr($action['_id']); ?> flexify ts-action"
+            <?php if (!empty($action['ts_enable_tooltip']) && $action['ts_enable_tooltip'] === 'yes' && !empty($action['ts_tooltip_text'])): ?>
+                tooltip-inactive="<?php echo esc_attr($action['ts_tooltip_text']); ?>"
+            <?php endif; ?>
+            <?php if (!empty($action['ts_acw_enable_tooltip']) && $action['ts_acw_enable_tooltip'] === 'yes' && !empty($action['ts_acw_tooltip_text'])): ?>
+                tooltip-active="<?php echo esc_attr($action['ts_acw_tooltip_text']); ?>"
+            <?php endif; ?>
+        >
             <a href="#"
                class="ts-action-con vt-compare-action-btn"
                role="button"
@@ -313,11 +372,15 @@ class Voxel_Toolkit_Compare_Posts_Widget_Manager {
                data-post-thumbnail="<?php echo esc_attr($post_thumbnail); ?>">
                 <span class="ts-initial">
                     <div class="ts-action-icon"><?php \Voxel\render_icon($initial_icon); ?></div>
-                    <?php echo esc_html($initial_text); ?>
+                    <?php if ($initial_text !== ''): ?>
+                        <?php echo esc_html($initial_text); ?>
+                    <?php endif; ?>
                 </span>
                 <span class="ts-reveal">
                     <div class="ts-action-icon"><?php \Voxel\render_icon($reveal_icon); ?></div>
-                    <?php echo esc_html($reveal_text); ?>
+                    <?php if ($reveal_text !== ''): ?>
+                        <?php echo esc_html($reveal_text); ?>
+                    <?php endif; ?>
                 </span>
             </a>
         </li>
