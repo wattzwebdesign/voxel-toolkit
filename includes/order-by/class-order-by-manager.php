@@ -82,6 +82,18 @@ class Voxel_Toolkit_Order_By_Manager {
                         sort_type: 'helpful'
                     }]
                 };
+
+                // Add "Open Now" preset
+                window.Post_Type_Options.orderby_presets['open-now-preset'] = {
+                    key: 'open-now-preset',
+                    label: 'Open Now',
+                    clauses: [{
+                        type: 'open-now',
+                        order: 'DESC',
+                        field: '',
+                        timezone_mode: 'site'
+                    }]
+                };
             }
         })();
         </script>
@@ -103,6 +115,12 @@ add_filter('voxel/orderby-types', function($orderby_types) {
         require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/order-by/class-helpful-votes-order.php';
     }
     $orderby_types['helpful-votes'] = \Voxel_Toolkit\Order_By\Helpful_Votes_Order::class;
+
+    // Load open now order class
+    if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/order-by/class-open-now-order.php')) {
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/order-by/class-open-now-order.php';
+    }
+    $orderby_types['open-now'] = \Voxel_Toolkit\Order_By\Open_Now_Order::class;
 
     return $orderby_types;
 });
