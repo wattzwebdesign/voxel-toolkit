@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **AI Bot Thinking Text**: New setting to customize the "AI is thinking" loading message
 - **Telnyx SMS Provider**: New SMS provider option with API v2 Bearer token authentication
 - **Solapi SMS Provider**: New SMS provider for Korean market with HMAC-SHA256 authentication
+- **External Link Warning Button Styling**: Added button styling controls for the External Link Warning modal:
+  - Border radius control (0-50px)
+  - Border width control (0-10px)
+  - Individual border colors for Continue and Cancel buttons
+  - Sticky live preview that follows scroll in settings page
 
 ### Fixed
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
