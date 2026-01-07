@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.6.1] - 2026-01-06
 
 ### Added
+- **Coupon Manager Widget**: New Elementor widget for creating and managing Stripe coupons. Features include:
+  - Create percent-off or fixed-amount discount coupons
+  - Set duration (once, repeating, forever)
+  - Optional restrictions: max redemptions, expiration date, minimum order value, limit to specific customer email, first-time customers only
+  - View list of coupons created by the current user
+  - Delete coupons
+  - Automatic Stripe provider check (widget only displays when Stripe is enabled)
+  - Full Elementor styling controls for form, buttons, coupon cards, promo codes, expired states, and delete button
 - **Open Now Search Order**: New search order option to sort listings by open/closed status based on work hours field. Features include:
   - Open listings appear first (or closed first if reversed)
   - Configurable work hours field selector
