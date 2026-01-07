@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.6.1] - 2026-01-06
 
 ### Added
+- **Open Now Search Order**: New search order option to sort listings by open/closed status based on work hours field. Features include:
+  - Open listings appear first (or closed first if reversed)
+  - Configurable work hours field selector
+  - Timezone modes: site timezone or individual post timezone
 - **Pin Timeline Post**: Allow post authors to pin a timeline post to the top of their post's timeline feed. Features include:
   - "Pin to Top" / "Unpin" action in post dropdown menu (visible only to parent post author)
   - Pinned badge displayed on pinned posts
