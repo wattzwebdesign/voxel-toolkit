@@ -6374,7 +6374,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         $default_title = sprintf(__("You're leaving %s", 'voxel-toolkit'), $site_name);
         $default_message = __('You are about to leave this website and visit an external site. We are not responsible for the content or privacy practices of external sites.', 'voxel-toolkit');
 
-        // Default colors
+        // Default colors and styles
         $defaults = array(
             'overlay_color' => 'rgba(0,0,0,0.6)',
             'modal_bg' => '#ffffff',
@@ -6384,8 +6384,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             'icon_color' => '#d97706',
             'continue_bg' => '#3b82f6',
             'continue_text_color' => '#ffffff',
+            'continue_border_color' => '',
             'cancel_bg' => '#f1f5f9',
             'cancel_text_color' => '#475569',
+            'cancel_border_color' => '',
+            'button_border_radius' => '8',
+            'button_border_width' => '0',
         );
 
         // Get current values with defaults
@@ -6399,6 +6403,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         $continue_text_color = isset($settings['continue_text_color']) ? $settings['continue_text_color'] : $defaults['continue_text_color'];
         $cancel_bg = isset($settings['cancel_bg']) ? $settings['cancel_bg'] : $defaults['cancel_bg'];
         $cancel_text_color = isset($settings['cancel_text_color']) ? $settings['cancel_text_color'] : $defaults['cancel_text_color'];
+        $continue_border_color = isset($settings['continue_border_color']) ? $settings['continue_border_color'] : $defaults['continue_border_color'];
+        $cancel_border_color = isset($settings['cancel_border_color']) ? $settings['cancel_border_color'] : $defaults['cancel_border_color'];
+        $button_border_radius = isset($settings['button_border_radius']) ? $settings['button_border_radius'] : $defaults['button_border_radius'];
+        $button_border_width = isset($settings['button_border_width']) ? $settings['button_border_width'] : $defaults['button_border_width'];
 
         $title_val = isset($settings['title']) && !empty($settings['title']) ? $settings['title'] : $default_title;
         $message_val = isset($settings['message']) && !empty($settings['message']) ? $settings['message'] : $default_message;
@@ -6535,7 +6543,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
 
                     <h5 style="margin: 20px 0 12px; font-size: 13px; color: #666;"><?php _e('Continue Button', 'voxel-toolkit'); ?></h5>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px;">
                         <div class="vt-field-group">
                             <label class="vt-field-label"><?php _e('Background', 'voxel-toolkit'); ?></label>
                             <input type="text"
@@ -6556,10 +6564,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                    class="vt-text-input lm-color-input"
                                    style="width: 120px; font-family: monospace;" />
                         </div>
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Border Color', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[link_management][continue_border_color]"
+                                   id="lm-continue-border-color"
+                                   value="<?php echo esc_attr($continue_border_color); ?>"
+                                   placeholder=""
+                                   class="vt-text-input lm-color-input"
+                                   style="width: 120px; font-family: monospace;" />
+                        </div>
                     </div>
 
                     <h5 style="margin: 20px 0 12px; font-size: 13px; color: #666;"><?php _e('Cancel Button', 'voxel-toolkit'); ?></h5>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px;">
                         <div class="vt-field-group">
                             <label class="vt-field-label"><?php _e('Background', 'voxel-toolkit'); ?></label>
                             <input type="text"
@@ -6579,6 +6597,44 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                    placeholder="#475569"
                                    class="vt-text-input lm-color-input"
                                    style="width: 120px; font-family: monospace;" />
+                        </div>
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Border Color', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[link_management][cancel_border_color]"
+                                   id="lm-cancel-border-color"
+                                   value="<?php echo esc_attr($cancel_border_color); ?>"
+                                   placeholder=""
+                                   class="vt-text-input lm-color-input"
+                                   style="width: 120px; font-family: monospace;" />
+                        </div>
+                    </div>
+
+                    <h5 style="margin: 20px 0 12px; font-size: 13px; color: #666;"><?php _e('Button Styling', 'voxel-toolkit'); ?></h5>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Border Radius (px)', 'voxel-toolkit'); ?></label>
+                            <input type="number"
+                                   name="voxel_toolkit_options[link_management][button_border_radius]"
+                                   id="lm-button-border-radius"
+                                   value="<?php echo esc_attr($button_border_radius); ?>"
+                                   placeholder="8"
+                                   class="vt-text-input lm-style-input"
+                                   style="width: 80px;"
+                                   min="0"
+                                   max="50" />
+                        </div>
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Border Width (px)', 'voxel-toolkit'); ?></label>
+                            <input type="number"
+                                   name="voxel_toolkit_options[link_management][button_border_width]"
+                                   id="lm-button-border-width"
+                                   value="<?php echo esc_attr($button_border_width); ?>"
+                                   placeholder="0"
+                                   class="vt-text-input lm-style-input"
+                                   style="width: 80px;"
+                                   min="0"
+                                   max="10" />
                         </div>
                     </div>
                 </div>
@@ -6613,8 +6669,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </div>
 
             <!-- Right column: Preview -->
-            <div style="flex: 0 0 420px;">
-                <div class="vt-settings-section" style="position: sticky; top: 50px;">
+            <div id="lm-preview-sticky-col" style="flex: 0 0 420px; align-self: flex-start;">
+                <div class="vt-settings-section" style="margin-bottom: 0;">
                     <h4 class="vt-settings-section-title"><?php _e('Live Preview', 'voxel-toolkit'); ?></h4>
                     <div id="lm-preview-container" style="background: #1a1a1a; border-radius: 8px; padding: 30px; min-height: 350px; display: flex; align-items: center; justify-content: center;">
                         <div id="lm-preview-modal" style="background: <?php echo esc_attr($modal_bg); ?>; border-radius: 12px; padding: 32px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);">
@@ -6629,8 +6685,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <p id="lm-preview-message" style="margin: 0 0 16px; font-size: 14px; color: <?php echo esc_attr($message_color); ?>; line-height: 1.5;"><?php echo esc_html($message_val); ?></p>
                             <p id="lm-preview-url" style="margin: 0 0 20px; padding: 8px 12px; background: #f1f5f9; border-radius: 6px; font-size: 12px; color: #475569; font-family: monospace; display: <?php echo !empty($settings['show_url']) ? 'block' : 'none'; ?>;">https://example.com/page</p>
                             <div style="display: flex; gap: 12px; justify-content: center;">
-                                <button type="button" id="lm-preview-cancel" style="padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; flex: 1; background: <?php echo esc_attr($cancel_bg); ?>; color: <?php echo esc_attr($cancel_text_color); ?>;"><?php echo esc_html($cancel_text_val); ?></button>
-                                <button type="button" id="lm-preview-continue" style="padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; flex: 1; background: <?php echo esc_attr($continue_bg); ?>; color: <?php echo esc_attr($continue_text_color); ?>;"><?php echo esc_html($continue_text_val); ?></button>
+                                <button type="button" id="lm-preview-cancel" style="padding: 10px 20px; border-radius: <?php echo esc_attr($button_border_radius); ?>px; font-size: 14px; font-weight: 500; cursor: pointer; border: <?php echo esc_attr($button_border_width); ?>px solid <?php echo esc_attr($cancel_border_color ?: 'transparent'); ?>; flex: 1; background: <?php echo esc_attr($cancel_bg); ?>; color: <?php echo esc_attr($cancel_text_color); ?>;"><?php echo esc_html($cancel_text_val); ?></button>
+                                <button type="button" id="lm-preview-continue" style="padding: 10px 20px; border-radius: <?php echo esc_attr($button_border_radius); ?>px; font-size: 14px; font-weight: 500; cursor: pointer; border: <?php echo esc_attr($button_border_width); ?>px solid <?php echo esc_attr($continue_border_color ?: 'transparent'); ?>; flex: 1; background: <?php echo esc_attr($continue_bg); ?>; color: <?php echo esc_attr($continue_text_color); ?>;"><?php echo esc_html($continue_text_val); ?></button>
                             </div>
                         </div>
                     </div>
@@ -6668,22 +6724,78 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     'background': $('#lm-icon-bg').val() || '#fef3c7',
                     'color': $('#lm-icon-color').val() || '#d97706'
                 });
+                // Button styling
+                var borderRadius = ($('#lm-button-border-radius').val() || '8') + 'px';
+                var borderWidth = ($('#lm-button-border-width').val() || '0') + 'px';
+                var continueBorderColor = $('#lm-continue-border-color').val() || 'transparent';
+                var cancelBorderColor = $('#lm-cancel-border-color').val() || 'transparent';
+
                 $('#lm-preview-continue').css({
                     'background': $('#lm-continue-bg').val() || '#3b82f6',
-                    'color': $('#lm-continue-text-color').val() || '#ffffff'
+                    'color': $('#lm-continue-text-color').val() || '#ffffff',
+                    'border-radius': borderRadius,
+                    'border-width': borderWidth,
+                    'border-style': 'solid',
+                    'border-color': continueBorderColor
                 });
                 $('#lm-preview-cancel').css({
                     'background': $('#lm-cancel-bg').val() || '#f1f5f9',
-                    'color': $('#lm-cancel-text-color').val() || '#475569'
+                    'color': $('#lm-cancel-text-color').val() || '#475569',
+                    'border-radius': borderRadius,
+                    'border-width': borderWidth,
+                    'border-style': 'solid',
+                    'border-color': cancelBorderColor
                 });
             }
 
             // Bind events
             $('#lm-title, #lm-message, #lm-continue-text, #lm-cancel-text').on('input keyup', updatePreview);
             $('#lm-show-url').on('change', updatePreview);
-            $('.lm-color-input').on('input keyup paste', function() {
+            $('.lm-color-input, .lm-style-input').on('input keyup paste change', function() {
                 setTimeout(updatePreview, 50);
             });
+
+            // Sticky preview using JS - window scroll approach
+            var $previewCol = $('#lm-preview-sticky-col');
+            var $previewInner = $previewCol.find('.vt-settings-section');
+            var $leftCol = $previewCol.prev();
+
+            if ($previewCol.length && $leftCol.length) {
+                var adminBarHeight = $('#wpadminbar').length ? $('#wpadminbar').outerHeight() : 0;
+                var stickyOffset = adminBarHeight + 20;
+
+                $(window).on('scroll resize', function() {
+                    var leftColRect = $leftCol[0].getBoundingClientRect();
+                    var previewColRect = $previewCol[0].getBoundingClientRect();
+                    var leftColBottom = leftColRect.bottom;
+                    var previewHeight = $previewInner.outerHeight();
+
+                    // Start sticky when preview would scroll out of view
+                    if (leftColRect.top < stickyOffset && leftColBottom > (stickyOffset + previewHeight + 40)) {
+                        $previewInner.css({
+                            'position': 'fixed',
+                            'top': stickyOffset + 'px',
+                            'width': $previewCol.width() + 'px'
+                        });
+                    } else if (leftColBottom <= (stickyOffset + previewHeight + 40)) {
+                        // Stop at bottom
+                        $previewInner.css({
+                            'position': 'absolute',
+                            'top': 'auto',
+                            'bottom': '0',
+                            'width': $previewCol.width() + 'px'
+                        });
+                        $previewCol.css('position', 'relative');
+                    } else {
+                        // Reset
+                        $previewInner.css({
+                            'position': 'static',
+                            'top': 'auto',
+                            'width': 'auto'
+                        });
+                    }
+                });
+            }
         });
         </script>
         <?php
