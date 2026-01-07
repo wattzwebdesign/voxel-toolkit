@@ -34,6 +34,40 @@
         var $submitBtn = $form.find('.vt-coupon-submit');
         var $message = $form.find('.vt-coupon-message');
         var originalBtnText = $submitBtn.text();
+        var $dateInput = $form.find('#vt-coupon-redeem-by');
+
+        // Initialize Pikaday date picker
+        if ($dateInput.length && typeof Pikaday !== 'undefined') {
+            var $dateContainer = $dateInput.closest('.vt-form-group');
+            $dateContainer.css('position', 'relative');
+
+            var picker = new Pikaday({
+                field: $dateInput[0],
+                container: $dateContainer[0],
+                format: 'YYYY-MM-DD',
+                minDate: new Date(),
+                theme: 'vt-coupon-pikaday',
+                bound: true,
+                keyboardInput: false,
+                toString: function(date, format) {
+                    var day = date.getDate();
+                    var month = date.getMonth() + 1;
+                    var year = date.getFullYear();
+                    return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+                },
+                parse: function(dateString, format) {
+                    var parts = dateString.split('-');
+                    return new Date(parts[0], parts[1] - 1, parts[2]);
+                }
+            });
+
+            // Prevent clicks inside Pikaday from closing the picker
+            // The picker closes because input loses focus - prevent that
+            $(picker.el).on('mousedown', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        }
 
         // Toggle discount type fields
         $discountType.on('change', function() {
@@ -68,6 +102,8 @@
             var durationMonths = $form.find('#vt-coupon-duration-months').val();
             var maxRedemptions = $form.find('#vt-coupon-max-redemptions').val();
             var redeemBy = $form.find('#vt-coupon-redeem-by').val();
+            var minimumAmount = $form.find('#vt-coupon-min-amount').val();
+            var customerEmail = $form.find('#vt-coupon-customer-email').val().trim();
             var firstTimeOnly = $form.find('#vt-coupon-first-time').is(':checked');
 
             // Validate
@@ -109,6 +145,8 @@
                     duration_months: durationMonths,
                     max_redemptions: maxRedemptions,
                     redeem_by: redeemBy,
+                    minimum_amount: minimumAmount,
+                    customer_email: customerEmail,
                     first_time_only: firstTimeOnly
                 },
                 success: function(response) {
@@ -186,12 +224,18 @@
             }
 
             var expiry = '';
+            var isExpired = false;
             if (coupon.redeem_by) {
                 var expiryDate = new Date(coupon.redeem_by * 1000);
                 expiry = expiryDate.toLocaleDateString();
+                isExpired = expiryDate < new Date();
             }
 
-            html += '<div class="vt-coupon-item" data-coupon-id="' + coupon.id + '">';
+            var itemClass = 'vt-coupon-item';
+            if (isExpired) itemClass += ' vt-coupon-expired';
+            if (!coupon.valid) itemClass += ' vt-coupon-invalid-item';
+
+            html += '<div class="' + itemClass + '" data-coupon-id="' + coupon.id + '">';
             html += '<div class="vt-coupon-header">';
             html += '<span class="vt-coupon-name">' + escapeHtml(coupon.name) + '</span>';
             html += '<span class="vt-coupon-discount">' + discount + '</span>';
@@ -201,9 +245,13 @@
             html += '<span class="vt-coupon-duration">Duration: ' + duration + '</span>';
             html += '<span class="vt-coupon-redemptions">Redeemed: ' + redemptions + '</span>';
             if (expiry) {
-                html += '<span class="vt-coupon-expiry">Expires: ' + expiry + '</span>';
+                if (isExpired) {
+                    html += '<span class="vt-coupon-expiry vt-expired-badge">Expired: ' + expiry + '</span>';
+                } else {
+                    html += '<span class="vt-coupon-expiry">Expires: ' + expiry + '</span>';
+                }
             }
-            if (!coupon.valid) {
+            if (!coupon.valid && !isExpired) {
                 html += '<span class="vt-coupon-invalid">Inactive</span>';
             }
             html += '</div>';
@@ -212,8 +260,12 @@
                 html += '<div class="vt-coupon-codes">';
                 coupon.promo_codes.forEach(function(promo) {
                     var promoClass = promo.active ? '' : ' inactive';
-                    var firstTime = promo.first_time_transaction ? ' (First-time only)' : '';
-                    html += '<span class="vt-promo-code' + promoClass + '">' + promo.code + firstTime + '</span>';
+                    var restrictions = [];
+                    if (promo.first_time_transaction) restrictions.push('First-time only');
+                    if (promo.minimum_amount) restrictions.push('Min: ' + formatCurrency(promo.minimum_amount / 100, promo.minimum_amount_currency));
+                    if (promo.customer_email) restrictions.push('Customer: ' + promo.customer_email);
+                    var restrictionText = restrictions.length > 0 ? ' (' + restrictions.join(', ') + ')' : '';
+                    html += '<span class="vt-promo-code' + promoClass + '">' + promo.code + restrictionText + '</span>';
                 });
                 html += '</div>';
             }

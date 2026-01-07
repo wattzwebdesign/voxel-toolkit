@@ -141,6 +141,16 @@ class Voxel_Toolkit_Coupon_Widget extends \Elementor\Widget_Base {
             )
         );
 
+        $this->add_control(
+            'stripe_required_message',
+            array(
+                'label' => __('Stripe Not Enabled Message', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXTAREA,
+                'default' => __('Stripe payment gateway must be enabled to use this feature.', 'voxel-toolkit'),
+                'label_block' => true,
+            )
+        );
+
         $this->end_controls_section();
 
         // Style Section - Container
@@ -649,11 +659,11 @@ class Voxel_Toolkit_Coupon_Widget extends \Elementor\Widget_Base {
         $this->add_control(
             'delete_button_color',
             array(
-                'label' => __('Color', 'voxel-toolkit'),
+                'label' => __('Text Color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'default' => '#dc3232',
                 'selectors' => array(
-                    '{{WRAPPER}} .vt-coupon-delete' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .vt-coupon-delete' => 'color: {{VALUE}}; border-color: {{VALUE}};',
                 ),
             )
         );
@@ -670,11 +680,23 @@ class Voxel_Toolkit_Coupon_Widget extends \Elementor\Widget_Base {
         $this->add_control(
             'delete_button_hover_color',
             array(
-                'label' => __('Color', 'voxel-toolkit'),
+                'label' => __('Text Color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
-                'default' => '#a01f1f',
+                'default' => '#ffffff',
                 'selectors' => array(
                     '{{WRAPPER}} .vt-coupon-delete:hover' => 'color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'delete_button_hover_bg',
+            array(
+                'label' => __('Background Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#dc3232',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-coupon-delete:hover' => 'background-color: {{VALUE}}; border-color: {{VALUE}};',
                 ),
             )
         );
@@ -684,6 +706,159 @@ class Voxel_Toolkit_Coupon_Widget extends \Elementor\Widget_Base {
         $this->end_controls_tabs();
 
         $this->end_controls_section();
+
+        // Style Section - Expired Coupons
+        $this->start_controls_section(
+            'expired_style_section',
+            array(
+                'label' => __('Expired Coupons', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            )
+        );
+
+        $this->add_control(
+            'expired_opacity',
+            array(
+                'label' => __('Opacity', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'range' => array(
+                    'px' => array(
+                        'min' => 0,
+                        'max' => 1,
+                        'step' => 0.1,
+                    ),
+                ),
+                'default' => array(
+                    'size' => 0.7,
+                ),
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-coupon-item.vt-coupon-expired' => 'opacity: {{SIZE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'expired_card_bg',
+            array(
+                'label' => __('Card Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#f5f5f5',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-coupon-item.vt-coupon-expired' => 'background-color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'expired_badge_bg',
+            array(
+                'label' => __('Discount Badge Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#999999',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-coupon-item.vt-coupon-expired .vt-coupon-discount' => 'background-color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'expired_text_color',
+            array(
+                'label' => __('Expired Badge Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#dc3232',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-expired-badge' => 'color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->end_controls_section();
+
+        // Style Section - Promo Codes
+        $this->start_controls_section(
+            'promo_code_style_section',
+            array(
+                'label' => __('Promo Codes', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            )
+        );
+
+        $this->add_control(
+            'promo_code_bg',
+            array(
+                'label' => __('Background Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#e9e9e9',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promo-code' => 'background-color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'promo_code_color',
+            array(
+                'label' => __('Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#333333',
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promo-code' => 'color: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_responsive_control(
+            'promo_code_padding',
+            array(
+                'label' => __('Padding', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => array('px', 'em'),
+                'default' => array(
+                    'top' => 4,
+                    'right' => 10,
+                    'bottom' => 4,
+                    'left' => 10,
+                    'unit' => 'px',
+                ),
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promo-code' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ),
+            )
+        );
+
+        $this->add_responsive_control(
+            'promo_code_border_radius',
+            array(
+                'label' => __('Border Radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => array('px'),
+                'range' => array(
+                    'px' => array(
+                        'min' => 0,
+                        'max' => 20,
+                    ),
+                ),
+                'default' => array(
+                    'size' => 4,
+                ),
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promo-code' => 'border-radius: {{SIZE}}{{UNIT}};',
+                ),
+            )
+        );
+
+        $this->end_controls_section();
+    }
+
+    /**
+     * Check if Stripe is the enabled payment provider
+     *
+     * @return bool
+     */
+    private function is_stripe_enabled() {
+        $provider = \Voxel\get('payments.provider', '');
+        return $provider === 'stripe';
     }
 
     /**
@@ -691,6 +866,14 @@ class Voxel_Toolkit_Coupon_Widget extends \Elementor\Widget_Base {
      */
     protected function render() {
         $settings = $this->get_settings_for_display();
+
+        // Check if Stripe is enabled
+        if (!$this->is_stripe_enabled()) {
+            echo '<div class="vt-coupon-widget vt-coupon-login-required">';
+            echo '<p>' . esc_html($settings['stripe_required_message']) . '</p>';
+            echo '</div>';
+            return;
+        }
 
         // Check if user is logged in
         if (!is_user_logged_in()) {
@@ -760,7 +943,18 @@ class Voxel_Toolkit_Coupon_Widget extends \Elementor\Widget_Base {
                         </div>
                         <div class="vt-form-group vt-form-group-half">
                             <label for="vt-coupon-redeem-by"><?php esc_html_e('Expiration Date (optional)', 'voxel-toolkit'); ?></label>
-                            <input type="date" id="vt-coupon-redeem-by" name="redeem_by">
+                            <input type="text" id="vt-coupon-redeem-by" name="redeem_by" placeholder="<?php esc_attr_e('Select date', 'voxel-toolkit'); ?>" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="vt-form-row">
+                        <div class="vt-form-group vt-form-group-half">
+                            <label for="vt-coupon-min-amount"><?php esc_html_e('Minimum Order Value (optional)', 'voxel-toolkit'); ?></label>
+                            <input type="number" id="vt-coupon-min-amount" name="minimum_amount" min="0" step="0.01" placeholder="<?php esc_attr_e('No minimum', 'voxel-toolkit'); ?>">
+                        </div>
+                        <div class="vt-form-group vt-form-group-half">
+                            <label for="vt-coupon-customer-email"><?php esc_html_e('Limit to Customer Email (optional)', 'voxel-toolkit'); ?></label>
+                            <input type="email" id="vt-coupon-customer-email" name="customer_email" placeholder="<?php esc_attr_e('Any customer', 'voxel-toolkit'); ?>">
                         </div>
                     </div>
 
@@ -849,7 +1043,18 @@ class Voxel_Toolkit_Coupon_Widget extends \Elementor\Widget_Base {
                         </div>
                         <div class="vt-form-group vt-form-group-half">
                             <label><?php esc_html_e('Expiration Date', 'voxel-toolkit'); ?></label>
-                            <input type="date" disabled>
+                            <input type="text" placeholder="<?php esc_attr_e('Select date', 'voxel-toolkit'); ?>" disabled>
+                        </div>
+                    </div>
+
+                    <div class="vt-form-row">
+                        <div class="vt-form-group vt-form-group-half">
+                            <label><?php esc_html_e('Minimum Order Value', 'voxel-toolkit'); ?></label>
+                            <input type="number" disabled>
+                        </div>
+                        <div class="vt-form-group vt-form-group-half">
+                            <label><?php esc_html_e('Limit to Customer Email', 'voxel-toolkit'); ?></label>
+                            <input type="email" disabled>
                         </div>
                     </div>
 

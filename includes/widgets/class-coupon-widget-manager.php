@@ -59,11 +59,15 @@ class Voxel_Toolkit_Coupon_Widget_Manager {
         $css_file = VOXEL_TOOLKIT_PLUGIN_DIR . 'assets/css/coupon-widget.css';
         $js_file = VOXEL_TOOLKIT_PLUGIN_DIR . 'assets/js/coupon-widget.js';
 
+        // Enqueue Pikaday (from Voxel theme)
+        wp_enqueue_script('pikaday');
+        wp_enqueue_style('pikaday');
+
         // Enqueue styles
         wp_enqueue_style(
             'voxel-coupon-widget',
             VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/coupon-widget.css',
-            array(),
+            array('pikaday'),
             file_exists($css_file) ? filemtime($css_file) : VOXEL_TOOLKIT_VERSION
         );
 
@@ -71,7 +75,7 @@ class Voxel_Toolkit_Coupon_Widget_Manager {
         wp_enqueue_script(
             'voxel-coupon-widget',
             VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/coupon-widget.js',
-            array('jquery'),
+            array('jquery', 'pikaday'),
             file_exists($js_file) ? filemtime($js_file) : VOXEL_TOOLKIT_VERSION,
             true
         );
@@ -101,11 +105,27 @@ class Voxel_Toolkit_Coupon_Widget_Manager {
     }
 
     /**
+     * Check if Stripe is the enabled payment provider
+     *
+     * @return bool
+     */
+    private function is_stripe_enabled() {
+        if (!function_exists('\Voxel\get')) {
+            return false;
+        }
+        $provider = \Voxel\get('payments.provider', '');
+        return $provider === 'stripe';
+    }
+
+    /**
      * Get Stripe client
      *
      * @return object|false Stripe client or false if not available
      */
     private function get_stripe_client() {
+        if (!$this->is_stripe_enabled()) {
+            return false;
+        }
         if (!class_exists('\Voxel\Modules\Stripe_Payments\Stripe_Client')) {
             return false;
         }
@@ -131,7 +151,7 @@ class Voxel_Toolkit_Coupon_Widget_Manager {
         // Get Stripe client
         $stripe = $this->get_stripe_client();
         if (!$stripe) {
-            wp_send_json_error(array('message' => __('Stripe is not configured', 'voxel-toolkit')));
+            wp_send_json_error(array('message' => __('Stripe payment gateway must be enabled to use this feature', 'voxel-toolkit')));
             return;
         }
 
@@ -145,6 +165,8 @@ class Voxel_Toolkit_Coupon_Widget_Manager {
         $duration_months = isset($_POST['duration_months']) ? intval($_POST['duration_months']) : 0;
         $max_redemptions = isset($_POST['max_redemptions']) ? intval($_POST['max_redemptions']) : 0;
         $redeem_by = isset($_POST['redeem_by']) ? sanitize_text_field($_POST['redeem_by']) : '';
+        $minimum_amount = isset($_POST['minimum_amount']) ? floatval($_POST['minimum_amount']) : 0;
+        $customer_email = isset($_POST['customer_email']) ? sanitize_email($_POST['customer_email']) : '';
         $first_time_only = isset($_POST['first_time_only']) && $_POST['first_time_only'] === 'true';
 
         // Validate required fields
@@ -217,9 +239,12 @@ class Voxel_Toolkit_Coupon_Widget_Manager {
             // Create coupon in Stripe
             $coupon = $stripe->coupons->create($coupon_data);
 
-            // Create promotion code if custom code provided or first-time only
+            // Determine if we need a promotion code
+            $needs_promo_code = !empty($code) || $first_time_only || $minimum_amount > 0 || !empty($customer_email);
+
+            // Create promotion code if needed
             $promo_code = null;
-            if (!empty($code) || $first_time_only) {
+            if ($needs_promo_code) {
                 $promo_data = array(
                     'coupon' => $coupon->id,
                     'code' => !empty($code) ? $code : strtoupper(wp_generate_password(8, false)),
@@ -228,10 +253,37 @@ class Voxel_Toolkit_Coupon_Widget_Manager {
                     ),
                 );
 
+                // Build restrictions array
+                $restrictions = array();
+
                 if ($first_time_only) {
-                    $promo_data['restrictions'] = array(
-                        'first_time_transaction' => true,
-                    );
+                    $restrictions['first_time_transaction'] = true;
+                }
+
+                if ($minimum_amount > 0) {
+                    $restrictions['minimum_amount'] = intval($minimum_amount * 100); // Convert to cents
+                    $currency = 'USD';
+                    if (function_exists('\Voxel\get')) {
+                        $currency = \Voxel\get('payments.stripe.currency', 'USD');
+                    }
+                    $restrictions['minimum_amount_currency'] = strtolower($currency);
+                }
+
+                if (!empty($restrictions)) {
+                    $promo_data['restrictions'] = $restrictions;
+                }
+
+                // Limit to specific customer by email
+                if (!empty($customer_email)) {
+                    // Look up customer by email
+                    $customers = $stripe->customers->all(array('email' => $customer_email, 'limit' => 1));
+                    if (!empty($customers->data)) {
+                        $promo_data['customer'] = $customers->data[0]->id;
+                    } else {
+                        // Customer not found - create one or return error
+                        wp_send_json_error(array('message' => sprintf(__('No Stripe customer found with email: %s', 'voxel-toolkit'), $customer_email)));
+                        return;
+                    }
                 }
 
                 $promo_code = $stripe->promotionCodes->create($promo_data);
@@ -279,7 +331,7 @@ class Voxel_Toolkit_Coupon_Widget_Manager {
         // Get Stripe client
         $stripe = $this->get_stripe_client();
         if (!$stripe) {
-            wp_send_json_error(array('message' => __('Stripe is not configured', 'voxel-toolkit')));
+            wp_send_json_error(array('message' => __('Stripe payment gateway must be enabled to use this feature', 'voxel-toolkit')));
             return;
         }
 
@@ -301,12 +353,28 @@ class Voxel_Toolkit_Coupon_Widget_Manager {
 
                     $codes = array();
                     foreach ($promo_codes->data as $promo) {
-                        $codes[] = array(
+                        $promo_data = array(
                             'id' => $promo->id,
                             'code' => $promo->code,
                             'active' => $promo->active,
                             'first_time_transaction' => $promo->restrictions->first_time_transaction ?? false,
+                            'minimum_amount' => $promo->restrictions->minimum_amount ?? null,
+                            'minimum_amount_currency' => $promo->restrictions->minimum_amount_currency ?? null,
                         );
+
+                        // Get customer email if restricted to specific customer
+                        if (!empty($promo->customer)) {
+                            try {
+                                $customer = $stripe->customers->retrieve($promo->customer);
+                                $promo_data['customer_email'] = $customer->email ?? null;
+                            } catch (\Exception $e) {
+                                $promo_data['customer_email'] = null;
+                            }
+                        } else {
+                            $promo_data['customer_email'] = null;
+                        }
+
+                        $codes[] = $promo_data;
                     }
 
                     $user_coupons[] = array(
@@ -358,7 +426,7 @@ class Voxel_Toolkit_Coupon_Widget_Manager {
         // Get Stripe client
         $stripe = $this->get_stripe_client();
         if (!$stripe) {
-            wp_send_json_error(array('message' => __('Stripe is not configured', 'voxel-toolkit')));
+            wp_send_json_error(array('message' => __('Stripe payment gateway must be enabled to use this feature', 'voxel-toolkit')));
             return;
         }
 
