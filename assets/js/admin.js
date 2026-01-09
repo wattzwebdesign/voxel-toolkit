@@ -87,7 +87,7 @@
                         // Show/hide configure button
                         const $actions = $card.find('.function-actions');
                         if (enabled && $actions.length === 0) {
-                            const settingsUrl = window.location.origin + window.location.pathname + '?page=voxel-toolkit-settings#section-' + functionKey;
+                            const settingsUrl = window.location.origin + window.location.pathname + '?page=voxel-toolkit-settings#' + functionKey;
                             $card.append('<div class="function-actions"><a href="' + settingsUrl + '" class="button button-secondary">Configure</a></div>');
                         } else if (!enabled) {
                             $actions.remove();
