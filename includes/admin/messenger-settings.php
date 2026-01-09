@@ -94,6 +94,9 @@ class Voxel_Toolkit_Messenger_Settings {
             $sanitized['excluded_post_types'] = array();
         }
 
+        // Open new chats in window
+        $sanitized['open_chats_in_window'] = !empty($input['open_chats_in_window']) ? 1 : 0;
+
         return $sanitized;
     }
 
@@ -171,6 +174,23 @@ class Voxel_Toolkit_Messenger_Settings {
                                         <?php _e('This image will be displayed in chat circles when a user has no avatar image.', 'voxel-toolkit'); ?>
                                     </p>
                                 </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th scope="row"><?php _e('Open New Chats in Window', 'voxel-toolkit'); ?></th>
+                            <td>
+                                <?php $open_chats_in_window = !empty($settings['open_chats_in_window']) ? 1 : 0; ?>
+                                <label>
+                                    <input type="checkbox"
+                                           name="open_chats_in_window"
+                                           value="1"
+                                           <?php checked($open_chats_in_window, 1); ?>>
+                                    <?php _e('Open message actions in chat window instead of inbox', 'voxel-toolkit'); ?>
+                                </label>
+                                <p class="description">
+                                    <?php _e('When enabled, clicking "Message" buttons on posts will open a chat window on the current page instead of navigating to the inbox page.', 'voxel-toolkit'); ?>
+                                </p>
                             </td>
                         </tr>
 
@@ -335,6 +355,7 @@ class Voxel_Toolkit_Messenger_Settings {
                 var settings = {
                     enabled: $form.find('input[name="enabled"]').is(':checked') ? 1 : 0,
                     default_avatar: $form.find('input[name="default_avatar"]').val(),
+                    open_chats_in_window: $form.find('input[name="open_chats_in_window"]').is(':checked') ? 1 : 0,
                     excluded_rules: [],
                     excluded_post_ids: $form.find('input[name="excluded_post_ids"]').val(),
                     excluded_post_types: []

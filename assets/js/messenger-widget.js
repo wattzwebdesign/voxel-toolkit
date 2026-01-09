@@ -798,8 +798,284 @@
             $messages.scrollTop($messages[0].scrollHeight);
         },
 
+        /**
+         * Intercept clicks on message action links to open chat windows instead of navigating
+         */
+        interceptMessageActions: function() {
+            var self = this;
+
+            // Intercept clicks on links with ?chat=p{id} or ?chat=u{id} in their href
+            $(document).on('click', 'a[href*="?chat=p"], a[href*="?chat=u"], a[href*="&chat=p"], a[href*="&chat=u"]', function(e) {
+                var href = $(this).attr('href');
+                if (!href) return;
+
+                // Extract the chat parameter
+                var chatMatch = href.match(/[?&]chat=([pu])(\d+)/);
+                if (!chatMatch) return;
+
+                var type = chatMatch[1]; // 'p' for post, 'u' for user
+                var id = parseInt(chatMatch[2], 10);
+
+                if (!id) return;
+
+                // Prevent default navigation
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Open chat window
+                var targetType = type === 'p' ? 'post' : 'user';
+                self.openChatByTarget(targetType, id);
+            });
+        },
+
+        /**
+         * Open a chat window with a specific target (post or user)
+         * This fetches target info and opens a chat window
+         */
+        openChatByTarget: function(targetType, targetId) {
+            var self = this;
+
+            // Check if user is logged in
+            if (!self.config.userId) {
+                // Redirect to login or show message
+                window.location.href = window.location.href;
+                return;
+            }
+
+            // Check if we already have this chat open or in the list
+            var existingChat = self.findExistingChatByTarget(targetType, targetId);
+            if (existingChat) {
+                self.openChat(existingChat);
+                return;
+            }
+
+            // Determine author info (current user)
+            var authorType = 'user';
+            var authorId = self.config.userId;
+
+            // Build a chat key based on target
+            var chatKey = targetType + '-' + targetId + '-user-' + authorId;
+
+            // Check if chat window already exists
+            var existingWindow = self.chatWindows.find('[data-chat-key="' + chatKey + '"]');
+            if (existingWindow.length > 0) {
+                if (existingWindow.hasClass('minimized')) {
+                    self.expandChat(chatKey);
+                }
+                return;
+            }
+
+            // Check max chat limit
+            var maxChats = parseInt(self.container.data('max-chats')) || 3;
+            if (self.state.openChats.length >= maxChats) {
+                var oldestChat = self.state.openChats[0];
+                self.closeChat(oldestChat.key, true);
+            }
+
+            // Create a new chat object with minimal info - we'll load the full data
+            var newChat = {
+                key: chatKey,
+                author: {
+                    type: authorType,
+                    id: authorId,
+                    name: 'You',
+                },
+                target: {
+                    type: targetType,
+                    id: targetId,
+                    name: 'Loading...',
+                    avatar: '',
+                },
+                messages: [],
+                loading: true,
+                minimized: false,
+                isNewConversation: true,
+            };
+
+            // Add to open chats
+            self.state.openChats.push(newChat);
+
+            // Render the chat window
+            self.renderChatWindow(newChat);
+
+            // Open the popup if not already open
+            if (!self.state.isOpen) {
+                self.openPopup();
+            }
+
+            // Load chat details and messages
+            self.loadChatByTarget(newChat, targetType, targetId);
+        },
+
+        /**
+         * Find an existing chat by target
+         */
+        findExistingChatByTarget: function(targetType, targetId) {
+            var self = this;
+
+            // Check in open chats
+            var found = self.state.openChats.find(function(chat) {
+                return chat.target &&
+                       chat.target.type === targetType &&
+                       chat.target.id === targetId;
+            });
+
+            if (found) return found;
+
+            // Check in chat list
+            found = self.state.chats.find(function(chat) {
+                return chat.target &&
+                       chat.target.type === targetType &&
+                       chat.target.id === targetId;
+            });
+
+            return found;
+        },
+
+        /**
+         * Load chat details for a target
+         */
+        loadChatByTarget: function(chat, targetType, targetId) {
+            var self = this;
+
+            console.log('VT Messenger: loadChatByTarget called', {targetType: targetType, targetId: targetId});
+
+            var ajaxUrl = (typeof Voxel_Config !== 'undefined' && Voxel_Config.ajax_url)
+                ? Voxel_Config.ajax_url + '&action=inbox.load_chat'
+                : self.config.ajaxUrl + '?action=inbox.load_chat';
+
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    author_type: 'user',
+                    author_id: self.config.userId,
+                    target_type: targetType,
+                    target_id: targetId,
+                    _wpnonce: self.config.nonce,
+                },
+                success: function(response) {
+                    console.log('VT Messenger: loadChatByTarget response', response);
+                    if (response.success) {
+                        // Update chat with real data
+                        chat.messages = response.list || [];
+                        chat.loading = false;
+
+                        // Update target info if available
+                        if (response.target) {
+                            console.log('VT Messenger: Got target from response', response.target);
+                            chat.target = response.target;
+                            self.updateChatWindowHeader(chat);
+                        } else {
+                            // Target info not in response - fetch it separately
+                            console.log('VT Messenger: No target in response, fetching separately');
+                            self.fetchTargetInfo(chat, targetType, targetId);
+                        }
+
+                        // Update author info if available
+                        if (response.author) {
+                            chat.author = response.author;
+                        }
+
+                        // Render messages
+                        self.renderMessages(chat.key);
+                    } else {
+                        // Chat may not exist yet - fetch target info and show empty state
+                        console.log('VT Messenger: Response not successful, fetching target info');
+                        chat.messages = [];
+                        chat.loading = false;
+                        self.fetchTargetInfo(chat, targetType, targetId);
+                        self.renderMessages(chat.key);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('VT Messenger: Error loading chat by target', error);
+                    chat.messages = [];
+                    chat.loading = false;
+                    self.fetchTargetInfo(chat, targetType, targetId);
+                    self.renderMessages(chat.key);
+                }
+            });
+        },
+
+        /**
+         * Fetch target info (post or user) using our custom AJAX endpoint
+         */
+        fetchTargetInfo: function(chat, targetType, targetId) {
+            var self = this;
+
+            console.log('VT Messenger: fetchTargetInfo called', {targetType: targetType, targetId: targetId});
+
+            $.ajax({
+                url: self.config.ajaxUrl,
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    action: 'vt_get_chat_target_info',
+                    target_type: targetType,
+                    target_id: targetId,
+                },
+                success: function(response) {
+                    console.log('VT Messenger: fetchTargetInfo response', response);
+                    if (response.success && response.data) {
+                        chat.target.name = response.data.name || (targetType === 'post' ? 'Post' : 'User') + ' #' + targetId;
+                        if (response.data.avatar) {
+                            chat.target.avatar = response.data.avatar;
+                        }
+                        console.log('VT Messenger: Updated chat target', chat.target);
+                    } else {
+                        console.log('VT Messenger: Response not successful or no data');
+                        chat.target.name = (targetType === 'post' ? 'Post' : 'User') + ' #' + targetId;
+                    }
+                    self.updateChatWindowHeader(chat);
+                },
+                error: function(xhr, status, error) {
+                    console.error('VT Messenger: fetchTargetInfo error', {xhr: xhr, status: status, error: error});
+                    chat.target.name = (targetType === 'post' ? 'Post' : 'User') + ' #' + targetId;
+                    self.updateChatWindowHeader(chat);
+                }
+            });
+        },
+
+        /**
+         * Update the chat window header with real target info
+         */
+        updateChatWindowHeader: function(chat) {
+            var self = this;
+            var $window = self.chatWindows.find('[data-chat-key="' + chat.key + '"]');
+            if (!$window.length) return;
+
+            var targetName = chat.target ? chat.target.name : 'Unknown';
+            var targetAvatar = chat.target ? chat.target.avatar : '';
+
+            // Use widget avatar first, then global default avatar
+            if (!targetAvatar) {
+                var fallbackAvatar = self.widgetConfig.widgetAvatar || self.config.defaultAvatar;
+                if (fallbackAvatar) {
+                    targetAvatar = '<img src="' + self.escapeHtml(fallbackAvatar) + '" alt="' + self.escapeHtml(targetName) + '">';
+                }
+            }
+
+            // Update header
+            $window.find('.vt-chat-header-avatar').html(targetAvatar);
+            $window.find('.vt-chat-header-name').text(targetName);
+
+            // Update placeholder if replying as a post
+            if (chat.author && chat.author.type === 'post' && chat.author.name) {
+                var replyAsTemplate = self.widgetConfig.replyAs || self.config.i18n.replyAs;
+                var placeholderText = replyAsTemplate.replace('%s', chat.author.name);
+                $window.find('.vt-messenger-input').attr('placeholder', placeholderText);
+            }
+        },
+
         bindEvents: function() {
             var self = this;
+
+            // Intercept message action clicks if enabled
+            if (self.config.openChatsInWindow) {
+                self.interceptMessageActions();
+            }
 
             // Stop title flash when user focuses on window
             $(window).on('focus', function() {

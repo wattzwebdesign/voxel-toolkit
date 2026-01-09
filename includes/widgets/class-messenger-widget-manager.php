@@ -37,6 +37,113 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
         // Register and enqueue scripts
         add_action('wp_enqueue_scripts', array($this, 'register_scripts'));
         add_action('elementor/frontend/after_enqueue_scripts', array($this, 'register_scripts'));
+
+        // AJAX endpoint for getting chat target info
+        add_action('wp_ajax_vt_get_chat_target_info', array($this, 'ajax_get_chat_target_info'));
+    }
+
+    /**
+     * AJAX handler to get chat target info (post or user)
+     */
+    public function ajax_get_chat_target_info() {
+        try {
+            // Verify user is logged in
+            if (!is_user_logged_in()) {
+                wp_send_json_error(array('message' => 'Not logged in'));
+            }
+
+            $target_type = isset($_GET['target_type']) ? sanitize_text_field($_GET['target_type']) : '';
+            $target_id = isset($_GET['target_id']) ? absint($_GET['target_id']) : 0;
+
+            if (!$target_type || !$target_id) {
+                wp_send_json_error(array('message' => 'Invalid parameters'));
+            }
+
+            $result = array(
+                'name' => '',
+                'avatar' => '',
+            );
+
+            if ($target_type === 'post') {
+                // Get post info using Voxel
+                if (class_exists('\Voxel\Post')) {
+                    $post = \Voxel\Post::get($target_id);
+                    if ($post) {
+                        // Try get_display_name first, fallback to get_title
+                        if (method_exists($post, 'get_display_name')) {
+                            $result['name'] = $post->get_display_name();
+                        } elseif (method_exists($post, 'get_title')) {
+                            $result['name'] = $post->get_title();
+                        }
+
+                        // Try to get logo/avatar markup (returns HTML)
+                        if (method_exists($post, 'get_logo_markup')) {
+                            $logo_markup = $post->get_logo_markup();
+                            if ($logo_markup) {
+                                $result['avatar'] = $logo_markup;
+                            }
+                        }
+                        // Fallback to avatar markup
+                        if (empty($result['avatar']) && method_exists($post, 'get_avatar_markup')) {
+                            $avatar_markup = $post->get_avatar_markup();
+                            if ($avatar_markup) {
+                                $result['avatar'] = $avatar_markup;
+                            }
+                        }
+                    }
+                }
+
+                // Fallback to standard WordPress
+                if (empty($result['name'])) {
+                    $post = get_post($target_id);
+                    if ($post) {
+                        $result['name'] = $post->post_title;
+                        $thumbnail = get_the_post_thumbnail_url($target_id, 'thumbnail');
+                        if ($thumbnail) {
+                            $result['avatar'] = '<img src="' . esc_url($thumbnail) . '" alt="' . esc_attr($result['name']) . '">';
+                        }
+                    }
+                }
+            } elseif ($target_type === 'user') {
+                // Get user info using Voxel
+                if (class_exists('\Voxel\User')) {
+                    $user = \Voxel\User::get($target_id);
+                    if ($user) {
+                        if (method_exists($user, 'get_display_name')) {
+                            $result['name'] = $user->get_display_name();
+                        }
+                        if (method_exists($user, 'get_avatar_markup')) {
+                            $avatar = $user->get_avatar_markup();
+                            if ($avatar) {
+                                $result['avatar'] = $avatar;
+                            }
+                        }
+                    }
+                }
+
+                // Fallback to standard WordPress
+                if (empty($result['name'])) {
+                    $user = get_user_by('ID', $target_id);
+                    if ($user) {
+                        $result['name'] = $user->display_name;
+                        $avatar_url = get_avatar_url($target_id, array('size' => 96));
+                        if ($avatar_url) {
+                            $result['avatar'] = '<img src="' . esc_url($avatar_url) . '" alt="' . esc_attr($result['name']) . '">';
+                        }
+                    }
+                }
+            }
+
+            if (empty($result['name'])) {
+                $result['name'] = ucfirst($target_type) . ' #' . $target_id;
+            }
+
+            wp_send_json_success($result);
+        } catch (Exception $e) {
+            wp_send_json_error(array('message' => 'Error: ' . $e->getMessage()));
+        } catch (Error $e) {
+            wp_send_json_error(array('message' => 'Fatal: ' . $e->getMessage()));
+        }
     }
 
     /**
@@ -64,6 +171,7 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
         $current_user_id = get_current_user_id();
         $messenger_settings = get_option('voxel_toolkit_messenger_settings', array());
         $default_avatar = !empty($messenger_settings['default_avatar']) ? $messenger_settings['default_avatar'] : '';
+        $open_chats_in_window = !empty($messenger_settings['open_chats_in_window']);
 
         // Get AI Bot settings for messenger integration
         $ai_bot_config = array(
@@ -99,6 +207,7 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
             'defaultAvatar' => $default_avatar,
             'pluginUrl' => VOXEL_TOOLKIT_PLUGIN_URL,
             'autoOpen' => true, // Auto-open new incoming chats
+            'openChatsInWindow' => $open_chats_in_window,
             'polling' => array(
                 'enabled' => true, // Now safe with concurrent request protection
                 'frequency' => 30000, // milliseconds - 30 seconds (conservative)
