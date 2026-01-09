@@ -89,7 +89,9 @@
                     city: city,
                     state: data.address.state || data.address.region || '',
                     country: data.address.country || '',
-                    country_code: data.address.country_code ? data.address.country_code.toUpperCase() : ''
+                    country_code: data.address.country_code ? data.address.country_code.toUpperCase() : '',
+                    latitude: lat,
+                    longitude: lon
                 };
 
                 console.log('Voxel Toolkit: Parsed location data:', locationData);

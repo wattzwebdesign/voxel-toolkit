@@ -99,7 +99,7 @@ class Voxel_Toolkit_Visitor_Location {
     }
 
     /**
-     * Get full location string (City, State/Country)
+     * Get full location string (City, State, Country)
      *
      * @return string Full location or empty string
      */
@@ -113,18 +113,23 @@ class Voxel_Toolkit_Visitor_Location {
         $city = isset($geo_data['city']) ? $geo_data['city'] : '';
         $state = isset($geo_data['state']) ? $geo_data['state'] : '';
         $country = isset($geo_data['country']) ? $geo_data['country'] : '';
-        $country_code = isset($geo_data['country_code']) ? $geo_data['country_code'] : '';
 
-        // Format based on country
-        if ($country_code === 'US' && $city && $state) {
-            return $city . ', ' . $state;
-        } elseif ($city && $country) {
-            return $city . ', ' . $country;
-        } elseif ($city) {
-            return $city;
+        // Build location parts
+        $parts = array();
+
+        if ($city) {
+            $parts[] = $city;
         }
 
-        return '';
+        if ($state) {
+            $parts[] = $state;
+        }
+
+        if ($country) {
+            $parts[] = $country;
+        }
+
+        return implode(', ', $parts);
     }
 
     /**
@@ -170,6 +175,36 @@ class Voxel_Toolkit_Visitor_Location {
         }
 
         return $geo_data['country'];
+    }
+
+    /**
+     * Get latitude
+     *
+     * @return string Latitude or empty string
+     */
+    public function get_latitude() {
+        $geo_data = $this->get_geo_data();
+
+        if (!$geo_data || !isset($geo_data['latitude']) || $geo_data['latitude'] === '') {
+            return '';
+        }
+
+        return (string) $geo_data['latitude'];
+    }
+
+    /**
+     * Get longitude
+     *
+     * @return string Longitude or empty string
+     */
+    public function get_longitude() {
+        $geo_data = $this->get_geo_data();
+
+        if (!$geo_data || !isset($geo_data['longitude']) || $geo_data['longitude'] === '') {
+            return '';
+        }
+
+        return (string) $geo_data['longitude'];
     }
 
     /**
@@ -304,6 +339,8 @@ class Voxel_Toolkit_Visitor_Location {
             'state' => isset($data['region']) ? sanitize_text_field($data['region']) : '',
             'country' => isset($data['country']) ? sanitize_text_field($data['country']) : '',
             'country_code' => isset($data['country_code']) ? strtoupper(sanitize_text_field($data['country_code'])) : '',
+            'latitude' => isset($data['latitude']) ? floatval($data['latitude']) : '',
+            'longitude' => isset($data['longitude']) ? floatval($data['longitude']) : '',
             'source' => 'geojs.io',
         ];
     }
@@ -337,6 +374,8 @@ class Voxel_Toolkit_Visitor_Location {
             'state' => isset($data['region']) ? sanitize_text_field($data['region']) : '',
             'country' => isset($data['country_name']) ? sanitize_text_field($data['country_name']) : '',
             'country_code' => isset($data['country_code']) ? strtoupper(sanitize_text_field($data['country_code'])) : '',
+            'latitude' => isset($data['latitude']) ? floatval($data['latitude']) : '',
+            'longitude' => isset($data['longitude']) ? floatval($data['longitude']) : '',
             'source' => 'ipapi.co',
         ];
     }
@@ -370,6 +409,8 @@ class Voxel_Toolkit_Visitor_Location {
             'state' => isset($data['regionName']) ? sanitize_text_field($data['regionName']) : '',
             'country' => isset($data['country']) ? sanitize_text_field($data['country']) : '',
             'country_code' => isset($data['countryCode']) ? strtoupper(sanitize_text_field($data['countryCode'])) : '',
+            'latitude' => isset($data['lat']) ? floatval($data['lat']) : '',
+            'longitude' => isset($data['lon']) ? floatval($data['lon']) : '',
             'source' => 'ip-api.com',
         ];
     }
