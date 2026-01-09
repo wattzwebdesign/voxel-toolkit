@@ -538,11 +538,24 @@
     overflow-y: auto;
 }
 
-/* Truncate long placeholder text with ellipsis */
+/* Placeholder text styling */
 .vt-messenger-input::placeholder {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    opacity: 1;
+}
+
+.vt-messenger-input::-webkit-input-placeholder {
+    opacity: 1;
+}
+
+.vt-messenger-input::-moz-placeholder {
+    opacity: 1;
+}
+
+.vt-messenger-input:-ms-input-placeholder {
+    opacity: 1;
 }
 
 .vt-messenger-input:focus {

@@ -34,6 +34,12 @@
         init: function() {
             var self = this;
 
+            // Prevent double initialization
+            if (self.initialized) {
+                return;
+            }
+            self.initialized = true;
+
             // Wait for DOM ready
             $(document).ready(function() {
                 self.container = $('.vt-messenger-container');
@@ -219,12 +225,21 @@
 
             if (!admin) return;
 
-            var $list = self.popup.find('.vt-messenger-chat-list');
-
-            // Check if already exists
-            if ($list.find('.vt-persistent-admin-chat').length > 0) {
+            // Prevent creating multiple times
+            if (self.state.persistentAdminCreated) {
                 return;
             }
+
+            var $list = self.popup.find('.vt-messenger-chat-list');
+
+            // Check if already exists in DOM
+            if ($list.find('.vt-persistent-admin-chat').length > 0) {
+                self.state.persistentAdminCreated = true;
+                return;
+            }
+
+            // Mark as created
+            self.state.persistentAdminCreated = true;
 
             // Create avatar HTML
             var avatarHtml = '';
@@ -448,12 +463,21 @@
 
             if (!self.config.aiBot || !self.config.aiBot.enabled) return;
 
-            var $list = self.popup.find('.vt-messenger-chat-list');
-
-            // Check if already exists
-            if ($list.find('.vt-ai-bot-chat-circle').length > 0) {
+            // Prevent creating multiple times
+            if (self.state.aiBotCircleCreated) {
                 return;
             }
+
+            var $list = self.popup.find('.vt-messenger-chat-list');
+
+            // Check if already exists in DOM
+            if ($list.find('.vt-ai-bot-chat-circle').length > 0) {
+                self.state.aiBotCircleCreated = true;
+                return;
+            }
+
+            // Mark as created
+            self.state.aiBotCircleCreated = true;
 
             // Get AI Bot avatar
             var avatarUrl = self.config.aiBot.avatar || self.config.defaultAvatar || '';
@@ -1392,14 +1416,18 @@
             var $list = self.popup.find('.vt-messenger-chat-list');
             var chats = self.state.searchTerm ? self.filterChatsByTerm(self.state.chats, self.state.searchTerm) : self.state.chats;
 
-            // Preserve persistent admin circle before updating
+            // Preserve special circles before updating (persistent admin and AI Bot)
             var $persistentCircle = $list.find('.vt-persistent-admin-chat').detach();
+            var $aiBotCircle = $list.find('.vt-ai-bot-chat-circle').detach();
 
             if (chats.length === 0) {
                 if ($list.children().length > 0) {
                     $list.empty();
                 }
-                // Re-add persistent admin circle
+                // Re-add special circles
+                if ($aiBotCircle.length > 0) {
+                    $list.prepend($aiBotCircle);
+                }
                 if ($persistentCircle.length > 0) {
                     $list.prepend($persistentCircle);
                 }
@@ -1465,7 +1493,10 @@
                 $list.html(html);
             }
 
-            // Re-add persistent admin circle at top
+            // Re-add special circles at top (AI Bot after persistent admin)
+            if ($aiBotCircle.length > 0) {
+                $list.prepend($aiBotCircle);
+            }
             if ($persistentCircle.length > 0) {
                 $list.prepend($persistentCircle);
             }

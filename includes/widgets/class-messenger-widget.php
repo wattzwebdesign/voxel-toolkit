@@ -1172,11 +1172,12 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
             [
                 'label' => __('Placeholder Color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#65676b',
                 'selectors' => [
-                    '{{WRAPPER}} .vt-messenger-input::placeholder' => 'color: {{VALUE}}',
-                    '{{WRAPPER}} .vt-messenger-input::-webkit-input-placeholder' => 'color: {{VALUE}}',
-                    '{{WRAPPER}} .vt-messenger-input::-moz-placeholder' => 'color: {{VALUE}}',
-                    '{{WRAPPER}} .vt-messenger-input:-ms-input-placeholder' => 'color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-messenger-input::placeholder' => 'color: {{VALUE}} !important',
+                    '{{WRAPPER}} .vt-messenger-input::-webkit-input-placeholder' => 'color: {{VALUE}} !important',
+                    '{{WRAPPER}} .vt-messenger-input::-moz-placeholder' => 'color: {{VALUE}} !important',
+                    '{{WRAPPER}} .vt-messenger-input:-ms-input-placeholder' => 'color: {{VALUE}} !important',
                 ],
             ]
         );
