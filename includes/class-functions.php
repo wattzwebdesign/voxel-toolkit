@@ -5090,6 +5090,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         $view_button_text = isset($settings['view_button_text']) ? sanitize_text_field($settings['view_button_text']) : __('View Comparison', 'voxel-toolkit');
         $clear_button_text = isset($settings['clear_button_text']) ? sanitize_text_field($settings['clear_button_text']) : __('Clear All', 'voxel-toolkit');
 
+        // Notification Messages
+        $different_post_type_text = isset($settings['different_post_type_text']) ? sanitize_text_field($settings['different_post_type_text']) : '';
+        $max_reached_text = isset($settings['max_reached_text']) ? sanitize_text_field($settings['max_reached_text']) : '';
+
         // Get all published pages for dropdown
         $pages = get_pages(array(
             'post_status' => 'publish',
@@ -5303,6 +5307,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                    value="<?php echo esc_attr($clear_button_text); ?>"
                                    class="vt-compare-clear-btn-text"
                                    placeholder="<?php esc_attr_e('Clear All', 'voxel-toolkit'); ?>"
+                                   style="width: 100%; height: 36px; padding: 0 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
+                    </div>
+
+                    <h5 style="margin: 20px 0 15px; font-size: 13px; font-weight: 600; color: #374151;"><?php _e('Notification Messages', 'voxel-toolkit'); ?></h5>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Different Post Type', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[compare_posts][different_post_type_text]"
+                                   value="<?php echo esc_attr($different_post_type_text); ?>"
+                                   placeholder="<?php esc_attr_e('Can only compare posts of the same type', 'voxel-toolkit'); ?>"
+                                   style="width: 100%; height: 36px; padding: 0 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
+                        <div class="vt-field-group">
+                            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #6b7280;"><?php _e('Max Posts Reached', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[compare_posts][max_reached_text]"
+                                   value="<?php echo esc_attr($max_reached_text); ?>"
+                                   placeholder="<?php esc_attr_e('Maximum posts reached', 'voxel-toolkit'); ?>"
                                    style="width: 100%; height: 36px; padding: 0 10px; border: 1px solid #d1d5db; border-radius: 6px;">
                         </div>
                     </div>

@@ -63,7 +63,11 @@ class Voxel_Toolkit_Compare_Posts_Widget_Manager {
         }
 
         // Controls that need add_to_compare added to their conditions
+        // Initial state controls (icon/text for normal state)
+        // Active/Reveal state controls (icon/text for when action is active)
         $controls_to_update = array(
+            'ts_acw_initial_icon',
+            'ts_acw_initial_text',
             'ts_acw_reveal_heading',
             'ts_acw_reveal_text',
             'ts_acw_reveal_icon',
@@ -148,6 +152,14 @@ class Voxel_Toolkit_Compare_Posts_Widget_Manager {
             ? $compare_settings['clear_button_text']
             : __('Clear All', 'voxel-toolkit');
 
+        // Get custom notification messages
+        $different_post_type_text = isset($compare_settings['different_post_type_text']) && !empty($compare_settings['different_post_type_text'])
+            ? $compare_settings['different_post_type_text']
+            : __('Can only compare posts of the same type', 'voxel-toolkit');
+        $max_reached_text = isset($compare_settings['max_reached_text']) && !empty($compare_settings['max_reached_text'])
+            ? $compare_settings['max_reached_text']
+            : __('Maximum posts reached', 'voxel-toolkit');
+
         // Build comparison page URLs per post type
         $comparison_page_urls = array();
         foreach ($comparison_pages as $pt_key => $page_id) {
@@ -175,8 +187,8 @@ class Voxel_Toolkit_Compare_Posts_Widget_Manager {
                 'clearAll' => $clear_button_text,
                 'remove' => __('Remove', 'voxel-toolkit'),
                 'postsSelected' => __('posts selected', 'voxel-toolkit'),
-                'maxReached' => __('Maximum posts reached', 'voxel-toolkit'),
-                'differentPostType' => __('Can only compare posts of the same type', 'voxel-toolkit'),
+                'maxReached' => $max_reached_text,
+                'differentPostType' => $different_post_type_text,
                 'minPosts' => __('Select at least 2 posts to compare', 'voxel-toolkit'),
                 'noComparisonPage' => __('Comparison page not configured for this post type', 'voxel-toolkit'),
             ),

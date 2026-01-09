@@ -56,6 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Tooltips now work correctly (using Voxel's tooltip-inactive/tooltip-active pattern)
   - Active state now uses configured icon instead of showing a checkmark
   - Added Active State controls (text, icon, tooltip) matching Save to Collection action
+  - Added Initial State icon/text controls so icon stays consistent between states
+  - Added customizable notification messages in settings (Different Post Type, Max Posts Reached)
 - **Recurring Events Date Display**: Fixed partial date formats not updating for recurring event occurrences. Now supports all PHP date format characters (d, j, D, l, F, M, m, n, Y, y, S, etc.) so individual day numbers, month names, weekday names, and other partial formats correctly update for each occurrence.
 
 ## [1.6.0.1] - 2026-01-05
