@@ -622,6 +622,7 @@ class Voxel_Toolkit_Functions {
                 'class' => 'Voxel_Toolkit_Temporary_Login',
                 'file' => 'functions/class-temporary-login.php',
                 'icon' => 'dashicons-admin-users',
+                'configure_url' => admin_url('users.php?page=vt-temp-logins'),
             ),
         );
 
