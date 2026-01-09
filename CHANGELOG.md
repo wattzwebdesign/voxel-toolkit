@@ -69,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Time input for precise scheduling
   - Uses WordPress native scheduling (post_status = future)
   - Customizable submit button text when scheduling (default: "Schedule")
+  - Customizable success message when scheduling (default: "Your post has been scheduled.")
   - Only works when posts would be published (not pending)
 
 ### Fixed
