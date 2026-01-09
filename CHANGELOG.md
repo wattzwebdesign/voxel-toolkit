@@ -90,6 +90,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Unread Notifications/Messages Dynamic Tags**: New dynamic tags for user notification counts:
   - `@user(unread_notifications)` - Number of unread notifications
   - `@user(unread_messages)` - Number of unread direct messages
+- **Title Notification Badge**: New function to show unread counts in browser tab. Features include:
+  - Displays combined count in page title (e.g., "(3) My Site")
+  - Red badge with count on favicon (Chrome tab indicator)
+  - Real-time updates via configurable polling interval (default 15 seconds)
+  - Title flashing when new notifications arrive (when tab unfocused)
+  - Settings for poll interval, include notifications/messages, custom flash text
+  - Only active for logged-in users
 
 ### Fixed
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
