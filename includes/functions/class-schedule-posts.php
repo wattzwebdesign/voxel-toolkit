@@ -74,6 +74,7 @@ class Voxel_Toolkit_Schedule_Posts {
                 'date_placeholder' => isset($settings['vt_schedule_date_placeholder']) ? $settings['vt_schedule_date_placeholder'] : __('Select date', 'voxel-toolkit'),
                 'time_placeholder' => isset($settings['vt_schedule_time_placeholder']) ? $settings['vt_schedule_time_placeholder'] : '00:00',
                 'button_text' => isset($settings['vt_schedule_button_text']) ? $settings['vt_schedule_button_text'] : __('Schedule', 'voxel-toolkit'),
+                'success_message' => isset($settings['vt_schedule_success_message']) ? $settings['vt_schedule_success_message'] : __('Your post has been scheduled.', 'voxel-toolkit'),
             );
         }
     }
@@ -146,6 +147,19 @@ class Voxel_Toolkit_Schedule_Posts {
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => __('Schedule', 'voxel-toolkit'),
                 'description' => __('Text to show on the submit button when a schedule date is selected.', 'voxel-toolkit'),
+                'condition' => array(
+                    'vt_enable_schedule_posts' => 'yes',
+                ),
+            )
+        );
+
+        $element->add_control(
+            'vt_schedule_success_message',
+            array(
+                'label' => __('Scheduled Success Message', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Your post has been scheduled.', 'voxel-toolkit'),
+                'description' => __('Message shown after successfully scheduling a post.', 'voxel-toolkit'),
                 'condition' => array(
                     'vt_enable_schedule_posts' => 'yes',
                 ),
@@ -328,12 +342,19 @@ class Voxel_Toolkit_Schedule_Posts {
             // Calendar icon SVG
             const calendarIcon = '<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20"><path d="M1 4c0-1.1.9-2 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4zm2 2v12h14V6H3zm2-6h2v2H5V0zm8 0h2v2h-2V0zM5 9h2v2H5V9zm0 4h2v2H5v-2zm4-4h2v2H9V9zm0 4h2v2H9v-2zm4-4h2v2h-2V9zm0 4h2v2h-2v-2z"/></svg>';
 
+            // Get success message from first widget settings
+            const firstWidgetSettings = Object.values(widgetsData)[0] || {};
+            const scheduledSuccessMessage = firstWidgetSettings.success_message || 'Your post has been scheduled.';
+
             // Intercept XHR to inject schedule data - do this ONCE globally
             if (!window._vtScheduleXHRPatched) {
                 window._vtScheduleXHRPatched = true;
+                window._vtSchedulePending = false;
                 const originalXHRSend = XMLHttpRequest.prototype.send;
 
                 XMLHttpRequest.prototype.send = function(data) {
+                    const xhr = this;
+
                     // Check if this is an admin-ajax request with data
                     if (data) {
                         // Find schedule inputs in DOM
@@ -347,6 +368,9 @@ class Voxel_Toolkit_Schedule_Posts {
                             console.log('VT Schedule: XHR send intercepted');
                             console.log('VT Schedule: Date:', scheduleDate, 'Time:', scheduleTime);
 
+                            // Mark that we're submitting a scheduled post
+                            window._vtSchedulePending = true;
+
                             if (data instanceof FormData) {
                                 console.log('VT Schedule: Appending to FormData');
                                 data.append('vt_schedule_date', scheduleDate);
@@ -356,6 +380,23 @@ class Voxel_Toolkit_Schedule_Posts {
                                 data += '&vt_schedule_date=' + encodeURIComponent(scheduleDate);
                                 data += '&vt_schedule_time=' + encodeURIComponent(scheduleTime);
                             }
+
+                            // Listen for response to change the success message
+                            xhr.addEventListener('load', function() {
+                                if (window._vtSchedulePending && xhr.status === 200) {
+                                    // Wait a moment for Vue to render the success message
+                                    setTimeout(function() {
+                                        // Find and replace the success message text
+                                        const successMessages = document.querySelectorAll('.ts-form h2, .ts-form .ts-heading, .create-post-form h2');
+                                        successMessages.forEach(function(el) {
+                                            if (el.textContent.includes('has been published')) {
+                                                el.textContent = scheduledSuccessMessage;
+                                            }
+                                        });
+                                        window._vtSchedulePending = false;
+                                    }, 100);
+                                }
+                            });
                         }
                     }
                     return originalXHRSend.call(this, data);
