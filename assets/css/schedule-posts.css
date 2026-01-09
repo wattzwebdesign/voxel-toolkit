@@ -74,6 +74,11 @@ div.vt-schedule-field > label {
     width: 100%;
 }
 
+/* Hide success message until replaced when scheduling */
+body.vt-schedule-pending .ts-edit-success h4 {
+    visibility: hidden;
+}
+
 /* Responsive */
 @media (max-width: 520px) {
     .vt-schedule-field .form-field-grid {

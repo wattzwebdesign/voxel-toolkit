@@ -342,19 +342,21 @@ class Voxel_Toolkit_Schedule_Posts {
             // Calendar icon SVG
             const calendarIcon = '<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20"><path d="M1 4c0-1.1.9-2 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4zm2 2v12h14V6H3zm2-6h2v2H5V0zm8 0h2v2h-2V0zM5 9h2v2H5V9zm0 4h2v2H5v-2zm4-4h2v2H9V9zm0 4h2v2H9v-2zm4-4h2v2h-2V9zm0 4h2v2h-2v-2z"/></svg>';
 
-            // Get success message from first widget settings
-            const firstWidgetSettings = Object.values(widgetsData)[0] || {};
-            const scheduledSuccessMessage = firstWidgetSettings.success_message || 'Your post has been scheduled.';
+            // Get the first widget's success message for scheduled posts
+            let scheduledSuccessMessage = '<?php _e('Your post has been scheduled.', 'voxel-toolkit'); ?>';
+            for (const wid in widgetsData) {
+                if (widgetsData[wid].success_message) {
+                    scheduledSuccessMessage = widgetsData[wid].success_message;
+                    break;
+                }
+            }
 
             // Intercept XHR to inject schedule data - do this ONCE globally
             if (!window._vtScheduleXHRPatched) {
                 window._vtScheduleXHRPatched = true;
-                window._vtSchedulePending = false;
                 const originalXHRSend = XMLHttpRequest.prototype.send;
 
                 XMLHttpRequest.prototype.send = function(data) {
-                    const xhr = this;
-
                     // Check if this is an admin-ajax request with data
                     if (data) {
                         // Find schedule inputs in DOM
@@ -368,8 +370,12 @@ class Voxel_Toolkit_Schedule_Posts {
                             console.log('VT Schedule: XHR send intercepted');
                             console.log('VT Schedule: Date:', scheduleDate, 'Time:', scheduleTime);
 
-                            // Mark that we're submitting a scheduled post
+                            // Mark that we're submitting a scheduled post and store the success message
                             window._vtSchedulePending = true;
+                            window._vtScheduleSuccessMessage = scheduledSuccessMessage;
+
+                            // Add class to body to hide the success message until we replace it
+                            document.body.classList.add('vt-schedule-pending');
 
                             if (data instanceof FormData) {
                                 console.log('VT Schedule: Appending to FormData');
@@ -381,26 +387,38 @@ class Voxel_Toolkit_Schedule_Posts {
                                 data += '&vt_schedule_time=' + encodeURIComponent(scheduleTime);
                             }
 
-                            // Listen for response to change the success message
-                            xhr.addEventListener('load', function() {
-                                if (window._vtSchedulePending && xhr.status === 200) {
-                                    // Wait a moment for Vue to render the success message
-                                    setTimeout(function() {
-                                        // Find and replace the success message text
-                                        const successMessages = document.querySelectorAll('.ts-form h2, .ts-form .ts-heading, .create-post-form h2');
-                                        successMessages.forEach(function(el) {
-                                            if (el.textContent.includes('has been published')) {
-                                                el.textContent = scheduledSuccessMessage;
-                                            }
-                                        });
-                                        window._vtSchedulePending = false;
-                                    }, 100);
-                                }
-                            });
                         }
                     }
                     return originalXHRSend.call(this, data);
                 };
+            }
+
+            // Function to replace confirmation message for scheduled posts
+            function replaceScheduledMessage() {
+                console.log('VT Schedule: replaceScheduledMessage called, pending:', window._vtSchedulePending);
+
+                if (!window._vtSchedulePending || !window._vtScheduleSuccessMessage) {
+                    return;
+                }
+
+                // Look for "Your post has been published" text - be flexible with matching
+                const searchText = 'your post has been published';
+
+                // Target heading elements in confirmation pages (Voxel uses h4 for success messages)
+                const headings = document.querySelectorAll('.ts-edit-success h4, .ts-create-post h4, h4, h2, h3');
+                console.log('VT Schedule: Found', headings.length, 'heading elements');
+
+                headings.forEach(function(heading) {
+                    const text = heading.textContent.trim().toLowerCase();
+                    if (text.includes(searchText) && !heading.hasAttribute('data-vt-replaced')) {
+                        console.log('VT Schedule: Replacing confirmation message in', heading.tagName);
+                        heading.textContent = window._vtScheduleSuccessMessage;
+                        heading.setAttribute('data-vt-replaced', 'true');
+                        // Clear the flag and remove hiding class
+                        window._vtSchedulePending = false;
+                        document.body.classList.remove('vt-schedule-pending');
+                    }
+                });
             }
 
             function initScheduleField(widgetId, settings) {
@@ -692,6 +710,8 @@ class Voxel_Toolkit_Schedule_Posts {
                     for (const widgetId in widgetsData) {
                         handleStepChange(widgetId, widgetsData[widgetId]);
                     }
+                    // Also check for message replacement
+                    replaceScheduledMessage();
                 }, 500);
 
                 // Also observe for dynamic content and step changes
@@ -702,6 +722,8 @@ class Voxel_Toolkit_Schedule_Posts {
                         for (const widgetId in widgetsData) {
                             handleStepChange(widgetId, widgetsData[widgetId]);
                         }
+                        // Check for confirmation message replacement
+                        replaceScheduledMessage();
                     }, 100);
                 });
 
