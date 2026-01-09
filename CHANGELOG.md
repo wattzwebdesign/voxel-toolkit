@@ -104,6 +104,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Temporary Login Redirect URL**: Fixed custom redirect URLs not working after login. Now properly handles relative URLs and same-site redirects.
 - **Configure Button Navigation**: Fixed Configure button not navigating to correct settings tab when clicked immediately after enabling a function.
 - **AI Bot Panel Behavior Description**: Fixed unclear description text for Push/Overlay panel behavior options.
+- **Messenger Duplicate Circles**: Fixed persistent admin chat and AI Bot circles replicating multiple times. Added initialization flags and improved circle preservation during chat list updates.
+- **Messenger Placeholder Color**: Fixed input placeholder color not applying from Elementor style controls. Added default color and proper CSS specificity.
 
 ## [1.6.0.1] - 2026-01-05
 
