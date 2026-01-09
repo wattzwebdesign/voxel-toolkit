@@ -63,6 +63,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Visitor Location Latitude/Longitude Tags**: New dynamic tags for visitor coordinates:
   - `@site.visitor.latitude` - Visitor's latitude
   - `@site.visitor.longitude` - Visitor's longitude
+- **Schedule Posts**: Allow users to schedule posts for future publication from the Create Post form. Features include:
+  - Toggle to enable/disable in Create Post (VX) widget settings
+  - Date picker using Voxel's native Pikaday calendar
+  - Time input for precise scheduling
+  - Uses WordPress native scheduling (post_status = future)
+  - Customizable submit button text when scheduling (default: "Schedule")
+  - Only works when posts would be published (not pending)
 
 ### Fixed
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
