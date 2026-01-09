@@ -54,6 +54,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Border width control (0-10px)
   - Individual border colors for Continue and Cancel buttons
   - Sticky live preview that follows scroll in settings page
+- **Saved Search Widget Styling**: Comprehensive styling enhancements for the Saved Search widget:
+  - Template selector: Detailed (filter tags) or Simple (filter summary)
+  - Show/hide controls for Search, Notification, and Delete action buttons
+  - Filter Tags styling: border width/color/style, 4-corner border radius, gap, icon color/size, box shadow
+  - Filter Summary styling section for Simple template
+  - Header/Footer divider color and thickness controls
 
 ### Fixed
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
