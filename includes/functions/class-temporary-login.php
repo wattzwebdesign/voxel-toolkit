@@ -612,10 +612,21 @@ class Voxel_Toolkit_Temporary_Login {
         // Determine redirect URL
         $redirect_url = !empty($result['redirect_url']) ? $result['redirect_url'] : admin_url();
 
-        // Validate redirect URL
+        // If redirect URL is relative, make it absolute
+        if (!empty($redirect_url) && strpos($redirect_url, 'http') !== 0) {
+            // Handle relative URLs (starting with /)
+            if (strpos($redirect_url, '/') === 0) {
+                $redirect_url = home_url($redirect_url);
+            } else {
+                // Assume it's a path without leading slash
+                $redirect_url = home_url('/' . $redirect_url);
+            }
+        }
+
+        // Validate redirect URL - allow same-site URLs
         $redirect_url = wp_validate_redirect($redirect_url, admin_url());
 
-        wp_safe_redirect($redirect_url);
+        wp_redirect($redirect_url);
         exit;
     }
 
