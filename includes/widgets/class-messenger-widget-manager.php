@@ -69,6 +69,7 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
         $ai_bot_config = array(
             'enabled' => false,
             'avatar' => '',
+            'displayMode' => 'sidebar', // sidebar or chat_window
         );
         if (class_exists('Voxel_Toolkit_AI_Bot')) {
             $ai_bot = Voxel_Toolkit_AI_Bot::instance();
@@ -76,6 +77,18 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
             if (!empty($ai_bot_settings['messenger_integration'])) {
                 $ai_bot_config['enabled'] = true;
                 $ai_bot_config['avatar'] = !empty($ai_bot_settings['ai_bot_avatar']) ? $ai_bot_settings['ai_bot_avatar'] : '';
+                $ai_bot_config['displayMode'] = !empty($ai_bot_settings['messenger_display_mode']) ? $ai_bot_settings['messenger_display_mode'] : 'sidebar';
+
+                // Additional settings needed for chat window mode
+                if ($ai_bot_config['displayMode'] === 'chat_window') {
+                    $ai_bot_config['nonce'] = wp_create_nonce('vt_ai_bot');
+                    $ai_bot_config['panelTitle'] = !empty($ai_bot_settings['panel_title']) ? $ai_bot_settings['panel_title'] : __('AI Assistant', 'voxel-toolkit');
+                    $ai_bot_config['welcomeMessage'] = !empty($ai_bot_settings['welcome_message']) ? $ai_bot_settings['welcome_message'] : __('Hi! How can I help you find what you are looking for?', 'voxel-toolkit');
+                    $ai_bot_config['placeholderText'] = !empty($ai_bot_settings['placeholder_text']) ? $ai_bot_settings['placeholder_text'] : __('Ask me anything...', 'voxel-toolkit');
+                    $ai_bot_config['thinkingText'] = !empty($ai_bot_settings['thinking_text']) ? $ai_bot_settings['thinking_text'] : __('AI is thinking', 'voxel-toolkit');
+                    $ai_bot_config['accessControl'] = !empty($ai_bot_settings['access_control']) ? $ai_bot_settings['access_control'] : 'everyone';
+                    $ai_bot_config['showQuickActions'] = isset($ai_bot_settings['show_quick_actions']) ? (bool) $ai_bot_settings['show_quick_actions'] : true;
+                }
             }
         }
 

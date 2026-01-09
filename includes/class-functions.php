@@ -7540,6 +7540,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         $rate_limit_requests = isset($settings['rate_limit_requests']) ? absint($settings['rate_limit_requests']) : 10;
         $rate_limit_period = isset($settings['rate_limit_period']) ? absint($settings['rate_limit_period']) : 60;
         $messenger_integration = isset($settings['messenger_integration']) ? (bool) $settings['messenger_integration'] : false;
+        $messenger_display_mode = isset($settings['messenger_display_mode']) ? $settings['messenger_display_mode'] : 'sidebar';
         $ai_bot_avatar = isset($settings['ai_bot_avatar']) ? $settings['ai_bot_avatar'] : '';
         $show_quick_actions = isset($settings['show_quick_actions']) ? (bool) $settings['show_quick_actions'] : true;
         $thinking_text = isset($settings['thinking_text']) ? $settings['thinking_text'] : __('AI is thinking', 'voxel-toolkit');
@@ -7845,13 +7846,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <input type="checkbox"
                                name="voxel_toolkit_options[ai_bot][messenger_integration]"
                                value="1"
+                               id="vt_messenger_integration"
                                <?php checked($messenger_integration); ?>>
                         <?php _e('Show AI Bot circle in messenger widget', 'voxel-toolkit'); ?>
                     </label>
-                    <p class="description"><?php _e('Adds an AI Assistant circle to the messenger popup. Clicking it opens the AI Bot panel.', 'voxel-toolkit'); ?></p>
+                    <p class="description"><?php _e('Adds an AI Assistant circle to the messenger popup.', 'voxel-toolkit'); ?></p>
                 </td>
             </tr>
-            <tr>
+            <tr class="vt-messenger-display-mode-row" style="<?php echo $messenger_integration ? '' : 'display: none;'; ?>">
+                <th scope="row"><?php _e('Display Mode', 'voxel-toolkit'); ?></th>
+                <td>
+                    <select name="voxel_toolkit_options[ai_bot][messenger_display_mode]" id="vt_messenger_display_mode">
+                        <option value="sidebar" <?php selected($messenger_display_mode, 'sidebar'); ?>><?php _e('Open in sidebar panel', 'voxel-toolkit'); ?></option>
+                        <option value="chat_window" <?php selected($messenger_display_mode, 'chat_window'); ?>><?php _e('Open in chat window', 'voxel-toolkit'); ?></option>
+                    </select>
+                    <p class="description"><?php _e('Sidebar: Opens the AI Bot in the full sidebar panel. Chat window: Opens in a messenger-style chat window.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr class="vt-messenger-display-mode-row" style="<?php echo $messenger_integration ? '' : 'display: none;'; ?>">
                 <th scope="row"><?php _e('AI Bot Avatar', 'voxel-toolkit'); ?></th>
                 <td>
                     <input type="text"
@@ -8034,6 +8046,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         <script>
         jQuery(document).ready(function($) {
+            // Toggle display mode row when messenger integration checkbox changes
+            $('#vt_messenger_integration').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('.vt-messenger-display-mode-row').show();
+                } else {
+                    $('.vt-messenger-display-mode-row').hide();
+                }
+            });
+
             // Live preview update
             $('.vt-ai-bot-style-input').on('input change', function() {
                 var $input = $(this);

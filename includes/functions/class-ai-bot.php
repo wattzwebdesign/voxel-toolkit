@@ -76,7 +76,7 @@ class Voxel_Toolkit_AI_Bot {
             'card_templates' => array(), // Card template IDs per post type
             'system_prompt' => '',
             'max_results' => 6,
-            'welcome_message' => __('Hi! How can I help you find what you\'re looking for?', 'voxel-toolkit'),
+            'welcome_message' => __('Hi! How can I help you find what you are looking for?', 'voxel-toolkit'),
             'placeholder_text' => __('Ask me anything...', 'voxel-toolkit'),
             'panel_title' => __('AI Assistant', 'voxel-toolkit'),
             'suggested_queries' => array(), // Example questions to show as clickable chips
@@ -86,6 +86,7 @@ class Voxel_Toolkit_AI_Bot {
             'rate_limit_requests' => 10,
             'rate_limit_period' => 60,
             'messenger_integration' => false, // Enable AI Bot in messenger widget
+            'messenger_display_mode' => 'sidebar', // sidebar or chat_window
             'ai_bot_avatar' => '', // Avatar URL for AI Bot in messenger
             // Styling options
             'style_primary_color' => '#0084ff',
@@ -522,6 +523,11 @@ class Voxel_Toolkit_AI_Bot {
 
         // Messenger integration
         $sanitized['messenger_integration'] = isset($input['messenger_integration']) && $input['messenger_integration'];
+
+        // Messenger display mode
+        $sanitized['messenger_display_mode'] = isset($input['messenger_display_mode']) && in_array($input['messenger_display_mode'], array('sidebar', 'chat_window'), true)
+            ? $input['messenger_display_mode']
+            : 'sidebar';
 
         // Show quick actions
         $sanitized['show_quick_actions'] = isset($input['show_quick_actions']) && $input['show_quick_actions'];

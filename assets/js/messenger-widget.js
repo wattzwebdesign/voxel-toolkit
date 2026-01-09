@@ -479,24 +479,323 @@
         },
 
         /**
-         * Open AI Bot panel (triggers the main AI Bot widget)
+         * Open AI Bot - either in sidebar panel or chat window based on displayMode
          */
         openAIBotPanel: function() {
-            // Trigger the AI Bot panel via the existing trigger class
-            var $trigger = $('.vt-ai-bot-trigger').first();
-            if ($trigger.length > 0) {
-                $trigger.trigger('click');
+            var displayMode = this.config.aiBot?.displayMode || 'sidebar';
+
+            if (displayMode === 'chat_window') {
+                this.openAIBotChatWindow();
             } else {
-                // Fallback: directly open the AI Bot container
-                var $container = $('.vt-ai-bot-container');
-                if ($container.length > 0) {
-                    $container.addClass('is-open');
-                    $('body').addClass('vt-ai-bot-panel-open');
+                // Sidebar mode - trigger the main AI Bot panel
+                var $trigger = $('.vt-ai-bot-trigger').first();
+                if ($trigger.length > 0) {
+                    $trigger.trigger('click');
+                } else {
+                    // Fallback: directly open the AI Bot container
+                    var $container = $('.vt-ai-bot-container');
+                    if ($container.length > 0) {
+                        $container.addClass('is-open');
+                        $('body').addClass('vt-ai-bot-panel-open');
+                    }
                 }
+                // Close messenger popup for sidebar mode
+                this.closePopup();
+            }
+        },
+
+        /**
+         * Open AI Bot in a messenger-style chat window
+         */
+        openAIBotChatWindow: function() {
+            var self = this;
+            var chatKey = 'ai-bot-chat';
+
+            // Check if AI Bot chat is already open
+            var existingWindow = this.chatWindows.find('[data-chat-key="' + chatKey + '"]');
+            if (existingWindow.length > 0) {
+                // If minimized, expand it
+                if (existingWindow.hasClass('minimized')) {
+                    this.expandChat(chatKey);
+                }
+                return;
             }
 
-            // Close messenger popup
-            this.closePopup();
+            // Check max chat limit
+            var maxChats = parseInt(this.container.data('max-chats')) || 3;
+            if (this.state.openChats.length >= maxChats) {
+                // Close the oldest chat
+                var oldestChat = this.state.openChats[0];
+                this.closeChat(oldestChat.key, true);
+            }
+
+            // Create AI Bot chat object
+            var aiChatConfig = this.config.aiBot || {};
+            var aiBotChat = {
+                key: chatKey,
+                isAIBot: true,
+                messages: [],
+                loading: false,
+                minimized: false,
+                state: {
+                    isLoading: false,
+                    messages: [],
+                }
+            };
+
+            // Add to open chats
+            this.state.openChats.push(aiBotChat);
+
+            // Render the AI Bot chat window
+            this.renderAIBotChatWindow(aiBotChat);
+        },
+
+        /**
+         * Render AI Bot chat window
+         */
+        renderAIBotChatWindow: function(chat) {
+            var self = this;
+            var aiConfig = this.config.aiBot || {};
+            var headerName = aiConfig.panelTitle || 'AI Assistant';
+            var avatarUrl = aiConfig.avatar || '';
+            var welcomeMessage = aiConfig.welcomeMessage || 'Hi! How can I help you find what you are looking for?';
+            var placeholderText = aiConfig.placeholderText || 'Ask me anything...';
+
+            // Avatar HTML
+            var avatarHtml = avatarUrl
+                ? '<img src="' + this.escapeHtml(avatarUrl) + '" alt="' + this.escapeHtml(headerName) + '">'
+                : '<span class="vt-ai-bot-icon">AI</span>';
+
+            var html = '<div class="vt-messenger-chat-window vt-ai-bot-chat-window" data-chat-key="' + chat.key + '">';
+
+            // Header
+            html += '  <div class="vt-messenger-chat-header">';
+            html += '    <div class="vt-chat-header-info">';
+            html += '      <div class="vt-chat-header-avatar vt-ai-bot-avatar">' + avatarHtml + '</div>';
+            html += '      <div class="vt-chat-header-name">' + this.escapeHtml(headerName) + '</div>';
+            html += '    </div>';
+            html += '    <div class="vt-chat-header-actions">';
+            html += '      <button class="vt-messenger-chat-minimize" title="' + this.config.i18n.minimize + '">';
+            html += '        <span>−</span>';
+            html += '      </button>';
+            html += '      <button class="vt-messenger-chat-close" title="' + this.config.i18n.close + '">';
+            html += '        <span>×</span>';
+            html += '      </button>';
+            html += '    </div>';
+            html += '  </div>';
+
+            // Body
+            html += '  <div class="vt-messenger-chat-body">';
+            html += '    <div class="vt-messenger-messages vt-ai-bot-messages">';
+            // Welcome message
+            html += '      <div class="vt-ai-bot-message vt-ai-bot-message-ai">';
+            html += '        <div class="vt-ai-bot-message-content">' + this.escapeHtml(welcomeMessage) + '</div>';
+            html += '      </div>';
+            html += '    </div>';
+            html += '  </div>';
+
+            // Footer with input
+            html += '  <div class="vt-messenger-chat-footer">';
+            html += '    <form class="vt-ai-bot-chat-form">';
+            html += '      <div class="vt-messenger-input-container">';
+            html += '        <input type="text" class="vt-ai-bot-chat-input" placeholder="' + this.escapeHtml(placeholderText) + '">';
+            html += '        <button type="submit" class="vt-messenger-send-btn">';
+            html += '          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>';
+            html += '        </button>';
+            html += '      </div>';
+            html += '    </form>';
+            html += '  </div>';
+
+            html += '</div>';
+
+            // Append to chat windows
+            this.chatWindows.append(html);
+
+            var $window = this.chatWindows.find('[data-chat-key="' + chat.key + '"]');
+
+            // Bind AI Bot chat events
+            this.bindAIBotChatEvents($window, chat);
+
+            // Focus input
+            setTimeout(function() {
+                $window.find('.vt-ai-bot-chat-input').focus();
+            }, 100);
+        },
+
+        /**
+         * Bind events for AI Bot chat window
+         */
+        bindAIBotChatEvents: function($window, chat) {
+            var self = this;
+
+            // Form submit
+            $window.find('.vt-ai-bot-chat-form').on('submit', function(e) {
+                e.preventDefault();
+                self.sendAIBotMessage($window, chat);
+            });
+
+            // Enter key in input
+            $window.find('.vt-ai-bot-chat-input').on('keypress', function(e) {
+                if (e.which === 13 && !e.shiftKey) {
+                    e.preventDefault();
+                    self.sendAIBotMessage($window, chat);
+                }
+            });
+        },
+
+        /**
+         * Send message to AI Bot
+         */
+        sendAIBotMessage: function($window, chat) {
+            var self = this;
+            var $input = $window.find('.vt-ai-bot-chat-input');
+            var $messages = $window.find('.vt-ai-bot-messages');
+            var message = $input.val().trim();
+
+            if (!message || chat.state.isLoading) return;
+
+            var aiConfig = this.config.aiBot || {};
+
+            // Check login if required
+            if (aiConfig.accessControl === 'logged_in' && !this.config.userId) {
+                this.addAIBotMessage($messages, 'error', 'Please log in to use the AI assistant.');
+                return;
+            }
+
+            // Add user message to UI
+            this.addAIBotMessage($messages, 'user', message);
+            $input.val('');
+
+            // Show loading
+            chat.state.isLoading = true;
+            var thinkingText = aiConfig.thinkingText || 'AI is thinking';
+            var $loading = $('<div class="vt-ai-bot-message vt-ai-bot-message-loading"><div class="vt-ai-bot-message-content"><i class="eicon-loading eicon-animation-spin"></i> ' + this.escapeHtml(thinkingText) + '...</div></div>');
+            $messages.append($loading);
+            this.scrollAIBotToBottom($messages);
+
+            // Build history for context
+            var history = chat.state.messages.slice(-10);
+
+            // Send AJAX request
+            $.ajax({
+                url: this.config.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'vt_ai_bot_query',
+                    nonce: aiConfig.nonce,
+                    message: message,
+                    history: JSON.stringify(history),
+                },
+                success: function(response) {
+                    $loading.remove();
+                    chat.state.isLoading = false;
+
+                    if (response.success) {
+                        self.handleAIBotResponse($messages, chat, response.data);
+                    } else {
+                        var errorMsg = response.data?.message || 'Something went wrong.';
+                        self.addAIBotMessage($messages, 'error', errorMsg);
+                    }
+                },
+                error: function() {
+                    $loading.remove();
+                    chat.state.isLoading = false;
+                    self.addAIBotMessage($messages, 'error', 'Something went wrong. Please try again.');
+                }
+            });
+        },
+
+        /**
+         * Handle AI Bot response
+         */
+        handleAIBotResponse: function($messages, chat, data) {
+            // Add AI explanation
+            if (data.explanation) {
+                this.addAIBotMessage($messages, 'ai', data.explanation);
+            }
+
+            // Add results
+            if (data.results && data.results.length > 0) {
+                var hasResults = false;
+                for (var i = 0; i < data.results.length; i++) {
+                    if (data.results[i].count > 0) {
+                        hasResults = true;
+                        break;
+                    }
+                }
+
+                if (hasResults) {
+                    this.addAIBotResults($messages, chat, data.results);
+                } else if (!data.explanation) {
+                    this.addAIBotMessage($messages, 'ai', 'I couldn\'t find any matching results. Try rephrasing your question.');
+                }
+            } else if (!data.explanation) {
+                this.addAIBotMessage($messages, 'ai', 'I couldn\'t find any matching results. Try rephrasing your question.');
+            }
+        },
+
+        /**
+         * Add message to AI Bot chat
+         */
+        addAIBotMessage: function($messages, type, content) {
+            var escapedContent = this.escapeHtml(content);
+            var html = '<div class="vt-ai-bot-message vt-ai-bot-message-' + type + '">';
+            html += '<div class="vt-ai-bot-message-content">' + escapedContent + '</div>';
+            html += '</div>';
+
+            $messages.append(html);
+            this.scrollAIBotToBottom($messages);
+
+            // Store in chat history (only user and ai messages)
+            if (type === 'user' || type === 'ai') {
+                // Find the chat in openChats and update its state
+                var chat = this.state.openChats.find(function(c) { return c.key === 'ai-bot-chat'; });
+                if (chat) {
+                    chat.state.messages.push({type: type, content: content});
+                }
+            }
+        },
+
+        /**
+         * Add AI Bot search results
+         */
+        addAIBotResults: function($messages, chat, results) {
+            var self = this;
+
+            var html = '<div class="vt-ai-bot-results">';
+
+            results.forEach(function(result) {
+                if (result.count === 0) return;
+
+                html += '<div class="vt-ai-bot-result-group">';
+                if (results.length > 1) {
+                    html += '<div class="vt-ai-bot-result-header">' + self.escapeHtml(result.post_type_label) + '</div>';
+                }
+
+                // Use pre-rendered HTML from the AI Bot response
+                html += '<div class="vt-ai-bot-result-cards">' + result.html + '</div>';
+
+                // View all link
+                if (result.has_more && result.archive_url) {
+                    html += '<a href="' + self.escapeHtml(result.archive_url) + '" class="vt-ai-bot-view-all" target="_blank">';
+                    html += 'View all ' + self.escapeHtml(result.post_type_label) + ' →';
+                    html += '</a>';
+                }
+
+                html += '</div>';
+            });
+
+            html += '</div>';
+
+            $messages.append(html);
+            this.scrollAIBotToBottom($messages);
+        },
+
+        /**
+         * Scroll AI Bot messages to bottom
+         */
+        scrollAIBotToBottom: function($messages) {
+            $messages.scrollTop($messages[0].scrollHeight);
         },
 
         bindEvents: function() {
@@ -1124,6 +1423,9 @@
             var self = this;
             var chat = self.findChatByKey(chatKey);
             if (!chat) return;
+
+            // Skip AI Bot chats - they don't load messages via AJAX
+            if (chat.isAIBot) return;
 
             var ajaxUrl = (typeof Voxel_Config !== 'undefined' && Voxel_Config.ajax_url)
                 ? Voxel_Config.ajax_url + '&action=inbox.load_chat'
