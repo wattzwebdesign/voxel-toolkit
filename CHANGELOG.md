@@ -93,6 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Temporary Login Configure Button**: Fixed Configure button linking to the correct Users > Temp Logins admin page.
 - **Temporary Login Redirect URL**: Fixed custom redirect URLs not working after login. Now properly handles relative URLs and same-site redirects.
 - **Configure Button Navigation**: Fixed Configure button not navigating to correct settings tab when clicked immediately after enabling a function.
+- **AI Bot Panel Behavior Description**: Fixed unclear description text for Push/Overlay panel behavior options.
 
 ## [1.6.0.1] - 2026-01-05
 
