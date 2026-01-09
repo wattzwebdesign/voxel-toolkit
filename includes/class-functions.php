@@ -624,6 +624,13 @@ class Voxel_Toolkit_Functions {
                 'icon' => 'dashicons-admin-users',
                 'configure_url' => admin_url('users.php?page=vt-temp-logins'),
             ),
+            'schedule_posts' => array(
+                'name' => __('Schedule Posts', 'voxel-toolkit'),
+                'description' => __('Allow users to schedule posts for future publication from the Create Post form. Uses WordPress native scheduling.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Schedule_Posts',
+                'file' => 'functions/class-schedule-posts.php',
+                'icon' => 'dashicons-calendar-alt',
+            ),
         );
 
         // Allow other plugins/themes to register functions

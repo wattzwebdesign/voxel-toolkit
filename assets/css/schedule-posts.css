@@ -1,0 +1,87 @@
+/**
+ * Schedule Posts - Styling
+ *
+ * Uses Voxel's native popup styling with minimal overrides
+ */
+
+/* Field Container - Multiple selectors for specificity */
+.vt-schedule-field {
+    margin-top: 25px !important;
+}
+
+.ts-form-group.vt-schedule-field {
+    margin-top: 25px !important;
+}
+
+.ts-form-group.vt-schedule-field > label {
+    display: block;
+    margin-top: 25px !important;
+    padding-top: 0;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--ts-shade-1);
+}
+
+div.vt-schedule-field > label {
+    margin-top: 25px !important;
+}
+
+/* Grid Layout */
+.vt-schedule-field .form-field-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 10px;
+}
+
+.vt-schedule-field .form-field-grid.medium {
+    grid-template-columns: 2fr 1fr;
+}
+
+.vt-schedule-field .vx-2-3 {
+    position: relative;
+}
+
+/* Popup Container - Position absolutely */
+.vt-schedule-popup-container {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 1000;
+    min-width: 300px;
+}
+
+.vt-schedule-popup-container .ts-field-popup {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Calendar Container */
+.vt-schedule-calendar {
+    padding: 15px;
+}
+
+.vt-schedule-calendar .pika-single {
+    border: none !important;
+    background: transparent !important;
+    font-family: inherit;
+    box-shadow: none !important;
+}
+
+/* Time Input - Use Voxel's ts-filter class */
+.vt-schedule-field .vt-schedule-time {
+    height: auto;
+    width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+    .vt-schedule-field .form-field-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .vt-schedule-popup-container {
+        min-width: 100%;
+        right: 0;
+    }
+}
