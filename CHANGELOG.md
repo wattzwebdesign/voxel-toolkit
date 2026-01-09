@@ -81,6 +81,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Support for "any" (all posts) and "current_user" (user's posts only) scopes
   - Post logos/avatars displayed in dropdown selections
   - "Load more" pagination for large result sets
+- **Open New Chats in Window**: New Messenger setting to open message actions in chat windows. Features include:
+  - Toggle in Messenger Settings to enable the feature
+  - Intercepts "Message Post" and "Message Author" action clicks
+  - Opens a messenger-style chat window on the current page instead of navigating to inbox
+  - Displays post/user name and logo/avatar in chat header
+  - Users can compose and send messages directly from the chat window
 
 ### Fixed
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
