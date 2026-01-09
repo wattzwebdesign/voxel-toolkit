@@ -41,6 +41,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **AI Bot Comprehensive Search**: Added `_search_all` filter for searching across all fields, taxonomies, and content
 - **AI Bot Quick Actions Toggle**: New setting to enable/disable quick action buttons (Directions, Call, View) below result cards
 - **AI Bot Thinking Text**: New setting to customize the "AI is thinking" loading message
+- **AI Response Language**: New global setting in AI Settings tab to configure the response language for all AI features (29 languages supported). Affects:
+  - AI Bot responses and explanations
+  - AI Post Summary generation
+  - Timeline Reply Summary
+  - Synonym Search generation
+  - AI Review Summary
 - **Telnyx SMS Provider**: New SMS provider option with API v2 Bearer token authentication
 - **Solapi SMS Provider**: New SMS provider for Korean market with HMAC-SHA256 authentication
 - **External Link Warning Button Styling**: Added button styling controls for the External Link Warning modal:

@@ -409,13 +409,18 @@ class Voxel_Toolkit_Synonym_Search {
             wp_send_json_error(array('message' => __('AI is not configured. Please set up AI Settings first.', 'voxel-toolkit')));
         }
 
+        // Get response language
+        $language_name = $this->get_response_language_name();
+        $language_instruction = ($language_name !== 'English') ? " Generate synonyms in {$language_name}." : '';
+
         // Build the prompt
         $prompt = sprintf(
-            'Generate exactly %d synonyms, alternative terms, and related phrases for the term "%s". These synonyms will be used for search functionality, so include common variations, abbreviations, and related terms that users might search for.
+            'Generate exactly %d synonyms, alternative terms, and related phrases for the term "%s". These synonyms will be used for search functionality, so include common variations, abbreviations, and related terms that users might search for.%s
 
 Return ONLY the synonyms as a comma-separated list, nothing else. Do not include the original term. Do not include numbering or explanations.',
             $count,
-            $term_name
+            $term_name,
+            $language_instruction
         );
 
         // If there are existing synonyms, ask to add more
@@ -426,7 +431,7 @@ Return ONLY the synonyms as a comma-separated list, nothing else. Do not include
             );
         }
 
-        $system_message = 'You are a helpful assistant that generates search synonyms. Respond only with comma-separated synonyms, no explanations or formatting.';
+        $system_message = 'You are a helpful assistant that generates search synonyms. Respond only with comma-separated synonyms, no explanations or formatting.' . (($language_name !== 'English') ? " Always respond in {$language_name}." : '');
 
         // Generate via AI
         $result = $ai_settings->generate_completion($prompt, 200, 0.7, $system_message);
@@ -569,16 +574,21 @@ Return ONLY the synonyms as a comma-separated list, nothing else. Do not include
             ));
         }
 
+        // Get response language
+        $language_name = $this->get_response_language_name();
+        $language_instruction = ($language_name !== 'English') ? " Generate synonyms in {$language_name}." : '';
+
         // Generate synonyms for this term
         $prompt = sprintf(
-            'Generate exactly %d synonyms, alternative terms, and related phrases for the term "%s". These synonyms will be used for search functionality, so include common variations, abbreviations, and related terms that users might search for.
+            'Generate exactly %d synonyms, alternative terms, and related phrases for the term "%s". These synonyms will be used for search functionality, so include common variations, abbreviations, and related terms that users might search for.%s
 
 Return ONLY the synonyms as a comma-separated list, nothing else. Do not include the original term. Do not include numbering or explanations.',
             $count,
-            $term_name
+            $term_name,
+            $language_instruction
         );
 
-        $system_message = 'You are a helpful assistant that generates search synonyms. Respond only with comma-separated synonyms, no explanations or formatting.';
+        $system_message = 'You are a helpful assistant that generates search synonyms. Respond only with comma-separated synonyms, no explanations or formatting.' . (($language_name !== 'English') ? " Always respond in {$language_name}." : '');
 
         $result = $ai_settings->generate_completion($prompt, 200, 0.7, $system_message);
 
@@ -645,5 +655,54 @@ Return ONLY the synonyms as a comma-separated list, nothing else. Do not include
             return array();
         }
         return array_map('trim', explode(',', $synonyms));
+    }
+
+    /**
+     * Get the response language name from AI Settings
+     *
+     * @return string Language name (e.g., "English", "Spanish", "French")
+     */
+    private function get_response_language_name() {
+        if (!class_exists('Voxel_Toolkit_Settings')) {
+            return 'English';
+        }
+
+        $settings = Voxel_Toolkit_Settings::instance();
+        $ai_settings = $settings->get_function_settings('ai_settings', array());
+        $language_code = isset($ai_settings['response_language']) ? $ai_settings['response_language'] : 'en';
+
+        $languages = array(
+            'en' => 'English',
+            'es' => 'Spanish',
+            'fr' => 'French',
+            'de' => 'German',
+            'it' => 'Italian',
+            'pt' => 'Portuguese',
+            'nl' => 'Dutch',
+            'pl' => 'Polish',
+            'ru' => 'Russian',
+            'uk' => 'Ukrainian',
+            'ja' => 'Japanese',
+            'ko' => 'Korean',
+            'zh' => 'Chinese',
+            'ar' => 'Arabic',
+            'hi' => 'Hindi',
+            'tr' => 'Turkish',
+            'vi' => 'Vietnamese',
+            'th' => 'Thai',
+            'id' => 'Indonesian',
+            'ms' => 'Malay',
+            'sv' => 'Swedish',
+            'da' => 'Danish',
+            'no' => 'Norwegian',
+            'fi' => 'Finnish',
+            'el' => 'Greek',
+            'cs' => 'Czech',
+            'ro' => 'Romanian',
+            'hu' => 'Hungarian',
+            'he' => 'Hebrew',
+        );
+
+        return isset($languages[$language_code]) ? $languages[$language_code] : 'English';
     }
 }

@@ -193,53 +193,50 @@ class Voxel_Toolkit_AI_Review_Summary {
     }
     
     /**
-     * Get the language name for AI prompts
+     * Get the language name for AI prompts from central AI Settings
      */
     private function get_language_name() {
-        $settings = get_option('voxel_toolkit_options', array());
-        $ai_settings = isset($settings['ai_review_summary']) ? $settings['ai_review_summary'] : array();
-        $language_code = isset($ai_settings['language']) ? $ai_settings['language'] : 'en';
-        
-        $language_names = array(
+        if (!class_exists('Voxel_Toolkit_Settings')) {
+            return 'English';
+        }
+
+        $settings = Voxel_Toolkit_Settings::instance();
+        $ai_settings = $settings->get_function_settings('ai_settings', array());
+        $language_code = isset($ai_settings['response_language']) ? $ai_settings['response_language'] : 'en';
+
+        $languages = array(
             'en' => 'English',
-            'it' => 'Italian',
             'es' => 'Spanish',
             'fr' => 'French',
             'de' => 'German',
+            'it' => 'Italian',
             'pt' => 'Portuguese',
             'nl' => 'Dutch',
+            'pl' => 'Polish',
             'ru' => 'Russian',
-            'zh' => 'Chinese',
+            'uk' => 'Ukrainian',
             'ja' => 'Japanese',
             'ko' => 'Korean',
+            'zh' => 'Chinese',
             'ar' => 'Arabic',
             'hi' => 'Hindi',
             'tr' => 'Turkish',
-            'pl' => 'Polish',
+            'vi' => 'Vietnamese',
+            'th' => 'Thai',
+            'id' => 'Indonesian',
+            'ms' => 'Malay',
             'sv' => 'Swedish',
             'da' => 'Danish',
             'no' => 'Norwegian',
             'fi' => 'Finnish',
-            'cs' => 'Czech',
-            'hu' => 'Hungarian',
-            'ro' => 'Romanian',
-            'bg' => 'Bulgarian',
-            'hr' => 'Croatian',
-            'sk' => 'Slovak',
-            'sl' => 'Slovenian',
-            'et' => 'Estonian',
-            'lv' => 'Latvian',
-            'lt' => 'Lithuanian',
             'el' => 'Greek',
+            'cs' => 'Czech',
+            'ro' => 'Romanian',
+            'hu' => 'Hungarian',
             'he' => 'Hebrew',
-            'th' => 'Thai',
-            'vi' => 'Vietnamese',
-            'id' => 'Indonesian',
-            'ms' => 'Malay',
-            'uk' => 'Ukrainian',
         );
-        
-        return isset($language_names[$language_code]) ? $language_names[$language_code] : 'English';
+
+        return isset($languages[$language_code]) ? $languages[$language_code] : 'English';
     }
     
     /**

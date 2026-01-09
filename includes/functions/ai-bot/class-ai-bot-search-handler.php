@@ -293,17 +293,25 @@ class Voxel_Toolkit_AI_Bot_Search_Handler {
         // Build location context if available
         $location_context = $this->build_location_context($user_location);
 
+        // Get response language from AI Settings
+        $language_name = $this->get_response_language_name();
+        $language_instruction = '';
+        if ($language_name !== 'English') {
+            $language_instruction = "\n\nIMPORTANT: You MUST respond in {$language_name}. All your responses, explanations, and descriptions must be written in {$language_name}. The JSON keys must remain in English, but the \"explanation\" value must be in {$language_name}.\n";
+        }
+
         // Use custom prompt if provided
         $custom_prompt = isset($this->settings['system_prompt']) ? $this->settings['system_prompt'] : '';
 
         if (!empty($custom_prompt)) {
             // Replace placeholders in custom prompt
             $custom_prompt = str_replace(
-                array('{{site_name}}', '{{schema}}', '{{max_results}}', '{{user_location}}'),
-                array($site_name, wp_json_encode($schema, JSON_PRETTY_PRINT), $max_results, $location_context),
+                array('{{site_name}}', '{{schema}}', '{{max_results}}', '{{user_location}}', '{{language}}'),
+                array($site_name, wp_json_encode($schema, JSON_PRETTY_PRINT), $max_results, $location_context, $language_name),
                 $custom_prompt
             );
-            return $custom_prompt;
+            // Append language instruction if not English
+            return $custom_prompt . $language_instruction;
         }
 
         // Build post type descriptions
@@ -533,7 +541,61 @@ User question: \"businesses in the medical field near me\"
 
 REMEMBER: Replace \"USE_EXACT_KEY_FROM_SCHEMA\" with the actual post_type key from the schema. Look at the schema above and use the exact key shown there.";
 
+        // Append language instruction if not English
+        $prompt .= $language_instruction;
+
         return $prompt;
+    }
+
+    /**
+     * Get the response language name from AI Settings
+     *
+     * @return string Language name (e.g., "English", "Spanish", "French")
+     */
+    private function get_response_language_name() {
+        // Get AI Settings
+        if (!class_exists('Voxel_Toolkit_Settings')) {
+            return 'English';
+        }
+
+        $settings = Voxel_Toolkit_Settings::instance();
+        $ai_settings = $settings->get_function_settings('ai_settings', array());
+        $language_code = isset($ai_settings['response_language']) ? $ai_settings['response_language'] : 'en';
+
+        // Map language codes to names
+        $languages = array(
+            'en' => 'English',
+            'es' => 'Spanish',
+            'fr' => 'French',
+            'de' => 'German',
+            'it' => 'Italian',
+            'pt' => 'Portuguese',
+            'nl' => 'Dutch',
+            'pl' => 'Polish',
+            'ru' => 'Russian',
+            'uk' => 'Ukrainian',
+            'ja' => 'Japanese',
+            'ko' => 'Korean',
+            'zh' => 'Chinese',
+            'ar' => 'Arabic',
+            'hi' => 'Hindi',
+            'tr' => 'Turkish',
+            'vi' => 'Vietnamese',
+            'th' => 'Thai',
+            'id' => 'Indonesian',
+            'ms' => 'Malay',
+            'sv' => 'Swedish',
+            'da' => 'Danish',
+            'no' => 'Norwegian',
+            'fi' => 'Finnish',
+            'el' => 'Greek',
+            'cs' => 'Czech',
+            'ro' => 'Romanian',
+            'hu' => 'Hungarian',
+            'he' => 'Hebrew',
+        );
+
+        return isset($languages[$language_code]) ? $languages[$language_code] : 'English';
     }
 
     /**

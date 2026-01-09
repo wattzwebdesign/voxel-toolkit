@@ -419,6 +419,12 @@ class Voxel_Toolkit_AI_Post_Summary {
 
         $prompt = str_replace('{{post_data}}', $aggregated_data, $prompt_template);
 
+        // Add language instruction if not English
+        $language_name = $this->get_response_language_name();
+        if ($language_name !== 'English') {
+            $prompt .= "\n\nIMPORTANT: Write the summary in {$language_name}.";
+        }
+
         // Generate summary
         $max_tokens = isset($settings['max_tokens']) ? absint($settings['max_tokens']) : 300;
         $max_tokens = max(50, min(1000, $max_tokens));
@@ -601,5 +607,56 @@ class Voxel_Toolkit_AI_Post_Summary {
             : '';
 
         return $sanitized;
+    }
+
+    /**
+     * Get the response language name from AI Settings
+     *
+     * @return string Language name (e.g., "English", "Spanish", "French")
+     */
+    private function get_response_language_name() {
+        // Get AI Settings
+        if (!class_exists('Voxel_Toolkit_Settings')) {
+            return 'English';
+        }
+
+        $settings = Voxel_Toolkit_Settings::instance();
+        $ai_settings = $settings->get_function_settings('ai_settings', array());
+        $language_code = isset($ai_settings['response_language']) ? $ai_settings['response_language'] : 'en';
+
+        // Map language codes to names
+        $languages = array(
+            'en' => 'English',
+            'es' => 'Spanish',
+            'fr' => 'French',
+            'de' => 'German',
+            'it' => 'Italian',
+            'pt' => 'Portuguese',
+            'nl' => 'Dutch',
+            'pl' => 'Polish',
+            'ru' => 'Russian',
+            'uk' => 'Ukrainian',
+            'ja' => 'Japanese',
+            'ko' => 'Korean',
+            'zh' => 'Chinese',
+            'ar' => 'Arabic',
+            'hi' => 'Hindi',
+            'tr' => 'Turkish',
+            'vi' => 'Vietnamese',
+            'th' => 'Thai',
+            'id' => 'Indonesian',
+            'ms' => 'Malay',
+            'sv' => 'Swedish',
+            'da' => 'Danish',
+            'no' => 'Norwegian',
+            'fi' => 'Finnish',
+            'el' => 'Greek',
+            'cs' => 'Czech',
+            'ro' => 'Romanian',
+            'hu' => 'Hungarian',
+            'he' => 'Hebrew',
+        );
+
+        return isset($languages[$language_code]) ? $languages[$language_code] : 'English';
     }
 }

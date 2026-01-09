@@ -7207,6 +7207,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         $api_key = isset($settings['api_key']) ? $settings['api_key'] : '';
         $openai_model = isset($settings['openai_model']) ? $settings['openai_model'] : 'gpt-4o-mini';
         $anthropic_model = isset($settings['anthropic_model']) ? $settings['anthropic_model'] : 'claude-3-5-haiku-20241022';
+        $response_language = isset($settings['response_language']) ? $settings['response_language'] : 'en';
         ?>
 
         <table class="form-table">
@@ -7258,6 +7259,43 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <option value="claude-3-opus-20240229" <?php selected($anthropic_model, 'claude-3-opus-20240229'); ?>>Claude 3 Opus</option>
                     </select>
                     <p class="description"><?php _e('Used when Anthropic is selected as provider.', 'voxel-toolkit'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><?php _e('Response Language', 'voxel-toolkit'); ?></th>
+                <td>
+                    <select name="voxel_toolkit_options[ai_settings][response_language]" class="vt-select" style="width: 300px;">
+                        <option value="en" <?php selected($response_language, 'en'); ?>>English</option>
+                        <option value="es" <?php selected($response_language, 'es'); ?>>Español (Spanish)</option>
+                        <option value="fr" <?php selected($response_language, 'fr'); ?>>Français (French)</option>
+                        <option value="de" <?php selected($response_language, 'de'); ?>>Deutsch (German)</option>
+                        <option value="it" <?php selected($response_language, 'it'); ?>>Italiano (Italian)</option>
+                        <option value="pt" <?php selected($response_language, 'pt'); ?>>Português (Portuguese)</option>
+                        <option value="nl" <?php selected($response_language, 'nl'); ?>>Nederlands (Dutch)</option>
+                        <option value="pl" <?php selected($response_language, 'pl'); ?>>Polski (Polish)</option>
+                        <option value="ru" <?php selected($response_language, 'ru'); ?>>Русский (Russian)</option>
+                        <option value="uk" <?php selected($response_language, 'uk'); ?>>Українська (Ukrainian)</option>
+                        <option value="ja" <?php selected($response_language, 'ja'); ?>>日本語 (Japanese)</option>
+                        <option value="ko" <?php selected($response_language, 'ko'); ?>>한국어 (Korean)</option>
+                        <option value="zh" <?php selected($response_language, 'zh'); ?>>中文 (Chinese)</option>
+                        <option value="ar" <?php selected($response_language, 'ar'); ?>>العربية (Arabic)</option>
+                        <option value="hi" <?php selected($response_language, 'hi'); ?>>हिन्दी (Hindi)</option>
+                        <option value="tr" <?php selected($response_language, 'tr'); ?>>Türkçe (Turkish)</option>
+                        <option value="vi" <?php selected($response_language, 'vi'); ?>>Tiếng Việt (Vietnamese)</option>
+                        <option value="th" <?php selected($response_language, 'th'); ?>>ไทย (Thai)</option>
+                        <option value="id" <?php selected($response_language, 'id'); ?>>Bahasa Indonesia (Indonesian)</option>
+                        <option value="ms" <?php selected($response_language, 'ms'); ?>>Bahasa Melayu (Malay)</option>
+                        <option value="sv" <?php selected($response_language, 'sv'); ?>>Svenska (Swedish)</option>
+                        <option value="da" <?php selected($response_language, 'da'); ?>>Dansk (Danish)</option>
+                        <option value="no" <?php selected($response_language, 'no'); ?>>Norsk (Norwegian)</option>
+                        <option value="fi" <?php selected($response_language, 'fi'); ?>>Suomi (Finnish)</option>
+                        <option value="el" <?php selected($response_language, 'el'); ?>>Ελληνικά (Greek)</option>
+                        <option value="cs" <?php selected($response_language, 'cs'); ?>>Čeština (Czech)</option>
+                        <option value="ro" <?php selected($response_language, 'ro'); ?>>Română (Romanian)</option>
+                        <option value="hu" <?php selected($response_language, 'hu'); ?>>Magyar (Hungarian)</option>
+                        <option value="he" <?php selected($response_language, 'he'); ?>>עברית (Hebrew)</option>
+                    </select>
+                    <p class="description"><?php _e('The language AI will use for responses. Affects AI Bot and AI Post Summary.', 'voxel-toolkit'); ?></p>
                 </td>
             </tr>
         </table>
