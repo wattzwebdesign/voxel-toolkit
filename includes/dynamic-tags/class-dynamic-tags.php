@@ -486,6 +486,75 @@ class Voxel_Toolkit_Dynamic_Tags {
                 return $expiration;
             } );
 
+        // Add unread notifications count property
+        $properties['unread_notifications'] = \Voxel\Dynamic_Data\Tag::Number('Unread Notifications')
+            ->render( function() use ( $group ) {
+                // Get user object
+                $user = $group->get_user();
+
+                if (!$user || !method_exists($user, 'get_id')) {
+                    return 0;
+                }
+
+                $user_id = $user->get_id();
+                if (!$user_id) {
+                    return 0;
+                }
+
+                // Get notifications data from usermeta
+                $notifications_data = get_user_meta($user_id, 'voxel:notifications', true);
+
+                if (empty($notifications_data)) {
+                    return 0;
+                }
+
+                // Parse JSON data
+                $data = json_decode($notifications_data, true);
+
+                if (!is_array($data) || !isset($data['unread'])) {
+                    return 0;
+                }
+
+                return intval($data['unread']);
+            } );
+
+        // Add unread messages count property
+        $properties['unread_messages'] = \Voxel\Dynamic_Data\Tag::Number('Unread Messages')
+            ->render( function() use ( $group ) {
+                // Get user object
+                $user = $group->get_user();
+
+                if (!$user || !method_exists($user, 'get_id')) {
+                    return 0;
+                }
+
+                $user_id = $user->get_id();
+                if (!$user_id) {
+                    return 0;
+                }
+
+                // Get DMs data from usermeta
+                $dms_data = get_user_meta($user_id, 'voxel:dms', true);
+
+                if (empty($dms_data)) {
+                    return 0;
+                }
+
+                // Parse JSON data
+                $data = json_decode($dms_data, true);
+
+                if (!is_array($data) || !isset($data['unread'])) {
+                    return 0;
+                }
+
+                // unread can be false (boolean) or a number
+                if ($data['unread'] === false) {
+                    return 0;
+                }
+
+                return intval($data['unread']);
+            } );
+
         return $properties;
     }
 

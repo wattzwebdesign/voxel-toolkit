@@ -2675,6 +2675,18 @@ class Voxel_Toolkit_Admin {
                             <td><code>@user(membership_expiration)</code><br><code>@author(membership_expiration)</code></td>
                             <td><em>February 24, 2026</em></td>
                         </tr>
+                        <tr>
+                            <td><code>unread_notifications</code></td>
+                            <td><?php _e('Number of unread notifications for the user', 'voxel-toolkit'); ?></td>
+                            <td><code>@user(unread_notifications)</code></td>
+                            <td><em>3</em></td>
+                        </tr>
+                        <tr>
+                            <td><code>unread_messages</code></td>
+                            <td><?php _e('Number of unread direct messages for the user', 'voxel-toolkit'); ?></td>
+                            <td><code>@user(unread_messages)</code></td>
+                            <td><em>5</em></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
