@@ -7584,7 +7584,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <option value="push" <?php selected($panel_behavior, 'push'); ?>><?php _e('Push content', 'voxel-toolkit'); ?></option>
                         <option value="overlay" <?php selected($panel_behavior, 'overlay'); ?>><?php _e('Overlay content', 'voxel-toolkit'); ?></option>
                     </select>
-                    <p class="description"><?php _e('Push content aside when panel opens, or overlay on top of content.', 'voxel-toolkit'); ?></p>
+                    <p class="description"><?php _e('Push: shifts page content aside. Overlay: displays panel on top of content.', 'voxel-toolkit'); ?></p>
                 </td>
             </tr>
             <tr>
