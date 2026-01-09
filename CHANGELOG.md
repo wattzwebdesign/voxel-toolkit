@@ -71,6 +71,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Customizable submit button text when scheduling (default: "Schedule")
   - Customizable success message when scheduling (default: "Your post has been scheduled.")
   - Only works when posts would be published (not pending)
+- **Post Relation Search**: Adds searchable dropdown to post relations filter in search forms. Features include:
+  - AJAX-powered search with debouncing (300ms delay)
+  - Hybrid search: client-side for short terms, server-side for longer queries
+  - Support for "any" (all posts) and "current_user" (user's posts only) scopes
+  - Post logos/avatars displayed in dropdown selections
+  - "Load more" pagination for large result sets
 
 ### Fixed
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
