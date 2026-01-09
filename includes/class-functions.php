@@ -435,6 +435,13 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-visitor-location.php',
                 'settings_callback' => array($this, 'render_visitor_location_settings'),
             ),
+            'title_notification_badge' => array(
+                'name' => __('Title Notification Badge', 'voxel-toolkit'),
+                'description' => __('Shows unread notification/message count in the browser tab title (e.g., "(3) My Site"). Updates in real-time via polling. Only for logged-in users.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Title_Notification_Badge',
+                'file' => 'functions/class-title-notification-badge.php',
+                'settings_callback' => array($this, 'render_title_notification_badge_settings'),
+            ),
             'post_fields_anywhere' => array(
                 'name' => __('Post Fields Anywhere', 'voxel-toolkit'),
                 'description' => __('Render any @post() tag in the context of a different post. Usage: @site().render_post_tag(post_id, @post(field))', 'voxel-toolkit'),
@@ -5072,6 +5079,93 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div style="margin-bottom: 8px;"><code>@site(visitor.city)</code> - <?php _e('City name', 'voxel-toolkit'); ?></div>
                 <div style="margin-bottom: 8px;"><code>@site(visitor.state)</code> - <?php _e('State/region', 'voxel-toolkit'); ?></div>
                 <div><code>@site(visitor.country)</code> - <?php _e('Country name', 'voxel-toolkit'); ?></div>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render settings for Title Notification Badge
+     *
+     * @param array $settings Current settings
+     */
+    public function render_title_notification_badge_settings($settings) {
+        $poll_interval = isset($settings['poll_interval']) ? absint($settings['poll_interval']) : 15;
+        $include_notifications = isset($settings['include_notifications']) ? (bool) $settings['include_notifications'] : true;
+        $include_messages = isset($settings['include_messages']) ? (bool) $settings['include_messages'] : true;
+        $flash_on_new = isset($settings['flash_on_new']) ? (bool) $settings['flash_on_new'] : true;
+        $flash_text = isset($settings['flash_text']) ? sanitize_text_field($settings['flash_text']) : __('New notification!', 'voxel-toolkit');
+
+        ?>
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('What to Include', 'voxel-toolkit'); ?></h4>
+            <div class="vt-checkbox-list">
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[title_notification_badge][include_notifications]"
+                           value="1"
+                           <?php checked($include_notifications, true); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Include Notifications', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Count unread notifications in the badge.', 'voxel-toolkit'); ?></p>
+                    </div>
+                </label>
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[title_notification_badge][include_messages]"
+                           value="1"
+                           <?php checked($include_messages, true); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Include Direct Messages', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Count unread DMs in the badge.', 'voxel-toolkit'); ?></p>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Poll Interval', 'voxel-toolkit'); ?></h4>
+            <div class="vt-field-group">
+                <input type="number"
+                       name="voxel_toolkit_options[title_notification_badge][poll_interval]"
+                       value="<?php echo esc_attr($poll_interval); ?>"
+                       min="5"
+                       max="300"
+                       class="vt-text-input"
+                       style="max-width: 100px;" />
+                <span style="margin-left: 8px;"><?php _e('seconds', 'voxel-toolkit'); ?></span>
+                <p class="vt-field-description"><?php _e('How often to check for new notifications. Lower = more responsive but more server load. Default: 15 seconds. Minimum: 5 seconds.', 'voxel-toolkit'); ?></p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Title Flashing', 'voxel-toolkit'); ?></h4>
+            <label class="vt-checkbox-item" style="margin-bottom: 15px;">
+                <input type="checkbox"
+                       name="voxel_toolkit_options[title_notification_badge][flash_on_new]"
+                       value="1"
+                       <?php checked($flash_on_new, true); ?> />
+                <div class="vt-checkbox-item-content">
+                    <span class="vt-checkbox-item-label"><?php _e('Flash Title on New Notifications', 'voxel-toolkit'); ?></span>
+                    <p class="vt-checkbox-item-description"><?php _e('Alternates between count and flash text when new notifications arrive (only when tab is not focused).', 'voxel-toolkit'); ?></p>
+                </div>
+            </label>
+            <div class="vt-field-group">
+                <label style="display: block; margin-bottom: 5px; font-weight: 500;"><?php _e('Flash Text', 'voxel-toolkit'); ?></label>
+                <input type="text"
+                       name="voxel_toolkit_options[title_notification_badge][flash_text]"
+                       value="<?php echo esc_attr($flash_text); ?>"
+                       class="vt-text-input"
+                       style="max-width: 250px;" />
+                <p class="vt-field-description"><?php _e('Text shown when flashing. Default: "New notification!"', 'voxel-toolkit'); ?></p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Preview', 'voxel-toolkit'); ?></h4>
+            <div style="background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px;">
+                <p style="margin: 0 0 8px 0;"><?php _e('Browser tab title will look like:', 'voxel-toolkit'); ?></p>
+                <code style="font-size: 14px;">(3) <?php echo esc_html(get_bloginfo('name')); ?></code>
             </div>
         </div>
         <?php
