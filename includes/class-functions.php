@@ -631,6 +631,13 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-schedule-posts.php',
                 'icon' => 'dashicons-calendar-alt',
             ),
+            'post_relation_search' => array(
+                'name' => __('Post Relation Search', 'voxel-toolkit'),
+                'description' => __('Adds searchable dropdown to post relations filter in search forms. Enables AJAX-powered search instead of scroll-only behavior.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Post_Relation_Search',
+                'file' => 'functions/class-post-relation-search.php',
+                'icon' => 'dashicons-search',
+            ),
         );
 
         // Allow other plugins/themes to register functions
