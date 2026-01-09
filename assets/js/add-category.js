@@ -22,10 +22,10 @@
      * This helps us identify which form group opened a teleported popup
      */
     function setupClickTracking() {
-        // Delegate click event on popup triggers within create post forms
-        document.addEventListener('click', function(e) {
+        // Track click handler to capture form group before popup opens
+        const trackClick = function(e) {
             // Check if clicked element or its parent is a popup trigger
-            const popupTrigger = e.target.closest('.ts-popup-target, [data-popup], .ts-filter-trigger');
+            const popupTrigger = e.target.closest('.ts-popup-target, [data-popup], .ts-filter-trigger, .ts-field-popup-trigger');
             if (!popupTrigger) return;
 
             // Find the form group containing this trigger
@@ -61,7 +61,12 @@
                     lastClickedTaxonomyFormGroup = formGroup;
                 }
             }
-        }, true); // Use capture phase to catch clicks early
+        };
+
+        // Listen to both click and mousedown to catch all popup triggers
+        // Some custom popup implementations may use mousedown instead of click
+        document.addEventListener('click', trackClick, true);
+        document.addEventListener('mousedown', trackClick, true);
     }
 
     /**
@@ -283,24 +288,66 @@
         }
 
         // For teleported popups, try to find by popup key
-        const popup = dropdown.closest('.ts-field-popup');
+        const popup = dropdown.closest('.ts-field-popup, .ts-popup');
         if (popup) {
-            const popupKey = popup.getAttribute('data-popup-key') || popup.getAttribute('data-key') || popup.id;
+            // Method 1: Check for popup-key attribute with multiple patterns
+            const popupKey = popup.getAttribute('data-popup-key') ||
+                             popup.getAttribute('data-key') ||
+                             popup.id ||
+                             popup.getAttribute('ref');
+
             if (popupKey) {
-                const trigger = document.querySelector(`[data-popup="${popupKey}"], [aria-controls="${popupKey}"], [data-target="${popupKey}"]`);
-                if (trigger) {
-                    formGroup = trigger.closest('.ts-form-group');
-                    if (formGroup) {
-                        const createPostForm = formGroup.closest('.ts-create-post, .ts-form.create-post-form');
-                        if (createPostForm && getFieldKeyFromFormGroup(formGroup)) {
-                            return formGroup;
+                // Try multiple selector patterns for triggers
+                const triggerSelectors = [
+                    `[data-popup="${popupKey}"]`,
+                    `[aria-controls="${popupKey}"]`,
+                    `[data-target="${popupKey}"]`,
+                    `.ts-popup-target[ref="${popupKey}"]`,
+                    `[data-popup-key="${popupKey}"]`
+                ];
+
+                for (const selector of triggerSelectors) {
+                    try {
+                        const trigger = document.querySelector(selector);
+                        if (trigger) {
+                            formGroup = trigger.closest('.ts-form-group');
+                            if (formGroup) {
+                                const createPostForm = formGroup.closest('.ts-create-post, .ts-form.create-post-form');
+                                if (createPostForm && getFieldKeyFromFormGroup(formGroup)) {
+                                    return formGroup;
+                                }
+                            }
                         }
+                    } catch (e) {
+                        // Selector may be invalid, continue to next
                     }
                 }
             }
+
+            // Method 2: Check Vue component for field reference
+            let el = popup;
+            while (el) {
+                if (el.__vueParentComponent || el.__vue__) {
+                    const component = el.__vueParentComponent || el.__vue__;
+                    const field = component?.props?.field ||
+                                  component?.ctx?.field ||
+                                  component?.$props?.field;
+                    if (field && field.key) {
+                        // Found field key from Vue - search for matching form group
+                        const createForms = document.querySelectorAll('.ts-create-post, .ts-form.create-post-form');
+                        for (const form of createForms) {
+                            const fg = form.querySelector(`.ts-form-group.field-key-${field.key}`);
+                            if (fg) {
+                                return fg;
+                            }
+                        }
+                    }
+                }
+                el = el.parentElement;
+            }
         }
 
-        // Try finding by looking for open/active state on form groups
+        // Method 3: Try finding by looking for open/active state on form groups
         const createForms = document.querySelectorAll('.ts-create-post, .ts-form.create-post-form');
         for (const form of createForms) {
             // Look for form group with active popup state
@@ -319,7 +366,7 @@
             }
         }
 
-        // Fallback: use the last clicked taxonomy form group (for teleported popups)
+        // Method 4: Fallback to last clicked taxonomy form group (for teleported popups)
         if (lastClickedTaxonomyFormGroup) {
             // Verify it's still valid (in DOM and has a field key)
             if (document.body.contains(lastClickedTaxonomyFormGroup)) {
