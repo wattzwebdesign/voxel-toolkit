@@ -281,6 +281,18 @@
     font-style: italic;
 }
 
+/* Filter Summary (Simple Template) */
+.vt-search-filters-summary {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ts-shade-2, #555);
+}
+
+.vt-search-filters-summary strong {
+    font-weight: 600;
+    color: var(--ts-shade-1, #1a1a1a);
+}
+
 /* Card Footer */
 .vt-search-card-footer {
     display: flex;

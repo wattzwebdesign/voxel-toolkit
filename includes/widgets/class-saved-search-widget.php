@@ -75,12 +75,29 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'vt_ss_template',
+            [
+                'label' => __('Card Template', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'default' => 'detailed',
+                'options' => [
+                    'detailed' => __('Detailed (Filter Tags)', 'voxel-toolkit'),
+                    'simple' => __('Simple (Filter Summary)', 'voxel-toolkit'),
+                ],
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
             'vt_ss_show_filter_icons',
             [
                 'label' => __('Show Filter Icons', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::SWITCHER,
                 'default' => 'no',
                 'return_value' => 'yes',
+                'condition' => [
+                    'vt_ss_template' => 'detailed',
+                ],
             ]
         );
 
@@ -118,6 +135,37 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
             'vt_ss_show_created_date',
             [
                 'label' => __('Show Created Date', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_show_search_btn',
+            [
+                'label' => __('Show Search Button', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_show_notification_btn',
+            [
+                'label' => __('Show Notification Button', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_show_delete_btn',
+            [
+                'label' => __('Show Delete Button', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::SWITCHER,
                 'default' => 'yes',
                 'return_value' => 'yes',
@@ -463,6 +511,39 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'vt_ss_header_divider_heading',
+            [
+                'label' => __('Header Divider', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_header_divider_color',
+            [
+                'label' => __('Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-search-card-header' => 'border-bottom-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'vt_ss_header_divider_width',
+            [
+                'label' => __('Thickness', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 10, 'step' => 1]],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-search-card-header' => 'border-bottom-width: {{SIZE}}{{UNIT}}; border-bottom-style: solid;',
+                ],
+            ]
+        );
+
         $this->end_controls_section();
 
         // Style Section - Action Buttons
@@ -550,12 +631,29 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
 
         $this->end_controls_section();
 
-        // Style Section - Filter Tags
+        // Style Section - Filter Tags (Detailed Template)
         $this->start_controls_section(
             'vt_ss_style_filters',
             [
                 'label' => __('Filter Tags', 'voxel-toolkit'),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+                'condition' => [
+                    'vt_ss_template' => 'detailed',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'vt_ss_filter_gap',
+            [
+                'label' => __('Gap', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 30, 'step' => 1]],
+                'default' => ['size' => 8, 'unit' => 'px'],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-search-filters' => 'gap: {{SIZE}}{{UNIT}};',
+                ],
             ]
         );
 
@@ -582,16 +680,89 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'vt_ss_filter_border_heading',
+            [
+                'label' => __('Border', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_filter_border_style',
+            [
+                'label' => __('Border Style', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'default' => 'none',
+                'options' => [
+                    'none' => __('None', 'voxel-toolkit'),
+                    'solid' => __('Solid', 'voxel-toolkit'),
+                    'dashed' => __('Dashed', 'voxel-toolkit'),
+                    'dotted' => __('Dotted', 'voxel-toolkit'),
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-filter-tag' => 'border-style: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'vt_ss_filter_border_width',
+            [
+                'label' => __('Border Width', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px'],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-filter-tag' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+                'condition' => [
+                    'vt_ss_filter_border_style!' => 'none',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_filter_border_color',
+            [
+                'label' => __('Border Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-filter-tag' => 'border-color: {{VALUE}}',
+                ],
+                'condition' => [
+                    'vt_ss_filter_border_style!' => 'none',
+                ],
+            ]
+        );
+
         $this->add_responsive_control(
             'vt_ss_filter_radius',
             [
                 'label' => __('Border Radius', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::SLIDER,
-                'size_units' => ['px'],
-                'range' => ['px' => ['min' => 0, 'max' => 30, 'step' => 1]],
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
                 'selectors' => [
-                    '{{WRAPPER}} .vt-filter-tag' => 'border-radius: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vt-filter-tag' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
                 ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Box_Shadow::get_type(),
+            [
+                'name' => 'vt_ss_filter_shadow',
+                'selector' => '{{WRAPPER}} .vt-filter-tag',
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_filter_text_heading',
+            [
+                'label' => __('Text', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
             ]
         );
 
@@ -621,7 +792,122 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
                 'label' => __('Label Color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt-filter-tag b, {{WRAPPER}} .vt-filter-tag strong' => 'color: {{VALUE}}',
+                    '{{WRAPPER}} .vt-filter-tag b, {{WRAPPER}} .vt-filter-tag strong, {{WRAPPER}} .vt-filter-tag label' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_filter_icon_heading',
+            [
+                'label' => __('Icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_filter_icon_color',
+            [
+                'label' => __('Icon Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-filter-tag .filter-icon svg' => 'fill: {{VALUE}}',
+                    '{{WRAPPER}} .vt-filter-tag label svg' => 'fill: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'vt_ss_filter_icon_size',
+            [
+                'label' => __('Icon Size', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 8, 'max' => 32, 'step' => 1]],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-filter-tag .filter-icon svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vt-filter-tag label svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+
+        // Style Section - Filter Summary (Simple Template)
+        $this->start_controls_section(
+            'vt_ss_style_summary',
+            [
+                'label' => __('Filter Summary', 'voxel-toolkit'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+                'condition' => [
+                    'vt_ss_template' => 'simple',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_summary_bg',
+            [
+                'label' => __('Background Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-search-filters-summary' => 'background: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'vt_ss_summary_padding',
+            [
+                'label' => __('Padding', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%', 'em'],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-search-filters-summary' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'vt_ss_summary_radius',
+            [
+                'label' => __('Border Radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-search-filters-summary' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'vt_ss_summary_typo',
+                'label' => __('Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vt-search-filters-summary',
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_summary_color',
+            [
+                'label' => __('Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-search-filters-summary' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_summary_label_color',
+            [
+                'label' => __('Label Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-search-filters-summary strong' => 'color: {{VALUE}}',
                 ],
             ]
         );
@@ -682,6 +968,39 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'vt_ss_footer_divider_heading',
+            [
+                'label' => __('Footer Divider', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_footer_divider_color',
+            [
+                'label' => __('Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-search-card-footer' => 'border-top-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'vt_ss_footer_divider_width',
+            [
+                'label' => __('Thickness', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 10, 'step' => 1]],
+                'selectors' => [
+                    '{{WRAPPER}} .vt-search-card-footer' => 'border-top-width: {{SIZE}}{{UNIT}}; border-top-style: solid;',
+                ],
+            ]
+        );
+
         $this->end_controls_section();
     }
 
@@ -692,6 +1011,7 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
         }
 
         $config = [
+            'template' => $this->get_settings_for_display('vt_ss_template') ?: 'detailed',
             'showPostType' => $this->get_settings_for_display('vt_ss_show_post_type'),
             'showFilterIcons' => $this->get_settings_for_display('vt_ss_show_filter_icons'),
             'showTitle' => $this->get_settings_for_display('vt_ss_show_title'),

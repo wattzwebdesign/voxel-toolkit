@@ -26,6 +26,7 @@ $deferred_templates = [
 $labels = $config['labels'];
 $icons = $config['icons'];
 $defaultIcons = $config['defaultIcons'] ?? [];
+$template = $config['template'] ?? 'detailed';
 ?>
 
 <div v-cloak class="vt-saved-searches" data-config="<?php echo esc_attr(wp_json_encode($config)); ?>">
@@ -47,11 +48,14 @@ $defaultIcons = $config['defaultIcons'] ?? [];
                         <?php endif; ?>
                     </div>
                     <div class="vt-search-card-actions">
+                        <?php if ($this->get_settings_for_display('vt_ss_show_search_btn') === 'yes'): ?>
                         <!-- View Search -->
                         <a href="#" class="vt-action-btn vt-action-view" @click.prevent="viewSearch(search.id)" :title="'<?php echo esc_attr($labels['search']); ?>'">
                             <?php echo $icons['search'] ?: ($defaultIcons['search'] ?? (function_exists('\Voxel\svg') ? \Voxel\svg('search.svg') : '<i class="las la-search"></i>')); ?>
                         </a>
+                        <?php endif; ?>
 
+                        <?php if ($this->get_settings_for_display('vt_ss_show_notification_btn') === 'yes'): ?>
                         <!-- Toggle Notification -->
                         <a href="#" class="vt-action-btn" :class="search.notification ? 'vt-action-notification-on' : 'vt-action-notification-off'"
                            @click.prevent="toggleNotification(search.id)"
@@ -68,6 +72,7 @@ $defaultIcons = $config['defaultIcons'] ?? [];
                                 </template>
                             </template>
                         </a>
+                        <?php endif; ?>
 
                         <?php if ($this->get_settings_for_display('vt_ss_show_edit_title') === 'yes'): ?>
                         <!-- Edit Title Popup -->
@@ -99,6 +104,7 @@ $defaultIcons = $config['defaultIcons'] ?? [];
                         </form-group>
                         <?php endif; ?>
 
+                        <?php if ($this->get_settings_for_display('vt_ss_show_delete_btn') === 'yes'): ?>
                         <!-- Delete -->
                         <a class="vt-action-btn vt-action-delete" href="#" @click.prevent="deleteSearch(search.id)" :title="'<?php echo esc_attr($labels['delete']); ?>'">
                             <div v-if="search.isDeleting" class="vt-loader">
@@ -108,17 +114,28 @@ $defaultIcons = $config['defaultIcons'] ?? [];
                                 <?php echo $icons['delete'] ?: ($defaultIcons['delete'] ?? (function_exists('\Voxel\svg') ? \Voxel\svg('trash-can.svg') : '<i class="las la-trash"></i>')); ?>
                             </template>
                         </a>
+                        <?php endif; ?>
                     </div>
                 </div>
 
                 <!-- Card Body - Filters -->
                 <div class="vt-search-card-body">
+                    <?php if ($template === 'simple'): ?>
+                    <!-- Simple Template: Filter Summary -->
+                    <div class="vt-search-filters-summary" v-if="search.filters.length">
+                        <span v-for="(filter, idx) in search.filters" :key="filter.key">
+                            <strong>{{ filter.label }}:</strong> {{ getFilterDisplayValue(filter) }}<span v-if="idx < search.filters.length - 1">, </span>
+                        </span>
+                    </div>
+                    <?php else: ?>
+                    <!-- Detailed Template: Filter Tags -->
                     <div class="vt-search-filters" v-if="search.filters.length">
                         <div class="vt-filter-tag" :data-type="filter.type" v-for="filter in search.filters" :key="filter.key">
                             <component :is="'filter-'+filter.type" :filter="filter"></component>
                         </div>
                     </div>
-                    <div class="vt-search-no-filters" v-else>
+                    <?php endif; ?>
+                    <div class="vt-search-no-filters" v-if="!search.filters.length">
                         <span><?php echo esc_html($labels['noFilter']); ?></span>
                     </div>
                 </div>

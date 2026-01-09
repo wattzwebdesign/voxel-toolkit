@@ -316,6 +316,80 @@
                             return dateString;
                         }
                     },
+                    getFilterDisplayValue(filter) {
+                        if (!filter || filter.value === null || filter.value === undefined) {
+                            return filter?.props?.placeholder || '';
+                        }
+
+                        const value = filter.value;
+                        const type = filter.type;
+
+                        // Handle different filter types
+                        switch (type) {
+                            case 'keywords':
+                            case 'stepper':
+                            case 'switcher':
+                            case 'post-status':
+                                return String(value);
+
+                            case 'range':
+                                if (typeof value === 'object') {
+                                    const min = value.min || '';
+                                    const max = value.max || '';
+                                    if (min && max) return min + ' - ' + max;
+                                    if (min) return 'From ' + min;
+                                    if (max) return 'Up to ' + max;
+                                }
+                                return String(value);
+
+                            case 'location':
+                                if (typeof value === 'string') {
+                                    const parts = value.split(';');
+                                    return parts[0] || value;
+                                }
+                                if (typeof value === 'object' && value.address) {
+                                    return value.address;
+                                }
+                                return filter.props?.placeholder || '';
+
+                            case 'terms':
+                                if (Array.isArray(value)) {
+                                    const labels = value.map(v => v.label || v).filter(Boolean);
+                                    return labels.join(', ');
+                                }
+                                if (typeof value === 'object' && value.label) {
+                                    return value.label;
+                                }
+                                return String(value);
+
+                            case 'date':
+                            case 'recurring-date':
+                                return String(value);
+
+                            case 'user':
+                            case 'relations':
+                                if (Array.isArray(value)) {
+                                    const labels = value.map(v => v.title || v.label || v).filter(Boolean);
+                                    return labels.join(', ');
+                                }
+                                if (typeof value === 'object') {
+                                    return value.title || value.label || '';
+                                }
+                                return String(value);
+
+                            case 'availability':
+                                return String(value);
+
+                            default:
+                                if (Array.isArray(value)) {
+                                    return value.join(', ');
+                                }
+                                if (typeof value === 'object') {
+                                    return JSON.stringify(value);
+                                }
+                                return String(value);
+                        }
+                    },
                 },
             });
 
