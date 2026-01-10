@@ -68,6 +68,12 @@ class Voxel_Toolkit_Image_Optimization {
 
         // Manage WordPress scaling
         add_filter('big_image_size_threshold', array($this, 'manage_wp_scaling'), 10, 1);
+
+        // Initialize bulk resize admin page
+        if (is_admin()) {
+            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/admin/class-bulk-resize.php';
+            Voxel_Toolkit_Bulk_Resize::instance();
+        }
     }
 
     /**
