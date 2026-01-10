@@ -301,12 +301,63 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'enable_driving',
+            array(
+                'label' => __('Enable Driving', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'default' => 'yes',
+                'condition' => array('allow_travel_mode_change' => 'yes'),
+            )
+        );
+
+        $this->add_control(
+            'enable_walking',
+            array(
+                'label' => __('Enable Walking', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'default' => 'yes',
+                'condition' => array('allow_travel_mode_change' => 'yes'),
+            )
+        );
+
+        $this->add_control(
+            'enable_cycling',
+            array(
+                'label' => __('Enable Cycling', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'default' => 'yes',
+                'condition' => array('allow_travel_mode_change' => 'yes'),
+            )
+        );
+
+        $this->add_control(
+            'enable_transit',
+            array(
+                'label' => __('Enable Transit', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'default' => 'yes',
+                'condition' => array('allow_travel_mode_change' => 'yes'),
+            )
+        );
+
+        $this->add_control(
             'travel_label_driving',
             array(
                 'label' => __('Driving Label', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => __('Drive', 'voxel-toolkit'),
-                'condition' => array('allow_travel_mode_change' => 'yes'),
+                'condition' => array(
+                    'allow_travel_mode_change' => 'yes',
+                    'enable_driving' => 'yes',
+                ),
             )
         );
 
@@ -319,7 +370,10 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                     'value' => '',
                     'library' => '',
                 ),
-                'condition' => array('allow_travel_mode_change' => 'yes'),
+                'condition' => array(
+                    'allow_travel_mode_change' => 'yes',
+                    'enable_driving' => 'yes',
+                ),
             )
         );
 
@@ -329,7 +383,10 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                 'label' => __('Walking Label', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => __('Walk', 'voxel-toolkit'),
-                'condition' => array('allow_travel_mode_change' => 'yes'),
+                'condition' => array(
+                    'allow_travel_mode_change' => 'yes',
+                    'enable_walking' => 'yes',
+                ),
             )
         );
 
@@ -342,7 +399,10 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                     'value' => '',
                     'library' => '',
                 ),
-                'condition' => array('allow_travel_mode_change' => 'yes'),
+                'condition' => array(
+                    'allow_travel_mode_change' => 'yes',
+                    'enable_walking' => 'yes',
+                ),
             )
         );
 
@@ -352,7 +412,10 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                 'label' => __('Cycling Label', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => __('Cycle', 'voxel-toolkit'),
-                'condition' => array('allow_travel_mode_change' => 'yes'),
+                'condition' => array(
+                    'allow_travel_mode_change' => 'yes',
+                    'enable_cycling' => 'yes',
+                ),
             )
         );
 
@@ -365,7 +428,10 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                     'value' => '',
                     'library' => '',
                 ),
-                'condition' => array('allow_travel_mode_change' => 'yes'),
+                'condition' => array(
+                    'allow_travel_mode_change' => 'yes',
+                    'enable_cycling' => 'yes',
+                ),
             )
         );
 
@@ -375,7 +441,10 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                 'label' => __('Transit Label', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => __('Transit', 'voxel-toolkit'),
-                'condition' => array('allow_travel_mode_change' => 'yes'),
+                'condition' => array(
+                    'allow_travel_mode_change' => 'yes',
+                    'enable_transit' => 'yes',
+                ),
             )
         );
 
@@ -388,7 +457,10 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                     'value' => '',
                     'library' => '',
                 ),
-                'condition' => array('allow_travel_mode_change' => 'yes'),
+                'condition' => array(
+                    'allow_travel_mode_change' => 'yes',
+                    'enable_transit' => 'yes',
+                ),
             )
         );
 
@@ -1797,6 +1869,7 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
 
             <?php if ($settings['allow_travel_mode_change'] === 'yes'): ?>
             <div class="vt-route-travel-modes">
+                <?php if ($settings['enable_driving'] === 'yes'): ?>
                 <button type="button" class="vt-travel-mode-btn <?php echo $settings['travel_mode'] === 'driving' ? 'active' : ''; ?>" data-mode="driving">
                     <?php echo $this->render_icon(
                         $settings['travel_icon_driving'] ?? array(),
@@ -1804,6 +1877,8 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                     ); ?>
                     <span><?php echo esc_html($settings['travel_label_driving'] ?: __('Drive', 'voxel-toolkit')); ?></span>
                 </button>
+                <?php endif; ?>
+                <?php if ($settings['enable_walking'] === 'yes'): ?>
                 <button type="button" class="vt-travel-mode-btn <?php echo $settings['travel_mode'] === 'walking' ? 'active' : ''; ?>" data-mode="walking">
                     <?php echo $this->render_icon(
                         $settings['travel_icon_walking'] ?? array(),
@@ -1811,6 +1886,8 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                     ); ?>
                     <span><?php echo esc_html($settings['travel_label_walking'] ?: __('Walk', 'voxel-toolkit')); ?></span>
                 </button>
+                <?php endif; ?>
+                <?php if ($settings['enable_cycling'] === 'yes'): ?>
                 <button type="button" class="vt-travel-mode-btn <?php echo $settings['travel_mode'] === 'cycling' ? 'active' : ''; ?>" data-mode="cycling">
                     <?php echo $this->render_icon(
                         $settings['travel_icon_cycling'] ?? array(),
@@ -1818,6 +1895,8 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                     ); ?>
                     <span><?php echo esc_html($settings['travel_label_cycling'] ?: __('Cycle', 'voxel-toolkit')); ?></span>
                 </button>
+                <?php endif; ?>
+                <?php if ($settings['enable_transit'] === 'yes'): ?>
                 <button type="button" class="vt-travel-mode-btn <?php echo $settings['travel_mode'] === 'transit' ? 'active' : ''; ?>" data-mode="transit">
                     <?php echo $this->render_icon(
                         $settings['travel_icon_transit'] ?? array(),
@@ -1825,6 +1904,7 @@ class Voxel_Toolkit_Route_Planner_Widget extends \Elementor\Widget_Base {
                     ); ?>
                     <span><?php echo esc_html($settings['travel_label_transit'] ?: __('Transit', 'voxel-toolkit')); ?></span>
                 </button>
+                <?php endif; ?>
             </div>
             <?php endif; ?>
 
