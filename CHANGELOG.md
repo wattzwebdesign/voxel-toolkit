@@ -104,6 +104,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Visibility rules: "User is online", "Author is online"
   - Admin columns: Online Status badge and Last Seen in Users list
   - Only visible to logged-in users
+- **Route Planner Travel Mode Toggles**: Individual toggles to enable/disable each travel mode button (Driving, Walking, Cycling, Transit)
 
 ### Fixed
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
