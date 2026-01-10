@@ -62,6 +62,8 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
             $result = array(
                 'name' => '',
                 'avatar' => '',
+                'is_online' => false,
+                'user_id' => 0,
             );
 
             if ($target_type === 'post') {
@@ -104,6 +106,12 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
                         }
                     }
                 }
+
+                // Get author user ID for online status
+                $wp_post = get_post($target_id);
+                if ($wp_post && $wp_post->post_author) {
+                    $result['user_id'] = intval($wp_post->post_author);
+                }
             } elseif ($target_type === 'user') {
                 // Get user info using Voxel
                 if (class_exists('\Voxel\User')) {
@@ -130,6 +138,23 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
                         if ($avatar_url) {
                             $result['avatar'] = '<img src="' . esc_url($avatar_url) . '" alt="' . esc_attr($result['name']) . '">';
                         }
+                    }
+                }
+
+                // Set user ID for online status
+                $result['user_id'] = $target_id;
+            }
+
+            // Add online status if enabled
+            if (class_exists('Voxel_Toolkit_Online_Status') && $result['user_id'] > 0) {
+                $settings = Voxel_Toolkit_Settings::instance();
+                if ($settings->is_function_enabled('online_status')) {
+                    $online_settings = $settings->get_function_settings('online_status', array());
+                    $show_in_messenger = isset($online_settings['show_in_messenger']) ? (bool) $online_settings['show_in_messenger'] : true;
+
+                    if ($show_in_messenger) {
+                        $online_status = Voxel_Toolkit_Online_Status::instance();
+                        $result['is_online'] = $online_status->is_user_online($result['user_id']);
                     }
                 }
             }
@@ -200,6 +225,19 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
             }
         }
 
+        // Online status configuration
+        $online_status_config = array(
+            'enabled' => false,
+        );
+        if (class_exists('Voxel_Toolkit_Settings')) {
+            $settings = Voxel_Toolkit_Settings::instance();
+            if ($settings->is_function_enabled('online_status')) {
+                $online_settings = $settings->get_function_settings('online_status', array());
+                $show_in_messenger = isset($online_settings['show_in_messenger']) ? (bool) $online_settings['show_in_messenger'] : true;
+                $online_status_config['enabled'] = $show_in_messenger;
+            }
+        }
+
         wp_localize_script('voxel-toolkit-messenger', 'vtMessenger', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('vx_chat'),
@@ -214,6 +252,7 @@ class Voxel_Toolkit_Messenger_Widget_Manager {
             ),
             'maxOpenChats' => 3,
             'aiBot' => $ai_bot_config,
+            'onlineStatus' => $online_status_config,
             'i18n' => array(
                 'searchPlaceholder' => __('Search messages...', 'voxel-toolkit'),
                 'noChats' => __('No conversations yet', 'voxel-toolkit'),

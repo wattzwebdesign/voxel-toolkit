@@ -1398,7 +1398,13 @@
                         }
 
                         self.state.unreadCount = self.calculateUnreadCount();
-                        self.renderChatList();
+
+                        // Fetch online status for chat targets if enabled
+                        if (self.config.onlineStatus && self.config.onlineStatus.enabled) {
+                            self.fetchOnlineStatusForChats();
+                        } else {
+                            self.renderChatList();
+                        }
                         self.updateBadge();
                     }
                 },
@@ -1407,6 +1413,59 @@
                 },
                 complete: function() {
                     self.popup.find('.vt-messenger-loading').hide();
+                }
+            });
+        },
+
+        /**
+         * Fetch online status for all chat targets
+         */
+        fetchOnlineStatusForChats: function() {
+            var self = this;
+
+            // Collect targets (type + id pairs) for online status lookup
+            var targets = [];
+            self.state.chats.forEach(function(chat) {
+                if (chat.target && chat.target.id) {
+                    var targetKey = (chat.target.type || 'user') + ':' + chat.target.id;
+                    if (targets.indexOf(targetKey) === -1) {
+                        targets.push(targetKey);
+                    }
+                }
+            });
+
+            if (targets.length === 0) {
+                self.renderChatList();
+                return;
+            }
+
+            // Fetch online status via AJAX
+            $.ajax({
+                url: self.config.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'vt_get_targets_online_status',
+                    nonce: window.vtOnlineStatus ? window.vtOnlineStatus.nonce : '',
+                    targets: targets
+                },
+                success: function(response) {
+                    if (response.success && response.data.statuses) {
+                        // Update chat targets with online status
+                        self.state.chats.forEach(function(chat) {
+                            if (chat.target && chat.target.id) {
+                                var targetKey = (chat.target.type || 'user') + ':' + chat.target.id;
+                                if (response.data.statuses[targetKey]) {
+                                    chat.target.is_online = response.data.statuses[targetKey].is_online;
+                                    chat.target.last_seen = response.data.statuses[targetKey].last_seen;
+                                }
+                            }
+                        });
+                    }
+                    self.renderChatList();
+                },
+                error: function() {
+                    // Still render chat list even if online status fetch fails
+                    self.renderChatList();
                 }
             });
         },
@@ -1481,6 +1540,13 @@
                         // Show just a dot if 1 unread or count not yet loaded
                         html += '    <span class="vt-chat-avatar-badge"></span>';
                     }
+                }
+
+                // Add online status indicator if enabled
+                if (self.config.onlineStatus && self.config.onlineStatus.enabled && chat.target) {
+                    var isOnline = chat.target.is_online === true;
+                    var statusClass = isOnline ? 'vt-online' : 'vt-offline';
+                    html += '    <span class="vt-online-indicator vt-online-indicator--small ' + statusClass + '"></span>';
                 }
 
                 html += '  </div>';
@@ -1612,7 +1678,17 @@
             // Header
             html += '  <div class="vt-messenger-chat-header">';
             html += '    <div class="vt-chat-header-info">';
-            html += '      <div class="vt-chat-header-avatar">' + targetAvatar + '</div>';
+            html += '      <div class="vt-chat-header-avatar-wrap">';
+            html += '        <div class="vt-chat-header-avatar">' + targetAvatar + '</div>';
+
+            // Add online status indicator to header if enabled
+            if (self.config.onlineStatus && self.config.onlineStatus.enabled && chat.target) {
+                var isOnline = chat.target.is_online === true;
+                var statusClass = isOnline ? 'vt-online' : 'vt-offline';
+                html += '        <span class="vt-online-indicator vt-online-indicator--small ' + statusClass + '"></span>';
+            }
+
+            html += '      </div>';
             html += '      <div class="vt-chat-header-name">' + self.escapeHtml(targetName) + '</div>';
             html += '    </div>';
             html += '    <div class="vt-chat-header-actions">';

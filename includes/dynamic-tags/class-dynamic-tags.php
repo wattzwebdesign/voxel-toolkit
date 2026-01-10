@@ -555,6 +555,79 @@ class Voxel_Toolkit_Dynamic_Tags {
                 return intval($data['unread']);
             } );
 
+        // Online Status properties
+        $online_settings = Voxel_Toolkit_Settings::instance();
+        if ($online_settings->is_function_enabled('online_status')) {
+            // @user(online_status) - returns "online" or "offline" string
+            $properties['online_status'] = \Voxel\Dynamic_Data\Tag::String('Online Status')
+                ->render(function() use ($group) {
+                    $user = $group->get_user();
+                    if (!$user || !method_exists($user, 'get_id')) {
+                        return 'offline';
+                    }
+
+                    // Only logged-in users can see online status
+                    if (!is_user_logged_in()) {
+                        return '';
+                    }
+
+                    if (!class_exists('Voxel_Toolkit_Online_Status')) {
+                        return 'offline';
+                    }
+
+                    $online_status = Voxel_Toolkit_Online_Status::instance();
+                    return $online_status->is_user_online($user->get_id()) ? 'online' : 'offline';
+                });
+
+            // @user(is_online) - returns "1" if online, empty if offline (for visibility conditions)
+            $properties['is_online'] = \Voxel\Dynamic_Data\Tag::String('Is Online')
+                ->render(function() use ($group) {
+                    $user = $group->get_user();
+                    if (!$user || !method_exists($user, 'get_id')) {
+                        return '';
+                    }
+
+                    // Only logged-in users can see online status
+                    if (!is_user_logged_in()) {
+                        return '';
+                    }
+
+                    if (!class_exists('Voxel_Toolkit_Online_Status')) {
+                        return '';
+                    }
+
+                    $online_status = Voxel_Toolkit_Online_Status::instance();
+                    return $online_status->is_user_online($user->get_id()) ? '1' : '';
+                });
+
+            // @user(last_seen) - returns the last activity timestamp
+            $properties['last_seen'] = \Voxel\Dynamic_Data\Tag::Date('Last Seen')
+                ->render(function() use ($group) {
+                    $user = $group->get_user();
+                    if (!$user || !method_exists($user, 'get_id')) {
+                        return null;
+                    }
+
+                    // Only logged-in users can see last seen
+                    if (!is_user_logged_in()) {
+                        return null;
+                    }
+
+                    if (!class_exists('Voxel_Toolkit_Online_Status')) {
+                        return null;
+                    }
+
+                    $online_status = Voxel_Toolkit_Online_Status::instance();
+                    $timestamp = $online_status->get_last_seen($user->get_id());
+
+                    if (empty($timestamp)) {
+                        return null;
+                    }
+
+                    return date('Y-m-d H:i:s', intval($timestamp));
+                });
+        }
+
         return $properties;
     }
 
@@ -607,6 +680,82 @@ class Voxel_Toolkit_Dynamic_Tags {
                     return '';
                 }
             } );
+
+        // Online Status properties for author
+        $settings = Voxel_Toolkit_Settings::instance();
+        if ($settings->is_function_enabled('online_status')) {
+            // @author(online_status) - returns "online" or "offline" string
+            $properties['online_status'] = \Voxel\Dynamic_Data\Tag::String('Online Status')
+                ->render(function() use ($group) {
+                    if (!$group->post || !$group->post->get_author()) {
+                        return 'offline';
+                    }
+
+                    // Only logged-in users can see online status
+                    if (!is_user_logged_in()) {
+                        return '';
+                    }
+
+                    $author = $group->post->get_author();
+
+                    if (!class_exists('Voxel_Toolkit_Online_Status')) {
+                        return 'offline';
+                    }
+
+                    $online_status = Voxel_Toolkit_Online_Status::instance();
+                    return $online_status->is_user_online($author->get_id()) ? 'online' : 'offline';
+                });
+
+            // @author(is_online) - returns "1" if online, empty if offline (for visibility conditions)
+            $properties['is_online'] = \Voxel\Dynamic_Data\Tag::String('Is Online')
+                ->render(function() use ($group) {
+                    if (!$group->post || !$group->post->get_author()) {
+                        return '';
+                    }
+
+                    // Only logged-in users can see online status
+                    if (!is_user_logged_in()) {
+                        return '';
+                    }
+
+                    $author = $group->post->get_author();
+
+                    if (!class_exists('Voxel_Toolkit_Online_Status')) {
+                        return '';
+                    }
+
+                    $online_status = Voxel_Toolkit_Online_Status::instance();
+                    return $online_status->is_user_online($author->get_id()) ? '1' : '';
+                });
+
+            // @author(last_seen) - returns the last activity timestamp
+            $properties['last_seen'] = \Voxel\Dynamic_Data\Tag::Date('Last Seen')
+                ->render(function() use ($group) {
+                    if (!$group->post || !$group->post->get_author()) {
+                        return null;
+                    }
+
+                    // Only logged-in users can see last seen
+                    if (!is_user_logged_in()) {
+                        return null;
+                    }
+
+                    $author = $group->post->get_author();
+
+                    if (!class_exists('Voxel_Toolkit_Online_Status')) {
+                        return null;
+                    }
+
+                    $online_status = Voxel_Toolkit_Online_Status::instance();
+                    $timestamp = $online_status->get_last_seen($author->get_id());
+
+                    if (empty($timestamp)) {
+                        return null;
+                    }
+
+                    return date('Y-m-d H:i:s', intval($timestamp));
+                });
+        }
 
         return $properties;
     }

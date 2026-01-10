@@ -740,6 +740,14 @@ class Voxel_Toolkit {
                 'enabled' => false,
                 'color_scheme' => 'auto',
                 'custom_accent' => '#2271b1'
+            ),
+            'online_status' => array(
+                'enabled' => true,
+                'show_in_dashboard' => true,
+                'show_in_inbox' => true,
+                'show_in_messenger' => true,
+                'show_in_admin' => true,
+                'timeout_minutes' => 3
             )
         );
         

@@ -645,6 +645,14 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-post-relation-search.php',
                 'icon' => 'dashicons-search',
             ),
+            'online_status' => array(
+                'name' => __('Online Status', 'voxel-toolkit'),
+                'description' => __('Display online/offline status indicators for users. Shows when users are active with configurable timeout.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Online_Status',
+                'file' => 'functions/class-online-status.php',
+                'settings_callback' => array($this, 'render_online_status_settings'),
+                'icon' => 'dashicons-visibility',
+            ),
         );
 
         // Allow other plugins/themes to register functions
@@ -8256,6 +8264,108 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <ul class="vt-feature-list">
                 <li><?php _e('<strong>Before:</strong> Shows 1 card with all dates listed', 'voxel-toolkit'); ?></li>
                 <li><?php _e('<strong>After:</strong> Shows 3 separate cards - one for each date', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render settings for Online Status function
+     *
+     * @param array $settings Current settings
+     */
+    public function render_online_status_settings($settings) {
+        $show_in_dashboard = isset($settings['show_in_dashboard']) ? (bool) $settings['show_in_dashboard'] : true;
+        $show_in_inbox = isset($settings['show_in_inbox']) ? (bool) $settings['show_in_inbox'] : true;
+        $show_in_messenger = isset($settings['show_in_messenger']) ? (bool) $settings['show_in_messenger'] : true;
+        $show_in_admin = isset($settings['show_in_admin']) ? (bool) $settings['show_in_admin'] : true;
+        $timeout_minutes = isset($settings['timeout_minutes']) ? intval($settings['timeout_minutes']) : 3;
+        ?>
+        <div class="vt-info-box">
+            <?php _e('Display online status indicators for users across your site. Users are considered "online" if they were active within the configured timeout period. Only logged-in users can see online status.', 'voxel-toolkit'); ?>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Display Locations', 'voxel-toolkit'); ?></h4>
+            <p class="vt-section-description"><?php _e('Choose where to show online status indicators.', 'voxel-toolkit'); ?></p>
+            <div class="vt-checkbox-list">
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[online_status][show_in_dashboard]"
+                           value="1"
+                           <?php checked($show_in_dashboard); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('User Dashboard Menu', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Show status indicator next to user avatar in dashboard areas.', 'voxel-toolkit'); ?></p>
+                    </div>
+                </label>
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[online_status][show_in_inbox]"
+                           value="1"
+                           <?php checked($show_in_inbox); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Inbox Widget', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Show status next to user avatars in Voxel inbox.', 'voxel-toolkit'); ?></p>
+                    </div>
+                </label>
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[online_status][show_in_messenger]"
+                           value="1"
+                           <?php checked($show_in_messenger); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Messenger Widget (VT)', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Show status on chat circles and chat window headers in the floating messenger.', 'voxel-toolkit'); ?></p>
+                    </div>
+                </label>
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[online_status][show_in_admin]"
+                           value="1"
+                           <?php checked($show_in_admin); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Admin User Columns', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Add online status column options to WordPress users list table.', 'voxel-toolkit'); ?></p>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Timeout Settings', 'voxel-toolkit'); ?></h4>
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Online Timeout (minutes)', 'voxel-toolkit'); ?></label>
+                <input type="number"
+                       name="voxel_toolkit_options[online_status][timeout_minutes]"
+                       value="<?php echo esc_attr($timeout_minutes); ?>"
+                       min="1"
+                       max="60"
+                       class="vt-text-input"
+                       style="max-width: 100px;" />
+                <p class="vt-field-description"><?php _e('Users are considered offline after this many minutes of inactivity. Default: 3 minutes.', 'voxel-toolkit'); ?></p>
+            </div>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Dynamic Tags', 'voxel-toolkit'); ?></h4>
+            <p class="vt-section-description"><?php _e('Use these dynamic tags in your templates:', 'voxel-toolkit'); ?></p>
+            <ul class="vt-feature-list">
+                <li><code>@user(online_status)</code> - <?php _e('Returns "online" or "offline"', 'voxel-toolkit'); ?></li>
+                <li><code>@user(is_online)</code> - <?php _e('Returns "1" if online, empty if offline (for visibility conditions)', 'voxel-toolkit'); ?></li>
+                <li><code>@user(last_seen)</code> - <?php _e('Returns the last activity timestamp', 'voxel-toolkit'); ?></li>
+                <li><code>@author(online_status)</code> - <?php _e('Same tags available for post authors', 'voxel-toolkit'); ?></li>
+            </ul>
+        </div>
+
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Visibility Conditions', 'voxel-toolkit'); ?></h4>
+            <p class="vt-section-description"><?php _e('Use these conditions to show/hide elements based on online status:', 'voxel-toolkit'); ?></p>
+            <ul class="vt-feature-list">
+                <li><strong><?php _e('Author Online:', 'voxel-toolkit'); ?></strong> <code>@author(is_online)</code> <?php _e('equals', 'voxel-toolkit'); ?> <code>1</code></li>
+                <li><strong><?php _e('Author Offline:', 'voxel-toolkit'); ?></strong> <code>@author(is_online)</code> <?php _e('is empty', 'voxel-toolkit'); ?></li>
+                <li><strong><?php _e('User Online:', 'voxel-toolkit'); ?></strong> <code>@user(is_online)</code> <?php _e('equals', 'voxel-toolkit'); ?> <code>1</code></li>
+                <li><strong><?php _e('User Offline:', 'voxel-toolkit'); ?></strong> <code>@user(is_online)</code> <?php _e('is empty', 'voxel-toolkit'); ?></li>
             </ul>
         </div>
         <?php

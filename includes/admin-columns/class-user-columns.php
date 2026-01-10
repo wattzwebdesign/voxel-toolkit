@@ -333,6 +333,32 @@ class Voxel_Toolkit_User_Columns {
             ),
         );
 
+        // Online Status fields (only if Online Status function is enabled)
+        $settings = Voxel_Toolkit_Settings::instance();
+        if ($settings->is_function_enabled('online_status')) {
+            $online_settings = $settings->get_function_settings('online_status', array());
+            $show_in_admin = isset($online_settings['show_in_admin']) ? (bool) $online_settings['show_in_admin'] : true;
+
+            if ($show_in_admin) {
+                $grouped_fields['stats']['fields'][] = array(
+                    'key' => ':online_status',
+                    'label' => __('Online Status', 'voxel-toolkit'),
+                    'type' => 'user-online-status',
+                    'type_label' => __('Voxel Toolkit', 'voxel-toolkit'),
+                    'sortable' => true,
+                    'filterable' => true,
+                );
+                $grouped_fields['stats']['fields'][] = array(
+                    'key' => ':last_seen',
+                    'label' => __('Last Seen', 'voxel-toolkit'),
+                    'type' => 'user-last-seen',
+                    'type_label' => __('Voxel Toolkit', 'voxel-toolkit'),
+                    'sortable' => true,
+                    'filterable' => false,
+                );
+            }
+        }
+
         // Voxel fields (only show if Voxel is active)
         if (class_exists('\Voxel\Modules\Paid_Memberships\Plan')) {
             $grouped_fields['voxel'] = array(
@@ -847,9 +873,57 @@ class Voxel_Toolkit_User_Columns {
             case ':membership_plan':
                 return $this->render_user_membership_plan($user_id, $column_config);
 
+            case ':online_status':
+                return $this->render_user_online_status($user_id);
+
+            case ':last_seen':
+                return $this->render_user_last_seen($user_id);
+
             default:
                 return '&mdash;';
         }
+    }
+
+    /**
+     * Render user online status badge
+     */
+    private function render_user_online_status($user_id) {
+        if (!class_exists('Voxel_Toolkit_Online_Status')) {
+            return '&mdash;';
+        }
+
+        $online_status = Voxel_Toolkit_Online_Status::instance();
+        $is_online = $online_status->is_user_online($user_id);
+
+        return sprintf(
+            '<span class="vt-online-status-badge %s">%s</span>',
+            $is_online ? 'vt-status-online' : 'vt-status-offline',
+            $is_online ? __('Online', 'voxel-toolkit') : __('Offline', 'voxel-toolkit')
+        );
+    }
+
+    /**
+     * Render user last seen
+     */
+    private function render_user_last_seen($user_id) {
+        if (!class_exists('Voxel_Toolkit_Online_Status')) {
+            return '&mdash;';
+        }
+
+        $online_status = Voxel_Toolkit_Online_Status::instance();
+        $last_seen = $online_status->get_last_seen($user_id);
+
+        if (empty($last_seen)) {
+            return '<span class="vt-last-seen">' . __('Never', 'voxel-toolkit') . '</span>';
+        }
+
+        $time_diff = time() - $last_seen;
+        $formatted = human_time_diff($last_seen, time()) . ' ' . __('ago', 'voxel-toolkit');
+
+        // Add "recent" class if within last 5 minutes
+        $class = $time_diff < 300 ? 'vt-last-seen vt-last-seen--recent' : 'vt-last-seen';
+
+        return '<span class="' . esc_attr($class) . '">' . esc_html($formatted) . '</span>';
     }
 
     /**
