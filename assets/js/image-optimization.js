@@ -15,13 +15,73 @@
     let isWorking = false;
     let fileCounter = 0;
 
-    // Check if browser supports WebP encoding
-    const supportsWebP = (() => {
+    // Check if browser supports WebP encoding (native canvas method)
+    const supportsNativeWebP = (() => {
         const canvas = document.createElement('canvas');
         canvas.width = 1;
         canvas.height = 1;
         return canvas.toDataURL('image/webp').startsWith('data:image/webp');
     })();
+
+    // jSquash WebP encoder for Safari (loaded on demand)
+    let jSquashWebP = null;
+    let jSquashLoading = false;
+    let jSquashLoadPromise = null;
+
+    /**
+     * Load jSquash WebP encoder from CDN (only for Safari)
+     */
+    async function loadJSquashEncoder() {
+        if (jSquashWebP) return jSquashWebP;
+        if (jSquashLoadPromise) return jSquashLoadPromise;
+
+        jSquashLoading = true;
+        jSquashLoadPromise = (async () => {
+            try {
+                // Dynamic import from esm.sh CDN
+                const module = await import('https://esm.sh/@jsquash/webp@1.4.0');
+                jSquashWebP = module;
+                return module;
+            } catch (e) {
+                console.warn('Failed to load WebP encoder:', e);
+                return null;
+            } finally {
+                jSquashLoading = false;
+            }
+        })();
+
+        return jSquashLoadPromise;
+    }
+
+    /**
+     * Convert canvas to blob with WebP support for Safari via jSquash
+     */
+    async function canvasToBlob(canvas, mimeType, quality) {
+        // Try native toBlob first (Chrome, Firefox)
+        if (supportsNativeWebP || mimeType !== 'image/webp') {
+            return new Promise(resolve => {
+                canvas.toBlob(resolve, mimeType, quality);
+            });
+        }
+
+        // Safari: use jSquash WASM encoder
+        try {
+            const encoder = await loadJSquashEncoder();
+            if (encoder && encoder.encode) {
+                const ctx = canvas.getContext('2d');
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const webpBuffer = await encoder.encode(imageData, { quality: Math.round(quality * 100) });
+                return new Blob([webpBuffer], { type: 'image/webp' });
+            }
+        } catch (e) {
+            console.warn('jSquash WebP encoding failed:', e);
+        }
+
+        // Fallback: use JPEG for better compression than PNG
+        return new Promise(resolve => {
+            canvas.toBlob(resolve, 'image/jpeg', quality);
+        });
+    }
 
     /**
      * Toast notification manager
@@ -256,44 +316,41 @@
                     let targetMime = file.type;
                     const mode = Settings.optimizationMode || 'all_webp';
 
-                    // Only convert to WebP if browser supports it
-                    if (supportsWebP) {
-                        if (mode === 'all_webp') {
-                            targetMime = 'image/webp';
-                        } else if (mode === 'only_jpg' && file.type === 'image/jpeg') {
-                            targetMime = 'image/webp';
-                        } else if (mode === 'only_png' && file.type === 'image/png') {
-                            targetMime = 'image/webp';
-                        } else if (mode === 'both_to_webp' && (file.type === 'image/jpeg' || file.type === 'image/png')) {
-                            targetMime = 'image/webp';
-                        }
+                    // Set target to WebP based on mode (canvasToBlob will handle fallback)
+                    if (mode === 'all_webp') {
+                        targetMime = 'image/webp';
+                    } else if (mode === 'only_jpg' && file.type === 'image/jpeg') {
+                        targetMime = 'image/webp';
+                    } else if (mode === 'only_png' && file.type === 'image/png') {
+                        targetMime = 'image/webp';
+                    } else if (mode === 'both_to_webp' && (file.type === 'image/jpeg' || file.type === 'image/png')) {
+                        targetMime = 'image/webp';
                     }
                     // 'originals_only' keeps the original format
 
-                    canvas.toBlob((blob) => {
-                        // Use actual blob type (browser may not support WebP encoding)
-                        const actualType = blob.type || targetMime;
-                        const ext = actualType.split('/')[1].replace('jpeg', 'jpg');
-                        const baseName = file.name.replace(/\.[^/.]+$/, '');
-                        fileCounter++;
-                        const counterStr = String(fileCounter).padStart(2, '0');
-                        const title = this.getPostTitle();
+                    // Use canvasToBlob which handles Safari WebP encoding
+                    const blob = await canvasToBlob(canvas, targetMime, Settings.outputQuality);
+                    const actualType = blob.type || targetMime;
+                    const ext = actualType.split('/')[1].replace('jpeg', 'jpg');
+                    const baseName = file.name.replace(/\.[^/.]+$/, '');
+                    fileCounter++;
+                    const counterStr = String(fileCounter).padStart(2, '0');
+                    const title = this.getPostTitle();
 
-                        let newName;
-                        if (Settings.renameFormat === 'post_title' && title) {
-                            newName = `${this.slugify(title)}-${counterStr}.${ext}`;
-                        } else {
-                            newName = `${baseName}-${counterStr}.${ext}`;
-                        }
+                    let newName;
+                    if (Settings.renameFormat === 'post_title' && title) {
+                        newName = `${this.slugify(title)}-${counterStr}.${ext}`;
+                    } else {
+                        newName = `${baseName}-${counterStr}.${ext}`;
+                    }
 
-                        const optimized = new File([blob], newName, {
-                            type: actualType,
-                            lastModified: Date.now()
-                        });
+                    const optimized = new File([blob], newName, {
+                        type: actualType,
+                        lastModified: Date.now()
+                    });
 
-                        processedFiles.add(optimized);
-                        resolve(optimized);
-                    }, targetMime, Settings.outputQuality);
+                    processedFiles.add(optimized);
+                    resolve(optimized);
                 };
 
                 img.onerror = () => {
