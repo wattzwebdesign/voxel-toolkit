@@ -92,11 +92,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `@user(unread_messages)` - Number of unread direct messages
 - **Title Notification Badge**: New function to show unread counts in browser tab. Features include:
   - Displays combined count in page title (e.g., "(3) My Site")
-  - Red badge with count on favicon (Chrome tab indicator)
   - Real-time updates via configurable polling interval (default 15 seconds)
   - Title flashing when new notifications arrive (when tab unfocused)
   - Settings for poll interval, include notifications/messages, custom flash text
   - Only active for logged-in users
+- **Online Status**: Display online/offline status indicators for users. Features include:
+  - Green dot indicator for online users (active within timeout period)
+  - Automatic heartbeat tracking with configurable timeout (default: 3 minutes)
+  - Per-location toggles: Dashboard Menu, Voxel Inbox, VT Messenger Widget, Admin User Columns
+  - Dynamic tags: `@user(online_status)`, `@user(is_online)`, `@user(last_seen)` and same for `@author`
+  - Visibility rules: "User is online", "Author is online"
+  - Admin columns: Online Status badge and Last Seen in Users list
+  - Only visible to logged-in users
 
 ### Fixed
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
