@@ -653,6 +653,14 @@ class Voxel_Toolkit_Functions {
                 'settings_callback' => array($this, 'render_online_status_settings'),
                 'icon' => 'dashicons-visibility',
             ),
+            'image_optimization' => array(
+                'name' => __('Image Optimization', 'voxel-toolkit'),
+                'description' => __('High-performance image optimization with WebP conversion, resizing, and SEO-friendly alt text.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_Image_Optimization',
+                'file' => 'functions/class-image-optimization.php',
+                'settings_callback' => array($this, 'render_image_optimization_settings'),
+                'icon' => 'dashicons-images-alt2',
+            ),
         );
 
         // Allow other plugins/themes to register functions
@@ -8367,6 +8375,216 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <li><strong><?php _e('User Online:', 'voxel-toolkit'); ?></strong> <code>@user(is_online)</code> <?php _e('equals', 'voxel-toolkit'); ?> <code>1</code></li>
                 <li><strong><?php _e('User Offline:', 'voxel-toolkit'); ?></strong> <code>@user(is_online)</code> <?php _e('is empty', 'voxel-toolkit'); ?></li>
             </ul>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render Image Optimization settings
+     */
+    public function render_image_optimization_settings($settings) {
+        // v5.0 settings with new defaults
+        $max_file_size = isset($settings['max_file_size']) ? intval($settings['max_file_size']) : 10;
+        $max_width = isset($settings['max_width']) ? intval($settings['max_width']) : 1600;
+        $max_height = isset($settings['max_height']) ? intval($settings['max_height']) : 1600;
+        $output_quality = isset($settings['output_quality']) ? intval($settings['output_quality']) : 80;
+        $optimization_mode = isset($settings['optimization_mode']) ? $settings['optimization_mode'] : 'all_webp';
+        $rename_format = isset($settings['rename_format']) ? $settings['rename_format'] : 'post_title';
+        $set_alt_text = isset($settings['set_alt_text']) ? (bool) $settings['set_alt_text'] : true;
+        $alt_text_format = isset($settings['alt_text_format']) ? $settings['alt_text_format'] : 'title_counter_date';
+        $disable_wp_scaling = isset($settings['disable_wp_scaling']) ? (bool) $settings['disable_wp_scaling'] : true;
+        $wm_type = isset($settings['wm_type']) ? $settings['wm_type'] : 'none';
+        $wm_text = isset($settings['wm_text']) ? $settings['wm_text'] : '';
+        $wm_image_url = isset($settings['wm_image_url']) ? $settings['wm_image_url'] : '';
+        $wm_pos = isset($settings['wm_pos']) ? $settings['wm_pos'] : 'bottom-right';
+        $wm_scale = isset($settings['wm_scale']) ? intval($settings['wm_scale']) : 15;
+        ?>
+        <div class="vt-info-box">
+            <?php _e('High-performance client-side image optimization with watermark support. Images are processed in the browser before upload, reducing server load and improving upload speeds.', 'voxel-toolkit'); ?>
+        </div>
+
+        <!-- Compression & Optimization -->
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Compression & Optimization', 'voxel-toolkit'); ?></h4>
+            <p class="vt-section-description"><?php _e('Configure how images are compressed and converted.', 'voxel-toolkit'); ?></p>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Optimization Mode', 'voxel-toolkit'); ?></label>
+                <select name="voxel_toolkit_options[image_optimization][optimization_mode]" class="vt-select-input">
+                    <option value="all_webp" <?php selected($optimization_mode, 'all_webp'); ?>><?php _e('Convert everything to WebP (Recommended)', 'voxel-toolkit'); ?></option>
+                    <option value="only_jpg" <?php selected($optimization_mode, 'only_jpg'); ?>><?php _e('Only JPG to WebP', 'voxel-toolkit'); ?></option>
+                    <option value="only_png" <?php selected($optimization_mode, 'only_png'); ?>><?php _e('Only PNG to WebP', 'voxel-toolkit'); ?></option>
+                    <option value="both_to_webp" <?php selected($optimization_mode, 'both_to_webp'); ?>><?php _e('JPG & PNG to WebP', 'voxel-toolkit'); ?></option>
+                    <option value="originals_only" <?php selected($optimization_mode, 'originals_only'); ?>><?php _e('Keep original formats', 'voxel-toolkit'); ?></option>
+                </select>
+                <p class="vt-field-description"><?php _e('WebP offers better compression while maintaining quality.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Output Quality (%)', 'voxel-toolkit'); ?></label>
+                <input type="number"
+                       name="voxel_toolkit_options[image_optimization][output_quality]"
+                       value="<?php echo esc_attr($output_quality); ?>"
+                       min="1"
+                       max="100"
+                       class="vt-text-input"
+                       style="max-width: 150px;" />
+                <p class="vt-field-description"><?php _e('Lower quality = smaller file size. 80% is recommended for most use cases.', 'voxel-toolkit'); ?></p>
+            </div>
+        </div>
+
+        <!-- Global Watermark -->
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Global Watermark', 'voxel-toolkit'); ?></h4>
+            <p class="vt-section-description"><?php _e('Add a text or image watermark to all uploaded images.', 'voxel-toolkit'); ?></p>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Watermark Type', 'voxel-toolkit'); ?></label>
+                <select name="voxel_toolkit_options[image_optimization][wm_type]" class="vt-select-input">
+                    <option value="none" <?php selected($wm_type, 'none'); ?>><?php _e('Disabled', 'voxel-toolkit'); ?></option>
+                    <option value="text" <?php selected($wm_type, 'text'); ?>><?php _e('Text', 'voxel-toolkit'); ?></option>
+                    <option value="image" <?php selected($wm_type, 'image'); ?>><?php _e('PNG Image', 'voxel-toolkit'); ?></option>
+                </select>
+            </div>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Watermark Text', 'voxel-toolkit'); ?></label>
+                <input type="text"
+                       name="voxel_toolkit_options[image_optimization][wm_text]"
+                       value="<?php echo esc_attr($wm_text); ?>"
+                       class="vt-text-input"
+                       placeholder="<?php esc_attr_e('e.g., © Your Company', 'voxel-toolkit'); ?>" />
+                <p class="vt-field-description"><?php _e('Text to display as watermark (only used when Type is "Text").', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Watermark PNG Image URL', 'voxel-toolkit'); ?></label>
+                <input type="url"
+                       name="voxel_toolkit_options[image_optimization][wm_image_url]"
+                       value="<?php echo esc_attr($wm_image_url); ?>"
+                       class="vt-text-input"
+                       placeholder="https://example.com/logo.png" />
+                <p class="vt-field-description"><?php _e('URL to a PNG image for watermark (only used when Type is "PNG Image"). Must be a PNG file.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <div class="vt-field-row" style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div class="vt-field-group" style="flex: 1; min-width: 150px;">
+                    <label class="vt-field-label"><?php _e('Watermark Scale (%)', 'voxel-toolkit'); ?></label>
+                    <input type="number"
+                           name="voxel_toolkit_options[image_optimization][wm_scale]"
+                           value="<?php echo esc_attr($wm_scale); ?>"
+                           min="5"
+                           max="80"
+                           class="vt-text-input"
+                           style="width: 100%;" />
+                    <p class="vt-field-description"><?php _e('Size of watermark relative to image width.', 'voxel-toolkit'); ?></p>
+                </div>
+                <div class="vt-field-group" style="flex: 1; min-width: 150px;">
+                    <label class="vt-field-label"><?php _e('Position', 'voxel-toolkit'); ?></label>
+                    <select name="voxel_toolkit_options[image_optimization][wm_pos]" class="vt-select-input" style="width: 100%;">
+                        <option value="center" <?php selected($wm_pos, 'center'); ?>><?php _e('Center', 'voxel-toolkit'); ?></option>
+                        <option value="top-left" <?php selected($wm_pos, 'top-left'); ?>><?php _e('Top Left', 'voxel-toolkit'); ?></option>
+                        <option value="top-right" <?php selected($wm_pos, 'top-right'); ?>><?php _e('Top Right', 'voxel-toolkit'); ?></option>
+                        <option value="bottom-left" <?php selected($wm_pos, 'bottom-left'); ?>><?php _e('Bottom Left', 'voxel-toolkit'); ?></option>
+                        <option value="bottom-right" <?php selected($wm_pos, 'bottom-right'); ?>><?php _e('Bottom Right', 'voxel-toolkit'); ?></option>
+                    </select>
+                    <p class="vt-field-description"><?php _e('Where to place the watermark.', 'voxel-toolkit'); ?></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEO & Metadata -->
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('SEO & Metadata', 'voxel-toolkit'); ?></h4>
+            <p class="vt-section-description"><?php _e('Configure how alt text and filenames are generated for SEO.', 'voxel-toolkit'); ?></p>
+
+            <div class="vt-checkbox-list">
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[image_optimization][set_alt_text]"
+                           value="1"
+                           <?php checked($set_alt_text); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Auto-set Alt Text', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Automatically generate alt text based on parent post title.', 'voxel-toolkit'); ?></p>
+                    </div>
+                </label>
+            </div>
+
+            <div class="vt-field-group" style="margin-top: 20px;">
+                <label class="vt-field-label"><?php _e('Filename Format', 'voxel-toolkit'); ?></label>
+                <select name="voxel_toolkit_options[image_optimization][rename_format]" class="vt-select-input">
+                    <option value="post_title" <?php selected($rename_format, 'post_title'); ?>><?php _e('Post Title + Counter (Recommended)', 'voxel-toolkit'); ?></option>
+                    <option value="original" <?php selected($rename_format, 'original'); ?>><?php _e('Keep original name', 'voxel-toolkit'); ?></option>
+                </select>
+                <p class="vt-field-description"><?php _e('Format for uploaded files.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Alt Text Format', 'voxel-toolkit'); ?></label>
+                <select name="voxel_toolkit_options[image_optimization][alt_text_format]" class="vt-select-input">
+                    <option value="title_only" <?php selected($alt_text_format, 'title_only'); ?>><?php _e('Post title only', 'voxel-toolkit'); ?></option>
+                    <option value="title_counter" <?php selected($alt_text_format, 'title_counter'); ?>><?php _e('Title - Image 01', 'voxel-toolkit'); ?></option>
+                    <option value="title_date" <?php selected($alt_text_format, 'title_date'); ?>><?php _e('Title (Date)', 'voxel-toolkit'); ?></option>
+                    <option value="title_counter_date" <?php selected($alt_text_format, 'title_counter_date'); ?>><?php _e('Title - Image 01 (Date)', 'voxel-toolkit'); ?></option>
+                </select>
+                <p class="vt-field-description"><?php _e('Format for auto-generated alt text.', 'voxel-toolkit'); ?></p>
+            </div>
+        </div>
+
+        <!-- Security & Limits -->
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Security & Limits', 'voxel-toolkit'); ?></h4>
+            <p class="vt-section-description"><?php _e('Set file size and dimension limits for uploaded images.', 'voxel-toolkit'); ?></p>
+
+            <div class="vt-field-group">
+                <label class="vt-field-label"><?php _e('Max File Size (MB)', 'voxel-toolkit'); ?></label>
+                <input type="number"
+                       name="voxel_toolkit_options[image_optimization][max_file_size]"
+                       value="<?php echo esc_attr($max_file_size); ?>"
+                       min="1"
+                       max="100"
+                       class="vt-text-input"
+                       style="max-width: 150px;" />
+                <p class="vt-field-description"><?php _e('Files larger than this limit will be rejected. Set higher if users upload large photos.', 'voxel-toolkit'); ?></p>
+            </div>
+
+            <div class="vt-field-row" style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div class="vt-field-group" style="flex: 1; min-width: 150px;">
+                    <label class="vt-field-label"><?php _e('Max Width (px)', 'voxel-toolkit'); ?></label>
+                    <input type="number"
+                           name="voxel_toolkit_options[image_optimization][max_width]"
+                           value="<?php echo esc_attr($max_width); ?>"
+                           min="100"
+                           max="10000"
+                           class="vt-text-input"
+                           style="width: 100%;" />
+                </div>
+                <div class="vt-field-group" style="flex: 1; min-width: 150px;">
+                    <label class="vt-field-label"><?php _e('Max Height (px)', 'voxel-toolkit'); ?></label>
+                    <input type="number"
+                           name="voxel_toolkit_options[image_optimization][max_height]"
+                           value="<?php echo esc_attr($max_height); ?>"
+                           min="100"
+                           max="10000"
+                           class="vt-text-input"
+                           style="width: 100%;" />
+                </div>
+            </div>
+            <p class="vt-field-description"><?php _e('Images larger than these dimensions will be resized proportionally.', 'voxel-toolkit'); ?></p>
+
+            <div class="vt-checkbox-list" style="margin-top: 20px;">
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[image_optimization][disable_wp_scaling]"
+                           value="1"
+                           <?php checked($disable_wp_scaling); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Disable WordPress Scaling', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Prevents WordPress from creating a "-scaled" version of large images. Recommended since images are already optimized client-side.', 'voxel-toolkit'); ?></p>
+                    </div>
+                </label>
+            </div>
         </div>
         <?php
     }

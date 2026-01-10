@@ -1977,6 +1977,14 @@ class Voxel_Toolkit_Admin {
                         }
                         break;
 
+                    case 'image_optimization':
+                        // Use Image Optimization's own sanitization method
+                        if (!class_exists('Voxel_Toolkit_Image_Optimization')) {
+                            require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/class-image-optimization.php';
+                        }
+                        $sanitized_function = Voxel_Toolkit_Image_Optimization::sanitize_settings($function_input);
+                        break;
+
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(

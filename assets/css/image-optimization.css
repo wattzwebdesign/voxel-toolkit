@@ -1,0 +1,87 @@
+/**
+ * Voxel Toolkit - Image Optimization Styles
+ */
+
+/* Toast Notification */
+.vt-image-opt-toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #001A33;
+    color: #ffffff;
+    padding: 20px 25px;
+    border-radius: 12px;
+    z-index: 2147483647 !important;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-width: 350px;
+    animation: vt-image-opt-slide-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.vt-image-opt-toast-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.vt-image-opt-toast-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: #fff;
+}
+
+.vt-image-opt-toast-message {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.vt-image-opt-toast-success {
+    background: #7abd71;
+}
+
+.vt-image-opt-toast-error {
+    background: #c0392b !important;
+}
+
+.vt-image-opt-toast-error-icon::before {
+    content: "\2715";
+    font-weight: bold;
+    font-size: 20px;
+    color: #fff;
+}
+
+.vt-image-opt-toast-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: vt-image-opt-rotate 0.8s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes vt-image-opt-rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes vt-image-opt-slide-in {
+    from {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.vt-image-opt-toast-hidden {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: 0.5s ease;
+}
