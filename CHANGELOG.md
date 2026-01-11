@@ -124,6 +124,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Safari WebP support via WASM encoder (loaded on-demand from CDN)
   - Toast notifications showing optimization progress and savings
   - Show/hide toast option in User Interface settings
+- **Timeline Photos Widget Sources**: Expanded Timeline Photos widget to support multiple timeline sources:
+  - Current Post Reviews (existing default)
+  - Current Post Wall
+  - Current Post Timeline
+  - Current Author Timeline
+  - Shortcode now accepts `source` attribute
 
 ### Fixed
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
