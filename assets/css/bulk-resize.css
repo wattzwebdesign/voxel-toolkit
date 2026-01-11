@@ -1,0 +1,348 @@
+/**
+ * Voxel Toolkit - Bulk Resize Styles
+ */
+
+.vt-bulk-resize-wrap {
+    max-width: 900px;
+}
+
+.vt-bulk-resize-wrap h1 {
+    color: #1e3a5f;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.vt-bulk-resize-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Card Styles */
+.vt-bulk-resize-card {
+    background: #fff;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.vt-bulk-resize-card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e1e5e9;
+    padding: 12px 16px;
+    font-weight: 600;
+    color: #1e3a5f;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vt-bulk-resize-card-header .dashicons {
+    color: #1e3a5f;
+}
+
+.vt-bulk-resize-card-body {
+    padding: 16px;
+}
+
+/* Info Card */
+.vt-bulk-resize-info {
+    border-left: 4px solid #1e3a5f;
+}
+
+.vt-bulk-resize-info p {
+    margin: 0 0 12px 0;
+    color: #555;
+}
+
+.vt-bulk-resize-settings-grid {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.vt-bulk-resize-setting {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.vt-bulk-resize-setting-label {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+}
+
+.vt-bulk-resize-setting-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e3a5f;
+}
+
+/* Filters */
+.vt-bulk-resize-filters {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.vt-bulk-resize-radio {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.vt-bulk-resize-radio input[type="radio"] {
+    margin: 0;
+}
+
+.vt-bulk-resize-radio span {
+    color: #333;
+}
+
+.vt-bulk-resize-count {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.vt-bulk-resize-count-label {
+    color: #666;
+}
+
+.vt-bulk-resize-count-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e3a5f;
+}
+
+#vt-refresh-count {
+    margin-left: 8px;
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#vt-refresh-count .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Progress */
+.vt-bulk-resize-progress-bar {
+    height: 24px;
+    background: #e1e5e9;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.vt-bulk-resize-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1e3a5f, #2d5a8f);
+    border-radius: 12px;
+    transition: width 0.3s ease;
+}
+
+.vt-bulk-resize-progress-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+}
+
+.vt-bulk-resize-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vt-bulk-resize-stat-label {
+    color: #666;
+    font-size: 13px;
+}
+
+.vt-bulk-resize-stat-value {
+    font-weight: 600;
+    color: #1e3a5f;
+}
+
+/* Actions */
+.vt-bulk-resize-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.vt-bulk-resize-actions .button-hero {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vt-bulk-resize-actions .button-hero .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.vt-bulk-resize-actions .button-primary {
+    background: #1e3a5f;
+    border-color: #1e3a5f;
+}
+
+.vt-bulk-resize-actions .button-primary:hover,
+.vt-bulk-resize-actions .button-primary:focus {
+    background: #2d5a8f;
+    border-color: #2d5a8f;
+}
+
+#vt-reset-btn {
+    margin-left: auto;
+    color: #888;
+}
+
+#vt-reset-btn:hover {
+    color: #c0392b;
+}
+
+/* Log */
+.vt-bulk-resize-log {
+    max-height: 300px;
+    overflow-y: auto;
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+    font-size: 12px;
+}
+
+.vt-bulk-resize-log-empty {
+    color: #888;
+    font-style: italic;
+}
+
+.vt-bulk-resize-log-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 4px 0;
+    border-bottom: 1px solid #e1e5e9;
+}
+
+.vt-bulk-resize-log-entry:last-child {
+    border-bottom: none;
+}
+
+.vt-bulk-resize-log-entry .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.vt-bulk-resize-log-success .dashicons {
+    color: #27ae60;
+}
+
+.vt-bulk-resize-log-info .dashicons {
+    color: #1e3a5f;
+}
+
+.vt-bulk-resize-log-warning .dashicons {
+    color: #f39c12;
+}
+
+.vt-bulk-resize-log-error .dashicons {
+    color: #c0392b;
+}
+
+.vt-bulk-resize-log-text {
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+/* Summary */
+.vt-bulk-resize-summary {
+    border-color: #27ae60;
+}
+
+.vt-bulk-resize-summary-header {
+    background: #27ae60;
+    color: #fff;
+    border-bottom-color: #27ae60;
+}
+
+.vt-bulk-resize-summary-header .dashicons {
+    color: #fff;
+}
+
+.vt-bulk-resize-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    .vt-bulk-resize-summary-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .vt-bulk-resize-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.vt-bulk-resize-summary-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.vt-bulk-resize-summary-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e3a5f;
+}
+
+.vt-bulk-resize-summary-label {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+}
+
+.vt-bulk-resize-summary-highlight .vt-bulk-resize-summary-value {
+    color: #27ae60;
+}
+
+/* Scrollbar for log */
+.vt-bulk-resize-log::-webkit-scrollbar {
+    width: 8px;
+}
+
+.vt-bulk-resize-log::-webkit-scrollbar-track {
+    background: #e1e5e9;
+    border-radius: 4px;
+}
+
+.vt-bulk-resize-log::-webkit-scrollbar-thumb {
+    background: #bbb;
+    border-radius: 4px;
+}
+
+.vt-bulk-resize-log::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}

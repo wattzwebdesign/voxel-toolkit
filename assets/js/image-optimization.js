@@ -89,7 +89,12 @@
     const Toast = {
         el: null,
 
+        isEnabled() {
+            return Settings.showToast !== false;
+        },
+
         show(title, message, type = 'default') {
+            if (!this.isEnabled()) return;
             this.hide();
             this.el = document.createElement('div');
             this.el.className = `vt-image-opt-toast ${type === 'error' ? 'vt-image-opt-toast-error' : ''}`;
@@ -108,6 +113,7 @@
         },
 
         update(title, message) {
+            if (!this.isEnabled()) return;
             if (this.el) {
                 this.el.querySelector('.vt-image-opt-toast-title').textContent = title;
                 this.el.querySelector('.vt-image-opt-toast-message').textContent = message;
@@ -115,6 +121,7 @@
         },
 
         success(title, message) {
+            if (!this.isEnabled()) return;
             if (this.el) {
                 this.el.classList.add('vt-image-opt-toast-success');
                 this.el.innerHTML = `
