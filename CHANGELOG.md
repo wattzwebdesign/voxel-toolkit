@@ -105,6 +105,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Admin columns: Online Status badge and Last Seen in Users list
   - Only visible to logged-in users
 - **Route Planner Travel Mode Toggles**: Individual toggles to enable/disable each travel mode button (Driving, Walking, Cycling, Transit)
+- **Bulk Resize (VT)**: Server-side batch image optimization tool under Media > Bulk Resize. Features include:
+  - Filter options: Not Yet Processed, Oversized Only, or All Images
+  - Live progress tracking with processed count, resized count, and bytes saved
+  - Percentage saved display per image and average reduction summary
+  - Media library column showing optimization status and savings
+  - Memory-safe batch processing with adaptive batch sizing
+  - Reset processed status option to re-optimize images
 - **Image Optimization**: Client-side image optimization with WebP conversion, watermarks, and SEO metadata. Features include:
   - Optimization modes: Convert all to WebP, JPG only, PNG only, both, or keep originals
   - Configurable output quality (1-100%)
@@ -116,6 +123,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Disable WordPress "-scaled" image creation
   - Safari WebP support via WASM encoder (loaded on-demand from CDN)
   - Toast notifications showing optimization progress and savings
+  - Show/hide toast option in User Interface settings
 
 ### Fixed
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
