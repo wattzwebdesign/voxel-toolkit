@@ -73,12 +73,21 @@ class Voxel_Toolkit_Promotion_Create_Form {
         $settings = $widget->get_settings_for_display();
 
         if (isset($settings['vt_enable_promotions']) && $settings['vt_enable_promotions'] === 'yes') {
+            // Only enable preview mode when in Elementor editor, not on frontend
+            $is_elementor_editor = (
+                isset($_GET['elementor-preview']) ||
+                (isset($_GET['action']) && $_GET['action'] === 'elementor') ||
+                (class_exists('\Elementor\Plugin') && \Elementor\Plugin::$instance->editor->is_edit_mode()) ||
+                (class_exists('\Elementor\Plugin') && \Elementor\Plugin::$instance->preview->is_preview_mode())
+            );
+            $preview_enabled = $is_elementor_editor && isset($settings['vt_promotions_preview']) && $settings['vt_promotions_preview'] === 'yes';
+
             $this->promotion_widgets[$widget->get_id()] = array(
                 'enabled' => true,
                 'title' => isset($settings['vt_promotions_title']) ? $settings['vt_promotions_title'] : __('Boost your listing', 'voxel-toolkit'),
                 'description' => isset($settings['vt_promotions_description']) ? $settings['vt_promotions_description'] : __('Get more visibility with a promotion package (optional)', 'voxel-toolkit'),
                 'skip_text' => isset($settings['vt_promotions_skip_text']) ? $settings['vt_promotions_skip_text'] : __('No thanks, just submit', 'voxel-toolkit'),
-                'preview' => isset($settings['vt_promotions_preview']) && $settings['vt_promotions_preview'] === 'yes',
+                'preview' => $preview_enabled,
             );
         }
     }
