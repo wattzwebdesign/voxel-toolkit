@@ -135,6 +135,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Pulls welcome message, placeholder, thinking text, and suggested queries from AI Bot global settings
   - Full styling controls for container, header, messages, and input area
   - Auto-enabled when AI Bot function is active
+- **AI Bot Panel Width Setting**: Configurable width for sidebar panel and overlay modes (300-800px) in AI Bot Appearance settings
 
 ### Fixed
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
