@@ -130,6 +130,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Current Post Timeline
   - Current Author Timeline
   - Shortcode now accepts `source` attribute
+- **AI Bot Embed Widget**: New Elementor widget to embed AI chatbot directly on pages (not floating panel). Features include:
+  - Embedded chat interface with header, messages area, and input
+  - Pulls welcome message, placeholder, thinking text, and suggested queries from AI Bot global settings
+  - Full styling controls for container, header, messages, and input area
+  - Auto-enabled when AI Bot function is active
 
 ### Fixed
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
@@ -151,6 +156,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Messenger Placeholder Color**: Fixed input placeholder color not applying from Elementor style controls. Added default color and proper CSS specificity.
 - **Advanced Phone Input Full Width**: Fixed Advanced Phone Input not respecting full width or column width settings. Phone field now properly expands to match other form fields.
 - **Profile Progress CSS Loading**: Fixed profile-progress.css loading on all pages even when the function is not active. CSS now only loads when widget or shortcode is used.
+- **AI Bot Action Defaults**: Fixed AI Bot action in VX widget showing "Ask AI" text when text field is blank and robot icon when no icon is set. Now shows nothing for both when not configured.
+- **AI Bot Panel Icons**: Fixed send and close icons disappearing in AI Bot panel by replacing icon fonts with inline SVG icons.
 
 ## [1.6.0.1] - 2026-01-05
 
