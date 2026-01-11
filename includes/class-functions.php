@@ -7762,8 +7762,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <td>
                     <?php
                     $suggested_queries = isset($settings['suggested_queries']) ? (array) $settings['suggested_queries'] : array();
-                    // Ensure we have at least 3 empty slots
-                    while (count($suggested_queries) < 3) {
+                    // Ensure we have at least 10 empty slots
+                    while (count($suggested_queries) < 10) {
                         $suggested_queries[] = '';
                     }
                     ?>
