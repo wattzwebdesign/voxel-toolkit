@@ -77,7 +77,22 @@ class Voxel_Toolkit_Elementor_Timeline_Photos extends \Elementor\Widget_Base {
                 'description' => __('Specify post ID or leave empty to use current post', 'voxel-toolkit'),
             ]
         );
-        
+
+        $this->add_control(
+            'timeline_source',
+            [
+                'label' => __('Timeline Source', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'default' => 'post_reviews',
+                'options' => [
+                    'post_reviews' => __('Current Post Reviews', 'voxel-toolkit'),
+                    'post_wall' => __('Current Post Wall', 'voxel-toolkit'),
+                    'post_timeline' => __('Current Post Timeline', 'voxel-toolkit'),
+                    'author_timeline' => __('Current Author Timeline', 'voxel-toolkit'),
+                ],
+            ]
+        );
+
         $this->add_control(
             'gallery_layout',
             [
@@ -404,20 +419,35 @@ class Voxel_Toolkit_Elementor_Timeline_Photos extends \Elementor\Widget_Base {
     /**
      * Get timeline photos from database
      */
-    private function get_timeline_photos($post_id) {
+    private function get_timeline_photos($post_id, $timeline_source = 'post_reviews') {
         global $wpdb;
-        
+
         if (!$post_id) {
             return [];
         }
-        
-        // Query the voxel timeline table for post_reviews
+
         $table_name = $wpdb->prefix . 'voxel_timeline';
-        $query = $wpdb->prepare(
-            "SELECT details FROM {$table_name} WHERE post_id = %d AND feed = 'post_reviews'",
-            $post_id
-        );
-        
+
+        // Handle author_timeline differently - query by user_id
+        if ($timeline_source === 'author_timeline') {
+            $post = get_post($post_id);
+            if (!$post || !$post->post_author) {
+                return [];
+            }
+            $author_id = $post->post_author;
+            $query = $wpdb->prepare(
+                "SELECT details FROM {$table_name} WHERE user_id = %d AND feed = 'user_timeline' AND moderation = 1",
+                $author_id
+            );
+        } else {
+            // Query by post_id for post_reviews, post_wall, post_timeline
+            $query = $wpdb->prepare(
+                "SELECT details FROM {$table_name} WHERE post_id = %d AND feed = %s AND moderation = 1",
+                $post_id,
+                $timeline_source
+            );
+        }
+
         $results = $wpdb->get_results($query);
         
         if (empty($results)) {
@@ -496,7 +526,8 @@ class Voxel_Toolkit_Elementor_Timeline_Photos extends \Elementor\Widget_Base {
             return;
         }
         
-        $photos = $this->get_timeline_photos($post_id);
+        $timeline_source = isset($settings['timeline_source']) ? $settings['timeline_source'] : 'post_reviews';
+        $photos = $this->get_timeline_photos($post_id, $timeline_source);
 
         // Apply offset and limit
         $offset = isset($settings['photo_offset']) ? intval($settings['photo_offset']) : 0;

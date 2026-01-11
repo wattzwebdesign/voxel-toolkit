@@ -149,25 +149,40 @@ class Voxel_Toolkit_Timeline_Photos_Widget {
     /**
      * Get timeline photos for a post (static method for external use)
      */
-    public static function get_post_timeline_photos($post_id, $debug_mode = false) {
+    public static function get_post_timeline_photos($post_id, $debug_mode = false, $timeline_source = 'post_reviews') {
         global $wpdb;
-        
+
         if (!$post_id) {
             return [];
         }
-        
+
         // If debug mode is enabled, return debug info instead
         if ($debug_mode) {
             return self::debug_timeline_data($post_id);
         }
-        
-        // Query the voxel timeline table for post_reviews
+
         $table_name = $wpdb->prefix . 'voxel_timeline';
-        $query = $wpdb->prepare(
-            "SELECT details FROM {$table_name} WHERE post_id = %d AND feed = 'post_reviews'",
-            $post_id
-        );
-        
+
+        // Handle author_timeline differently - query by user_id
+        if ($timeline_source === 'author_timeline') {
+            $post = get_post($post_id);
+            if (!$post || !$post->post_author) {
+                return [];
+            }
+            $author_id = $post->post_author;
+            $query = $wpdb->prepare(
+                "SELECT details FROM {$table_name} WHERE user_id = %d AND feed = 'user_timeline' AND moderation = 1",
+                $author_id
+            );
+        } else {
+            // Query by post_id for post_reviews, post_wall, post_timeline
+            $query = $wpdb->prepare(
+                "SELECT details FROM {$table_name} WHERE post_id = %d AND feed = %s AND moderation = 1",
+                $post_id,
+                $timeline_source
+            );
+        }
+
         $results = $wpdb->get_results($query);
         
         if (empty($results)) {
@@ -237,31 +252,36 @@ class Voxel_Toolkit_Timeline_Photos_Widget {
      */
     public function timeline_photos_shortcode($atts) {
         global $post;
-        
+
         $atts = shortcode_atts(array(
             'post_id' => '',
+            'source' => 'post_reviews',
             'columns' => 3,
             'layout' => 'masonry',
             'image_size' => 'medium_large',
             'lightbox' => 'yes',
-            'empty_message' => 'No photos found in reviews',
+            'empty_message' => 'No photos found',
             'show_empty' => 'yes',
             'debug' => 'no',
         ), $atts);
-        
+
         $post_id = !empty($atts['post_id']) ? intval($atts['post_id']) : (isset($post->ID) ? $post->ID : 0);
-        
+
         if (!$post_id) {
             return '';
         }
-        
+
+        // Validate timeline source
+        $valid_sources = array('post_reviews', 'post_wall', 'post_timeline', 'author_timeline');
+        $timeline_source = in_array($atts['source'], $valid_sources) ? $atts['source'] : 'post_reviews';
+
         // If debug mode is enabled, show debug information
         if ($atts['debug'] === 'yes') {
-            $debug_info = self::get_post_timeline_photos($post_id, true);
+            $debug_info = self::get_post_timeline_photos($post_id, true, $timeline_source);
             return '<div class="timeline-photos-debug"><pre>' . esc_html($debug_info) . '</pre></div>';
         }
-        
-        $photos = self::get_post_timeline_photos($post_id);
+
+        $photos = self::get_post_timeline_photos($post_id, false, $timeline_source);
         
         if (empty($photos)) {
             return $atts['show_empty'] === 'yes' ? '<div class="timeline-photos-empty">' . esc_html($atts['empty_message']) . '</div>' : '';
