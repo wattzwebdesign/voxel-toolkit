@@ -69,6 +69,23 @@ class Voxel_Toolkit_Advanced_Phone_Input {
                     background-image: url("' . $flags_2x_url . '") !important;
                 }
             }
+            /* Make intl-tel-input container respect full width and column width */
+            .iti {
+                width: 100% !important;
+                display: block !important;
+            }
+            /* When inside Voxel flexbox containers, expand to fill available space */
+            .ts-input-icon .iti,
+            .flexify .iti,
+            .ts-form-group .iti {
+                flex: 1 1 100% !important;
+                min-width: 0 !important;
+                width: 100% !important;
+            }
+            .iti input[type="tel"],
+            .iti .iti__tel-input {
+                width: 100% !important;
+            }
         ';
         wp_add_inline_style('intl-tel-input', $flag_sprite_css);
 

@@ -18,6 +18,9 @@
         if (initialized) return;
         initialized = true;
 
+        // Inject CSS for full-width support
+        injectStyles();
+
         // Initial scan for phone inputs
         initPhoneInputs();
 
@@ -26,6 +29,24 @@
 
         // Hook into form submissions
         hookFormSubmission();
+    }
+
+    /**
+     * Inject CSS styles for full-width phone inputs
+     */
+    function injectStyles() {
+        var styleId = 'vt-advanced-phone-styles';
+        if (document.getElementById(styleId)) return;
+
+        var style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = [
+            '.iti { width: 100% !important; display: block !important; }',
+            '.ts-input-icon .iti, .flexify .iti, .ts-form-group .iti { flex: 1 1 100% !important; min-width: 0 !important; }',
+            '.ts-input-icon, .ts-form-group .ts-input-icon { width: 100% !important; }',
+            '.iti input[type="tel"], .iti .iti__tel-input { width: 100% !important; }'
+        ].join('\n');
+        document.head.appendChild(style);
     }
 
     /**
@@ -94,6 +115,27 @@
         }
 
         var iti = window.intlTelInput(input, itiOptions);
+
+        // Apply full-width styles to the .iti container and all parents
+        var itiContainer = input.closest('.iti');
+        if (itiContainer) {
+            // Force styles with setAttribute to override everything
+            itiContainer.setAttribute('style', 'width: 100% !important; flex: 1 1 100% !important; min-width: 0 !important; display: block !important;');
+
+            // Also ensure parent .ts-input-icon takes full width
+            var tsInputIcon = itiContainer.closest('.ts-input-icon');
+            if (tsInputIcon) {
+                var existingStyle = tsInputIcon.getAttribute('style') || '';
+                tsInputIcon.setAttribute('style', existingStyle + ' width: 100% !important;');
+            }
+
+            // Also ensure .ts-form-group takes full width
+            var formGroup = itiContainer.closest('.ts-form-group');
+            if (formGroup) {
+                var existingStyle = formGroup.getAttribute('style') || '';
+                formGroup.setAttribute('style', existingStyle + ' width: 100% !important;');
+            }
+        }
 
         // Store instance with field key
         var fieldKey = fieldConfig.fieldKey || getFieldKey(input);
