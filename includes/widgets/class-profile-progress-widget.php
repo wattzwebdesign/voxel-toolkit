@@ -24,12 +24,9 @@ class Voxel_Toolkit_Profile_Progress_Widget {
     private function init_hooks() {
         // Register Elementor widget
         add_action('elementor/widgets/register', array($this, 'register_elementor_widget'));
-        
+
         // Add shortcode
         add_shortcode('voxel_profile_progress', array($this, 'render_shortcode'));
-        
-        // Enqueue styles
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
     }
     
     /**
@@ -290,6 +287,14 @@ class Voxel_Toolkit_Profile_Progress_Widget {
      * Render shortcode
      */
     public function render_shortcode($atts) {
+        // Enqueue styles only when shortcode is used
+        wp_enqueue_style(
+            'voxel-profile-progress',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/profile-progress.css',
+            array(),
+            VOXEL_TOOLKIT_VERSION
+        );
+
         $atts = shortcode_atts(array(
             'user_id' => '',
             'field_keys' => '',
@@ -318,17 +323,5 @@ class Voxel_Toolkit_Profile_Progress_Widget {
             'show_percentage' => $show_percentage,
             'show_field_list' => $show_field_list
         ));
-    }
-    
-    /**
-     * Enqueue styles
-     */
-    public function enqueue_styles() {
-        wp_enqueue_style(
-            'voxel-profile-progress',
-            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/profile-progress.css',
-            array(),
-            VOXEL_TOOLKIT_VERSION
-        );
     }
 }
