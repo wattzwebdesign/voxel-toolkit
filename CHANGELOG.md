@@ -144,6 +144,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Messenger Duplicate Circles**: Fixed persistent admin chat and AI Bot circles replicating multiple times. Added initialization flags and improved circle preservation during chat list updates.
 - **Messenger Placeholder Color**: Fixed input placeholder color not applying from Elementor style controls. Added default color and proper CSS specificity.
 - **Advanced Phone Input Full Width**: Fixed Advanced Phone Input not respecting full width or column width settings. Phone field now properly expands to match other form fields.
+- **Profile Progress CSS Loading**: Fixed profile-progress.css loading on all pages even when the function is not active. CSS now only loads when widget or shortcode is used.
 
 ## [1.6.0.1] - 2026-01-05
 
