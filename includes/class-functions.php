@@ -8398,6 +8398,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         $wm_image_url = isset($settings['wm_image_url']) ? $settings['wm_image_url'] : '';
         $wm_pos = isset($settings['wm_pos']) ? $settings['wm_pos'] : 'bottom-right';
         $wm_scale = isset($settings['wm_scale']) ? intval($settings['wm_scale']) : 15;
+        $show_toast = isset($settings['show_toast']) ? (bool) $settings['show_toast'] : true;
         ?>
         <div class="vt-info-box">
             <?php _e('High-performance client-side image optimization with watermark support. Images are processed in the browser before upload, reducing server load and improving upload speeds.', 'voxel-toolkit'); ?>
@@ -8582,6 +8583,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <div class="vt-checkbox-item-content">
                         <span class="vt-checkbox-item-label"><?php _e('Disable WordPress Scaling', 'voxel-toolkit'); ?></span>
                         <p class="vt-checkbox-item-description"><?php _e('Prevents WordPress from creating a "-scaled" version of large images. Recommended since images are already optimized client-side.', 'voxel-toolkit'); ?></p>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- User Interface -->
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('User Interface', 'voxel-toolkit'); ?></h4>
+            <p class="vt-section-description"><?php _e('Configure the user interface for image optimization.', 'voxel-toolkit'); ?></p>
+
+            <div class="vt-checkbox-list">
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[image_optimization][show_toast]"
+                           value="1"
+                           <?php checked($show_toast); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Show Progress Toast', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Display a progress notification in the bottom-right corner when images are being optimized. Disable for a cleaner user experience.', 'voxel-toolkit'); ?></p>
                     </div>
                 </label>
             </div>

@@ -34,6 +34,11 @@ class Voxel_Toolkit_Bulk_Resize {
         add_action('wp_ajax_vt_bulk_resize_get_count', array($this, 'ajax_get_count'));
         add_action('wp_ajax_vt_bulk_resize_process', array($this, 'ajax_process_batch'));
         add_action('wp_ajax_vt_bulk_resize_reset', array($this, 'ajax_reset_processed'));
+
+        // Media library column
+        add_filter('manage_media_columns', array($this, 'add_media_column'));
+        add_action('manage_media_custom_column', array($this, 'render_media_column'), 10, 2);
+        add_action('admin_head', array($this, 'media_column_styles'));
     }
 
     /**
@@ -240,6 +245,10 @@ class Voxel_Toolkit_Bulk_Resize {
                                 <span class="vt-bulk-resize-summary-value" id="vt-summary-saved">0 B</span>
                                 <span class="vt-bulk-resize-summary-label"><?php _e('Total Saved', 'voxel-toolkit'); ?></span>
                             </div>
+                            <div class="vt-bulk-resize-summary-stat vt-bulk-resize-summary-highlight">
+                                <span class="vt-bulk-resize-summary-value" id="vt-summary-percent">0%</span>
+                                <span class="vt-bulk-resize-summary-label"><?php _e('Avg. Reduction', 'voxel-toolkit'); ?></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -328,9 +337,14 @@ class Voxel_Toolkit_Bulk_Resize {
             wp_send_json_error('Unauthorized');
         }
 
+        // Extend time limit for shared hosting
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(120);
+        }
+
         $filter = isset($_POST['filter']) ? sanitize_text_field($_POST['filter']) : 'not_processed';
         $offset = isset($_POST['offset']) ? intval($_POST['offset']) : 0;
-        $batch_size = 5;
+        $batch_size = 10;
 
         $settings = Voxel_Toolkit_Image_Optimization::instance()->get_settings();
         $max_width = intval($settings['max_width']);
@@ -340,8 +354,12 @@ class Voxel_Toolkit_Bulk_Resize {
         $query = new WP_Query($args);
         $attachment_ids = $query->posts;
 
+        // Free query memory
+        $query = null;
+
         $results = array();
         $total_saved = 0;
+        $total_original = 0;
         $resized_count = 0;
         $skipped_count = 0;
 
@@ -351,10 +369,14 @@ class Voxel_Toolkit_Bulk_Resize {
 
             if ($result['saved'] > 0) {
                 $total_saved += $result['saved'];
+                $total_original += $result['original_size'];
                 $resized_count++;
             } else {
                 $skipped_count++;
             }
+
+            // Clean up memory after each image
+            $this->cleanup_memory();
         }
 
         // Check if there are more images
@@ -367,11 +389,35 @@ class Voxel_Toolkit_Bulk_Resize {
             'processed' => count($results),
             'results' => $results,
             'saved_bytes' => $total_saved,
+            'original_bytes' => $total_original,
             'resized' => $resized_count,
             'skipped' => $skipped_count,
             'has_more' => $has_more,
             'next_offset' => $next_offset,
         ));
+    }
+
+    /**
+     * Clean up memory between image processing
+     */
+    private function cleanup_memory() {
+        // Clear WordPress object cache
+        global $wpdb, $wp_object_cache;
+
+        if (is_object($wpdb)) {
+            $wpdb->flush();
+        }
+
+        // Clear specific caches that grow during batch operations
+        if (function_exists('wp_cache_flush_group')) {
+            wp_cache_flush_group('posts');
+            wp_cache_flush_group('post_meta');
+        }
+
+        // Trigger garbage collection if available
+        if (function_exists('gc_collect_cycles')) {
+            gc_collect_cycles();
+        }
     }
 
     /**
@@ -440,6 +486,7 @@ class Voxel_Toolkit_Bulk_Resize {
         // Get new size
         $new_size = filesize($file_path);
         $saved = $original_size - $new_size;
+        $percent = $original_size > 0 ? round(($saved / $original_size) * 100, 1) : 0;
 
         // Regenerate thumbnails
         wp_update_attachment_metadata(
@@ -447,8 +494,11 @@ class Voxel_Toolkit_Bulk_Resize {
             wp_generate_attachment_metadata($attachment_id, $file_path)
         );
 
-        // Mark as processed
+        // Store optimization data
         update_post_meta($attachment_id, '_vt_bulk_resized', time());
+        update_post_meta($attachment_id, '_vt_original_size', $original_size);
+        update_post_meta($attachment_id, '_vt_saved_bytes', $saved);
+        update_post_meta($attachment_id, '_vt_saved_percent', $percent);
 
         // Get new dimensions
         $new_editor = wp_get_image_editor($file_path);
@@ -459,14 +509,17 @@ class Voxel_Toolkit_Bulk_Resize {
             'filename' => $filename,
             'status' => 'resized',
             'message' => sprintf(
-                __('%dx%d -> %dx%d (saved %s)', 'voxel-toolkit'),
+                __('%dx%d -> %dx%d (saved %s, %s%%)', 'voxel-toolkit'),
                 $size['width'],
                 $size['height'],
                 $new_dims['width'],
                 $new_dims['height'],
-                $this->format_bytes($saved)
+                $this->format_bytes($saved),
+                $percent
             ),
             'saved' => $saved,
+            'original_size' => $original_size,
+            'percent' => $percent,
         );
     }
 
@@ -481,11 +534,18 @@ class Voxel_Toolkit_Bulk_Resize {
         }
 
         global $wpdb;
-        $deleted = $wpdb->delete(
-            $wpdb->postmeta,
-            array('meta_key' => '_vt_bulk_resized'),
-            array('%s')
-        );
+
+        // Delete all VT bulk resize meta keys
+        $meta_keys = array('_vt_bulk_resized', '_vt_original_size', '_vt_saved_bytes', '_vt_saved_percent');
+        $deleted = 0;
+
+        foreach ($meta_keys as $key) {
+            $deleted += $wpdb->delete(
+                $wpdb->postmeta,
+                array('meta_key' => $key),
+                array('%s')
+            );
+        }
 
         wp_send_json_success(array(
             'deleted' => $deleted,
@@ -504,5 +564,94 @@ class Voxel_Toolkit_Bulk_Resize {
         $i = floor(log($bytes) / log($k));
 
         return round($bytes / pow($k, $i), 2) . ' ' . $sizes[$i];
+    }
+
+    /**
+     * Add optimization column to media library
+     */
+    public function add_media_column($columns) {
+        $columns['vt_optimized'] = __('Optimized (VT)', 'voxel-toolkit');
+        return $columns;
+    }
+
+    /**
+     * Render optimization column content
+     */
+    public function render_media_column($column_name, $attachment_id) {
+        if ($column_name !== 'vt_optimized') {
+            return;
+        }
+
+        // Check if it's an image
+        $mime_type = get_post_mime_type($attachment_id);
+        if (!in_array($mime_type, array('image/jpeg', 'image/png', 'image/webp'))) {
+            echo '<span class="vt-opt-na">—</span>';
+            return;
+        }
+
+        $resized_time = get_post_meta($attachment_id, '_vt_bulk_resized', true);
+
+        if (!$resized_time) {
+            echo '<span class="vt-opt-no">' . __('No', 'voxel-toolkit') . '</span>';
+            return;
+        }
+
+        $saved_bytes = get_post_meta($attachment_id, '_vt_saved_bytes', true);
+        $saved_percent = get_post_meta($attachment_id, '_vt_saved_percent', true);
+
+        if ($saved_bytes && $saved_percent) {
+            echo '<span class="vt-opt-yes">';
+            echo '<span class="vt-opt-badge">' . esc_html($saved_percent) . '%</span> ';
+            echo '<span class="vt-opt-saved">' . esc_html($this->format_bytes($saved_bytes)) . '</span>';
+            echo '</span>';
+        } else {
+            // Was processed but already optimal (no resize needed)
+            echo '<span class="vt-opt-optimal">' . __('Optimal', 'voxel-toolkit') . '</span>';
+        }
+    }
+
+    /**
+     * Add styles for media column
+     */
+    public function media_column_styles() {
+        $screen = get_current_screen();
+        if (!$screen || $screen->id !== 'upload') {
+            return;
+        }
+        ?>
+        <style>
+            .column-vt_optimized {
+                width: 110px;
+            }
+            .vt-opt-na {
+                color: #999;
+            }
+            .vt-opt-no {
+                color: #999;
+            }
+            .vt-opt-yes {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+            .vt-opt-badge {
+                display: inline-block;
+                background: #27ae60;
+                color: #fff;
+                font-size: 11px;
+                font-weight: 600;
+                padding: 2px 6px;
+                border-radius: 3px;
+            }
+            .vt-opt-saved {
+                color: #666;
+                font-size: 12px;
+            }
+            .vt-opt-optimal {
+                color: #1e3a5f;
+                font-weight: 500;
+            }
+        </style>
+        <?php
     }
 }

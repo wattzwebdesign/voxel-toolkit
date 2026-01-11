@@ -12,6 +12,7 @@
     let totalImages = 0;
     let processedImages = 0;
     let totalSaved = 0;
+    let totalOriginal = 0;
     let totalResized = 0;
     let totalSkipped = 0;
 
@@ -83,6 +84,7 @@
         shouldStop = false;
         processedImages = 0;
         totalSaved = 0;
+        totalOriginal = 0;
         totalResized = 0;
         totalSkipped = 0;
 
@@ -141,6 +143,7 @@
                 const data = response.data;
                 processedImages += data.processed;
                 totalSaved += data.saved_bytes;
+                totalOriginal += data.original_bytes || 0;
                 totalResized += data.resized;
                 totalSkipped += data.skipped;
 
@@ -197,11 +200,15 @@
             $('#vt-total-count').text(formatNumber(processedImages));
         }
 
+        // Calculate average percentage saved
+        const avgPercent = totalOriginal > 0 ? Math.round((totalSaved / totalOriginal) * 100) : 0;
+
         // Show summary
         $('#vt-summary-processed').text(formatNumber(processedImages));
         $('#vt-summary-resized').text(formatNumber(totalResized));
         $('#vt-summary-skipped').text(formatNumber(totalSkipped));
         $('#vt-summary-saved').text(formatBytes(totalSaved));
+        $('#vt-summary-percent').text(avgPercent + '%');
         $('#vt-summary-card').show();
 
         // Refresh count

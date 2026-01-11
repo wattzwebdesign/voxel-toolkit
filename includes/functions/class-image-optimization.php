@@ -31,6 +31,7 @@ class Voxel_Toolkit_Image_Optimization {
         'set_alt_text' => true,
         'alt_text_format' => 'title_counter_date',
         'disable_wp_scaling' => true,
+        'show_toast' => true,
         'wm_type' => 'none',
         'wm_text' => '',
         'wm_image_url' => '',
@@ -197,6 +198,7 @@ class Voxel_Toolkit_Image_Optimization {
             'outputQuality' => intval($settings['output_quality']) / 100,
             'optimizationMode' => sanitize_text_field($settings['optimization_mode']),
             'renameFormat' => sanitize_text_field($settings['rename_format']),
+            'showToast' => !empty($settings['show_toast']),
             'wmType' => sanitize_text_field($settings['wm_type']),
             'wmText' => sanitize_text_field($settings['wm_text']),
             'wmImg' => esc_url($settings['wm_image_url']),
@@ -215,6 +217,7 @@ class Voxel_Toolkit_Image_Optimization {
         $sanitized['enabled'] = !empty($input['enabled']);
         $sanitized['set_alt_text'] = !empty($input['set_alt_text']);
         $sanitized['disable_wp_scaling'] = !empty($input['disable_wp_scaling']);
+        $sanitized['show_toast'] = !empty($input['show_toast']);
 
         // Integer settings with bounds
         $sanitized['max_file_size'] = isset($input['max_file_size']) ? max(1, min(100, intval($input['max_file_size']))) : 10;

@@ -289,12 +289,18 @@
 
 .vt-bulk-resize-summary-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 20px;
     text-align: center;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
+    .vt-bulk-resize-summary-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
     .vt-bulk-resize-summary-grid {
         grid-template-columns: repeat(2, 1fr);
     }
