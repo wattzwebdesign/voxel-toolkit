@@ -139,6 +139,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **AI Bot Suggested Questions**: Increased suggested questions slots from 3 to 10
 
 ### Fixed
+- **Promotion Create Form Preview**: Fixed preview mode showing on frontend at every step. Preview now only displays in the Elementor editor.
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
 - **Compare Action Improvements**: Fixed multiple issues with the Compare action in Edit Actions widget:
   - Blank text field now shows nothing instead of defaulting to "Compare"
