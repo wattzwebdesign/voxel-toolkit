@@ -133,16 +133,20 @@ class Voxel_Toolkit_AI_Bot_Widget_Manager {
             return;
         }
 
-        // Get icon settings from action config
-        $initial_icon = !empty($action['ts_acw_initial_icon']['value']) ? $action['ts_acw_initial_icon'] : ['library' => 'la-solid', 'value' => 'las la-robot'];
-        $initial_text = !empty($action['ts_acw_initial_text']) ? $action['ts_acw_initial_text'] : __('Ask AI', 'voxel-toolkit');
+        // Get icon and text settings from action config
+        $initial_icon = !empty($action['ts_acw_initial_icon']['value']) ? $action['ts_acw_initial_icon'] : null;
+        $initial_text = isset($action['ts_acw_initial_text']) && $action['ts_acw_initial_text'] !== '' ? $action['ts_acw_initial_text'] : '';
         ?>
         <li class="elementor-repeater-item-<?php echo esc_attr($action['_id']); ?> flexify ts-action">
             <a href="#"
                class="ts-action-con vt-ai-bot-trigger"
                role="button">
-                <div class="ts-action-icon"><?php \Voxel\render_icon($initial_icon); ?></div>
-                <?php echo esc_html($initial_text); ?>
+                <?php if ($initial_icon) : ?>
+                    <div class="ts-action-icon"><?php \Voxel\render_icon($initial_icon); ?></div>
+                <?php endif; ?>
+                <?php if ($initial_text !== '') : ?>
+                    <?php echo esc_html($initial_text); ?>
+                <?php endif; ?>
             </a>
         </li>
         <?php
@@ -194,7 +198,10 @@ class Voxel_Toolkit_AI_Bot_Widget_Manager {
                 <div class="vt-ai-bot-header">
                     <span class="vt-ai-bot-header-title"><?php echo esc_html($panel_title); ?></span>
                     <button type="button" class="vt-ai-bot-close" aria-label="<?php esc_attr_e('Close', 'voxel-toolkit'); ?>">
-                        <i class="las la-times"></i>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
                     </button>
                 </div>
 
@@ -211,7 +218,10 @@ class Voxel_Toolkit_AI_Bot_Widget_Manager {
                                placeholder="<?php echo esc_attr($placeholder); ?>"
                                autocomplete="off">
                         <button type="submit" class="vt-ai-bot-send" aria-label="<?php esc_attr_e('Send', 'voxel-toolkit'); ?>">
-                            <i class="las la-paper-plane"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
                         </button>
                     </form>
                 </div>

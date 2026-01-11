@@ -613,7 +613,7 @@ class Voxel_Toolkit_Functions {
                 'file' => 'functions/class-ai-bot.php',
                 'settings_callback' => array($this, 'render_ai_bot_settings'),
                 'icon' => 'dashicons-format-chat',
-                'required_widgets' => array('ai_bot_widget'),
+                'required_widgets' => array('ai_bot_widget', 'ai_bot_embed'),
             ),
             'recurring_events' => array(
                 'name' => __('Recurring Events - Multiple Instances', 'voxel-toolkit'),
@@ -845,6 +845,15 @@ class Voxel_Toolkit_Functions {
                 'file' => 'widgets/class-ai-bot-widget-manager.php',
                 'icon' => 'eicon-commenting-o',
                 'widget_name' => 'vt-ai-bot',
+                'hidden' => true,
+            ),
+            'ai_bot_embed' => array(
+                'name' => __('AI Bot Embed (VT)', 'voxel-toolkit'),
+                'description' => __('Embed the AI-powered search assistant directly on a page.', 'voxel-toolkit'),
+                'class' => 'Voxel_Toolkit_AI_Bot_Embed_Widget',
+                'file' => 'widgets/class-ai-bot-embed-widget.php',
+                'icon' => 'eicon-comments',
+                'widget_name' => 'voxel-ai-bot-embed',
                 'hidden' => true,
             ),
             'coupon_manager' => array(
