@@ -564,7 +564,7 @@ class Voxel_Toolkit_AI_Bot {
 
         // Styling options - sizing
         $sanitized['style_panel_width'] = isset($input['style_panel_width'])
-            ? max(300, min(600, absint($input['style_panel_width'])))
+            ? max(300, min(800, absint($input['style_panel_width'])))
             : 400;
 
         $sanitized['style_font_size'] = isset($input['style_font_size'])

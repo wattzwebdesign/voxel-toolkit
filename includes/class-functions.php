@@ -8074,9 +8074,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                    name="voxel_toolkit_options[ai_bot][style_panel_width]"
                                    value="<?php echo esc_attr($style_panel_width); ?>"
                                    min="300"
-                                   max="600"
+                                   max="800"
                                    class="small-text vt-ai-bot-style-input"
                                    data-style="panel-width"> px
+                            <p class="description"><?php _e('Width of the sidebar panel and overlay (300-800px).', 'voxel-toolkit'); ?></p>
                         </td>
                     </tr>
                     <tr>
