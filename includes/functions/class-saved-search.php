@@ -71,8 +71,8 @@ class Voxel_Toolkit_Saved_Search {
         // Fallback: WordPress post status transitions (for wp-admin posts)
         add_action('transition_post_status', array($this, 'on_post_status_change'), 10, 3);
 
-        // Register app events with Voxel
-        add_filter('voxel/app-events/register', array($this, 'register_events'), 99);
+        // Note: App events are registered early in main plugin file (voxel-toolkit.php)
+        // to ensure they're added before Voxel caches events
 
         // Search form widget integration
         add_action('elementor/widget/render_content', array($this, 'render_save_button'), 10, 2);
@@ -252,6 +252,8 @@ class Voxel_Toolkit_Saved_Search {
 
     /**
      * Register saved search events with Voxel
+     * Note: This is now primarily handled in the main plugin file (voxel-toolkit.php)
+     * via early filter registration to ensure events are added before Voxel caches them.
      */
     public function register_events($events) {
         if (!class_exists('\Voxel\Post_Type')) {

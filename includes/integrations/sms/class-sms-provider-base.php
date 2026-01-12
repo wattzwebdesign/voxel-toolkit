@@ -24,6 +24,11 @@ abstract class Voxel_Toolkit_SMS_Provider_Base {
     protected $last_error = '';
 
     /**
+     * Logging context (event_key, user_id, etc.)
+     */
+    protected $log_context = array();
+
+    /**
      * Constructor
      *
      * @param array $credentials Provider-specific credentials
@@ -92,6 +97,22 @@ abstract class Voxel_Toolkit_SMS_Provider_Base {
      */
     protected function clear_error() {
         $this->last_error = '';
+    }
+
+    /**
+     * Set logging context for the next send operation
+     *
+     * @param array $context Context data (event_key, user_id, etc.)
+     */
+    public function set_log_context($context) {
+        $this->log_context = $context;
+    }
+
+    /**
+     * Clear logging context
+     */
+    protected function clear_log_context() {
+        $this->log_context = array();
     }
 
     /**
@@ -233,9 +254,30 @@ abstract class Voxel_Toolkit_SMS_Provider_Base {
      * @param string $message Message content
      * @param bool $success Whether send was successful
      * @param string $message_id Provider message ID (if available)
+     * @param array $context Additional context (event_key, user_id)
      */
-    protected function log_send($phone, $message, $success, $message_id = '') {
-        // Optional: Log to WordPress debug log if WP_DEBUG is enabled
+    protected function log_send($phone, $message, $success, $message_id = '', $context = array()) {
+        // Log to database
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/integrations/sms/class-sms-log.php';
+
+        // Merge passed context with stored context (passed takes precedence)
+        $merged_context = array_merge($this->log_context, $context);
+
+        Voxel_Toolkit_SMS_Log::log(array(
+            'phone' => $phone,
+            'message' => $message,
+            'provider' => $this->get_provider_key(),
+            'status' => $success ? 'success' : 'failed',
+            'message_id' => $message_id,
+            'error' => $success ? '' : $this->last_error,
+            'event_key' => isset($merged_context['event_key']) ? $merged_context['event_key'] : '',
+            'user_id' => isset($merged_context['user_id']) ? $merged_context['user_id'] : 0,
+        ));
+
+        // Clear context after logging
+        $this->clear_log_context();
+
+        // Optional: Also log to WordPress debug log if WP_DEBUG is enabled
         if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
             $status = $success ? 'SUCCESS' : 'FAILED';
             $log_message = sprintf(

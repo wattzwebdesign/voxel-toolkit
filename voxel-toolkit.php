@@ -109,6 +109,12 @@ class Voxel_Toolkit {
         // Register checklist field type filter early (before Voxel calls it)
         add_filter('voxel/field-types', array($this, 'register_checklist_field_if_enabled'), 10);
 
+        // Register saved search app events filter early (before Voxel caches events)
+        add_filter('voxel/app-events/register', array($this, 'register_saved_search_events_if_enabled'), 99);
+
+        // Hook into Voxel's event save to also save SMS settings
+        add_action('voxel_ajax_app_events.save_config', array($this, 'save_sms_event_settings'), 5);
+
         // Load the actual field class later when Voxel classes are available
         add_action('after_setup_theme', array($this, 'init_post_fields'), 10);
     }
@@ -306,6 +312,104 @@ class Voxel_Toolkit {
 
         $fields['checklist-vt'] = '\Voxel_Toolkit_Checklist_Field_Type';
         return $fields;
+    }
+
+    /**
+     * Register saved search app events if enabled (called early via filter)
+     * This must run before Voxel caches events in Base_Event::get_all()
+     */
+    public function register_saved_search_events_if_enabled($events) {
+        // Load settings class if not loaded
+        if (!class_exists('Voxel_Toolkit_Settings')) {
+            if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-settings.php')) {
+                require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-settings.php';
+            } else {
+                return $events;
+            }
+        }
+
+        $settings = Voxel_Toolkit_Settings::instance();
+        if (!$settings->is_function_enabled('saved_search')) {
+            return $events;
+        }
+
+        // Check if Voxel Post_Type class exists
+        if (!class_exists('\Voxel\Post_Type')) {
+            return $events;
+        }
+
+        // Load the saved search event class
+        $event_file = VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/saved-search/class-saved-search-event.php';
+        if (file_exists($event_file) && !class_exists('Voxel_Toolkit_Saved_Search_Event')) {
+            require_once $event_file;
+        }
+
+        if (!class_exists('Voxel_Toolkit_Saved_Search_Event')) {
+            return $events;
+        }
+
+        // Register saved search events for each post type
+        foreach (\Voxel\Post_Type::get_voxel_types() as $post_type) {
+            $event = new Voxel_Toolkit_Saved_Search_Event($post_type);
+            $events[$event->get_key()] = $event;
+        }
+
+        return $events;
+    }
+
+    /**
+     * Save SMS event settings when Voxel saves app events config
+     * This runs before Voxel's save handler to capture and save SMS data
+     */
+    public function save_sms_event_settings() {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        if (!function_exists('\Voxel\get') || !function_exists('\Voxel\set')) {
+            return;
+        }
+
+        $config = json_decode(stripslashes($_POST['config'] ?? ''), true);
+        if (!is_array($config)) {
+            return;
+        }
+
+        // Get current Voxel events config
+        $voxel_events = \Voxel\get('events', []);
+
+        // Process each event's SMS settings
+        foreach ($config as $event_key => $event_config) {
+            if (!isset($event_config['notifications']) || !is_array($event_config['notifications'])) {
+                continue;
+            }
+
+            foreach ($event_config['notifications'] as $destination => $notification) {
+                if (!isset($notification['sms'])) {
+                    continue;
+                }
+
+                // Ensure the event structure exists
+                if (!isset($voxel_events[$event_key])) {
+                    $voxel_events[$event_key] = ['notifications' => []];
+                }
+                if (!isset($voxel_events[$event_key]['notifications'])) {
+                    $voxel_events[$event_key]['notifications'] = [];
+                }
+                if (!isset($voxel_events[$event_key]['notifications'][$destination])) {
+                    $voxel_events[$event_key]['notifications'][$destination] = [];
+                }
+
+                // Save SMS settings
+                $voxel_events[$event_key]['notifications'][$destination]['sms'] = [
+                    'enabled' => !empty($notification['sms']['enabled']),
+                    'message' => sanitize_textarea_field($notification['sms']['message'] ?? ''),
+                ];
+            }
+        }
+
+        // Save the updated config with SMS data
+        \Voxel\set('events', $voxel_events, false);
     }
 
     /**

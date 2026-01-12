@@ -32,6 +32,60 @@ if (!class_exists('Voxel_Toolkit_SMS_Ajax_Handler')) {
             // Note: vt_send_test_sms is handled by Voxel_Toolkit_Functions::ajax_send_test_sms()
             // which works without requiring Voxel Base_Controller to be loaded
             add_action('wp_ajax_vt_get_sms_event_settings', array($this, 'ajax_get_event_settings'));
+
+            // Hook into Voxel's event save to also save SMS settings
+            add_action('voxel_ajax_app_events.save_config', array($this, 'intercept_voxel_event_save'), 5);
+        }
+
+        /**
+         * Intercept Voxel's event save to also save SMS settings
+         * This runs before Voxel's handler and saves SMS data to Voxel's event storage
+         */
+        public function intercept_voxel_event_save() {
+            if (!current_user_can('manage_options')) {
+                return;
+            }
+
+            $config = json_decode(stripslashes($_POST['config'] ?? ''), true);
+            if (!is_array($config)) {
+                return;
+            }
+
+            // Get current Voxel events config
+            $voxel_events = \Voxel\get('events', []);
+
+            // Process each event's SMS settings
+            foreach ($config as $event_key => $event_config) {
+                if (!isset($event_config['notifications']) || !is_array($event_config['notifications'])) {
+                    continue;
+                }
+
+                foreach ($event_config['notifications'] as $destination => $notification) {
+                    if (!isset($notification['sms'])) {
+                        continue;
+                    }
+
+                    // Ensure the event structure exists
+                    if (!isset($voxel_events[$event_key])) {
+                        $voxel_events[$event_key] = ['notifications' => []];
+                    }
+                    if (!isset($voxel_events[$event_key]['notifications'])) {
+                        $voxel_events[$event_key]['notifications'] = [];
+                    }
+                    if (!isset($voxel_events[$event_key]['notifications'][$destination])) {
+                        $voxel_events[$event_key]['notifications'][$destination] = [];
+                    }
+
+                    // Save SMS settings
+                    $voxel_events[$event_key]['notifications'][$destination]['sms'] = [
+                        'enabled' => !empty($notification['sms']['enabled']),
+                        'message' => sanitize_textarea_field($notification['sms']['message'] ?? ''),
+                    ];
+                }
+            }
+
+            // Save the updated config with SMS data
+            \Voxel\set('events', $voxel_events, false);
         }
 
         /**
@@ -143,9 +197,12 @@ class Voxel_Toolkit_SMS_Notifications extends \Voxel\Controllers\Base_Controller
     /**
      * Get singleton instance
      *
-     * @return Voxel_Toolkit_SMS_Notifications|null
+     * @return Voxel_Toolkit_SMS_Notifications
      */
     public static function instance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
         return self::$instance;
     }
 
@@ -219,11 +276,55 @@ class Voxel_Toolkit_SMS_Notifications extends \Voxel\Controllers\Base_Controller
      * Hook registration for all Voxel events
      */
     protected function hooks() {
+        // Register hooks for currently available events
+        $this->register_event_hooks();
+
+        // Also register hooks later to catch events registered after init (like saved search)
+        add_action('init', array($this, 'register_late_event_hooks'), 999);
+    }
+
+    /**
+     * Register hooks for late-registered events (like saved search)
+     */
+    public function register_late_event_hooks() {
+        $this->register_event_hooks();
+
+        // Manually register hooks for saved search events (they may not be in Base_Event::get_all() cache)
+        $this->register_saved_search_hooks();
+    }
+
+    /**
+     * Manually register hooks for saved search events
+     * These events are registered late and may not be in Voxel's event cache
+     */
+    private function register_saved_search_hooks() {
+        if (!class_exists('\Voxel\Post_Type')) {
+            return;
+        }
+
+        foreach (\Voxel\Post_Type::get_voxel_types() as $post_type) {
+            // Hook for the saved search event: post-types/{type}/vt-saved-search:post-published
+            $event_key = 'post-types/' . $post_type->get_key() . '/vt-saved-search:post-published';
+            $hook_name = 'voxel/app-events/' . $event_key;
+
+            if (!has_action($hook_name, array($this, 'send_sms_notification'))) {
+                add_action($hook_name, array($this, 'send_sms_notification'), 10, 1);
+            }
+        }
+    }
+
+    /**
+     * Register hooks for all available Voxel events
+     */
+    private function register_event_hooks() {
         $events = \Voxel\Events\Base_Event::get_all();
 
         foreach ($events as $event) {
             $hook_name = sprintf('voxel/app-events/%s', $event->get_key());
-            $this->on($hook_name, '@send_sms_notification', 10, 1);
+            // Use add_action directly to avoid duplicate registration issues
+            if (!has_action($hook_name, array($this, 'send_sms_notification'))) {
+                add_action($hook_name, array($this, 'send_sms_notification'), 10, 1);
+            }
         }
     }
 
@@ -233,47 +334,127 @@ class Voxel_Toolkit_SMS_Notifications extends \Voxel\Controllers\Base_Controller
      * @param \Voxel\Events\Base_Event $event The event that triggered
      */
     public function send_sms_notification($event) {
+        $event_key = $event->get_key();
+
+        // Debug: Log that event was received
+        $this->debug_log('EVENT_RECEIVED', array(
+            'event_key' => $event_key,
+            'enabled' => $this->enabled,
+        ));
+
         if (!$this->enabled) {
+            $this->debug_log('SMS_DISABLED', array('event_key' => $event_key));
             return;
         }
 
-        $event_key = $event->get_key();
         $notifications = $event->get_notifications();
+
+        $this->debug_log('NOTIFICATIONS_FOUND', array(
+            'event_key' => $event_key,
+            'destinations' => array_keys($notifications),
+        ));
 
         // Check each notification destination (customer, vendor, admin)
         foreach ($notifications as $destination => $notification) {
             // Get SMS config for this event/destination
             $sms_config = $this->get_sms_config($event_key, $destination);
 
+            $this->debug_log('SMS_CONFIG', array(
+                'event_key' => $event_key,
+                'destination' => $destination,
+                'config' => $sms_config,
+            ));
+
             if (!$sms_config['enabled']) {
+                $this->debug_log('SMS_NOT_ENABLED_FOR_DESTINATION', array(
+                    'event_key' => $event_key,
+                    'destination' => $destination,
+                ));
                 continue;
             }
 
             // Get recipient user based on destination
             $recipient_user = $this->get_recipient_user($event, $destination);
 
+            $this->debug_log('RECIPIENT_LOOKUP', array(
+                'event_key' => $event_key,
+                'destination' => $destination,
+                'recipient_found' => $recipient_user ? true : false,
+                'recipient_id' => $recipient_user ? $recipient_user->ID : null,
+            ));
+
             if (!$recipient_user) {
+                $this->debug_log('NO_RECIPIENT', array(
+                    'event_key' => $event_key,
+                    'destination' => $destination,
+                ));
                 continue;
             }
 
             // Get recipient phone number from their profile
             $phone = $this->get_recipient_phone_from_profile($recipient_user->ID);
 
+            $this->debug_log('PHONE_LOOKUP', array(
+                'event_key' => $event_key,
+                'user_id' => $recipient_user->ID,
+                'phone_found' => !empty($phone),
+                'phone' => !empty($phone) ? substr($phone, 0, 4) . '***' : 'none',
+            ));
+
             if (empty($phone)) {
                 // Silently skip if no phone number configured for this user
+                $this->debug_log('NO_PHONE', array(
+                    'event_key' => $event_key,
+                    'user_id' => $recipient_user->ID,
+                ));
                 continue;
             }
 
             // Render message with dynamic tags
             $message = $this->render_message($sms_config['message'], $event);
 
+            $this->debug_log('MESSAGE_RENDERED', array(
+                'event_key' => $event_key,
+                'template' => $sms_config['message'],
+                'rendered' => $message,
+            ));
+
             if (empty($message)) {
+                $this->debug_log('EMPTY_MESSAGE', array('event_key' => $event_key));
                 continue;
             }
 
-            // Send SMS
-            $this->send_sms($phone, $message);
+            // Send SMS with context for logging
+            $this->debug_log('SENDING_SMS', array(
+                'event_key' => $event_key,
+                'phone' => substr($phone, 0, 4) . '***',
+                'user_id' => $recipient_user->ID,
+            ));
+
+            $this->send_sms($phone, $message, array(
+                'event_key' => $event_key,
+                'user_id' => $recipient_user->ID,
+            ));
         }
+    }
+
+    /**
+     * Debug logging helper
+     */
+    private function debug_log($step, $data = array()) {
+        // Log to SMS log table as debug entry
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/integrations/sms/class-sms-log.php';
+
+        Voxel_Toolkit_SMS_Log::log(array(
+            'phone' => 'DEBUG',
+            'message' => $step . ': ' . json_encode($data),
+            'provider' => 'debug',
+            'status' => 'debug',
+            'message_id' => '',
+            'error' => '',
+            'event_key' => isset($data['event_key']) ? $data['event_key'] : '',
+            'user_id' => isset($data['user_id']) ? $data['user_id'] : 0,
+        ));
     }
 
     /**
@@ -289,13 +470,53 @@ class Voxel_Toolkit_SMS_Notifications extends \Voxel\Controllers\Base_Controller
             'message' => '',
         );
 
-        $events = isset($this->function_settings['events']) ? $this->function_settings['events'] : array();
+        // Get FRESH settings from database (not cached $this->function_settings)
+        $fresh_settings = $this->settings->get_function_settings('sms_notifications', array());
+        $events = isset($fresh_settings['events']) ? $fresh_settings['events'] : array();
 
-        if (!isset($events[$event_key]) || !isset($events[$event_key][$destination])) {
-            return $default;
+        // Normalize destination - JS saves "subscriber" but PHP uses "notify-subscriber"
+        $dest_variations = array(
+            $destination,
+            str_replace('notify-', '', $destination),  // "notify-subscriber" -> "subscriber"
+            'notify-' . $destination,                   // "subscriber" -> "notify-subscriber"
+        );
+
+        if (isset($events[$event_key])) {
+            foreach ($dest_variations as $dest_key) {
+                if (isset($events[$event_key][$dest_key])) {
+                    $this->debug_log('SMS_CONFIG_SOURCE', array(
+                        'source' => 'toolkit',
+                        'event_key' => $event_key,
+                        'destination' => $dest_key,
+                        'config' => $events[$event_key][$dest_key],
+                    ));
+                    return wp_parse_args($events[$event_key][$dest_key], $default);
+                }
+            }
         }
 
-        return wp_parse_args($events[$event_key][$destination], $default);
+        // Fallback: check Voxel's event storage
+        if (function_exists('\Voxel\get')) {
+            $voxel_events = \Voxel\get('events', []);
+
+            if (isset($voxel_events[$event_key]['notifications'][$destination]['sms'])) {
+                $sms_config = $voxel_events[$event_key]['notifications'][$destination]['sms'];
+                $this->debug_log('SMS_CONFIG_SOURCE', array(
+                    'source' => 'voxel',
+                    'event_key' => $event_key,
+                    'destination' => $destination,
+                ));
+                return wp_parse_args($sms_config, $default);
+            }
+        }
+
+        $this->debug_log('SMS_CONFIG_SOURCE', array(
+            'source' => 'none',
+            'event_key' => $event_key,
+            'destination' => $destination,
+        ));
+
+        return $default;
     }
 
     /**
@@ -320,6 +541,10 @@ class Voxel_Toolkit_SMS_Notifications extends \Voxel\Controllers\Base_Controller
             $recipient = call_user_func($notification['recipient'], $event);
             if ($recipient instanceof \WP_User) {
                 return $recipient;
+            }
+            // Handle \Voxel\User objects (returned by saved search and other Voxel events)
+            if ($recipient instanceof \Voxel\User) {
+                return get_user_by('id', $recipient->get_id());
             }
             if (is_numeric($recipient)) {
                 return get_user_by('id', $recipient);
@@ -509,8 +734,7 @@ class Voxel_Toolkit_SMS_Notifications extends \Voxel\Controllers\Base_Controller
         // Clean country code (remove + if present, we'll add it)
         $country_code = preg_replace('/[^0-9]/', '', $country_code);
 
-        // If we have a country code, always prepend it
-        // (local numbers stored in Voxel don't include country code)
+        // If we have a country code, prepend it
         if (!empty($country_code)) {
             // Remove leading 0 if present (common in local formats like UK: 07xxx -> 7xxx)
             if (strpos($phone, '0') === 0) {
@@ -547,9 +771,10 @@ class Voxel_Toolkit_SMS_Notifications extends \Voxel\Controllers\Base_Controller
      *
      * @param string $phone Recipient phone number
      * @param string $message SMS message
+     * @param array $context Optional context for logging (event_key, user_id)
      * @return array Result with success/error
      */
-    private function send_sms($phone, $message) {
+    private function send_sms($phone, $message, $context = array()) {
         $provider_key = isset($this->function_settings['provider']) ? $this->function_settings['provider'] : 'twilio';
 
         // Get provider credentials
@@ -565,6 +790,11 @@ class Voxel_Toolkit_SMS_Notifications extends \Voxel\Controllers\Base_Controller
                 'success' => false,
                 'error' => __('SMS provider not configured', 'voxel-toolkit'),
             );
+        }
+
+        // Set logging context before sending
+        if (!empty($context)) {
+            $provider->set_log_context($context);
         }
 
         return $provider->send($phone, $message);

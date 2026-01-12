@@ -43,6 +43,8 @@ class Voxel_Toolkit_Functions {
         // AJAX handlers
         add_action('wp_ajax_voxel_toolkit_sync_submissions', array($this, 'ajax_sync_submissions'));
         add_action('wp_ajax_vt_send_test_sms', array($this, 'ajax_send_test_sms'));
+        add_action('wp_ajax_vt_get_sms_logs', array($this, 'ajax_get_sms_logs'));
+        add_action('wp_ajax_vt_clear_sms_logs', array($this, 'ajax_clear_sms_logs'));
 
         // Add post type groups to exporter early on settings page
         add_action('admin_init', array($this, 'add_post_type_groups_to_exporter'), 5);
@@ -981,8 +983,9 @@ class Voxel_Toolkit_Functions {
                 // Use regular constructor
                 $this->active_functions[$function_key] = new $class_name();
             }
+
         }
-        
+
         // Fire action hook
         do_action("voxel_toolkit/function_initialized/{$function_key}", $function_data);
     }
@@ -1776,6 +1779,52 @@ class Voxel_Toolkit_Functions {
                         <div id="test_sms_result" style="margin-top: 10px; display: none;"></div>
                     </div>
 
+                    <!-- SMS Log -->
+                    <div style="margin-bottom: 25px; padding: 20px; background: #fafafa; border: 1px solid #ddd; border-radius: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h4 style="margin: 0; color: #1e1e1e; font-size: 15px;">
+                                <?php _e('SMS Log', 'voxel-toolkit'); ?>
+                            </h4>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span id="sms_log_stats" style="font-size: 12px; color: #666;"></span>
+                                <button type="button" id="refresh_sms_log_btn" class="button button-small" title="<?php _e('Refresh', 'voxel-toolkit'); ?>">
+                                    <span class="dashicons dashicons-update" style="margin-top: 3px;"></span>
+                                </button>
+                                <button type="button" id="clear_sms_log_btn" class="button button-small" style="color: #b32d2e;">
+                                    <?php _e('Clear Log', 'voxel-toolkit'); ?>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="sms_log_container" style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; background: white;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                                <thead style="position: sticky; top: 0; background: #f5f5f5;">
+                                    <tr>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd; font-weight: 600;"><?php _e('Time', 'voxel-toolkit'); ?></th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd; font-weight: 600;"><?php _e('Status', 'voxel-toolkit'); ?></th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd; font-weight: 600;"><?php _e('Phone', 'voxel-toolkit'); ?></th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd; font-weight: 600;"><?php _e('Event', 'voxel-toolkit'); ?></th>
+                                        <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd; font-weight: 600;"><?php _e('Details', 'voxel-toolkit'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sms_log_tbody">
+                                    <tr>
+                                        <td colspan="5" style="padding: 20px; text-align: center; color: #666;">
+                                            <?php _e('Loading...', 'voxel-toolkit'); ?>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="sms_log_pagination" style="margin-top: 10px; text-align: center; display: none;">
+                            <button type="button" id="load_more_logs_btn" class="button button-small">
+                                <?php _e('Load More', 'voxel-toolkit'); ?>
+                            </button>
+                        </div>
+                        <p style="margin: 10px 0 0 0; font-size: 11px; color: #888;">
+                            <?php _e('Phone numbers are masked for privacy. Logs are automatically cleared after 30 days.', 'voxel-toolkit'); ?>
+                        </p>
+                    </div>
+
                     <!-- Usage Instructions -->
                     <div style="padding: 15px; background: #e8f5e9; border: 1px solid #81c784; border-radius: 6px;">
                         <h4 style="margin: 0 0 10px 0; color: #2e7d32; font-size: 14px;">
@@ -1831,12 +1880,119 @@ class Voxel_Toolkit_Functions {
                                 } else {
                                     $result.html('<div style="color: #721c24; background: #f8d7da; padding: 10px; border-radius: 4px;">' + response.data.message + '</div>').show();
                                 }
+                                // Refresh log after test
+                                loadSmsLogs(true);
                             },
                             error: function() {
                                 $result.html('<div style="color: #721c24; background: #f8d7da; padding: 10px; border-radius: 4px;"><?php _e('Network error. Please try again.', 'voxel-toolkit'); ?></div>').show();
                             },
                             complete: function() {
                                 $btn.prop('disabled', false).text('<?php _e('Send Test SMS', 'voxel-toolkit'); ?>');
+                            }
+                        });
+                    });
+
+                    // SMS Log functionality
+                    var smsLogOffset = 0;
+                    var smsLogLimit = 25;
+
+                    function loadSmsLogs(reset) {
+                        if (reset) {
+                            smsLogOffset = 0;
+                        }
+
+                        $.ajax({
+                            url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                            type: 'POST',
+                            data: {
+                                action: 'vt_get_sms_logs',
+                                nonce: '<?php echo wp_create_nonce('vt_sms_nonce'); ?>',
+                                offset: smsLogOffset,
+                                limit: smsLogLimit
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    var logs = response.data.logs;
+                                    var stats = response.data.stats;
+                                    var hasMore = response.data.has_more;
+
+                                    // Update stats
+                                    $('#sms_log_stats').html(
+                                        '<span style="color: #28a745;">' + stats.success + ' <?php _e('sent', 'voxel-toolkit'); ?></span> / ' +
+                                        '<span style="color: #dc3545;">' + stats.failed + ' <?php _e('failed', 'voxel-toolkit'); ?></span>'
+                                    );
+
+                                    // Build table rows
+                                    var html = '';
+                                    if (logs.length === 0 && smsLogOffset === 0) {
+                                        html = '<tr><td colspan="5" style="padding: 20px; text-align: center; color: #666;"><?php _e('No SMS logs yet. Logs will appear here when SMS messages are sent.', 'voxel-toolkit'); ?></td></tr>';
+                                    } else {
+                                        logs.forEach(function(log) {
+                                            var statusBadge = log.status === 'success'
+                                                ? '<span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 3px; font-size: 11px;"><?php _e('Sent', 'voxel-toolkit'); ?></span>'
+                                                : '<span style="background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 3px; font-size: 11px;"><?php _e('Failed', 'voxel-toolkit'); ?></span>';
+
+                                            var eventName = log.event_key || '<span style="color: #999;"><?php _e('Test/Manual', 'voxel-toolkit'); ?></span>';
+                                            var details = log.status === 'success'
+                                                ? (log.message_id ? 'ID: ' + log.message_id : '-')
+                                                : '<span style="color: #dc3545;" title="' + (log.error_message || '').replace(/"/g, '&quot;') + '">' + (log.error_message ? log.error_message.substring(0, 50) + (log.error_message.length > 50 ? '...' : '') : '-') + '</span>';
+
+                                            html += '<tr style="border-bottom: 1px solid #eee;">' +
+                                                '<td style="padding: 8px 10px; white-space: nowrap;">' + log.created_at + '</td>' +
+                                                '<td style="padding: 8px 10px;">' + statusBadge + '</td>' +
+                                                '<td style="padding: 8px 10px; font-family: monospace; font-size: 12px;">' + log.phone + '</td>' +
+                                                '<td style="padding: 8px 10px; font-size: 11px; max-width: 200px; overflow: hidden; text-overflow: ellipsis;">' + eventName + '</td>' +
+                                                '<td style="padding: 8px 10px; font-size: 11px;">' + details + '</td>' +
+                                                '</tr>';
+                                        });
+                                    }
+
+                                    if (smsLogOffset === 0) {
+                                        $('#sms_log_tbody').html(html);
+                                    } else {
+                                        $('#sms_log_tbody').append(html);
+                                    }
+
+                                    // Show/hide load more button
+                                    if (hasMore) {
+                                        $('#sms_log_pagination').show();
+                                    } else {
+                                        $('#sms_log_pagination').hide();
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // Initial load
+                    loadSmsLogs(true);
+
+                    // Refresh button
+                    $('#refresh_sms_log_btn').on('click', function() {
+                        loadSmsLogs(true);
+                    });
+
+                    // Load more button
+                    $('#load_more_logs_btn').on('click', function() {
+                        smsLogOffset += smsLogLimit;
+                        loadSmsLogs(false);
+                    });
+
+                    // Clear log button
+                    $('#clear_sms_log_btn').on('click', function() {
+                        if (!confirm('<?php _e('Are you sure you want to clear all SMS logs?', 'voxel-toolkit'); ?>')) {
+                            return;
+                        }
+
+                        $.ajax({
+                            url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                            type: 'POST',
+                            data: {
+                                action: 'vt_clear_sms_logs',
+                                nonce: '<?php echo wp_create_nonce('vt_sms_nonce'); ?>'
+                            },
+                            success: function(response) {
+                                loadSmsLogs(true);
                             }
                         });
                     });
@@ -4884,8 +5040,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             get_bloginfo('name')
         );
 
-        // Send based on provider
-        $result = $this->send_test_sms_via_provider($provider, $phone, $message, $sms_settings);
+        // Load provider class for proper logging
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/integrations/sms/class-sms-provider-base.php';
+
+        // Get credentials based on provider
+        $credentials = $this->get_test_sms_credentials($provider, $sms_settings);
+        $provider_instance = Voxel_Toolkit_SMS_Provider_Base::get_provider($provider, $credentials);
+
+        if (!$provider_instance) {
+            // Fallback to legacy method if provider class not available
+            $result = $this->send_test_sms_via_provider($provider, $phone, $message, $sms_settings);
+        } else {
+            // Set context for logging (test SMS)
+            $provider_instance->set_log_context(array(
+                'event_key' => 'test-sms',
+                'user_id' => get_current_user_id(),
+            ));
+            $result = $provider_instance->send($phone, $message);
+        }
 
         if ($result['success']) {
             wp_send_json_success(array(
@@ -4896,6 +5068,44 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             wp_send_json_error(array(
                 'message' => sprintf(__('Failed to send SMS: %s', 'voxel-toolkit'), $result['error']),
             ));
+        }
+    }
+
+    /**
+     * Get credentials for test SMS based on provider
+     */
+    private function get_test_sms_credentials($provider, $settings) {
+        switch ($provider) {
+            case 'twilio':
+                return array(
+                    'account_sid' => isset($settings['twilio_account_sid']) ? $settings['twilio_account_sid'] : '',
+                    'auth_token' => isset($settings['twilio_auth_token']) ? $settings['twilio_auth_token'] : '',
+                    'from_number' => isset($settings['twilio_from_number']) ? $settings['twilio_from_number'] : '',
+                );
+            case 'vonage':
+                return array(
+                    'api_key' => isset($settings['vonage_api_key']) ? $settings['vonage_api_key'] : '',
+                    'api_secret' => isset($settings['vonage_api_secret']) ? $settings['vonage_api_secret'] : '',
+                    'from' => isset($settings['vonage_from']) ? $settings['vonage_from'] : '',
+                );
+            case 'messagebird':
+                return array(
+                    'api_key' => isset($settings['messagebird_api_key']) ? $settings['messagebird_api_key'] : '',
+                    'originator' => isset($settings['messagebird_originator']) ? $settings['messagebird_originator'] : '',
+                );
+            case 'telnyx':
+                return array(
+                    'api_key' => isset($settings['telnyx_api_key']) ? $settings['telnyx_api_key'] : '',
+                    'from_number' => isset($settings['telnyx_from_number']) ? $settings['telnyx_from_number'] : '',
+                );
+            case 'solapi':
+                return array(
+                    'api_key' => isset($settings['solapi_api_key']) ? $settings['solapi_api_key'] : '',
+                    'api_secret' => isset($settings['solapi_api_secret']) ? $settings['solapi_api_secret'] : '',
+                    'from_number' => isset($settings['solapi_from_number']) ? $settings['solapi_from_number'] : '',
+                );
+            default:
+                return array();
         }
     }
 
@@ -5035,6 +5245,68 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         $error = isset($body['errors'][0]['description']) ? $body['errors'][0]['description'] : __('Unknown MessageBird error', 'voxel-toolkit');
         return array('success' => false, 'error' => $error);
+    }
+
+    /**
+     * AJAX handler for getting SMS logs
+     */
+    public function ajax_get_sms_logs() {
+        check_ajax_referer('vt_sms_nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Permission denied', 'voxel-toolkit')));
+        }
+
+        $offset = isset($_POST['offset']) ? absint($_POST['offset']) : 0;
+        $limit = isset($_POST['limit']) ? min(absint($_POST['limit']), 100) : 25;
+
+        // Load the SMS log class
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/integrations/sms/class-sms-log.php';
+
+        $logs = Voxel_Toolkit_SMS_Log::get_logs($limit, $offset);
+        $stats = Voxel_Toolkit_SMS_Log::get_stats();
+        $total = Voxel_Toolkit_SMS_Log::get_count();
+
+        // Format the logs for display
+        $formatted_logs = array();
+        foreach ($logs as $log) {
+            $formatted_logs[] = array(
+                'id' => $log->id,
+                'phone' => $log->phone,
+                'message' => $log->message,
+                'provider' => $log->provider,
+                'status' => $log->status,
+                'message_id' => $log->message_id,
+                'error_message' => $log->error_message,
+                'event_key' => $log->event_key,
+                'created_at' => mysql2date(get_option('date_format') . ' ' . get_option('time_format'), $log->created_at),
+            );
+        }
+
+        wp_send_json_success(array(
+            'logs' => $formatted_logs,
+            'stats' => $stats,
+            'total' => $total,
+            'has_more' => ($offset + $limit) < $total,
+        ));
+    }
+
+    /**
+     * AJAX handler for clearing SMS logs
+     */
+    public function ajax_clear_sms_logs() {
+        check_ajax_referer('vt_sms_nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Permission denied', 'voxel-toolkit')));
+        }
+
+        // Load the SMS log class
+        require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/integrations/sms/class-sms-log.php';
+
+        Voxel_Toolkit_SMS_Log::clear_logs();
+
+        wp_send_json_success(array('message' => __('SMS logs cleared', 'voxel-toolkit')));
     }
 
     /**
