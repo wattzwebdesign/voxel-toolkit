@@ -140,6 +140,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **SMS Notifications for Saved Search**: Fixed SMS notifications not sending for saved search matches. Events now register early before Voxel caches them, SMS config reads from correct storage, and phone numbers properly include country code from settings.
+- **Add Category App Events**: Fixed Term Added, Term Pending, and Term Approved events not appearing in App Events & Notifications UI. Events now register early before Voxel caches them.
 - **Promotion Create Form Preview**: Fixed preview mode showing on frontend at every step. Preview now only displays in the Elementor editor.
 - **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
 - **Compare Action Improvements**: Fixed multiple issues with the Compare action in Edit Actions widget:
