@@ -53,6 +53,8 @@ class Voxel_Toolkit_RSVP {
         add_action('wp_ajax_nopriv_vt_rsvp_cancel', array($this, 'ajax_cancel_rsvp'));
         add_action('wp_ajax_vt_rsvp_get_list', array($this, 'ajax_get_list'));
         add_action('wp_ajax_nopriv_vt_rsvp_get_list', array($this, 'ajax_get_list'));
+        add_action('wp_ajax_vt_rsvp_get_widget_data', array($this, 'ajax_get_widget_data'));
+        add_action('wp_ajax_nopriv_vt_rsvp_get_widget_data', array($this, 'ajax_get_widget_data'));
 
         // AJAX handlers - admin only
         add_action('wp_ajax_vt_rsvp_approve', array($this, 'ajax_approve_rsvp'));
@@ -314,7 +316,7 @@ class Voxel_Toolkit_RSVP {
         $post_id = absint($_POST['post_id'] ?? 0);
         $require_approval = isset($_POST['require_approval']) && $_POST['require_approval'] === 'yes';
         $max_attendees = absint($_POST['max_attendees'] ?? 0);
-        $comment = isset($_POST['comment']) ? sanitize_textarea_field($_POST['comment']) : '';
+        $comment = isset($_POST['comment']) ? sanitize_textarea_field(wp_unslash($_POST['comment'])) : '';
 
         if (!$post_id) {
             wp_send_json_error(array('message' => __('Invalid post ID', 'voxel-toolkit')));
@@ -330,8 +332,8 @@ class Voxel_Toolkit_RSVP {
             $user_email = $user->user_email;
             $user_name = $user->display_name;
         } else {
-            $user_name = sanitize_text_field($_POST['user_name'] ?? '');
-            $user_email = sanitize_email($_POST['user_email'] ?? '');
+            $user_name = sanitize_text_field(wp_unslash($_POST['user_name'] ?? ''));
+            $user_email = sanitize_email(wp_unslash($_POST['user_email'] ?? ''));
 
             if (empty($user_name) || empty($user_email)) {
                 wp_send_json_error(array('message' => __('Name and email are required', 'voxel-toolkit')));
@@ -360,11 +362,12 @@ class Voxel_Toolkit_RSVP {
         if (isset($_POST['custom_fields']) && is_array($_POST['custom_fields'])) {
             foreach ($_POST['custom_fields'] as $key => $value) {
                 $sanitized_key = sanitize_key($key);
+                $unslashed_value = wp_unslash($value);
                 // Sanitize value based on whether it contains newlines (textarea) or not
-                if (strpos($value, "\n") !== false) {
-                    $custom_fields[$sanitized_key] = sanitize_textarea_field($value);
+                if (strpos($unslashed_value, "\n") !== false) {
+                    $custom_fields[$sanitized_key] = sanitize_textarea_field($unslashed_value);
                 } else {
-                    $custom_fields[$sanitized_key] = sanitize_text_field($value);
+                    $custom_fields[$sanitized_key] = sanitize_text_field($unslashed_value);
                 }
             }
         }
@@ -702,6 +705,45 @@ class Voxel_Toolkit_RSVP {
             'pages' => $pages,
             'current_page' => $page,
         ));
+    }
+
+    /**
+     * AJAX: Get widget data (count and user status) - cache-proof
+     *
+     * This endpoint is specifically for loading fresh RSVP data after page load
+     * to ensure cached pages still show accurate counts and user status.
+     */
+    public function ajax_get_widget_data() {
+        check_ajax_referer('vt_rsvp_nonce', 'nonce');
+
+        $post_id = absint($_POST['post_id'] ?? $_GET['post_id'] ?? 0);
+
+        if (!$post_id) {
+            wp_send_json_error(array('message' => __('Invalid post ID', 'voxel-toolkit')));
+        }
+
+        // Get count of approved RSVPs
+        $count = $this->get_rsvp_count($post_id, array('approved'));
+
+        // Check if current user has RSVP'd
+        $user_rsvp = null;
+        $user_email = '';
+
+        if (is_user_logged_in()) {
+            $user = wp_get_current_user();
+            $user_email = $user->user_email;
+            $user_rsvp = $this->get_user_rsvp($post_id, $user_email);
+        }
+
+        $response = array(
+            'count' => $count,
+            'has_rsvp' => $user_rsvp !== null,
+            'rsvp_status' => $user_rsvp ? $user_rsvp->status : null,
+            'user_email' => $user_email,
+            'is_logged_in' => is_user_logged_in(),
+        );
+
+        wp_send_json_success($response);
     }
 
     /**

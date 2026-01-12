@@ -163,4 +163,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **AI Bot Panel Icons**: Fixed send and close icons disappearing in AI Bot panel by replacing icon fonts with inline SVG icons.
 - **Plan Filter Labels**: Added (VT) suffix to Membership Plan, Listing Plan, and User Role filters for identification. Fixed missing translation strings for "No Plan" and "Guest" labels. Added configurable label fields in filter settings for customization.
 - **Address Part Modifier Multi-Provider Support**: Fixed `address_part` modifier only working with Google Maps. Now supports all Voxel map providers (Google Maps, Mapbox, OpenStreetMap/Nominatim) by detecting the active provider from Voxel settings and using the appropriate geocoding API.
+- **RSVP Widget Apostrophe Escaping**: Fixed apostrophes appearing as escaped characters (e.g., "Let\'s" instead of "Let's") in RSVP comments by adding proper `wp_unslash()` before sanitization.
+- **RSVP Widgets Cache-Proof**: Fixed RSVP count showing 0 and attendee list not appearing for logged-out users when page caching is enabled. Both widgets now fetch fresh data via AJAX after page load, ensuring cached pages display accurate counts and attendee lists.
 

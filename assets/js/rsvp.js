@@ -393,11 +393,177 @@
     }
 
     /**
+     * Cache-proof initialization - fetch fresh data via AJAX
+     * This ensures cached pages still show accurate counts and lists
+     */
+    function initCacheProofRefresh() {
+        // Refresh RSVP form widget counts
+        $('.vt-rsvp-form-wrapper[data-ajax-refresh="true"]').each(function() {
+            var $wrapper = $(this);
+            var postId = $wrapper.data('post-id');
+            var showCount = $wrapper.data('show-count') === 'yes';
+            var maxAttendees = parseInt($wrapper.data('max-attendees'), 10) || 0;
+            var countFormat = $wrapper.data('count-format') || '{current} / {max} attending';
+            var countFormatUnlimited = $wrapper.data('count-format-unlimited') || '{current} attending';
+
+            $.post(vtRsvp.ajaxUrl, {
+                action: 'vt_rsvp_get_widget_data',
+                nonce: vtRsvp.nonce,
+                post_id: postId
+            })
+            .done(function(response) {
+                if (response.success) {
+                    var data = response.data;
+
+                    // Update count display
+                    if (showCount) {
+                        var countDisplay = '';
+                        if (maxAttendees > 0) {
+                            countDisplay = countFormat
+                                .replace('{current}', data.count)
+                                .replace('{max}', maxAttendees);
+                        } else {
+                            countDisplay = countFormatUnlimited.replace('{current}', data.count);
+                        }
+
+                        var $countEl = $wrapper.find('.vt-rsvp-count');
+                        if ($countEl.length) {
+                            $countEl.text(countDisplay);
+                        }
+                    }
+                }
+            });
+        });
+
+        // Refresh attendee list widgets
+        $('.vt-attendee-list-wrapper[data-ajax-refresh="true"]').each(function() {
+            var $wrapper = $(this);
+            var postId = $wrapper.data('post-id');
+            var perPage = parseInt($wrapper.data('per-page'), 10) || 10;
+            var statuses = $wrapper.data('statuses') || 'approved';
+            var showAvatars = $wrapper.data('show-avatars') === 'yes';
+            var showComments = $wrapper.data('show-comments') === 'yes';
+            var showTimestamps = $wrapper.data('show-timestamps') === 'yes';
+            var showStatusBadge = $wrapper.data('show-status-badge') === 'yes';
+            var emptyMessage = $wrapper.data('empty-message') || 'No RSVPs yet.';
+            var statusLabels = {
+                approved: $wrapper.data('status-approved-label') || 'Approved',
+                pending: $wrapper.data('status-pending-label') || 'Pending',
+                rejected: $wrapper.data('status-rejected-label') || 'Rejected'
+            };
+
+            $.ajax({
+                url: vtRsvp.ajaxUrl,
+                type: 'GET',
+                data: {
+                    action: 'vt_rsvp_get_list',
+                    nonce: vtRsvp.nonce,
+                    post_id: postId,
+                    page: 1,
+                    per_page: perPage,
+                    statuses: statuses.split(',')
+                }
+            })
+            .done(function(response) {
+                if (response.success) {
+                    var data = response.data;
+                    var $list = $wrapper.find('.vt-attendee-list');
+                    var $empty = $wrapper.find('.vt-attendee-empty');
+
+                    // Update total count
+                    $wrapper.data('total', data.total);
+
+                    if (data.rsvps.length === 0) {
+                        // Show empty state
+                        if ($list.length) {
+                            $list.remove();
+                        }
+                        if (!$empty.length) {
+                            $wrapper.find('.vt-attendee-list-header').after(
+                                '<div class="vt-attendee-empty"><p>' + escapeHtml(emptyMessage) + '</p></div>'
+                            );
+                        }
+                        // Remove load more if present
+                        $wrapper.find('.vt-load-more-wrapper').remove();
+                    } else {
+                        // Remove empty state if present
+                        if ($empty.length) {
+                            $empty.remove();
+                        }
+
+                        // Create or update list
+                        if (!$list.length) {
+                            $list = $('<div class="vt-attendee-list"></div>');
+                            $wrapper.find('.vt-attendee-list-header').after($list);
+                        } else {
+                            $list.empty();
+                        }
+
+                        // Add items
+                        data.rsvps.forEach(function(rsvp) {
+                            var $item = createAttendeeItemFromData(rsvp, showAvatars, showComments, showTimestamps, showStatusBadge, statusLabels);
+                            $list.append($item);
+                        });
+
+                        // Handle load more button
+                        var $loadMore = $wrapper.find('.vt-load-more-wrapper');
+                        if (data.total > perPage) {
+                            if (!$loadMore.length) {
+                                $list.after('<div class="vt-load-more-wrapper"><button type="button" class="vt-load-more-btn">Load More</button></div>');
+                            }
+                        } else {
+                            $loadMore.remove();
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    /**
+     * Create attendee item HTML from data (for cache-proof refresh)
+     */
+    function createAttendeeItemFromData(rsvp, showAvatars, showComments, showTimestamps, showStatusBadge, statusLabels) {
+        var html = '<div class="vt-attendee-item" data-rsvp-id="' + rsvp.id + '">';
+        html += '<div class="vt-attendee-main">';
+
+        if (showAvatars && rsvp.avatar_url) {
+            html += '<img src="' + escapeHtml(rsvp.avatar_url) + '" alt="" class="vt-attendee-avatar">';
+        }
+
+        html += '<div class="vt-attendee-info">';
+        html += '<div class="vt-attendee-name-row">';
+        html += '<span class="vt-attendee-name">' + escapeHtml(rsvp.user_name) + '</span>';
+
+        if (showStatusBadge) {
+            var statusLabel = statusLabels[rsvp.status] || (rsvp.status.charAt(0).toUpperCase() + rsvp.status.slice(1));
+            html += '<span class="vt-status-badge vt-status-' + escapeHtml(rsvp.status) + '">';
+            html += escapeHtml(statusLabel);
+            html += '</span>';
+        }
+
+        html += '</div>';
+
+        if (showComments && rsvp.comment) {
+            html += '<div class="vt-attendee-comment">' + escapeHtml(rsvp.comment) + '</div>';
+        }
+
+        if (showTimestamps && rsvp.time_ago) {
+            html += '<div class="vt-attendee-timestamp">' + escapeHtml(rsvp.time_ago) + '</div>';
+        }
+
+        html += '</div></div></div>';
+
+        return $(html);
+    }
+
+    /**
      * Initialize on document ready
      */
     $(document).ready(function() {
         initRsvpForm();
         initAttendeeList();
+        initCacheProofRefresh();
     });
 
 })(jQuery);

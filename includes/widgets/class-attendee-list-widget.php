@@ -1136,7 +1136,16 @@ class Voxel_Toolkit_RSVP_Attendee_List_Widget extends \Elementor\Widget_Base {
              data-statuses="<?php echo esc_attr(implode(',', $statuses)); ?>"
              data-per-page="<?php echo esc_attr($items_per_page); ?>"
              data-page="1"
-             data-total="<?php echo esc_attr($total); ?>">
+             data-total="<?php echo esc_attr($total); ?>"
+             data-ajax-refresh="true"
+             data-show-avatars="<?php echo esc_attr($settings['show_avatars']); ?>"
+             data-show-comments="<?php echo esc_attr($settings['show_comments']); ?>"
+             data-show-timestamps="<?php echo esc_attr($settings['show_timestamps']); ?>"
+             data-show-status-badge="<?php echo esc_attr($settings['show_status_badge']); ?>"
+             data-empty-message="<?php echo esc_attr($settings['empty_message']); ?>"
+             data-status-approved-label="<?php echo esc_attr($settings['status_approved_label']); ?>"
+             data-status-pending-label="<?php echo esc_attr($settings['status_pending_label']); ?>"
+             data-status-rejected-label="<?php echo esc_attr($settings['status_rejected_label']); ?>">
 
             <div class="vt-attendee-list-header">
                 <?php if (!empty($settings['list_title'])) : ?>

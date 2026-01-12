@@ -893,7 +893,11 @@ class Voxel_Toolkit_RSVP_Form_Widget extends \Elementor\Widget_Base {
         <div class="vt-rsvp-form-wrapper"
              data-post-id="<?php echo esc_attr($post_id); ?>"
              data-require-approval="<?php echo esc_attr($settings['require_approval']); ?>"
-             data-max-attendees="<?php echo esc_attr($max_attendees); ?>">
+             data-max-attendees="<?php echo esc_attr($max_attendees); ?>"
+             data-show-count="<?php echo esc_attr($settings['show_count']); ?>"
+             data-count-format="<?php echo esc_attr($settings['count_format'] ?? '{current} / {max} attending'); ?>"
+             data-count-format-unlimited="<?php echo esc_attr($settings['count_format_unlimited'] ?? '{current} attending'); ?>"
+             data-ajax-refresh="true">
 
             <?php if (!empty($settings['form_description'])) : ?>
                 <div class="vt-rsvp-description"><?php echo esc_html($settings['form_description']); ?></div>
