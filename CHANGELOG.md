@@ -162,4 +162,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **AI Bot Action Defaults**: Fixed AI Bot action in VX widget showing "Ask AI" text when text field is blank and robot icon when no icon is set. Now shows nothing for both when not configured.
 - **AI Bot Panel Icons**: Fixed send and close icons disappearing in AI Bot panel by replacing icon fonts with inline SVG icons.
 - **Plan Filter Labels**: Added (VT) suffix to Membership Plan, Listing Plan, and User Role filters for identification. Fixed missing translation strings for "No Plan" and "Guest" labels. Added configurable label fields in filter settings for customization.
+- **Address Part Modifier Multi-Provider Support**: Fixed `address_part` modifier only working with Google Maps. Now supports all Voxel map providers (Google Maps, Mapbox, OpenStreetMap/Nominatim) by detecting the active provider from Voxel settings and using the appropriate geocoding API.
 
