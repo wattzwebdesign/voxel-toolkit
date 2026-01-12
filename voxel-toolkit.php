@@ -112,6 +112,9 @@ class Voxel_Toolkit {
         // Register saved search app events filter early (before Voxel caches events)
         add_filter('voxel/app-events/register', array($this, 'register_saved_search_events_if_enabled'), 99);
 
+        // Register add category app events filter early (before Voxel caches events)
+        add_filter('voxel/app-events/register', array($this, 'register_add_category_events_if_enabled'), 99);
+
         // Hook into Voxel's event save to also save SMS settings
         add_action('voxel_ajax_app_events.save_config', array($this, 'save_sms_event_settings'), 5);
 
@@ -352,6 +355,50 @@ class Voxel_Toolkit {
         foreach (\Voxel\Post_Type::get_voxel_types() as $post_type) {
             $event = new Voxel_Toolkit_Saved_Search_Event($post_type);
             $events[$event->get_key()] = $event;
+        }
+
+        return $events;
+    }
+
+    /**
+     * Register add category app events if enabled (called early via filter)
+     * This must run before Voxel caches events in Base_Event::get_all()
+     */
+    public function register_add_category_events_if_enabled($events) {
+        // Load settings class if not loaded
+        if (!class_exists('Voxel_Toolkit_Settings')) {
+            if (file_exists(VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-settings.php')) {
+                require_once VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/class-settings.php';
+            } else {
+                return $events;
+            }
+        }
+
+        $settings = Voxel_Toolkit_Settings::instance();
+        if (!$settings->is_function_enabled('add_category')) {
+            return $events;
+        }
+
+        // Check if Voxel Base_Event class exists
+        if (!class_exists('\Voxel\Events\Base_Event')) {
+            return $events;
+        }
+
+        // Load the Add Category file (contains event classes)
+        $file = VOXEL_TOOLKIT_PLUGIN_DIR . 'includes/functions/class-add-category.php';
+        if (file_exists($file) && !class_exists('Voxel_Toolkit_Term_Added_Event')) {
+            require_once $file;
+        }
+
+        // Register the three events
+        if (class_exists('Voxel_Toolkit_Term_Added_Event')) {
+            $events['voxel_toolkit/term:added'] = new \Voxel_Toolkit_Term_Added_Event();
+        }
+        if (class_exists('Voxel_Toolkit_Term_Pending_Event')) {
+            $events['voxel_toolkit/term:pending'] = new \Voxel_Toolkit_Term_Pending_Event();
+        }
+        if (class_exists('Voxel_Toolkit_Term_Approved_Event')) {
+            $events['voxel_toolkit/term:approved'] = new \Voxel_Toolkit_Term_Approved_Event();
         }
 
         return $events;
