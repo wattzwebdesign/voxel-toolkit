@@ -161,18 +161,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Profile Progress CSS Loading**: Fixed profile-progress.css loading on all pages even when the function is not active. CSS now only loads when widget or shortcode is used.
 - **AI Bot Action Defaults**: Fixed AI Bot action in VX widget showing "Ask AI" text when text field is blank and robot icon when no icon is set. Now shows nothing for both when not configured.
 - **AI Bot Panel Icons**: Fixed send and close icons disappearing in AI Bot panel by replacing icon fonts with inline SVG icons.
-
-## [1.6.0.1] - 2026-01-05
-
-### Fixed
-- **AI Functions Settings**: Fixed enabling AI Post Summary or AI Bot without API key configured causing all settings tabs to appear blank
-- **AI Bot Avatar Upload**: Fixed upload button not working in AI Bot settings
-- **Saved Search**: Fixed infinite page refresh loop when loading a saved search
-- **Promotion Create Form**: Fixed currency symbol display to match site's configured currency instead of hardcoded $
-- **Save Search**: Fixed save button in popup not working
-
-### Added
-- **AI Bot Panel Behavior**: New setting to choose between "Push content" (default) or "Overlay content" when panel opens
-- **Load Search Button Styling**: Added full style controls for Load Search button (alignment, icon size, height, border radius, typography, colors, padding, margin, border, box shadow, hover states)
-- **Load Search Button Width**: Added button width control for Load Search button
+- **Plan Filter Labels**: Added (VT) suffix to Membership Plan, Listing Plan, and User Role filters for identification. Fixed missing translation strings for "No Plan" and "Guest" labels. Added configurable label fields in filter settings for customization.
 
