@@ -22,8 +22,9 @@ class Membership_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
 
     protected $props = [
         'type' => 'membership-plan',
-        'label' => 'Membership Plan',
+        'label' => 'Membership Plan (VT)',
         'placeholder' => 'Select membership plan(s)',
+        'guest_label' => '',
     ];
 
     /**
@@ -42,6 +43,13 @@ class Membership_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
             'placeholder' => $this->get_placeholder_model(),
             'key' => $this->get_model('key', ['classes' => 'x-col-6']),
             'icon' => $this->get_icon_model(),
+            'guest_label' => function() { ?>
+                <div class="ts-form-group x-col-6">
+                    <label><?php esc_html_e('Guest Label', 'voxel-toolkit'); ?></label>
+                    <input type="text" v-model="filter.guest_label" placeholder="<?php esc_attr_e('Guest', 'voxel-toolkit'); ?>">
+                    <p class="ts-description"><?php esc_html_e('Label for users without a membership plan', 'voxel-toolkit'); ?></p>
+                </div>
+            <?php },
         ];
     }
 
@@ -52,9 +60,10 @@ class Membership_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
         $choices = [];
 
         // Add Guest plan first
+        $guest_label = $this->props['guest_label'] ?? '';
         $choices['default'] = [
             'key' => 'default',
-            'label' => 'Guest',
+            'label' => !empty($guest_label) ? $guest_label : __('Guest', 'voxel-toolkit'),
         ];
 
         // Get all active (non-archived) membership plans

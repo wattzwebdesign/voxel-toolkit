@@ -24,7 +24,7 @@ class User_Role_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
 
     protected $props = [
         'type' => 'user-role',
-        'label' => 'User Role',
+        'label' => 'User Role (VT)',
         'placeholder' => '',
     ];
 

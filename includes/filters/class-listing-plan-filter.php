@@ -22,8 +22,9 @@ class Listing_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
 
     protected $props = [
         'type' => 'listing-plan',
-        'label' => 'Listing Plan',
+        'label' => 'Listing Plan (VT)',
         'placeholder' => 'Select listing plan(s)',
+        'no_plan_label' => '',
     ];
 
     /**
@@ -42,6 +43,13 @@ class Listing_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
             'placeholder' => $this->get_placeholder_model(),
             'key' => $this->get_model('key', ['classes' => 'x-col-6']),
             'icon' => $this->get_icon_model(),
+            'no_plan_label' => function() { ?>
+                <div class="ts-form-group x-col-6">
+                    <label><?php esc_html_e('No Plan Label', 'voxel-toolkit'); ?></label>
+                    <input type="text" v-model="filter.no_plan_label" placeholder="<?php esc_attr_e('No Plan', 'voxel-toolkit'); ?>">
+                    <p class="ts-description"><?php esc_html_e('Label for listings without a plan', 'voxel-toolkit'); ?></p>
+                </div>
+            <?php },
         ];
     }
 
@@ -52,9 +60,10 @@ class Listing_Plan_Filter extends \Voxel\Post_Types\Filters\Base_Filter {
         $choices = [];
 
         // Add "No Plan" option first (for listings without a plan)
+        $no_plan_label = $this->props['no_plan_label'] ?? '';
         $choices['none'] = [
             'key' => 'none',
-            'label' => 'No Plan',
+            'label' => !empty($no_plan_label) ? $no_plan_label : __('No Plan', 'voxel-toolkit'),
         ];
 
         // Get paid listings settings from options table
