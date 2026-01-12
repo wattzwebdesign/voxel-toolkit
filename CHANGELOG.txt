@@ -1,0 +1,165 @@
+# Changelog
+
+All notable changes to Voxel Toolkit will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.6.1] - 2026-01-06
+
+### Added
+- **Coupon Manager Widget**: New Elementor widget for creating and managing Stripe coupons. Features include:
+  - Create percent-off or fixed-amount discount coupons
+  - Set duration (once, repeating, forever)
+  - Optional restrictions: max redemptions, expiration date, minimum order value, limit to specific customer email, first-time customers only
+  - View list of coupons created by the current user
+  - Delete coupons
+  - Automatic Stripe provider check (widget only displays when Stripe is enabled)
+  - Full Elementor styling controls for form, buttons, coupon cards, promo codes, expired states, and delete button
+- **Open Now Search Order**: New search order option to sort listings by open/closed status based on work hours field. Features include:
+  - Open listings appear first (or closed first if reversed)
+  - Configurable work hours field selector
+  - Timezone modes: site timezone or individual post timezone
+- **Pin Timeline Post**: Allow post authors to pin a timeline post to the top of their post's timeline feed. Features include:
+  - "Pin to Top" / "Unpin" action in post dropdown menu (visible only to parent post author)
+  - Pinned badge displayed on pinned posts
+  - Pin icon next to the actions button on pinned posts
+  - Pinned post automatically moves to top of timeline (below filters)
+  - Per-widget toggle to enable/disable pin functionality in Timeline widget settings
+  - Styling controls in Timeline Style Kit widget for border color, badge (alignment, background, text color, typography, padding, border radius), and pin icon (color, size)
+- **Checklist Field**: New custom post field type for creating checklists with title (optional) and description per item. Features include:
+  - Configurable permissions (post author only or any logged-in user)
+  - Check scope options (global shared or per-user tracking)
+  - Drag-and-drop reordering of items
+  - Timestamp recording when items are checked
+  - App event triggered on item check
+  - Dynamic tags for completion percentage
+  - Full Elementor widget for frontend display with progress bar, styling controls
+  - Create Post (VX) widget styling controls for checklist cards, inputs, icons, and buttons
+- **AI Bot Location Awareness**: AI Bot now understands "near me" queries using browser geolocation, visitor location cookie, or IP-based fallback
+- **AI Bot Taxonomy Filtering**: Enhanced search with complex taxonomy filters (contains, doesn't contain, has, does not have, empty, not empty)
+- **AI Bot Comprehensive Search**: Added `_search_all` filter for searching across all fields, taxonomies, and content
+- **AI Bot Quick Actions Toggle**: New setting to enable/disable quick action buttons (Directions, Call, View) below result cards
+- **AI Bot Thinking Text**: New setting to customize the "AI is thinking" loading message
+- **AI Bot Chat Window Mode**: New display mode option for Messenger Integration. When enabled, clicking the AI Bot circle in messenger opens a chat window instead of the sidebar panel:
+  - Chat window matches messenger chat styling
+  - Includes welcome message, message bubbles, and result cards
+  - Conversation persists within the chat window session
+- **AI Response Language**: New global setting in AI Settings tab to configure the response language for all AI features (29 languages supported). Affects:
+  - AI Bot responses and explanations
+  - AI Post Summary generation
+  - Timeline Reply Summary
+  - Synonym Search generation
+  - AI Review Summary
+- **Telnyx SMS Provider**: New SMS provider option with API v2 Bearer token authentication
+- **Solapi SMS Provider**: New SMS provider for Korean market with HMAC-SHA256 authentication
+- **External Link Warning Button Styling**: Added button styling controls for the External Link Warning modal:
+  - Border radius control (0-50px)
+  - Border width control (0-10px)
+  - Individual border colors for Continue and Cancel buttons
+  - Sticky live preview that follows scroll in settings page
+- **Saved Search Widget Styling**: Comprehensive styling enhancements for the Saved Search widget:
+  - Template selector: Detailed (filter tags) or Simple (filter summary)
+  - Show/hide controls for Search, Notification, and Delete action buttons
+  - Filter Tags styling: border width/color/style, 4-corner border radius, gap, icon color/size, box shadow
+  - Filter Summary styling section for Simple template
+  - Header/Footer divider color and thickness controls
+- **Visitor Location Latitude/Longitude Tags**: New dynamic tags for visitor coordinates:
+  - `@site.visitor.latitude` - Visitor's latitude
+  - `@site.visitor.longitude` - Visitor's longitude
+- **Schedule Posts**: Allow users to schedule posts for future publication from the Create Post form. Features include:
+  - Toggle to enable/disable in Create Post (VX) widget settings
+  - Date picker using Voxel's native Pikaday calendar
+  - Time input for precise scheduling
+  - Uses WordPress native scheduling (post_status = future)
+  - Customizable submit button text when scheduling (default: "Schedule")
+  - Customizable success message when scheduling (default: "Your post has been scheduled.")
+  - Only works when posts would be published (not pending)
+- **Post Relation Search**: Adds searchable dropdown to post relations filter in search forms. Features include:
+  - AJAX-powered search with debouncing (300ms delay)
+  - Hybrid search: client-side for short terms, server-side for longer queries
+  - Support for "any" (all posts) and "current_user" (user's posts only) scopes
+  - Post logos/avatars displayed in dropdown selections
+  - "Load more" pagination for large result sets
+- **Open New Chats in Window**: New Messenger setting to open message actions in chat windows. Features include:
+  - Toggle in Messenger Settings to enable the feature
+  - Intercepts "Message Post" and "Message Author" action clicks
+  - Opens a messenger-style chat window on the current page instead of navigating to inbox
+  - Displays post/user name and logo/avatar in chat header
+  - Users can compose and send messages directly from the chat window
+- **Unread Notifications/Messages Dynamic Tags**: New dynamic tags for user notification counts:
+  - `@user(unread_notifications)` - Number of unread notifications
+  - `@user(unread_messages)` - Number of unread direct messages
+- **Title Notification Badge**: New function to show unread counts in browser tab. Features include:
+  - Displays combined count in page title (e.g., "(3) My Site")
+  - Real-time updates via configurable polling interval (default 15 seconds)
+  - Title flashing when new notifications arrive (when tab unfocused)
+  - Settings for poll interval, include notifications/messages, custom flash text
+  - Only active for logged-in users
+- **Online Status**: Display online/offline status indicators for users. Features include:
+  - Green dot indicator for online users (active within timeout period)
+  - Automatic heartbeat tracking with configurable timeout (default: 3 minutes)
+  - Per-location toggles: Dashboard Menu, Voxel Inbox, VT Messenger Widget, Admin User Columns
+  - Dynamic tags: `@user(online_status)`, `@user(is_online)`, `@user(last_seen)` and same for `@author`
+  - Visibility rules: "User is online", "Author is online"
+  - Admin columns: Online Status badge and Last Seen in Users list
+  - Only visible to logged-in users
+- **Route Planner Travel Mode Toggles**: Individual toggles to enable/disable each travel mode button (Driving, Walking, Cycling, Transit)
+- **Bulk Resize (VT)**: Server-side batch image optimization tool under Media > Bulk Resize. Features include:
+  - Filter options: Not Yet Processed, Oversized Only, or All Images
+  - Live progress tracking with processed count, resized count, and bytes saved
+  - Percentage saved display per image and average reduction summary
+  - Media library column showing optimization status and savings
+  - Memory-safe batch processing with adaptive batch sizing
+  - Reset processed status option to re-optimize images
+- **Image Optimization**: Client-side image optimization with WebP conversion, watermarks, and SEO metadata. Features include:
+  - Optimization modes: Convert all to WebP, JPG only, PNG only, both, or keep originals
+  - Configurable output quality (1-100%)
+  - Global watermark support: text or PNG image with position and scale controls
+  - SEO filename renaming: Post title + counter or keep original
+  - Auto-generated alt text with multiple formats (title, counter, date combinations)
+  - Max file size limit with rejection for oversized files
+  - Max width/height with proportional resizing
+  - Disable WordPress "-scaled" image creation
+  - Safari WebP support via WASM encoder (loaded on-demand from CDN)
+  - Toast notifications showing optimization progress and savings
+  - Show/hide toast option in User Interface settings
+- **Timeline Photos Widget Sources**: Expanded Timeline Photos widget to support multiple timeline sources:
+  - Current Post Reviews (existing default)
+  - Current Post Wall
+  - Current Post Timeline
+  - Current Author Timeline
+  - Shortcode now accepts `source` attribute
+- **AI Bot Embed Widget**: New Elementor widget to embed AI chatbot directly on pages (not floating panel). Features include:
+  - Embedded chat interface with header, messages area, and input
+  - Pulls welcome message, placeholder, thinking text, and suggested queries from AI Bot global settings
+  - Full styling controls for container, header, messages, and input area
+  - Auto-enabled when AI Bot function is active
+- **AI Bot Panel Width Setting**: Configurable width for sidebar panel and overlay modes (300-800px) in AI Bot Appearance settings
+- **AI Bot Suggested Questions**: Increased suggested questions slots from 3 to 10
+
+### Fixed
+- **SMS Notifications for Saved Search**: Fixed SMS notifications not sending for saved search matches. Events now register early before Voxel caches them, SMS config reads from correct storage, and phone numbers properly include country code from settings.
+- **Promotion Create Form Preview**: Fixed preview mode showing on frontend at every step. Preview now only displays in the Elementor editor.
+- **AI Bot Post Type Matching**: Fixed AI using plural post type names (e.g., "members") instead of exact schema keys (e.g., "member")
+- **Compare Action Improvements**: Fixed multiple issues with the Compare action in Edit Actions widget:
+  - Blank text field now shows nothing instead of defaulting to "Compare"
+  - Tooltips now work correctly (using Voxel's tooltip-inactive/tooltip-active pattern)
+  - Active state now uses configured icon instead of showing a checkmark
+  - Added Active State controls (text, icon, tooltip) matching Save to Collection action
+  - Added Initial State icon/text controls so icon stays consistent between states
+  - Added customizable notification messages in settings (Different Post Type, Max Posts Reached)
+- **Recurring Events Date Display**: Fixed partial date formats not updating for recurring event occurrences. Now supports all PHP date format characters (d, j, D, l, F, M, m, n, Y, y, S, etc.) so individual day numbers, month names, weekday names, and other partial formats correctly update for each occurrence.
+- **Add Category with Custom Popup Style**: Fixed "Add Category" button not appearing in taxonomy popups when "Popups: Custom style" is enabled in the Create Post widget. Improved form group detection for teleported popups.
+- **Visitor Location Tags Output**: Fixed visitor location dynamic tags outputting HTML span elements. Tags now output plain text only. Also updated full location format to include City, State, and Country.
+- **Temporary Login Configure Button**: Fixed Configure button linking to the correct Users > Temp Logins admin page.
+- **Temporary Login Redirect URL**: Fixed custom redirect URLs not working after login. Now properly handles relative URLs and same-site redirects.
+- **Configure Button Navigation**: Fixed Configure button not navigating to correct settings tab when clicked immediately after enabling a function.
+- **AI Bot Panel Behavior Description**: Fixed unclear description text for Push/Overlay panel behavior options.
+- **Messenger Duplicate Circles**: Fixed persistent admin chat and AI Bot circles replicating multiple times. Added initialization flags and improved circle preservation during chat list updates.
+- **Messenger Placeholder Color**: Fixed input placeholder color not applying from Elementor style controls. Added default color and proper CSS specificity.
+- **Advanced Phone Input Full Width**: Fixed Advanced Phone Input not respecting full width or column width settings. Phone field now properly expands to match other form fields.
+- **Profile Progress CSS Loading**: Fixed profile-progress.css loading on all pages even when the function is not active. CSS now only loads when widget or shortcode is used.
+- **AI Bot Action Defaults**: Fixed AI Bot action in VX widget showing "Ask AI" text when text field is blank and robot icon when no icon is set. Now shows nothing for both when not configured.
+- **AI Bot Panel Icons**: Fixed send and close icons disappearing in AI Bot panel by replacing icon fonts with inline SVG icons.
+
