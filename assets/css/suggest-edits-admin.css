@@ -298,6 +298,14 @@
     object-fit: cover;
 }
 
+.vt-comment-box {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 12px;
+    border-radius: 3px;
+    word-wrap: break-word;
+}
+
 .vt-modal-footer {
     padding: 20px;
     border-top: 1px solid #ddd;

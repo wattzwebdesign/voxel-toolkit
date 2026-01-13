@@ -615,6 +615,15 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
                                         </div>
                                     </div>
                                 <?php endif; ?>
+
+                                <?php if (!empty($suggestion->suggester_comment)): ?>
+                                    <div class="vt-suggester-comment-display">
+                                        <label><?php _e('Comment:', 'voxel-toolkit'); ?></label>
+                                        <div class="vt-comment-text">
+                                            <?php echo esc_html($suggestion->suggester_comment); ?>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
                             </div>
 
                             <?php if ($suggestion->status === 'pending'): ?>

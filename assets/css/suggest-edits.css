@@ -6,7 +6,7 @@
    Suggest Edit Button
    =================================== */
 .vt-suggest-edits-wrapper {
-    margin: 20px 0;
+    margin: 0;
 }
 
 .vt-suggest-edit-btn {
@@ -452,6 +452,43 @@ body.vt-modal-open {
     text-align: center;
 }
 
+/* Suggester Comment Field */
+.vt-suggester-comment {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid #e1e5e9;
+}
+
+.vt-suggester-comment > label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 500;
+    color: #1e293b;
+    font-size: 14px;
+}
+
+.vt-comment-textarea {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 14px;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: inherit;
+}
+
+.vt-comment-textarea:focus {
+    outline: none;
+    border-color: #1e3a5f;
+    box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+}
+
+.vt-comment-textarea::placeholder {
+    color: #94a3b8;
+}
+
 /* Form Messages */
 .vt-form-messages {
     margin-top: 15px;
@@ -736,6 +773,30 @@ body.vt-modal-open {
     object-fit: cover;
     border-radius: 6px;
     border: 1px solid #e1e5e9;
+}
+
+/* Suggester Comment Display in Pending Suggestions */
+.vt-suggester-comment-display {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e1e5e9;
+}
+
+.vt-suggester-comment-display label {
+    display: block;
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.vt-suggester-comment-display .vt-comment-text {
+    background: #f8f9fa;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.5;
 }
 
 .vt-suggestion-actions {

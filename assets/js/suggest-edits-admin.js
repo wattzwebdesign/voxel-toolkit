@@ -79,6 +79,14 @@
                 $('#modal-proof-images-row').hide();
             }
 
+            // Suggester comment
+            if (data.suggesterComment && data.suggesterComment.trim() !== '') {
+                $('#modal-comment').text(data.suggesterComment);
+                $('#modal-comment-row').show();
+            } else {
+                $('#modal-comment-row').hide();
+            }
+
             // Suggester
             var suggesterText = data.suggesterName;
             if (data.suggesterUserId == 0) {

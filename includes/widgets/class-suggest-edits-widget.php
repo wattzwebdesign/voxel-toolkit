@@ -181,6 +181,43 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'enable_comment_field',
+            [
+                'label' => __('Enable Comment Field', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => '',
+                'description' => __('Allow users to add a comment with their suggestions', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'comment_field_label',
+            [
+                'label' => __('Comment Field Label', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Additional Comments', 'voxel-toolkit'),
+                'condition' => [
+                    'enable_comment_field' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'comment_field_placeholder',
+            [
+                'label' => __('Comment Field Placeholder', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Add any additional context or notes...', 'voxel-toolkit'),
+                'condition' => [
+                    'enable_comment_field' => 'yes',
+                ],
+            ]
+        );
+
         // Translation Section
         $this->add_control(
             'translations_heading',
@@ -636,6 +673,7 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                     'ui-step',
                     'ui-heading',
                     'ui-image',
+                    'team-members-vt',
                 );
 
                 // Specific field keys to exclude (logo, cover, gallery, event_date)
@@ -1001,6 +1039,13 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                                 <div class="vt-upload-progress-bar"></div>
                             </div>
                             <span class="vt-upload-progress-text">Uploading...</span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($settings['enable_comment_field'] === 'yes'): ?>
+                        <div class="vt-suggester-comment">
+                            <label><?php echo esc_html($settings['comment_field_label'] ?: __('Additional Comments', 'voxel-toolkit')); ?></label>
+                            <textarea class="vt-comment-textarea" name="suggester_comment" rows="3" placeholder="<?php echo esc_attr($settings['comment_field_placeholder'] ?: __('Add any additional context or notes...', 'voxel-toolkit')); ?>"></textarea>
                         </div>
                     <?php endif; ?>
 

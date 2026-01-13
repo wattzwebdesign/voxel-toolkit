@@ -548,6 +548,10 @@
             formData.append('suggester_email', suggesterEmail);
             formData.append('permanently_closed', isPermanentlyClosed ? 1 : 0);
 
+            // Get suggester comment if field exists
+            var suggesterComment = $modal.find('.vt-comment-textarea').val() || '';
+            formData.append('suggester_comment', suggesterComment);
+
             // Add uploaded files
             console.log('VT Frontend: Adding ' + pendingUploads.length + ' files to form data');
             pendingUploads.forEach(function(upload, index) {

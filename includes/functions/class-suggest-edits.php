@@ -67,16 +67,11 @@ class Voxel_Toolkit_Suggest_Edits {
     }
 
     /**
-     * Create database table if it doesn't exist
+     * Create database table if it doesn't exist or update schema
      */
     public function maybe_create_table() {
-        global $wpdb;
-
-        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$this->table_name}'");
-
-        if ($table_exists != $this->table_name) {
-            $this->create_table();
-        }
+        // Always run create_table to allow dbDelta to add any new columns
+        $this->create_table();
     }
 
     /**
@@ -97,6 +92,7 @@ class Voxel_Toolkit_Suggest_Edits {
             suggester_email varchar(255),
             suggester_name varchar(255),
             proof_images longtext,
+            suggester_comment longtext,
             is_incorrect tinyint(1) DEFAULT 0,
             status varchar(20) DEFAULT 'pending',
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
@@ -382,7 +378,7 @@ class Voxel_Toolkit_Suggest_Edits {
                             }
 
                             $data_attrs = sprintf(
-                                'data-suggestion-id="%s" data-post-title="%s" data-field-key="%s" data-current-value="%s" data-suggested-value="%s" data-is-incorrect="%s" data-suggester-name="%s" data-suggester-email="%s" data-suggester-user-id="%s" data-proof-images="%s" data-post-id="%s" data-date="%s" data-status="%s"',
+                                'data-suggestion-id="%s" data-post-title="%s" data-field-key="%s" data-current-value="%s" data-suggested-value="%s" data-is-incorrect="%s" data-suggester-name="%s" data-suggester-email="%s" data-suggester-user-id="%s" data-proof-images="%s" data-post-id="%s" data-date="%s" data-status="%s" data-suggester-comment="%s"',
                                 esc_attr($suggestion->id),
                                 esc_attr($suggestion->post_title),
                                 esc_attr($suggestion->field_key),
@@ -395,7 +391,8 @@ class Voxel_Toolkit_Suggest_Edits {
                                 esc_attr(json_encode($image_urls)),
                                 esc_attr($suggestion->post_id),
                                 esc_attr(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($suggestion->created_at))),
-                                esc_attr($suggestion->status)
+                                esc_attr($suggestion->status),
+                                esc_attr($suggestion->suggester_comment ?? '')
                             );
                             ?>
                             <tr data-suggestion-id="<?php echo esc_attr($suggestion->id); ?>" class="suggestion-row status-<?php echo esc_attr($suggestion->status); ?>">
@@ -530,6 +527,10 @@ class Voxel_Toolkit_Suggest_Edits {
                             <strong><?php _e('Proof Images:', 'voxel-toolkit'); ?></strong>
                             <div id="modal-proof-images" class="vt-proof-images"></div>
                         </div>
+                        <div class="vt-detail-row" id="modal-comment-row" style="display: none;">
+                            <strong><?php _e('Comment:', 'voxel-toolkit'); ?></strong>
+                            <div id="modal-comment" class="vt-comment-box"></div>
+                        </div>
                         <div class="vt-detail-row">
                             <strong><?php _e('Submitted By:', 'voxel-toolkit'); ?></strong>
                             <span id="modal-suggester"></span>
@@ -641,6 +642,9 @@ class Voxel_Toolkit_Suggest_Edits {
         // Encode uploaded images for storage (needed for both regular and permanently_closed suggestions)
         $proof_images_json = !empty($uploaded_image_ids) ? json_encode($uploaded_image_ids) : '';
 
+        // Get suggester comment
+        $suggester_comment = isset($_POST['suggester_comment']) ? sanitize_textarea_field(wp_unslash($_POST['suggester_comment'])) : '';
+
         // If permanently closed is marked, create a special suggestion entry
         if ($permanently_closed) {
             $result = $wpdb->insert(
@@ -654,10 +658,11 @@ class Voxel_Toolkit_Suggest_Edits {
                     'suggester_email' => $suggester_email,
                     'suggester_name' => $suggester_name,
                     'proof_images' => $proof_images_json,
+                    'suggester_comment' => $suggester_comment,
                     'is_incorrect' => 0,
                     'status' => 'pending',
                 ),
-                array('%d', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%d', '%s')
+                array('%d', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%d', '%s')
             );
 
             if ($result) {
@@ -778,10 +783,11 @@ class Voxel_Toolkit_Suggest_Edits {
                     'suggester_email' => $suggester_email,
                     'suggester_name' => $suggester_name,
                     'proof_images' => $proof_images_json,
+                    'suggester_comment' => $suggester_comment,
                     'is_incorrect' => $is_incorrect,
                     'status' => 'pending',
                 ),
-                array('%d', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%d', '%s')
+                array('%d', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%d', '%s')
             );
 
             if ($result) {
