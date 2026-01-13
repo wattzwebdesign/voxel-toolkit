@@ -137,6 +137,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Auto-enabled when AI Bot function is active
 - **AI Bot Panel Width Setting**: Configurable width for sidebar panel and overlay modes (300-800px) in AI Bot Appearance settings
 - **AI Bot Suggested Questions**: Increased suggested questions slots from 3 to 10
+- **Suggest Edits Comment Field**: Optional comment field for users to provide additional context with edit suggestions. Features include:
+  - Toggle to enable/disable comment field in widget settings
+  - Customizable label and placeholder text
+  - Comment displayed in Pending Suggestions widget on frontend
+  - Comment displayed in admin Suggested Edits modal
+  - Team Members field excluded from field selector dropdown
 
 ### Fixed
 - **Promotion Create Form Preview**: Fixed preview mode showing on frontend at every step. Preview now only displays in the Elementor editor.
