@@ -143,6 +143,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Comment displayed in Pending Suggestions widget on frontend
   - Comment displayed in admin Suggested Edits modal
   - Team Members field excluded from field selector dropdown
+- **Saved Search Widget Hide When Empty**: New option to completely hide the widget when user has no saved searches. Features include:
+  - "Hide When Empty" toggle in widget settings
+  - "User has saved searches" visibility rule for use with any Elementor element
 
 ### Fixed
 - **Promotion Create Form Preview**: Fixed preview mode showing on frontend at every step. Preview now only displays in the Elementor editor.
