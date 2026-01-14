@@ -265,34 +265,30 @@ class Voxel_Toolkit_Column_Renderer {
     private function render_view_counts($post_id) {
         $view_data = get_post_meta($post_id, 'voxel:view_counts', true);
 
-        if (empty($view_data)) {
-            return $this->empty_value();
-        }
-
-        // Decode if JSON string
-        if (is_string($view_data)) {
-            $view_data = json_decode($view_data, true);
-        }
-
-        if (!is_array($view_data)) {
-            return $this->empty_value();
-        }
-
         // Get total views (all time)
         $total_views = 0;
         $views_30d = 0;
 
-        if (isset($view_data['views']['all'])) {
-            $total_views = intval($view_data['views']['all']);
-        }
+        if (!empty($view_data)) {
+            // Decode if JSON string
+            if (is_string($view_data)) {
+                $view_data = json_decode($view_data, true);
+            }
 
-        if (isset($view_data['views']['30d'])) {
-            $views_30d = intval($view_data['views']['30d']);
+            if (is_array($view_data)) {
+                if (isset($view_data['views']['all'])) {
+                    $total_views = intval($view_data['views']['all']);
+                }
+
+                if (isset($view_data['views']['30d'])) {
+                    $views_30d = intval($view_data['views']['30d']);
+                }
+            }
         }
 
         // Build output showing total and 30d
         $output = '<span class="vt-ac-view-counts">';
-        $output .= '<span class="vt-ac-views-total" title="' . esc_attr__('Total views', 'voxel-toolkit') . '">';
+        $output .= '<span class="vt-ac-views-total' . ($total_views === 0 ? ' vt-ac-muted' : '') . '" title="' . esc_attr__('Total views', 'voxel-toolkit') . '">';
         $output .= number_format_i18n($total_views);
         $output .= '</span>';
 

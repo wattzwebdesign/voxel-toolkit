@@ -157,6 +157,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Recurring Events Date Display**: Fixed partial date formats not updating for recurring event occurrences. Now supports all PHP date format characters (d, j, D, l, F, M, m, n, Y, y, S, etc.) so individual day numbers, month names, weekday names, and other partial formats correctly update for each occurrence.
 - **Add Category with Custom Popup Style**: Fixed "Add Category" button not appearing in taxonomy popups when "Popups: Custom style" is enabled in the Create Post widget. Improved form group detection for teleported popups.
 - **Visitor Location Tags Output**: Fixed visitor location dynamic tags outputting HTML span elements. Tags now output plain text only. Also updated full location format to include City, State, and Country.
+- **Admin Columns View Count**: Fixed View Counts column showing empty placeholder for posts that haven't been viewed yet. Column now displays "0" instead of requiring a frontend view to initialize the count.
 - **Temporary Login Configure Button**: Fixed Configure button linking to the correct Users > Temp Logins admin page.
 - **Temporary Login Redirect URL**: Fixed custom redirect URLs not working after login. Now properly handles relative URLs and same-site redirects.
 - **Configure Button Navigation**: Fixed Configure button not navigating to correct settings tab when clicked immediately after enabling a function.
