@@ -85,6 +85,19 @@ class Voxel_Toolkit_Saved_Search {
 
         // Register assets
         add_action('wp_enqueue_scripts', array($this, 'register_assets'), 5);
+
+        // Register visibility rules
+        add_filter('voxel/dynamic-data/visibility-rules', array($this, 'register_visibility_rules'));
+    }
+
+    /**
+     * Register visibility rules with Voxel
+     */
+    public function register_visibility_rules($rules) {
+        if (class_exists('\Voxel\Dynamic_Data\Visibility_Rules\Base_Visibility_Rule')) {
+            $rules['user:has_saved_searches'] = 'Voxel_Toolkit_User_Has_Saved_Searches_Rule';
+        }
+        return $rules;
     }
 
     /**
@@ -129,6 +142,32 @@ class Voxel_Toolkit_Saved_Search {
         dbDelta($sql);
 
         update_option('vt_saved_search_table_version', static::$table_version);
+    }
+
+    /**
+     * Check if a user has any saved searches
+     *
+     * @param int $user_id User ID to check
+     * @return bool True if user has saved searches, false otherwise
+     */
+    public static function user_has_saved_searches($user_id = null) {
+        if ($user_id === null) {
+            $user_id = get_current_user_id();
+        }
+
+        if (!$user_id) {
+            return false;
+        }
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'vt_saved_searches';
+
+        $count = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM {$table_name} WHERE user_id = %d",
+            $user_id
+        ));
+
+        return intval($count) > 0;
     }
 
     /**
@@ -1798,6 +1837,33 @@ class Voxel_Toolkit_Saved_Search {
                     $e->getMessage()
                 ));
             }
+        }
+    }
+}
+
+/**
+ * User Has Saved Searches Visibility Rule
+ *
+ * Checks if the current logged-in user has any saved searches
+ */
+if (class_exists('\Voxel\Dynamic_Data\Visibility_Rules\Base_Visibility_Rule')) {
+
+    class Voxel_Toolkit_User_Has_Saved_Searches_Rule extends \Voxel\Dynamic_Data\Visibility_Rules\Base_Visibility_Rule {
+
+        public function get_type(): string {
+            return 'user:has_saved_searches';
+        }
+
+        public function get_label(): string {
+            return _x('User has saved searches', 'visibility rules', 'voxel-toolkit');
+        }
+
+        public function evaluate(): bool {
+            if (!is_user_logged_in()) {
+                return false;
+            }
+
+            return Voxel_Toolkit_Saved_Search::user_has_saved_searches();
         }
     }
 }

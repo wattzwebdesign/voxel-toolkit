@@ -172,6 +172,18 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'vt_ss_hide_when_empty',
+            [
+                'label' => __('Hide When Empty', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => '',
+                'return_value' => 'yes',
+                'separator' => 'before',
+                'description' => __('Hide the widget completely if user has no saved searches', 'voxel-toolkit'),
+            ]
+        );
+
         $this->end_controls_section();
 
         // Labels Section
@@ -1008,6 +1020,12 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
         if (!is_user_logged_in()) {
             printf('<p class="ts-restricted">%s</p>', __('You must be logged in to view this content.', 'voxel-toolkit'));
             return;
+        }
+
+        // Check if widget should be hidden when user has no saved searches
+        $hide_when_empty = $this->get_settings_for_display('vt_ss_hide_when_empty') === 'yes';
+        if ($hide_when_empty && !Voxel_Toolkit_Saved_Search::user_has_saved_searches()) {
+            return; // Don't render anything
         }
 
         $config = [
