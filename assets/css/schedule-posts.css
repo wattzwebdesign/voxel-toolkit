@@ -68,6 +68,16 @@ div.vt-schedule-field > label {
     box-shadow: none !important;
 }
 
+/* Calendar Navigation Arrows - Add padding */
+.vt-schedule-calendar .pika-title {
+    padding: 0 10px;
+}
+
+.vt-schedule-calendar .pika-prev,
+.vt-schedule-calendar .pika-next {
+    margin: 0 5px;
+}
+
 /* Time Input - Use Voxel's ts-filter class */
 .vt-schedule-field .vt-schedule-time {
     height: auto;

@@ -312,6 +312,16 @@ class Voxel_Toolkit_Schedule_Posts {
             return;
         }
 
+        // Get Pikaday URLs from Voxel theme
+        $pikaday_js = get_template_directory_uri() . '/assets/vendor/pikaday/pikaday.prod.js';
+        $pikaday_css = get_template_directory_uri() . '/assets/vendor/pikaday/pikaday.prod.css';
+
+        // Output Pikaday CSS if not already loaded
+        ?>
+        <link rel="stylesheet" href="<?php echo esc_url($pikaday_css); ?>" media="all">
+        <script src="<?php echo esc_url($pikaday_js); ?>"></script>
+        <?php
+
         $widgets_data = array();
         foreach ($this->schedule_widgets as $widget_id => $settings) {
             $widgets_data[$widget_id] = $settings;
@@ -546,21 +556,37 @@ class Voxel_Toolkit_Schedule_Posts {
                 const originalBtnText = submitBtn.textContent.trim();
                 const scheduleBtnText = settings.button_text || 'Schedule';
 
-                // Check if Pikaday is available
-                if (typeof Pikaday !== 'undefined') {
-                    picker = new Pikaday({
-                        field: document.createElement('input'), // Dummy field
-                        container: calendarContainer,
-                        bound: false,
-                        firstDay: 1,
-                        minDate: new Date(),
-                        keyboardInput: false,
-                        defaultDate: selectedDate || new Date(),
-                        setDefaultDate: !!selectedDate,
-                        onSelect: function(date) {
-                            selectedDate = date;
+                // Initialize Pikaday when available
+                function initPikaday() {
+                    if (typeof Pikaday !== 'undefined' && !picker) {
+                        picker = new Pikaday({
+                            field: document.createElement('input'), // Dummy field
+                            container: calendarContainer,
+                            bound: false,
+                            firstDay: 1,
+                            minDate: new Date(),
+                            keyboardInput: false,
+                            defaultDate: selectedDate || new Date(),
+                            setDefaultDate: !!selectedDate,
+                            onSelect: function(date) {
+                                selectedDate = date;
+                            }
+                        });
+                        console.log('VT Schedule: Pikaday initialized');
+                    }
+                }
+
+                // Try immediately, then poll if not available
+                initPikaday();
+                if (!picker) {
+                    const pikadayCheck = setInterval(function() {
+                        if (typeof Pikaday !== 'undefined') {
+                            initPikaday();
+                            clearInterval(pikadayCheck);
                         }
-                    });
+                    }, 100);
+                    // Stop checking after 5 seconds
+                    setTimeout(function() { clearInterval(pikadayCheck); }, 5000);
                 }
 
                 // Update display if existing date
