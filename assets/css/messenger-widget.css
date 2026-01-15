@@ -531,6 +531,7 @@
     min-height: 36px;
     transition: border-color 0.2s;
     overflow: hidden;
+    color: #000000;
 }
 
 /* Allow scrolling only when user is typing (has content) */

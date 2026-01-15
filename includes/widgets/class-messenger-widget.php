@@ -1161,6 +1161,7 @@ class Voxel_Toolkit_Messenger_Widget extends \Elementor\Widget_Base {
             [
                 'label' => __('Input Text Color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#000000',
                 'selectors' => [
                     '{{WRAPPER}} .vt-messenger-input' => 'color: {{VALUE}}',
                 ],
