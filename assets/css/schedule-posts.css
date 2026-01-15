@@ -26,15 +26,30 @@ div.vt-schedule-field > label {
     margin-top: 25px !important;
 }
 
-/* Grid Layout */
+/* Grid Layout - Inline date and time */
 .vt-schedule-field .form-field-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 10px;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
 }
 
 .vt-schedule-field .form-field-grid.medium {
-    grid-template-columns: 2fr 1fr;
+    display: flex !important;
+    flex-direction: row !important;
+}
+
+.vt-schedule-field .form-field-grid > .ts-form-group {
+    margin-bottom: 0 !important;
+}
+
+.vt-schedule-field .form-field-grid .vx-2-3 {
+    flex: 2 !important;
+    width: auto !important;
+}
+
+.vt-schedule-field .form-field-grid .vx-1-3 {
+    flex: 1 !important;
+    width: auto !important;
 }
 
 .vt-schedule-field .vx-2-3 {
@@ -53,7 +68,13 @@ div.vt-schedule-field > label {
 .vt-schedule-popup-container .ts-field-popup {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     border-radius: 10px;
-    overflow: hidden;
+    overflow: visible;
+}
+
+/* Remove scroll from calendar popup */
+.vt-schedule-popup-container .ts-popup-content-wrapper {
+    max-height: none !important;
+    overflow: visible !important;
 }
 
 /* Calendar Container */
@@ -68,20 +89,37 @@ div.vt-schedule-field > label {
     box-shadow: none !important;
 }
 
-/* Calendar Navigation Arrows - Add padding */
-.vt-schedule-calendar .pika-title {
-    padding: 0 10px;
+/* Calendar Navigation Arrows - Add padding from edges */
+.vt-schedule-popup-container .pika-prev,
+.ts-field-popup .pika-prev,
+.pika-single .pika-prev {
+    left: 10px !important;
 }
 
-.vt-schedule-calendar .pika-prev,
-.vt-schedule-calendar .pika-next {
-    margin: 0 5px;
+.vt-schedule-popup-container .pika-next,
+.ts-field-popup .pika-next,
+.pika-single .pika-next {
+    right: 10px !important;
 }
 
-/* Time Input - Use Voxel's ts-filter class */
+/* Time Input - Match date selector height */
 .vt-schedule-field .vt-schedule-time {
-    height: auto;
+    height: 100% !important;
     width: 100%;
+    min-height: 44px;
+    padding: 8px !important;
+}
+
+.vt-schedule-field .form-field-grid .vx-1-3 {
+    display: flex !important;
+    align-items: stretch !important;
+}
+
+.vt-schedule-field .vx-1-3 .ts-filter,
+.vt-schedule-field .vx-1-3 input[type="time"] {
+    height: 100% !important;
+    min-height: 44px;
+    padding: 8px !important;
 }
 
 /* Hide success message until replaced when scheduling */

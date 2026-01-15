@@ -316,9 +316,13 @@ class Voxel_Toolkit_Schedule_Posts {
         $pikaday_js = get_template_directory_uri() . '/assets/vendor/pikaday/pikaday.prod.js';
         $pikaday_css = get_template_directory_uri() . '/assets/vendor/pikaday/pikaday.prod.css';
 
-        // Output Pikaday CSS if not already loaded
+        // Schedule posts CSS
+        $schedule_css = VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/schedule-posts.css?ver=' . VOXEL_TOOLKIT_VERSION;
+
+        // Output CSS and JS
         ?>
         <link rel="stylesheet" href="<?php echo esc_url($pikaday_css); ?>" media="all">
+        <link rel="stylesheet" href="<?php echo esc_url($schedule_css); ?>" media="all">
         <script src="<?php echo esc_url($pikaday_js); ?>"></script>
         <?php
 
