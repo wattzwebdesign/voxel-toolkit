@@ -21,6 +21,7 @@
 
 - **Watermark Opacity Control** - New setting to adjust watermark transparency (0-100%) for both text and image watermarks
 - **Translation Support** - Toast notifications and messages are now translatable via Loco Translate and similar plugins
+- **Elementor Media Library Support** - Image optimization now works with Elementor image widgets, Gutenberg blocks, and WordPress Media Library uploads
 
 ### Social Proof
 
