@@ -56,24 +56,24 @@
 .vt-add-term-form textarea {
     width: 100%;
     padding: 12px 14px;
-    background: #fff !important;
-    border: 1px solid #e0e0e0 !important;
+    background: #fff;
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
     font-size: 14px;
-    color: #1a1a2e !important;
+    color: #1a1a2e;
     transition: all 0.15s ease;
     box-sizing: border-box;
 }
 
 .vt-add-term-form input[type="text"]::placeholder,
 .vt-add-term-form textarea::placeholder {
-    color: #999 !important;
+    color: #999;
 }
 
 .vt-add-term-form input[type="text"]:focus,
 .vt-add-term-form textarea:focus {
     outline: none;
-    border-color: var(--ts-primary-color, #4361ee) !important;
+    border-color: var(--ts-primary-color, #4361ee);
     box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.1);
 }
 
@@ -202,14 +202,14 @@
 
 .vt-add-term-form input[type="text"],
 .vt-add-term-form textarea {
-    background: var(--ts-shade-8, #fff) !important;
-    border-color: var(--ts-shade-5, #e0e0e0) !important;
-    color: var(--ts-shade-1, #1a1a2e) !important;
+    background: var(--ts-shade-8, #fff);
+    border-color: var(--ts-shade-5, #e0e0e0);
+    color: var(--ts-shade-1, #1a1a2e);
 }
 
 .vt-add-term-form input[type="text"]::placeholder,
 .vt-add-term-form textarea::placeholder {
-    color: var(--ts-shade-3, #999) !important;
+    color: var(--ts-shade-3, #999);
 }
 
 .vt-add-term-cancel {
