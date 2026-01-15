@@ -38,3 +38,7 @@
 ### Add Category
 
 - **Elementor Styling Fix** - Fixed form input styling controls not applying in Elementor editor
+
+### Messenger Widget
+
+- **Input Text Color Default** - Set default input text color to black for better visibility
