@@ -52,3 +52,5 @@
 
 - **WebP Format Conversion** - Bulk resize now converts images to WebP based on the optimization mode setting, even for images that don't need resizing
 - **Warning for Larger Files** - Shows warning icon with tooltip for images that increased in size after conversion
+- **Backup Original Files** - New option to keep original images in a backup folder (wp-content/uploads/vt-originals/) instead of deleting them during WebP conversion
+- **Delete Originals Button** - Backup Management card shows file count and size with a delete button requiring "confirm" input for safety
