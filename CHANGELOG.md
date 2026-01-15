@@ -38,6 +38,7 @@
 ### Add Category
 
 - **Elementor Styling Fix** - Fixed form input styling controls not applying in Elementor editor
+- **Translation Support** - Added all frontend strings to POT file for translation (Add new, Term name, etc.)
 
 ### Messenger Widget
 
