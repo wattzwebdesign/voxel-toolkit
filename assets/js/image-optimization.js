@@ -11,9 +11,30 @@
     }
 
     const Settings = VT_ImageOptimization;
+    const i18n = Settings.i18n || {};
     const processedFiles = new WeakSet();
     let isWorking = false;
     let fileCounter = 0;
+
+    /**
+     * Get translated string with sprintf-like replacement
+     */
+    function __(key, ...args) {
+        let str = i18n[key] || key;
+        if (args.length > 0) {
+            // Handle positional placeholders like %1$d, %2$s
+            str = str.replace(/%(\d+)\$([ds])/g, (match, pos, type) => {
+                const idx = parseInt(pos, 10) - 1;
+                return args[idx] !== undefined ? args[idx] : match;
+            });
+            // Handle simple placeholders like %d, %s
+            let argIndex = 0;
+            str = str.replace(/%([ds])/g, (match, type) => {
+                return args[argIndex] !== undefined ? args[argIndex++] : match;
+            });
+        }
+        return str;
+    }
 
     // Check if browser supports WebP encoding (native canvas method)
     const supportsNativeWebP = (() => {
@@ -184,9 +205,9 @@
          * Format bytes to human readable string
          */
         formatBytes(bytes) {
-            if (bytes === 0) return '0 Bytes';
+            if (bytes === 0) return '0 ' + (i18n.bytes || 'Bytes');
             const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB'];
+            const sizes = [i18n.bytes || 'Bytes', i18n.kb || 'KB', i18n.mb || 'MB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         },
@@ -276,7 +297,11 @@
             // Check file size limit
             const maxBytes = Settings.maxFileSizeMB * 1024 * 1024;
             if (file.size > maxBytes) {
-                Toast.show('File too large!', `${file.name} exceeds ${Settings.maxFileSizeMB}MB limit.`, 'error');
+                Toast.show(
+                    i18n.fileTooLarge || 'File too large!',
+                    __('exceedsMbLimit', file.name, Settings.maxFileSizeMB),
+                    'error'
+                );
                 return null;
             }
 
@@ -285,7 +310,10 @@
                 return file;
             }
 
-            Toast.update('Optimizing images...', `Image ${index + 1} of ${total}: ${file.name}`);
+            Toast.update(
+                i18n.optimizingImages || 'Optimizing images...',
+                __('imageXOfY', index + 1, total, file.name)
+            );
 
             return new Promise((resolve) => {
                 const img = new Image();
@@ -385,7 +413,10 @@
             return;
         }
 
-        Toast.show('Optimizing...', `Processing ${imageFiles.length} image(s)`);
+        Toast.show(
+            i18n.optimizing || 'Optimizing...',
+            __('processingImages', imageFiles.length)
+        );
 
         const optimizedFiles = [];
         for (let i = 0; i < allFiles.length; i++) {
@@ -402,7 +433,10 @@
             }
         }
 
-        Toast.success('Done!', `${imageFiles.length} images optimized. Saved: ${ImageOptimizer.formatBytes(totalSaved)}`);
+        Toast.success(
+            i18n.done || 'Done!',
+            __('imagesOptimized', imageFiles.length, ImageOptimizer.formatBytes(totalSaved))
+        );
 
         // Create new DataTransfer with optimized files
         const dt = new DataTransfer();

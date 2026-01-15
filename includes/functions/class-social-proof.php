@@ -501,6 +501,16 @@ class Voxel_Toolkit_Social_Proof {
             'boostListings' => !empty($boost_listings) ? array_values($boost_listings) : array('Beach House', 'Mountain Cabin', 'City Apartment', 'Lake Cottage'),
             'boostMessages' => $boost_messages,
             'defaultAvatar' => $default_avatar,
+            'i18n' => array(
+                'minute' => __('minute', 'voxel-toolkit'),
+                'minutes' => __('minutes', 'voxel-toolkit'),
+                'hour' => __('hour', 'voxel-toolkit'),
+                'hours' => __('hours', 'voxel-toolkit'),
+                'day' => __('day', 'voxel-toolkit'),
+                'days' => __('days', 'voxel-toolkit'),
+                'ago' => __('ago', 'voxel-toolkit'),
+                'justNow' => __('just now', 'voxel-toolkit'),
+            ),
         ));
     }
 

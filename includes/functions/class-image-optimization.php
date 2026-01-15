@@ -206,6 +206,19 @@ class Voxel_Toolkit_Image_Optimization {
             'wmPos' => sanitize_text_field($settings['wm_pos']),
             'wmScale' => intval($settings['wm_scale']),
             'wmOpacity' => intval($settings['wm_opacity']) / 100,
+            'i18n' => array(
+                'fileTooLarge' => __('File too large!', 'voxel-toolkit'),
+                'exceedsMbLimit' => __('%s exceeds %dMB limit.', 'voxel-toolkit'),
+                'optimizingImages' => __('Optimizing images...', 'voxel-toolkit'),
+                'imageXOfY' => __('Image %1$d of %2$d: %3$s', 'voxel-toolkit'),
+                'optimizing' => __('Optimizing...', 'voxel-toolkit'),
+                'processingImages' => __('Processing %d image(s)', 'voxel-toolkit'),
+                'done' => __('Done!', 'voxel-toolkit'),
+                'imagesOptimized' => __('%1$d images optimized. Saved: %2$s', 'voxel-toolkit'),
+                'bytes' => __('Bytes', 'voxel-toolkit'),
+                'kb' => __('KB', 'voxel-toolkit'),
+                'mb' => __('MB', 'voxel-toolkit'),
+            ),
         ));
     }
 

@@ -329,6 +329,27 @@
         },
 
         /**
+         * Format time ago string with i18n support
+         */
+        formatTimeAgo: function(value, unit) {
+            var i18n = this.config.i18n || {};
+            var ago = i18n.ago || 'ago';
+            var unitStr;
+
+            if (unit === 'minute') {
+                unitStr = value === 1 ? (i18n.minute || 'minute') : (i18n.minutes || 'minutes');
+            } else if (unit === 'hour') {
+                unitStr = value === 1 ? (i18n.hour || 'hour') : (i18n.hours || 'hours');
+            } else if (unit === 'day') {
+                unitStr = value === 1 ? (i18n.day || 'day') : (i18n.days || 'days');
+            } else {
+                unitStr = unit;
+            }
+
+            return value + ' ' + unitStr + ' ' + ago;
+        },
+
+        /**
          * Generate a single boost event
          */
         generateBoostEvent: function() {
@@ -350,7 +371,7 @@
                 message: message,
                 user_avatar: this.config.defaultAvatar || '',
                 post_url: '',
-                time_ago: minutesAgo + ' ' + (minutesAgo === 1 ? 'minute' : 'minutes') + ' ago',
+                time_ago: this.formatTimeAgo(minutesAgo, 'minute'),
                 boost: true
             };
         },
