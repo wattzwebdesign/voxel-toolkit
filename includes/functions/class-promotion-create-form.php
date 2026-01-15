@@ -242,17 +242,6 @@ class Voxel_Toolkit_Promotion_Create_Form {
             )
         );
 
-        $element->add_control(
-            'vt_promo_icon_bg',
-            array(
-                'label' => __('Icon Background', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'selectors' => array(
-                    '{{WRAPPER}} .vt-promotion-icon-header' => 'background: {{VALUE}};',
-                ),
-            )
-        );
-
         // Card Styles
         $element->add_control(
             'vt_promo_card_heading',
@@ -479,12 +468,18 @@ class Voxel_Toolkit_Promotion_Create_Form {
 
             // If no post types specified, it applies to all
             if (empty($package_post_types) || in_array($post_type, $package_post_types)) {
+                // Convert icon reference to SVG markup
+                $icon_markup = '';
+                if (isset($package['ui']['icon']) && !empty($package['ui']['icon'])) {
+                    $icon_markup = $this->get_icon_svg($package['ui']['icon']);
+                }
+
                 $filtered[] = array(
                     'key' => isset($package['key']) ? $package['key'] : '',
                     'label' => isset($package['ui']['label']) ? $package['ui']['label'] : __('Promotion', 'voxel-toolkit'),
                     'description' => isset($package['ui']['description']) ? $package['ui']['description'] : '',
                     'color' => isset($package['ui']['color']) ? $package['ui']['color'] : '#3b82f6',
-                    'icon' => isset($package['ui']['icon']) ? $package['ui']['icon'] : '',
+                    'icon' => $icon_markup,
                     'price' => isset($package['price']['amount']) ? floatval($package['price']['amount']) : 0,
                     'currency' => $this->get_currency(),
                     'duration' => isset($package['duration']) ? $package['duration'] : array('type' => 'days', 'amount' => 7),
@@ -494,6 +489,49 @@ class Voxel_Toolkit_Promotion_Create_Form {
         }
 
         return $filtered;
+    }
+
+    /**
+     * Get SVG markup from icon string (e.g., "svg:51")
+     */
+    private function get_icon_svg($icon_string) {
+        if (empty($icon_string)) {
+            return '';
+        }
+
+        // Parse the icon string format "library:value"
+        $parts = explode(':', $icon_string, 2);
+        if (count($parts) !== 2) {
+            return '';
+        }
+
+        $library = $parts[0];
+        $value = $parts[1];
+
+        // Handle SVG attachment IDs
+        if ($library === 'svg' && is_numeric($value)) {
+            $attachment_id = absint($value);
+            $file_path = get_attached_file($attachment_id);
+
+            if ($file_path && file_exists($file_path) && pathinfo($file_path, PATHINFO_EXTENSION) === 'svg') {
+                $svg_content = file_get_contents($file_path);
+                if ($svg_content) {
+                    // Clean up the SVG - remove XML declaration if present
+                    $svg_content = preg_replace('/<\?xml[^>]*\?>/i', '', $svg_content);
+                    return trim($svg_content);
+                }
+            }
+        }
+
+        // Try Voxel's get_icon_markup as fallback (works when Elementor is active)
+        if (function_exists('\Voxel\get_icon_markup')) {
+            $markup = \Voxel\get_icon_markup($icon_string);
+            if (!empty($markup)) {
+                return $markup;
+            }
+        }
+
+        return '';
     }
 
     /**
@@ -995,11 +1033,15 @@ class Voxel_Toolkit_Promotion_Create_Form {
 
                 const duration = formatDuration(pkg.duration);
 
+                // Use package icon if set, otherwise use default lightning bolt
+                const defaultIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>`;
+                const iconHtml = pkg.icon ? pkg.icon : defaultIcon;
+
                 card.innerHTML = `
                     <div class="vt-promotion-card-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                        </svg>
+                        ${iconHtml}
                     </div>
                     <div class="vt-promotion-card-info">
                         <div class="vt-promotion-card-label">${escapeHtml(pkg.label)}</div>
