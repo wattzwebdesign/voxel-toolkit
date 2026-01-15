@@ -651,51 +651,76 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
     private function get_post_type_fields() {
         $fields = array();
 
-        // Check if we're in Elementor editor
-        if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            // Try to get post type from current post
-            $post_id = get_the_ID();
-            if ($post_id) {
-                $post_type = get_post_type($post_id);
-            } else {
-                return $fields;
-            }
-        } else {
-            $post_id = get_the_ID();
-            if (!$post_id) {
-                return $fields;
-            }
-            $post_type = get_post_type($post_id);
+        // Field types to exclude from suggestions
+        $excluded_types = array(
+            'timezone',
+            'switcher',
+            'file',
+            'repeater',
+            'recurring-date',
+            'post-relation',
+            'time',
+            'ui-step',
+            'ui-heading',
+            'ui-image',
+            'team-members-vt',
+        );
+
+        // Specific field keys to exclude (logo, cover, gallery, event_date)
+        $excluded_keys = array(
+            'logo',
+            'cover',
+            'gallery',
+            'event_date',
+        );
+
+        // Check if Voxel is active
+        if (!class_exists('\Voxel\Post_Type')) {
+            return $fields;
         }
 
-        // Get Voxel post type
-        if (class_exists('\Voxel\Post_Type')) {
+        // Get post type - try current post first
+        $post_id = get_the_ID();
+        $post_type = $post_id ? get_post_type($post_id) : null;
+
+        // If we're editing an Elementor template, get ALL Voxel post types
+        // This ensures fields show up when editing templates
+        $is_template = ($post_type === 'elementor_library' || !$post_type);
+
+        if ($is_template || \Elementor\Plugin::$instance->editor->is_edit_mode()) {
+            // Get all Voxel post types and their fields
+            $all_post_types = \Voxel\Post_Type::get_all();
+
+            foreach ($all_post_types as $voxel_post_type) {
+                $post_type_label = $voxel_post_type->get_label();
+                $post_fields = $voxel_post_type->get_fields();
+
+                foreach ($post_fields as $field) {
+                    $field_type = $field->get_type();
+                    $field_key = $field->get_key();
+
+                    // Skip excluded field types
+                    if (in_array($field_type, $excluded_types)) {
+                        continue;
+                    }
+
+                    // Skip excluded field keys
+                    if (in_array($field_key, $excluded_keys)) {
+                        continue;
+                    }
+
+                    // Use field key as the option key, label includes post type for clarity
+                    // Only add if not already added (avoid duplicates across post types)
+                    if (!isset($fields[$field_key])) {
+                        $fields[$field_key] = $field->get_label();
+                    }
+                }
+            }
+        } else {
+            // Frontend or preview - get fields for current post type only
             $voxel_post_type = \Voxel\Post_Type::get($post_type);
             if ($voxel_post_type) {
                 $post_fields = $voxel_post_type->get_fields();
-
-                // Field types to exclude from suggestions
-                $excluded_types = array(
-                    'timezone',
-                    'switcher',
-                    'file',
-                    'repeater',
-                    'recurring-date',
-                    'post-relation',
-                    'time',
-                    'ui-step',
-                    'ui-heading',
-                    'ui-image',
-                    'team-members-vt',
-                );
-
-                // Specific field keys to exclude (logo, cover, gallery, event_date)
-                $excluded_keys = array(
-                    'logo',
-                    'cover',
-                    'gallery',
-                    'event_date',
-                );
 
                 foreach ($post_fields as $field) {
                     $field_type = $field->get_type();
