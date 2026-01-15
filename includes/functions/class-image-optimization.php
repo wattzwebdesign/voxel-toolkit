@@ -65,6 +65,10 @@ class Voxel_Toolkit_Image_Optimization {
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'), 1);
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'), 1);
 
+        // Enqueue scripts in Elementor editor
+        add_action('elementor/editor/before_enqueue_scripts', array($this, 'enqueue_scripts'), 1);
+        add_action('elementor/preview/enqueue_scripts', array($this, 'enqueue_scripts'), 1);
+
         // Auto-set alt text on attachment
         add_action('add_attachment', array($this, 'auto_set_image_metadata'));
 

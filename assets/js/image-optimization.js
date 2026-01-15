@@ -483,4 +483,265 @@
             }
         }
     }, true);
+
+    /**
+     * Hook into WordPress Media Library uploads (wp.Uploader/plupload)
+     * This handles Elementor image widget, Gutenberg, and native WP media uploads
+     */
+    const hookedUploaders = new WeakSet();
+
+    /**
+     * Hook a plupload uploader instance for file optimization
+     */
+    function hookPluploadInstance(uploader) {
+        if (!uploader || hookedUploaders.has(uploader)) return;
+        hookedUploaders.add(uploader);
+
+        uploader.bind('FilesAdded', async function(up, files) {
+            // Find image files that need processing
+            const imageFiles = files.filter(f =>
+                f.type && f.type.match(/^image\/(jpeg|png|webp)$/) &&
+                !f._vtOptimized
+            );
+
+            if (imageFiles.length === 0 || isWorking) {
+                return;
+            }
+
+            isWorking = true;
+            fileCounter = 0;
+            let totalSaved = 0;
+
+            // Stop auto-start
+            up.stop();
+
+            Toast.show(
+                i18n.optimizing || 'Optimizing...',
+                __('processingImages', imageFiles.length)
+            );
+
+            // Process each file
+            const filesToReplace = [];
+
+            for (let i = 0; i < imageFiles.length; i++) {
+                const plFile = imageFiles[i];
+                const nativeFile = plFile.getNative ? plFile.getNative() : null;
+
+                if (!nativeFile) continue;
+
+                const originalSize = nativeFile.size;
+                const originalId = plFile.id;
+
+                Toast.update(
+                    i18n.optimizingImages || 'Optimizing images...',
+                    __('imageXOfY', i + 1, imageFiles.length, nativeFile.name)
+                );
+
+                try {
+                    const optimizedFile = await ImageOptimizer.optimize(nativeFile, i, imageFiles.length);
+
+                    if (optimizedFile && optimizedFile !== nativeFile) {
+                        totalSaved += (originalSize - optimizedFile.size);
+                        filesToReplace.push({
+                            originalId: originalId,
+                            optimizedFile: optimizedFile
+                        });
+                    }
+                } catch (e) {
+                    console.warn('VT Image Optimization: Failed to optimize', nativeFile.name, e);
+                }
+            }
+
+            // Replace files in the queue
+            for (const item of filesToReplace) {
+                const plFile = up.getFile(item.originalId);
+                if (plFile) {
+                    // Remove original file
+                    up.removeFile(plFile);
+
+                    // Add optimized file
+                    up.addFile(item.optimizedFile);
+
+                    // Mark the newly added file as optimized
+                    const newFile = up.files[up.files.length - 1];
+                    if (newFile) {
+                        newFile._vtOptimized = true;
+                    }
+                }
+            }
+
+            Toast.success(
+                i18n.done || 'Done!',
+                __('imagesOptimized', imageFiles.length, ImageOptimizer.formatBytes(totalSaved))
+            );
+
+            isWorking = false;
+
+            // Resume upload
+            up.start();
+        });
+    }
+
+    /**
+     * Find and hook all plupload uploaders on the page
+     */
+    function findAndHookUploaders() {
+        // Check wp.Uploader instances
+        if (typeof wp !== 'undefined' && wp.Uploader && wp.Uploader.queue) {
+            // Hook existing queue uploader
+            if (wp.Uploader.queue.uploader) {
+                hookPluploadInstance(wp.Uploader.queue.uploader);
+            }
+        }
+
+        // Check for plupload instances in the global scope
+        if (typeof plupload !== 'undefined') {
+            // Look for uploaders attached to the page
+            document.querySelectorAll('[id*="plupload"]').forEach(el => {
+                if (el.plupload) {
+                    hookPluploadInstance(el.plupload);
+                }
+            });
+        }
+
+        // Hook into wp.media frames when they open
+        if (typeof wp !== 'undefined' && wp.media && !wp.media._vtWrapped) {
+            const originalMediaFn = wp.media;
+
+            const wrappedMedia = function() {
+                const frame = originalMediaFn.apply(this, arguments);
+
+                if (frame && frame.on) {
+                    frame.on('open', function() {
+                        // Wait for uploader to be ready
+                        setTimeout(() => {
+                            tryHookMediaUploader();
+                        }, 100);
+                    });
+                }
+
+                return frame;
+            };
+
+            wrappedMedia._vtWrapped = true;
+
+            // Copy over static properties and prototype
+            for (const prop in originalMediaFn) {
+                if (originalMediaFn.hasOwnProperty(prop)) {
+                    wrappedMedia[prop] = originalMediaFn[prop];
+                }
+            }
+
+            // Preserve prototype chain
+            wrappedMedia.prototype = originalMediaFn.prototype;
+
+            wp.media = wrappedMedia;
+        }
+    }
+
+    /**
+     * Try to find and hook the media uploader from various sources
+     */
+    function tryHookMediaUploader() {
+        // Method 1: wp.Uploader.queue
+        if (typeof wp !== 'undefined' && wp.Uploader && wp.Uploader.queue && wp.Uploader.queue.uploader) {
+            hookPluploadInstance(wp.Uploader.queue.uploader);
+        }
+
+        // Method 2: wp.media.frame
+        if (typeof wp !== 'undefined' && wp.media && wp.media.frame) {
+            const frame = wp.media.frame;
+            if (frame.uploader && frame.uploader.uploader) {
+                hookPluploadInstance(frame.uploader.uploader);
+            }
+        }
+
+        // Method 3: Look for plupload instances globally
+        if (typeof plupload !== 'undefined' && plupload.instances) {
+            plupload.instances.forEach(inst => hookPluploadInstance(inst));
+        }
+
+        // Method 4: Find plupload container in DOM and get uploader
+        const pluploadContainer = document.querySelector('.moxie-shim input[type="file"]');
+        if (pluploadContainer) {
+            const container = pluploadContainer.closest('.uploader-window, .media-frame');
+            if (container && container._plupload) {
+                hookPluploadInstance(container._plupload);
+            }
+        }
+    }
+
+    /**
+     * Watch for media modal to appear in DOM
+     */
+    function watchForMediaModal() {
+        const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                for (const node of mutation.addedNodes) {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        // Check if media modal was added
+                        if (node.classList && (
+                            node.classList.contains('media-modal') ||
+                            node.classList.contains('media-frame')
+                        )) {
+                            setTimeout(() => tryHookMediaUploader(), 200);
+                        }
+                        // Also check children
+                        const modal = node.querySelector && node.querySelector('.media-modal, .media-frame');
+                        if (modal) {
+                            setTimeout(() => tryHookMediaUploader(), 200);
+                        }
+                    }
+                }
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    }
+
+    /**
+     * Hook wp.Uploader prototype for new instances
+     */
+    function hookWPUploaderPrototype() {
+        if (typeof wp === 'undefined' || !wp.Uploader) return;
+
+        const originalInit = wp.Uploader.prototype.init;
+        wp.Uploader.prototype.init = function() {
+            originalInit.apply(this, arguments);
+            if (this.uploader) {
+                hookPluploadInstance(this.uploader);
+            }
+        };
+    }
+
+    // Initialize hooks when ready
+    function initWPHooks() {
+        hookWPUploaderPrototype();
+        findAndHookUploaders();
+        watchForMediaModal();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initWPHooks);
+    } else {
+        initWPHooks();
+    }
+
+    // Periodic check for late-loaded uploaders
+    let checkCount = 0;
+    const maxChecks = 20; // 10 seconds
+    const wpCheckInterval = setInterval(() => {
+        checkCount++;
+        if (typeof wp !== 'undefined') {
+            hookWPUploaderPrototype();
+            findAndHookUploaders();
+            tryHookMediaUploader();
+        }
+        if (checkCount >= maxChecks) {
+            clearInterval(wpCheckInterval);
+        }
+    }, 500);
 })();
