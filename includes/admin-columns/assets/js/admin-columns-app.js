@@ -315,6 +315,16 @@ function initAdminColumnsApp() {
                                     display: 'plan_name'
                                 };
                             }
+                            // Ensure verification_settings exists for verification status field
+                            if (col.field_key === ':verification_status' && !col.verification_settings) {
+                                col.verification_settings = {
+                                    verified_label: 'Verified',
+                                    not_verified_label: 'Not Verified',
+                                    verified_icon: '',
+                                    show_icon: true,
+                                    show_label: true
+                                };
+                            }
                             // Ensure date_settings exists for WP date fields (:date, :modified)
                             if ((col.field_key === ':date' || col.field_key === ':modified')) {
                                 if (!col.date_settings) {
@@ -712,6 +722,22 @@ function initAdminColumnsApp() {
                     delete column.listing_plan_settings;
                 }
 
+                // Add default verification settings for verification status field
+                if (column.field_key === ':verification_status') {
+                    if (!column.verification_settings) {
+                        column.verification_settings = {
+                            verified_label: 'Verified',
+                            not_verified_label: 'Not Verified',
+                            verified_icon: '',
+                            show_icon: true,
+                            show_label: true
+                        };
+                    }
+                } else {
+                    // Remove verification settings if not a verification status field
+                    delete column.verification_settings;
+                }
+
                 // Add default date settings for WP date fields (:date, :modified)
                 if (column.field_key === ':date' || column.field_key === ':modified') {
                     if (!column.date_settings) {
@@ -887,6 +913,10 @@ function initAdminColumnsApp() {
                 return fieldKey === ':listing_plan';
             }
 
+            function isVerificationStatusField(fieldKey) {
+                return fieldKey === ':verification_status';
+            }
+
             // User column field type checks
             function isPostCountField(fieldKey) {
                 return fieldKey === ':post_count';
@@ -1059,6 +1089,7 @@ function initAdminColumnsApp() {
                 isWpDateField,
                 isRecurringDateField,
                 isListingPlanField,
+                isVerificationStatusField,
                 isPostCountField,
                 isUserRegisteredField,
                 isUserAvatarField,

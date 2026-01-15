@@ -400,6 +400,49 @@ $js_data = $admin_columns->get_js_data();
                                     </div>
                                 </div>
 
+                                <!-- Verification Status Settings -->
+                                <div v-if="isVerificationStatusField(element.field_key) && element.verification_settings" class="vt-ac-product-settings">
+                                    <h4><?php _e('Verification Display', 'voxel-toolkit'); ?></h4>
+                                    <div class="vt-ac-field-row">
+                                        <div class="vt-ac-field-group">
+                                            <label><?php _e('Verified Label', 'voxel-toolkit'); ?></label>
+                                            <input type="text"
+                                                   v-model="element.verification_settings.verified_label"
+                                                   @input="markChanged"
+                                                   placeholder="<?php _e('Verified', 'voxel-toolkit'); ?>">
+                                        </div>
+                                        <div class="vt-ac-field-group">
+                                            <label><?php _e('Not Verified Label', 'voxel-toolkit'); ?></label>
+                                            <input type="text"
+                                                   v-model="element.verification_settings.not_verified_label"
+                                                   @input="markChanged"
+                                                   placeholder="<?php _e('Not Verified', 'voxel-toolkit'); ?>">
+                                        </div>
+                                    </div>
+                                    <div class="vt-ac-field-group">
+                                        <label><?php _e('Custom Verified Icon URL', 'voxel-toolkit'); ?></label>
+                                        <input type="text"
+                                               v-model="element.verification_settings.verified_icon"
+                                               @input="markChanged"
+                                               placeholder="<?php _e('Leave empty for default checkmark', 'voxel-toolkit'); ?>">
+                                        <p class="description" style="margin-top: 4px; font-size: 12px;"><?php _e('Enter image URL or leave empty for default icon', 'voxel-toolkit'); ?></p>
+                                    </div>
+                                    <div class="vt-ac-field-row vt-ac-checkbox-row">
+                                        <label class="vt-ac-checkbox-label">
+                                            <input type="checkbox"
+                                                   v-model="element.verification_settings.show_icon"
+                                                   @change="markChanged">
+                                            <?php _e('Show Icon', 'voxel-toolkit'); ?>
+                                        </label>
+                                        <label class="vt-ac-checkbox-label">
+                                            <input type="checkbox"
+                                                   v-model="element.verification_settings.show_label"
+                                                   @change="markChanged">
+                                            <?php _e('Show Label', 'voxel-toolkit'); ?>
+                                        </label>
+                                    </div>
+                                </div>
+
                                 <!-- Post Count Settings (User Columns) -->
                                 <div v-if="isPostCountField(element.field_key) && element.post_count_settings" class="vt-ac-product-settings">
                                     <h4><?php _e('Post Count Settings', 'voxel-toolkit'); ?></h4>

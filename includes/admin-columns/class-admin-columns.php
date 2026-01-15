@@ -776,6 +776,15 @@ class Voxel_Toolkit_Admin_Columns {
             'filterable' => true,
         );
 
+        $grouped_fields['voxel']['fields'][] = array(
+            'key' => ':verification_status',
+            'label' => __('Verification Status', 'voxel-toolkit'),
+            'type' => 'voxel-verification-status',
+            'type_label' => __('Voxel', 'voxel-toolkit'),
+            'sortable' => true,
+            'filterable' => true,
+        );
+
         // Add WordPress core fields (sorted alphabetically)
         $wp_fields = array(
             array(
@@ -1329,6 +1338,13 @@ class Voxel_Toolkit_Admin_Columns {
                 }
                 return '';
 
+            case ':verification_status':
+                $is_verified = get_post_meta($post_id, 'voxel:verified', true);
+                if ($is_verified === '1') {
+                    return '<span class="vt-verified-badge" style="display: inline-flex; align-items: center; gap: 4px; color: #00a32a; font-weight: 500;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>' . __('Verified', 'voxel-toolkit') . '</span>';
+                }
+                return '<span class="vt-unverified-badge" style="color: #787c82;">' . __('Not Verified', 'voxel-toolkit') . '</span>';
+
             default:
                 return '';
         }
@@ -1464,6 +1480,27 @@ class Voxel_Toolkit_Admin_Columns {
                         'display' => isset($column['listing_plan_settings']['display']) && in_array($column['listing_plan_settings']['display'], $valid_displays)
                             ? $column['listing_plan_settings']['display']
                             : 'plan_name',
+                    );
+                }
+
+                // Sanitize verification status settings if present
+                if (isset($column['verification_settings']) && is_array($column['verification_settings'])) {
+                    $sanitized_column['verification_settings'] = array(
+                        'verified_label' => isset($column['verification_settings']['verified_label'])
+                            ? sanitize_text_field($column['verification_settings']['verified_label'])
+                            : __('Verified', 'voxel-toolkit'),
+                        'not_verified_label' => isset($column['verification_settings']['not_verified_label'])
+                            ? sanitize_text_field($column['verification_settings']['not_verified_label'])
+                            : __('Not Verified', 'voxel-toolkit'),
+                        'verified_icon' => isset($column['verification_settings']['verified_icon'])
+                            ? esc_url_raw($column['verification_settings']['verified_icon'])
+                            : '',
+                        'show_icon' => isset($column['verification_settings']['show_icon'])
+                            ? (bool) $column['verification_settings']['show_icon']
+                            : true,
+                        'show_label' => isset($column['verification_settings']['show_label'])
+                            ? (bool) $column['verification_settings']['show_label']
+                            : true,
                     );
                 }
 
@@ -2303,6 +2340,12 @@ class Voxel_Toolkit_Admin_Columns {
             case ':menu_order':
                 $query->set('orderby', 'menu_order');
                 break;
+
+            case ':verification_status':
+                // Sort by voxel:verified meta - verified posts first when ASC, last when DESC
+                $query->set('meta_key', 'voxel:verified');
+                $query->set('orderby', 'meta_value');
+                break;
         }
     }
 
@@ -2391,6 +2434,12 @@ class Voxel_Toolkit_Admin_Columns {
             } elseif ($col['field_key'] === ':listing_plan') {
                 $field['filter_type'] = 'select';
                 $field['options'] = $this->get_listing_plan_options($post_type);
+            } elseif ($col['field_key'] === ':verification_status') {
+                $field['filter_type'] = 'select';
+                $field['options'] = array(
+                    array('value' => 'verified', 'label' => __('Verified', 'voxel-toolkit')),
+                    array('value' => 'not_verified', 'label' => __('Not Verified', 'voxel-toolkit')),
+                );
             } else {
                 // Get field type from Voxel
                 $voxel_type = $this->get_field_type($col['field_key'], $post_type);
@@ -2903,6 +2952,9 @@ class Voxel_Toolkit_Admin_Columns {
             case ':article_helpful':
                 return $this->build_article_helpful_sql($operator, $value);
 
+            case ':verification_status':
+                return $this->build_verification_status_sql($operator, $value);
+
             default:
                 // Check if taxonomy
                 if (!empty($field_config['filter_type']) && $field_config['filter_type'] === 'taxonomy') {
@@ -3333,6 +3385,60 @@ class Voxel_Toolkit_Admin_Columns {
             case 'is_not_empty':
                 return $wpdb->prepare(
                     "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value IS NOT NULL AND meta_value != '' AND CAST(JSON_UNQUOTE(JSON_EXTRACT(meta_value, '$.total')) AS SIGNED) > 0))",
+                    $meta_key
+                );
+        }
+        return '';
+    }
+
+    /**
+     * Build SQL for verification status field
+     * Verified = voxel:verified meta exists with value '1'
+     * Not Verified = meta row doesn't exist
+     */
+    private function build_verification_status_sql($operator, $value) {
+        global $wpdb;
+        $meta_key = 'voxel:verified';
+
+        switch ($operator) {
+            case 'equals':
+                if ($value === 'verified' || $value === '1') {
+                    // Verified: meta exists with value '1'
+                    return $wpdb->prepare(
+                        "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = '1'))",
+                        $meta_key
+                    );
+                } else {
+                    // Not verified: meta doesn't exist or value is not '1'
+                    return $wpdb->prepare(
+                        "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = '1'))",
+                        $meta_key
+                    );
+                }
+            case 'not_equals':
+                if ($value === 'verified' || $value === '1') {
+                    // Not verified
+                    return $wpdb->prepare(
+                        "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = '1'))",
+                        $meta_key
+                    );
+                } else {
+                    // Verified
+                    return $wpdb->prepare(
+                        "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = '1'))",
+                        $meta_key
+                    );
+                }
+            case 'is_empty':
+                // Not verified
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID NOT IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = '1'))",
+                    $meta_key
+                );
+            case 'is_not_empty':
+                // Verified
+                return $wpdb->prepare(
+                    "({$wpdb->posts}.ID IN (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = '1'))",
                     $meta_key
                 );
         }

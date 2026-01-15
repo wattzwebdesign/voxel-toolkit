@@ -190,6 +190,9 @@ class Voxel_Toolkit_Column_Renderer {
             case ':article_helpful':
                 return $this->render_article_helpful($post_id, $column_config);
 
+            case ':verification_status':
+                return $this->render_verification_status($post_id, $column_config);
+
             default:
                 return $this->empty_value();
         }
@@ -425,6 +428,53 @@ class Voxel_Toolkit_Column_Renderer {
                 $output .= '</span>';
                 return $output;
         }
+    }
+
+    /**
+     * Render Voxel verification status
+     */
+    private function render_verification_status($post_id, $column_config = null) {
+        $is_verified = get_post_meta($post_id, 'voxel:verified', true);
+
+        // Get settings with defaults
+        $settings = isset($column_config['verification_settings']) ? $column_config['verification_settings'] : array();
+        $verified_label = isset($settings['verified_label']) && !empty($settings['verified_label']) ? $settings['verified_label'] : __('Verified', 'voxel-toolkit');
+        $not_verified_label = isset($settings['not_verified_label']) && !empty($settings['not_verified_label']) ? $settings['not_verified_label'] : __('Not Verified', 'voxel-toolkit');
+        $custom_icon = isset($settings['verified_icon']) ? $settings['verified_icon'] : '';
+        $show_icon = isset($settings['show_icon']) ? (bool) $settings['show_icon'] : true;
+        $show_label = isset($settings['show_label']) ? (bool) $settings['show_label'] : true;
+
+        // Default checkmark icon SVG
+        $default_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+
+        if ($is_verified === '1') {
+            $output = '<span class="vt-verified-badge" style="display: inline-flex; align-items: center; gap: 4px; color: #00a32a; font-weight: 500;">';
+
+            if ($show_icon) {
+                if (!empty($custom_icon)) {
+                    $output .= '<img src="' . esc_url($custom_icon) . '" alt="" style="width: 16px; height: 16px; object-fit: contain;">';
+                } else {
+                    $output .= $default_icon;
+                }
+            }
+
+            if ($show_label) {
+                $output .= esc_html($verified_label);
+            }
+
+            $output .= '</span>';
+            return $output;
+        }
+
+        // Not verified
+        $output = '<span class="vt-unverified-badge" style="color: #787c82;">';
+        if ($show_label) {
+            $output .= esc_html($not_verified_label);
+        } else {
+            $output .= '&mdash;';
+        }
+        $output .= '</span>';
+        return $output;
     }
 
     /**
