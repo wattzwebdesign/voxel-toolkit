@@ -19,3 +19,8 @@
 ### Image Optimization
 
 - **Watermark Opacity Control** - New setting to adjust watermark transparency (0-100%) for both text and image watermarks
+- **Translation Support** - Toast notifications and messages are now translatable via Loco Translate and similar plugins
+
+### Social Proof
+
+- **Translation Support** - Time ago strings (minutes, hours, days, ago) are now translatable for boost events
