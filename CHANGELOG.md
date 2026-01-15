@@ -29,3 +29,7 @@
 ### Saved Search
 
 - **Alert Width Fix** - Fixed alert popup text overlapping when using translated languages (e.g., Polish)
+
+### Admin Columns
+
+- **Verification Status Column** - New column type showing post verification status with configurable labels, custom icon support, and show/hide toggles for icon and text
