@@ -149,9 +149,22 @@
 
                 // Log each result
                 data.results.forEach(function(result) {
-                    const type = result.status === 'resized' ? 'success' :
-                                 result.status === 'skipped' ? 'info' : 'error';
-                    addLog(type, result.filename + ' - ' + result.message);
+                    let type;
+                    let tooltip = '';
+
+                    if (result.status === 'error') {
+                        type = 'error';
+                    } else if (result.status === 'skipped') {
+                        type = 'info';
+                    } else if (result.saved < 0) {
+                        // File got larger after conversion
+                        type = 'warning';
+                        tooltip = 'File size increased after conversion. This can happen with already-optimized images.';
+                    } else {
+                        type = 'success';
+                    }
+
+                    addLog(type, result.filename + ' - ' + result.message, tooltip);
                 });
 
                 updateProgress();
@@ -247,7 +260,7 @@
     /**
      * Add log entry
      */
-    function addLog(type, message) {
+    function addLog(type, message, tooltip) {
         const $log = $('#vt-log');
         $log.find('.vt-bulk-resize-log-empty').remove();
 
@@ -255,7 +268,9 @@
                      type === 'error' ? 'no' :
                      type === 'warning' ? 'warning' : 'arrow-right-alt2';
 
-        const $entry = $('<div class="vt-bulk-resize-log-entry vt-bulk-resize-log-' + type + '">' +
+        const tooltipAttr = tooltip ? ' title="' + escapeHtml(tooltip) + '"' : '';
+
+        const $entry = $('<div class="vt-bulk-resize-log-entry vt-bulk-resize-log-' + type + '"' + tooltipAttr + '>' +
             '<span class="dashicons dashicons-' + icon + '"></span>' +
             '<span class="vt-bulk-resize-log-text">' + escapeHtml(message) + '</span>' +
         '</div>');
@@ -264,7 +279,7 @@
         $log.scrollTop($log[0].scrollHeight);
 
         // Update current image display
-        if (type === 'success' || type === 'info') {
+        if (type === 'success' || type === 'info' || type === 'warning') {
             const filename = message.split(' - ')[0];
             $('#vt-current-image').text(filename);
         }

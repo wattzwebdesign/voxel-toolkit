@@ -127,6 +127,10 @@ class Voxel_Toolkit_Bulk_Resize {
                                 <span class="vt-bulk-resize-setting-label"><?php _e('Quality', 'voxel-toolkit'); ?></span>
                                 <span class="vt-bulk-resize-setting-value"><?php echo esc_html($settings['output_quality']); ?>%</span>
                             </div>
+                            <div class="vt-bulk-resize-setting">
+                                <span class="vt-bulk-resize-setting-label"><?php _e('Format Mode', 'voxel-toolkit'); ?></span>
+                                <span class="vt-bulk-resize-setting-value"><?php echo esc_html($this->get_mode_label($settings['optimization_mode'])); ?></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -438,6 +442,16 @@ class Voxel_Toolkit_Bulk_Resize {
         }
 
         $original_size = filesize($file_path);
+        $current_mime = get_post_mime_type($attachment_id);
+
+        // Determine if format conversion is needed
+        $optimization_mode = isset($settings['optimization_mode']) ? $settings['optimization_mode'] : 'all_webp';
+        $convert_to_webp = $this->should_convert_to_webp($current_mime, $optimization_mode);
+
+        // Check WebP support if conversion needed
+        if ($convert_to_webp && !wp_image_editor_supports(array('mime_type' => 'image/webp'))) {
+            $convert_to_webp = false;
+        }
 
         // Get image editor
         $editor = wp_get_image_editor($file_path);
@@ -454,8 +468,8 @@ class Voxel_Toolkit_Bulk_Resize {
         $size = $editor->get_size();
         $needs_resize = ($size['width'] > $max_width || $size['height'] > $max_height);
 
-        if (!$needs_resize) {
-            // Mark as processed but skipped
+        // If no resize AND no conversion needed, skip
+        if (!$needs_resize && !$convert_to_webp) {
             update_post_meta($attachment_id, '_vt_bulk_resized', time());
 
             return array(
@@ -467,11 +481,44 @@ class Voxel_Toolkit_Bulk_Resize {
             );
         }
 
-        // Resize
-        $editor->resize($max_width, $max_height, false);
+        // Resize if needed
+        if ($needs_resize) {
+            $editor->resize($max_width, $max_height, false);
+        }
         $editor->set_quality(intval($settings['output_quality']));
 
-        $result = $editor->save($file_path);
+        // Save with format conversion if needed
+        $converted = false;
+        $original_format = strtoupper(pathinfo($file_path, PATHINFO_EXTENSION));
+
+        if ($convert_to_webp) {
+            $new_file_path = preg_replace('/\.(jpe?g|png)$/i', '.webp', $file_path);
+            $result = $editor->save($new_file_path, 'image/webp');
+
+            if (!is_wp_error($result)) {
+                $converted = true;
+
+                // Delete original file if it's a different path
+                if ($new_file_path !== $file_path && file_exists($file_path)) {
+                    @unlink($file_path);
+                }
+
+                // Update attachment metadata
+                update_attached_file($attachment_id, $new_file_path);
+                wp_update_post(array(
+                    'ID' => $attachment_id,
+                    'post_mime_type' => 'image/webp',
+                ));
+
+                $file_path = $new_file_path;
+                $filename = basename($new_file_path);
+            }
+        }
+
+        // If not converted (or conversion failed), save normally
+        if (!$converted) {
+            $result = $editor->save($file_path);
+        }
 
         if (is_wp_error($result)) {
             return array(
@@ -504,11 +551,32 @@ class Voxel_Toolkit_Bulk_Resize {
         $new_editor = wp_get_image_editor($file_path);
         $new_dims = is_wp_error($new_editor) ? array('width' => 0, 'height' => 0) : $new_editor->get_size();
 
-        return array(
-            'id' => $attachment_id,
-            'filename' => $filename,
-            'status' => 'resized',
-            'message' => sprintf(
+        // Build status message
+        $status = $needs_resize ? 'resized' : 'converted';
+        if ($needs_resize && $converted) {
+            // Resized and converted
+            $message = sprintf(
+                __('%dx%d -> %dx%d WebP (saved %s, %s%%)', 'voxel-toolkit'),
+                $size['width'],
+                $size['height'],
+                $new_dims['width'],
+                $new_dims['height'],
+                $this->format_bytes($saved),
+                $percent
+            );
+        } elseif ($converted) {
+            // Converted only (no resize)
+            $message = sprintf(
+                __('%dx%d %s -> WebP (saved %s, %s%%)', 'voxel-toolkit'),
+                $size['width'],
+                $size['height'],
+                $original_format,
+                $this->format_bytes($saved),
+                $percent
+            );
+        } else {
+            // Resized only (no conversion)
+            $message = sprintf(
                 __('%dx%d -> %dx%d (saved %s, %s%%)', 'voxel-toolkit'),
                 $size['width'],
                 $size['height'],
@@ -516,10 +584,18 @@ class Voxel_Toolkit_Bulk_Resize {
                 $new_dims['height'],
                 $this->format_bytes($saved),
                 $percent
-            ),
+            );
+        }
+
+        return array(
+            'id' => $attachment_id,
+            'filename' => $filename,
+            'status' => $status,
+            'message' => $message,
             'saved' => $saved,
             'original_size' => $original_size,
             'percent' => $percent,
+            'converted' => $converted,
         );
     }
 
@@ -564,6 +640,44 @@ class Voxel_Toolkit_Bulk_Resize {
         $i = floor(log($bytes) / log($k));
 
         return round($bytes / pow($k, $i), 2) . ' ' . $sizes[$i];
+    }
+
+    /**
+     * Check if image should be converted to WebP based on optimization mode
+     */
+    private function should_convert_to_webp($mime_type, $mode) {
+        // Already WebP, no conversion needed
+        if ($mime_type === 'image/webp') {
+            return false;
+        }
+
+        switch ($mode) {
+            case 'all_webp':
+                return in_array($mime_type, array('image/jpeg', 'image/png'));
+            case 'only_jpg':
+                return $mime_type === 'image/jpeg';
+            case 'only_png':
+                return $mime_type === 'image/png';
+            case 'both_to_webp':
+                return in_array($mime_type, array('image/jpeg', 'image/png'));
+            case 'originals_only':
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Get human-readable label for optimization mode
+     */
+    private function get_mode_label($mode) {
+        $labels = array(
+            'all_webp' => __('Convert all to WebP', 'voxel-toolkit'),
+            'only_jpg' => __('Only JPG to WebP', 'voxel-toolkit'),
+            'only_png' => __('Only PNG to WebP', 'voxel-toolkit'),
+            'both_to_webp' => __('JPG & PNG to WebP', 'voxel-toolkit'),
+            'originals_only' => __('Keep original formats', 'voxel-toolkit'),
+        );
+        return isset($labels[$mode]) ? $labels[$mode] : $mode;
     }
 
     /**
