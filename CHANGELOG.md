@@ -24,3 +24,7 @@
 ### Social Proof
 
 - **Translation Support** - Time ago strings (minutes, hours, days, ago) are now translatable for boost events
+
+### Saved Search
+
+- **Alert Width Fix** - Fixed alert popup text overlapping when using translated languages (e.g., Polish)
