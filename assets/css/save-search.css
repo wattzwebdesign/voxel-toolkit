@@ -24,3 +24,15 @@
 .vt-save-search-link {
     cursor: pointer;
 }
+
+/* Alert popup - ensure enough width for translated text */
+.ts-notice-container .ts-notice {
+    min-width: 280px;
+    width: max-content;
+    max-width: 90vw;
+}
+
+.ts-notice-container .ts-notice p {
+    white-space: normal;
+    word-wrap: break-word;
+}
