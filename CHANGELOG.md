@@ -34,3 +34,7 @@
 ### Admin Columns
 
 - **Verification Status Column** - New column type showing post verification status with configurable labels, custom icon support, and show/hide toggles for icon and text
+
+### Add Category
+
+- **Elementor Styling Fix** - Fixed form input styling controls not applying in Elementor editor
