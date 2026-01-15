@@ -47,3 +47,8 @@
 ### Promotion Create Form
 
 - **Package Icons Fix** - Custom SVG icons from promotion package settings now display correctly in the create form
+
+### Bulk Resize
+
+- **WebP Format Conversion** - Bulk resize now converts images to WebP based on the optimization mode setting, even for images that don't need resizing
+- **Warning for Larger Files** - Shows warning icon with tooltip for images that increased in size after conversion
