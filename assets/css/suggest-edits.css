@@ -1294,3 +1294,120 @@ body.vt-modal-open {
     position: relative;
     z-index: 1;
 }
+
+/* ===================================
+   Multi-select Checkbox List
+   =================================== */
+.vt-multicheck {
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.vt-multicheck__scroll {
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 8px 0;
+}
+
+.vt-multicheck__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    user-select: none;
+}
+
+.vt-multicheck__item:hover {
+    background-color: #f8f9fa;
+}
+
+.vt-multicheck__item--checked {
+    background-color: #e7f3ff;
+}
+
+.vt-multicheck__item--checked:hover {
+    background-color: #dbeafe;
+}
+
+/* Circle indicator */
+.vt-multicheck__circle {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    background: #fff;
+}
+
+.vt-multicheck__item--checked .vt-multicheck__circle {
+    border-color: #1e3a5f;
+    background-color: #1e3a5f;
+}
+
+/* Checkmark */
+.vt-multicheck__checkmark {
+    width: 10px;
+    height: 10px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.vt-multicheck__item--checked .vt-multicheck__checkmark {
+    opacity: 1;
+}
+
+.vt-multicheck__item--checked .vt-multicheck__checkmark::before {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 9px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translate(-1px, -1px);
+}
+
+/* Label */
+.vt-multicheck__label {
+    flex: 1;
+    font-size: 14px;
+    color: #1e293b;
+    line-height: 1.4;
+}
+
+/* Hierarchical depth visual - slightly muted for children */
+.vt-multicheck__item[data-depth="1"] .vt-multicheck__label,
+.vt-multicheck__item[data-depth="2"] .vt-multicheck__label,
+.vt-multicheck__item[data-depth="3"] .vt-multicheck__label {
+    color: #475569;
+}
+
+/* Scrollbar styling */
+.vt-multicheck__scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.vt-multicheck__scroll::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.vt-multicheck__scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.vt-multicheck__scroll::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Hide the native select */
+.vt-multicheck__select {
+    display: none !important;
+}

@@ -202,6 +202,29 @@
                 e.preventDefault();
                 self.handleFrontendReject($(this));
             });
+
+            // Multicheck: Toggle item selection
+            $(document).on('click', '.vt-multicheck__item', function(e) {
+                e.preventDefault();
+                var $item = $(this);
+                var $container = $item.closest('.vt-multicheck');
+                var $hiddenSelect = $container.siblings('.vt-multicheck__select');
+                var value = $item.data('value');
+
+                // Toggle visual state
+                $item.toggleClass('vt-multicheck__item--checked');
+
+                // Update hidden select to keep in sync
+                var $option = $hiddenSelect.find('option[value="' + value + '"]');
+                if ($item.hasClass('vt-multicheck__item--checked')) {
+                    $option.prop('selected', true);
+                } else {
+                    $option.prop('selected', false);
+                }
+
+                // Trigger change for any listeners
+                $hiddenSelect.trigger('change');
+            });
         },
 
         openWorkHoursPopup: function($btn) {
@@ -603,6 +626,9 @@
                             $modal.find('input[type="checkbox"]').prop('checked', false);
                             $modal.find('.vt-uploaded-photos').empty();
                             $modal.data('pending-uploads', []);
+                            // Reset multicheck items
+                            $modal.find('.vt-multicheck__item').removeClass('vt-multicheck__item--checked');
+                            $modal.find('.vt-multicheck__select option').prop('selected', false);
                             $modal.fadeOut(200);
                             $('body').removeClass('vt-modal-open');
                         }, 2000);

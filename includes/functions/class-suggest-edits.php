@@ -377,13 +377,16 @@ class Voxel_Toolkit_Suggest_Edits {
                                 }
                             }
 
+                            // Format the suggested value for display (converts term IDs to labels, etc.)
+                            $formatted_suggested_value = $this->format_suggested_value_for_display($suggestion);
+
                             $data_attrs = sprintf(
                                 'data-suggestion-id="%s" data-post-title="%s" data-field-key="%s" data-current-value="%s" data-suggested-value="%s" data-is-incorrect="%s" data-suggester-name="%s" data-suggester-email="%s" data-suggester-user-id="%s" data-proof-images="%s" data-post-id="%s" data-date="%s" data-status="%s" data-suggester-comment="%s"',
                                 esc_attr($suggestion->id),
                                 esc_attr($suggestion->post_title),
                                 esc_attr($suggestion->field_key),
                                 esc_attr($suggestion->current_value),
-                                esc_attr($suggestion->suggested_value),
+                                esc_attr($formatted_suggested_value),
                                 esc_attr($suggestion->is_incorrect),
                                 esc_attr($suggestion->suggester_name),
                                 esc_attr($suggestion->suggester_email),
@@ -461,7 +464,8 @@ class Voxel_Toolkit_Suggest_Edits {
                                 <td class="suggested-value">
                                     <?php
                                     if (!empty($suggestion->suggested_value)) {
-                                        echo esc_html(wp_trim_words($suggestion->suggested_value, 10));
+                                        $formatted_value = $this->format_suggested_value_for_display($suggestion);
+                                        echo esc_html(wp_trim_words($formatted_value, 10));
                                     } else {
                                         echo '<em>' . __('(Remove)', 'voxel-toolkit') . '</em>';
                                     }
@@ -1612,6 +1616,94 @@ class Voxel_Toolkit_Suggest_Edits {
         $events[$event->get_key()] = $event;
 
         return $events;
+    }
+
+    /**
+     * Format suggested value for display in admin
+     * Converts taxonomy term IDs to labels, etc.
+     *
+     * @param object $suggestion The suggestion object
+     * @return string Formatted value for display
+     */
+    public function format_suggested_value_for_display($suggestion) {
+        $value = $suggestion->suggested_value;
+
+        if (empty($value)) {
+            return '';
+        }
+
+        // Get the post to determine post type
+        $post = get_post($suggestion->post_id);
+        if (!$post) {
+            return $value;
+        }
+
+        // Get Voxel post type and field definition
+        if (!class_exists('\Voxel\Post_Type')) {
+            return $value;
+        }
+
+        $voxel_post_type = \Voxel\Post_Type::get($post->post_type);
+        if (!$voxel_post_type) {
+            return $value;
+        }
+
+        $fields = $voxel_post_type->get_fields();
+        if (!isset($fields[$suggestion->field_key])) {
+            return $value;
+        }
+
+        $field = $fields[$suggestion->field_key];
+        $field_type = $field->get_type();
+
+        // Handle taxonomy fields - convert term IDs to labels
+        if ($field_type === 'taxonomy') {
+            $taxonomy = $field->get_prop('taxonomy');
+            if ($taxonomy) {
+                $term_ids = strpos($value, ',') !== false
+                    ? array_map('intval', explode(',', $value))
+                    : array(intval($value));
+
+                $term_labels = array();
+                foreach ($term_ids as $term_id) {
+                    $term = get_term($term_id, $taxonomy);
+                    if ($term && !is_wp_error($term)) {
+                        $term_labels[] = $term->name;
+                    }
+                }
+
+                if (!empty($term_labels)) {
+                    return implode(', ', $term_labels);
+                }
+            }
+        }
+
+        // Handle select/multiselect fields - convert values to labels
+        if ($field_type === 'select' || $field_type === 'multiselect') {
+            $choices = $field->get_prop('choices');
+            if (!empty($choices)) {
+                $values = strpos($value, ',') !== false
+                    ? explode(',', $value)
+                    : array($value);
+
+                $labels = array();
+                foreach ($values as $val) {
+                    $val = trim($val);
+                    foreach ($choices as $choice) {
+                        if (isset($choice['value']) && $choice['value'] === $val) {
+                            $labels[] = $choice['label'];
+                            break;
+                        }
+                    }
+                }
+
+                if (!empty($labels)) {
+                    return implode(', ', $labels);
+                }
+            }
+        }
+
+        return $value;
     }
 }
 

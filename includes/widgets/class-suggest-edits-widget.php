@@ -182,6 +182,19 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'inherit_current_values',
+            [
+                'label' => __('Pre-fill with Current Values', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'voxel-toolkit'),
+                'label_off' => __('No', 'voxel-toolkit'),
+                'return_value' => 'yes',
+                'default' => '',
+                'description' => __('Pre-populate multi-select fields with current values, allowing users to add or remove items without re-selecting everything', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
             'enable_comment_field',
             [
                 'label' => __('Enable Comment Field', 'voxel-toolkit'),
@@ -782,7 +795,7 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                             'is_empty' => $is_empty,
                         );
 
-                        // For taxonomy fields, get all available terms
+                        // For taxonomy fields, get all available terms with hierarchy
                         if ($field_type === 'taxonomy') {
                             $taxonomy = $field->get_prop('taxonomy');
                             $multiple = $field->get_prop('multiple');
@@ -791,10 +804,14 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                                 $terms = get_terms(array(
                                     'taxonomy' => $taxonomy,
                                     'hide_empty' => false,
+                                    'orderby' => 'name',
+                                    'order' => 'ASC',
                                 ));
                                 if (!is_wp_error($terms)) {
-                                    $field_data['options'] = $terms;
+                                    // Build hierarchical structure with depth info
+                                    $field_data['options'] = $this->build_hierarchical_terms($terms);
                                     $field_data['multiple'] = $multiple;
+                                    $field_data['is_taxonomy'] = true;
                                 }
                             }
                         }
@@ -976,26 +993,104 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                                             <?php if (!empty($field_data['options'])): ?>
                                                 <?php
                                                 $is_multiple = !empty($field_data['multiple']);
-                                                $is_taxonomy = ($field_data['type'] === 'taxonomy');
+                                                $is_taxonomy = !empty($field_data['is_taxonomy']);
+                                                $inherit_values = ($settings['inherit_current_values'] === 'yes');
+
+                                                // Get current values for pre-selection (if inherit enabled)
+                                                $current_selected = array();
+                                                if ($inherit_values && !empty($field_data['value'])) {
+                                                    if ($is_taxonomy) {
+                                                        // Extract term IDs from current value
+                                                        $current_values = is_array($field_data['value']) ? $field_data['value'] : array($field_data['value']);
+                                                        foreach ($current_values as $val) {
+                                                            if (is_object($val) && isset($val->term_id)) {
+                                                                $current_selected[] = $val->term_id;
+                                                            } elseif (is_object($val) && method_exists($val, 'get_id')) {
+                                                                $current_selected[] = $val->get_id();
+                                                            } elseif (is_numeric($val)) {
+                                                                $current_selected[] = intval($val);
+                                                            }
+                                                        }
+                                                    } else {
+                                                        // Regular select/multiselect values
+                                                        $current_selected = is_array($field_data['value']) ? $field_data['value'] : array($field_data['value']);
+                                                    }
+                                                }
                                                 ?>
-                                                <select class="vt-suggestion-input"
-                                                    data-field-key="<?php echo esc_attr($field_key); ?>"
-                                                    <?php echo $is_multiple ? 'multiple' : ''; ?>>
-                                                    <?php if (!$is_multiple): ?>
+
+                                                <?php if ($is_multiple): ?>
+                                                    <!-- Checkbox List UI for Multi-select -->
+                                                    <div class="vt-multicheck" data-field-key="<?php echo esc_attr($field_key); ?>">
+                                                        <div class="vt-multicheck__scroll">
+                                                            <?php foreach ($field_data['options'] as $option): ?>
+                                                                <?php
+                                                                if ($is_taxonomy) {
+                                                                    $opt_value = $option['term_id'];
+                                                                    $opt_label = $option['display_name'];
+                                                                    $opt_name = $option['name'];
+                                                                    $depth = $option['depth'];
+                                                                } else {
+                                                                    $opt_value = $option['value'];
+                                                                    $opt_label = $option['label'];
+                                                                    $opt_name = $option['label'];
+                                                                    $depth = 0;
+                                                                }
+                                                                $is_selected = in_array($opt_value, $current_selected);
+                                                                ?>
+                                                                <div class="vt-multicheck__item <?php echo $is_selected ? 'vt-multicheck__item--checked' : ''; ?>"
+                                                                     data-value="<?php echo esc_attr($opt_value); ?>"
+                                                                     data-depth="<?php echo esc_attr($depth); ?>"
+                                                                     style="<?php echo $depth > 0 ? 'padding-left: ' . (16 + ($depth * 20)) . 'px;' : ''; ?>">
+                                                                    <span class="vt-multicheck__circle">
+                                                                        <span class="vt-multicheck__checkmark"></span>
+                                                                    </span>
+                                                                    <span class="vt-multicheck__label"><?php echo esc_html($is_taxonomy ? $opt_name : $opt_label); ?></span>
+                                                                </div>
+                                                            <?php endforeach; ?>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Hidden select for form compatibility -->
+                                                    <select class="vt-suggestion-input vt-multicheck__select"
+                                                            data-field-key="<?php echo esc_attr($field_key); ?>"
+                                                            multiple
+                                                            style="display: none !important;">
+                                                        <?php foreach ($field_data['options'] as $option): ?>
+                                                            <?php
+                                                            if ($is_taxonomy) {
+                                                                $opt_value = $option['term_id'];
+                                                                $opt_name = $option['name'];
+                                                            } else {
+                                                                $opt_value = $option['value'];
+                                                                $opt_name = $option['label'];
+                                                            }
+                                                            $is_selected = in_array($opt_value, $current_selected);
+                                                            ?>
+                                                            <option value="<?php echo esc_attr($opt_value); ?>" <?php selected($is_selected); ?>>
+                                                                <?php echo esc_html($opt_name); ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                <?php else: ?>
+                                                    <!-- Single Select Dropdown -->
+                                                    <select class="vt-suggestion-input"
+                                                            data-field-key="<?php echo esc_attr($field_key); ?>">
                                                         <option value=""><?php _e('Select...', 'voxel-toolkit'); ?></option>
-                                                    <?php endif; ?>
-                                                    <?php foreach ($field_data['options'] as $option): ?>
-                                                        <?php if ($is_taxonomy): ?>
-                                                            <option value="<?php echo esc_attr($option->term_id); ?>">
-                                                                <?php echo esc_html($option->name); ?>
+                                                        <?php foreach ($field_data['options'] as $option): ?>
+                                                            <?php
+                                                            if ($is_taxonomy) {
+                                                                $opt_value = $option['term_id'];
+                                                                $opt_label = $option['display_name'];
+                                                            } else {
+                                                                $opt_value = $option['value'];
+                                                                $opt_label = $option['label'];
+                                                            }
+                                                            ?>
+                                                            <option value="<?php echo esc_attr($opt_value); ?>">
+                                                                <?php echo esc_html($opt_label); ?>
                                                             </option>
-                                                        <?php else: ?>
-                                                            <option value="<?php echo esc_attr($option['value']); ?>">
-                                                                <?php echo esc_html($option['label']); ?>
-                                                            </option>
-                                                        <?php endif; ?>
-                                                    <?php endforeach; ?>
-                                                </select>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                <?php endif; ?>
                                             <?php else: ?>
                                                 <input type="text"
                                                     class="vt-suggestion-input"
@@ -1172,5 +1267,75 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
      */
     private function format_work_hours_display($schedule) {
         return Voxel_Toolkit_Field_Formatters::format_work_hours_display($schedule);
+    }
+
+    /**
+     * Build hierarchical term structure with depth info
+     *
+     * @param array $terms Array of WP_Term objects
+     * @return array Terms with hierarchy data (depth, display_name with indentation)
+     */
+    private function build_hierarchical_terms($terms) {
+        // Create lookup array by term_id
+        $terms_by_id = array();
+        foreach ($terms as $term) {
+            $terms_by_id[$term->term_id] = $term;
+        }
+
+        // Calculate depth for each term
+        $result = array();
+        foreach ($terms as $term) {
+            $depth = 0;
+            $parent_id = $term->parent;
+
+            // Walk up the parent chain to calculate depth
+            while ($parent_id > 0 && isset($terms_by_id[$parent_id])) {
+                $depth++;
+                $parent_id = $terms_by_id[$parent_id]->parent;
+            }
+
+            $result[] = array(
+                'term_id' => $term->term_id,
+                'name' => $term->name,
+                'slug' => $term->slug,
+                'parent' => $term->parent,
+                'depth' => $depth,
+                'display_name' => str_repeat('— ', $depth) . $term->name,
+            );
+        }
+
+        // Sort hierarchically: parents before children, alphabetically within same level
+        usort($result, function($a, $b) use ($terms_by_id) {
+            // Build ancestry paths for comparison
+            $path_a = $this->get_term_ancestry_path($a, $terms_by_id);
+            $path_b = $this->get_term_ancestry_path($b, $terms_by_id);
+            return strcmp($path_a, $path_b);
+        });
+
+        return $result;
+    }
+
+    /**
+     * Get ancestry path for sorting hierarchical terms
+     *
+     * @param array $term_data Term data array
+     * @param array $terms_by_id Lookup array of terms
+     * @return string Ancestry path for sorting
+     */
+    private function get_term_ancestry_path($term_data, $terms_by_id) {
+        $path = array();
+        $current_id = $term_data['term_id'];
+
+        // Build path from term up to root
+        while ($current_id > 0) {
+            if (isset($terms_by_id[$current_id])) {
+                array_unshift($path, $terms_by_id[$current_id]->name);
+                $current_id = $terms_by_id[$current_id]->parent;
+            } else {
+                break;
+            }
+        }
+
+        return implode('/', $path);
     }
 }
