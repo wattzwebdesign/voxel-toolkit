@@ -8680,6 +8680,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         $wm_image_url = isset($settings['wm_image_url']) ? $settings['wm_image_url'] : '';
         $wm_pos = isset($settings['wm_pos']) ? $settings['wm_pos'] : 'bottom-right';
         $wm_scale = isset($settings['wm_scale']) ? intval($settings['wm_scale']) : 15;
+        $wm_opacity = isset($settings['wm_opacity']) ? intval($settings['wm_opacity']) : 70;
         $show_toast = isset($settings['show_toast']) ? (bool) $settings['show_toast'] : true;
         ?>
         <div class="vt-info-box">
@@ -8761,6 +8762,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                            class="vt-text-input"
                            style="width: 100%;" />
                     <p class="vt-field-description"><?php _e('Size of watermark relative to image width.', 'voxel-toolkit'); ?></p>
+                </div>
+                <div class="vt-field-group" style="flex: 1; min-width: 150px;">
+                    <label class="vt-field-label"><?php _e('Opacity (%)', 'voxel-toolkit'); ?></label>
+                    <input type="number"
+                           name="voxel_toolkit_options[image_optimization][wm_opacity]"
+                           value="<?php echo esc_attr($wm_opacity); ?>"
+                           min="0"
+                           max="100"
+                           class="vt-text-input"
+                           style="width: 100%;" />
+                    <p class="vt-field-description"><?php _e('Transparency of the watermark (0 = invisible, 100 = fully opaque).', 'voxel-toolkit'); ?></p>
                 </div>
                 <div class="vt-field-group" style="flex: 1; min-width: 150px;">
                     <label class="vt-field-label"><?php _e('Position', 'voxel-toolkit'); ?></label>

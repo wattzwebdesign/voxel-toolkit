@@ -15,3 +15,7 @@
 - **CSS Loading Fix** - Fixed stylesheet not loading due to hook timing issue
 - **Inline Layout** - Date and time inputs now display side-by-side as intended
 - **Consistent Styling** - Time input now matches date selector height (44px)
+
+### Image Optimization
+
+- **Watermark Opacity Control** - New setting to adjust watermark transparency (0-100%) for both text and image watermarks

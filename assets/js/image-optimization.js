@@ -198,7 +198,8 @@
             const scaleFactor = (Settings.wmScale / 100);
             const fontSize = Math.floor(w * scaleFactor / 5);
             ctx.font = `bold ${fontSize}px sans-serif`;
-            ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+            const opacity = Settings.wmOpacity || 0.7;
+            ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
             ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
             ctx.shadowBlur = 4;
             ctx.textBaseline = 'middle';
@@ -259,7 +260,7 @@
                         x = w - wmW - 30;
                         y = h - wmH - 30;
                     }
-                    ctx.globalAlpha = 0.7;
+                    ctx.globalAlpha = Settings.wmOpacity || 0.7;
                     ctx.drawImage(wm, x, y, wmW, wmH);
                     ctx.globalAlpha = 1.0;
                     resolve();

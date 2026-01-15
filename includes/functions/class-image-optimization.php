@@ -37,6 +37,7 @@ class Voxel_Toolkit_Image_Optimization {
         'wm_image_url' => '',
         'wm_pos' => 'bottom-right',
         'wm_scale' => 15,
+        'wm_opacity' => 70,
     );
 
     /**
@@ -204,6 +205,7 @@ class Voxel_Toolkit_Image_Optimization {
             'wmImg' => esc_url($settings['wm_image_url']),
             'wmPos' => sanitize_text_field($settings['wm_pos']),
             'wmScale' => intval($settings['wm_scale']),
+            'wmOpacity' => intval($settings['wm_opacity']) / 100,
         ));
     }
 
@@ -225,6 +227,7 @@ class Voxel_Toolkit_Image_Optimization {
         $sanitized['max_height'] = isset($input['max_height']) ? max(100, min(10000, intval($input['max_height']))) : 1600;
         $sanitized['output_quality'] = isset($input['output_quality']) ? max(1, min(100, intval($input['output_quality']))) : 80;
         $sanitized['wm_scale'] = isset($input['wm_scale']) ? max(5, min(80, intval($input['wm_scale']))) : 15;
+        $sanitized['wm_opacity'] = isset($input['wm_opacity']) ? max(0, min(100, intval($input['wm_opacity']))) : 70;
 
         // Optimization mode
         $allowed_modes = array('all_webp', 'only_jpg', 'only_png', 'both_to_webp', 'originals_only');
