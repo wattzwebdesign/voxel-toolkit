@@ -33,6 +33,20 @@
         $('#vt-start-btn').on('click', startProcessing);
         $('#vt-stop-btn').on('click', stopProcessing);
         $('#vt-reset-btn').on('click', resetProcessed);
+
+        // Delete originals modal
+        $('#vt-delete-originals-btn').on('click', showDeleteModal);
+        $('#vt-delete-cancel-btn').on('click', hideDeleteModal);
+        $('#vt-delete-confirm-btn').on('click', deleteOriginals);
+        $('#vt-delete-confirm-input').on('input', validateConfirmInput);
+        $('#vt-delete-modal').on('click', function(e) {
+            if (e.target === this) hideDeleteModal();
+        });
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape' && $('#vt-delete-modal').is(':visible')) {
+                hideDeleteModal();
+            }
+        });
     }
 
     /**
@@ -319,6 +333,76 @@
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    /**
+     * Show delete confirmation modal
+     */
+    function showDeleteModal() {
+        $('#vt-delete-confirm-input').val('');
+        $('#vt-delete-confirm-btn').prop('disabled', true);
+        $('#vt-delete-modal').fadeIn(200);
+        $('#vt-delete-confirm-input').focus();
+    }
+
+    /**
+     * Hide delete confirmation modal
+     */
+    function hideDeleteModal() {
+        $('#vt-delete-modal').fadeOut(200);
+        $('#vt-delete-confirm-input').val('');
+        $('#vt-delete-confirm-btn').prop('disabled', true);
+    }
+
+    /**
+     * Validate confirm input
+     */
+    function validateConfirmInput() {
+        const value = $('#vt-delete-confirm-input').val().toLowerCase().trim();
+        $('#vt-delete-confirm-btn').prop('disabled', value !== 'confirm');
+    }
+
+    /**
+     * Delete original files
+     */
+    function deleteOriginals() {
+        const $btn = $('#vt-delete-confirm-btn');
+        const originalText = $btn.text();
+
+        $btn.prop('disabled', true).text('Deleting...');
+
+        $.ajax({
+            url: Config.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'vt_bulk_resize_delete_originals',
+                nonce: Config.nonce
+            },
+            success: function(response) {
+                hideDeleteModal();
+
+                if (response.success) {
+                    const data = response.data;
+                    addLog('success', 'Deleted ' + formatNumber(data.deleted) + ' original files. Freed ' + data.freed_formatted + '.');
+
+                    // Update backup stats display
+                    $('#vt-backup-count').text('0');
+                    $('#vt-backup-size').text('0 B');
+
+                    // Hide the delete button since no files remain
+                    $('#vt-delete-originals-btn').hide();
+                } else {
+                    addLog('error', 'Failed to delete original files.');
+                }
+            },
+            error: function() {
+                hideDeleteModal();
+                addLog('error', 'Failed to delete original files (AJAX error).');
+            },
+            complete: function() {
+                $btn.prop('disabled', false).text(originalText);
+            }
+        });
     }
 
     // Initialize when ready

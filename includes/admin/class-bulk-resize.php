@@ -34,6 +34,7 @@ class Voxel_Toolkit_Bulk_Resize {
         add_action('wp_ajax_vt_bulk_resize_get_count', array($this, 'ajax_get_count'));
         add_action('wp_ajax_vt_bulk_resize_process', array($this, 'ajax_process_batch'));
         add_action('wp_ajax_vt_bulk_resize_reset', array($this, 'ajax_reset_processed'));
+        add_action('wp_ajax_vt_bulk_resize_delete_originals', array($this, 'ajax_delete_originals'));
 
         // Media library column
         add_filter('manage_media_columns', array($this, 'add_media_column'));
@@ -130,6 +131,10 @@ class Voxel_Toolkit_Bulk_Resize {
                             <div class="vt-bulk-resize-setting">
                                 <span class="vt-bulk-resize-setting-label"><?php _e('Format Mode', 'voxel-toolkit'); ?></span>
                                 <span class="vt-bulk-resize-setting-value"><?php echo esc_html($this->get_mode_label($settings['optimization_mode'])); ?></span>
+                            </div>
+                            <div class="vt-bulk-resize-setting">
+                                <span class="vt-bulk-resize-setting-label"><?php _e('Backup Originals', 'voxel-toolkit'); ?></span>
+                                <span class="vt-bulk-resize-setting-value"><?php echo !empty($settings['backup_originals']) ? __('Yes', 'voxel-toolkit') : __('No', 'voxel-toolkit'); ?></span>
                             </div>
                         </div>
                     </div>
@@ -255,6 +260,58 @@ class Voxel_Toolkit_Bulk_Resize {
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Backup Management -->
+                <?php
+                $backup_stats = $this->get_backup_stats();
+                if ($backup_stats['count'] > 0 || !empty($settings['backup_originals'])) :
+                ?>
+                <div class="vt-bulk-resize-card vt-bulk-resize-backup">
+                    <div class="vt-bulk-resize-card-header">
+                        <span class="dashicons dashicons-portfolio"></span>
+                        <?php _e('Backup Management', 'voxel-toolkit'); ?>
+                    </div>
+                    <div class="vt-bulk-resize-card-body">
+                        <p><?php _e('Original images are stored in:', 'voxel-toolkit'); ?> <code>wp-content/uploads/vt-originals/</code></p>
+                        <div class="vt-bulk-resize-backup-stats">
+                            <div class="vt-bulk-resize-backup-stat">
+                                <span class="vt-bulk-resize-backup-stat-value" id="vt-backup-count"><?php echo esc_html($backup_stats['count']); ?></span>
+                                <span class="vt-bulk-resize-backup-stat-label"><?php _e('Files', 'voxel-toolkit'); ?></span>
+                            </div>
+                            <div class="vt-bulk-resize-backup-stat">
+                                <span class="vt-bulk-resize-backup-stat-value" id="vt-backup-size"><?php echo esc_html($this->format_bytes($backup_stats['size'])); ?></span>
+                                <span class="vt-bulk-resize-backup-stat-label"><?php _e('Total Size', 'voxel-toolkit'); ?></span>
+                            </div>
+                        </div>
+                        <?php if ($backup_stats['count'] > 0) : ?>
+                        <button type="button" class="button button-secondary" id="vt-delete-originals-btn">
+                            <span class="dashicons dashicons-trash"></span>
+                            <?php _e('Delete Original Files', 'voxel-toolkit'); ?>
+                        </button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="vt-modal-overlay" id="vt-delete-modal" style="display: none;">
+            <div class="vt-modal">
+                <div class="vt-modal-header">
+                    <span class="dashicons dashicons-warning"></span>
+                    <?php _e('Delete Original Files', 'voxel-toolkit'); ?>
+                </div>
+                <div class="vt-modal-body">
+                    <p class="vt-modal-warning"><?php _e('This action cannot be undone!', 'voxel-toolkit'); ?></p>
+                    <p><?php _e('You are about to permanently delete all original image files from the backup folder. These files will be lost forever.', 'voxel-toolkit'); ?></p>
+                    <p><?php _e('To confirm, type "confirm" below:', 'voxel-toolkit'); ?></p>
+                    <input type="text" id="vt-delete-confirm-input" class="regular-text" placeholder="<?php esc_attr_e('Type confirm here', 'voxel-toolkit'); ?>" autocomplete="off">
+                </div>
+                <div class="vt-modal-footer">
+                    <button type="button" class="button button-secondary" id="vt-delete-cancel-btn"><?php _e('Cancel', 'voxel-toolkit'); ?></button>
+                    <button type="button" class="button button-primary vt-delete-confirm-btn" id="vt-delete-confirm-btn" disabled><?php _e('Delete Files', 'voxel-toolkit'); ?></button>
                 </div>
             </div>
         </div>
@@ -498,9 +555,24 @@ class Voxel_Toolkit_Bulk_Resize {
             if (!is_wp_error($result)) {
                 $converted = true;
 
-                // Delete original file if it's a different path
+                // Handle original file - backup or delete
                 if ($new_file_path !== $file_path && file_exists($file_path)) {
-                    @unlink($file_path);
+                    $backup_originals = !empty($settings['backup_originals']);
+
+                    if ($backup_originals) {
+                        $backup_dir = $this->get_backup_folder();
+                        $backup_path = $backup_dir . '/' . basename($file_path);
+
+                        // Add timestamp if file already exists in backup folder
+                        if (file_exists($backup_path)) {
+                            $info = pathinfo($file_path);
+                            $backup_path = $backup_dir . '/' . $info['filename'] . '-' . time() . '.' . $info['extension'];
+                        }
+
+                        @rename($file_path, $backup_path);
+                    } else {
+                        @unlink($file_path);
+                    }
                 }
 
                 // Update attachment metadata
@@ -629,6 +701,77 @@ class Voxel_Toolkit_Bulk_Resize {
     }
 
     /**
+     * AJAX: Delete backup originals
+     */
+    public function ajax_delete_originals() {
+        check_ajax_referer('vt_bulk_resize', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Unauthorized');
+        }
+
+        $backup_dir = $this->get_backup_folder();
+
+        if (!is_dir($backup_dir)) {
+            wp_send_json_success(array(
+                'deleted' => 0,
+                'freed' => 0,
+            ));
+            return;
+        }
+
+        $deleted = 0;
+        $freed_bytes = 0;
+
+        // Get all files in backup directory (not subdirectories)
+        $files = glob($backup_dir . '/*');
+
+        foreach ($files as $file) {
+            // Skip .htaccess and directories
+            if (is_dir($file) || basename($file) === '.htaccess') {
+                continue;
+            }
+
+            $size = filesize($file);
+            if (@unlink($file)) {
+                $deleted++;
+                $freed_bytes += $size;
+            }
+        }
+
+        wp_send_json_success(array(
+            'deleted' => $deleted,
+            'freed' => $freed_bytes,
+            'freed_formatted' => $this->format_bytes($freed_bytes),
+        ));
+    }
+
+    /**
+     * Get backup folder file count and size
+     */
+    public function get_backup_stats() {
+        $backup_dir = $this->get_backup_folder();
+
+        if (!is_dir($backup_dir)) {
+            return array('count' => 0, 'size' => 0);
+        }
+
+        $count = 0;
+        $size = 0;
+        $files = glob($backup_dir . '/*');
+
+        foreach ($files as $file) {
+            if (is_dir($file) || basename($file) === '.htaccess') {
+                continue;
+            }
+            $count++;
+            $size += filesize($file);
+        }
+
+        return array('count' => $count, 'size' => $size);
+    }
+
+    /**
      * Format bytes to human readable
      */
     private function format_bytes($bytes) {
@@ -678,6 +821,22 @@ class Voxel_Toolkit_Bulk_Resize {
             'originals_only' => __('Keep original formats', 'voxel-toolkit'),
         );
         return isset($labels[$mode]) ? $labels[$mode] : $mode;
+    }
+
+    /**
+     * Get or create backup folder for original images
+     */
+    private function get_backup_folder() {
+        $upload_dir = wp_upload_dir();
+        $backup_dir = $upload_dir['basedir'] . '/vt-originals';
+
+        if (!file_exists($backup_dir)) {
+            wp_mkdir_p($backup_dir);
+            // Add .htaccess to prevent direct access
+            file_put_contents($backup_dir . '/.htaccess', 'Deny from all');
+        }
+
+        return $backup_dir;
     }
 
     /**

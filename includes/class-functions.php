@@ -8682,6 +8682,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         $wm_scale = isset($settings['wm_scale']) ? intval($settings['wm_scale']) : 15;
         $wm_opacity = isset($settings['wm_opacity']) ? intval($settings['wm_opacity']) : 70;
         $show_toast = isset($settings['show_toast']) ? (bool) $settings['show_toast'] : true;
+        $backup_originals = isset($settings['backup_originals']) ? (bool) $settings['backup_originals'] : false;
         ?>
         <div class="vt-info-box">
             <?php _e('High-performance client-side image optimization with watermark support. Images are processed in the browser before upload, reducing server load and improving upload speeds.', 'voxel-toolkit'); ?>
@@ -8896,6 +8897,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <div class="vt-checkbox-item-content">
                         <span class="vt-checkbox-item-label"><?php _e('Show Progress Toast', 'voxel-toolkit'); ?></span>
                         <p class="vt-checkbox-item-description"><?php _e('Display a progress notification in the bottom-right corner when images are being optimized. Disable for a cleaner user experience.', 'voxel-toolkit'); ?></p>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Bulk Resize Backup -->
+        <div class="vt-settings-section">
+            <h4 class="vt-settings-section-title"><?php _e('Bulk Resize Backup', 'voxel-toolkit'); ?></h4>
+            <p class="vt-section-description"><?php _e('Configure backup options for the Bulk Resize tool when converting images to WebP format.', 'voxel-toolkit'); ?></p>
+
+            <div class="vt-checkbox-list">
+                <label class="vt-checkbox-item">
+                    <input type="checkbox"
+                           name="voxel_toolkit_options[image_optimization][backup_originals]"
+                           value="1"
+                           <?php checked($backup_originals); ?> />
+                    <div class="vt-checkbox-item-content">
+                        <span class="vt-checkbox-item-label"><?php _e('Backup Original Files', 'voxel-toolkit'); ?></span>
+                        <p class="vt-checkbox-item-description"><?php _e('Keep original image files in a backup folder when converting to WebP format. Files will be saved to wp-content/uploads/vt-originals/', 'voxel-toolkit'); ?></p>
                     </div>
                 </label>
             </div>

@@ -38,6 +38,7 @@ class Voxel_Toolkit_Image_Optimization {
         'wm_pos' => 'bottom-right',
         'wm_scale' => 15,
         'wm_opacity' => 70,
+        'backup_originals' => false,
     );
 
     /**
@@ -237,6 +238,7 @@ class Voxel_Toolkit_Image_Optimization {
         $sanitized['set_alt_text'] = !empty($input['set_alt_text']);
         $sanitized['disable_wp_scaling'] = !empty($input['disable_wp_scaling']);
         $sanitized['show_toast'] = !empty($input['show_toast']);
+        $sanitized['backup_originals'] = !empty($input['backup_originals']);
 
         // Integer settings with bounds
         $sanitized['max_file_size'] = isset($input['max_file_size']) ? max(1, min(100, intval($input['max_file_size']))) : 10;
