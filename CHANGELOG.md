@@ -42,3 +42,7 @@
 ### Messenger Widget
 
 - **Input Text Color Default** - Set default input text color to black for better visibility
+
+### Promotion Create Form
+
+- **Package Icons Fix** - Custom SVG icons from promotion package settings now display correctly in the create form
