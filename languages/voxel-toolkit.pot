@@ -128,3 +128,67 @@ msgstr ""
 #: includes/admin/class-admin.php
 msgid "Failed to reset settings."
 msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Add new"
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Term name"
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Description (optional)"
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Add"
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Cancel"
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Adding..."
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Please enter a term name"
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "This term already exists"
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Term added successfully"
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Term submitted for approval. Once approved, you can edit your post to add it."
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Add New Button"
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Add Category"
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Add Category (VT)"
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Term added"
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Error adding term"
+msgstr ""
+
+#: includes/functions/class-add-category.php
+msgid "Invalid request"
+msgstr ""
