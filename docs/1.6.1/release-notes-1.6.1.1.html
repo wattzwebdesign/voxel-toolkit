@@ -1,0 +1,59 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Voxel Toolkit 1.6.1.1 Release Notes</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Version 1.6.1.1 is a bug fix release addressing issues discovered in 1.6.1.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Bug Fixes</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Messenger Widget - Persistent Admin Chat Fix</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Fixed an issue where the persistent admin chat circle would duplicate exponentially (doubling on each render). The fix ensures only one instance of the persistent admin chat and AI bot circles exist by:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>Using .first() on container and popup selections to work with single widget instances</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Removing duplicate circles before re-rendering the chat list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Adding duplicate checks before prepending circles back to the list</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">External Link Warning - Settings Not Saving</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Fixed an issue where border colors and button styling settings were not being saved in the External Link Warning feature. Added missing sanitization for:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>Continue button border color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Cancel button border color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Button border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Button border width</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
