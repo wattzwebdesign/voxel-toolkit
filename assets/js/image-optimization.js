@@ -111,7 +111,7 @@
         el: null,
 
         isEnabled() {
-            return Settings.showToast !== false;
+            return !!Settings.showToast;
         },
 
         show(title, message, type = 'default') {
