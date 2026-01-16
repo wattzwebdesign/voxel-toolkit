@@ -42,16 +42,17 @@
 
             // Wait for DOM ready
             $(document).ready(function() {
-                self.container = $('.vt-messenger-container');
+                // Use .first() to ensure we only work with one widget instance
+                self.container = $('.vt-messenger-container').first();
 
                 if (self.container.length === 0) {
                     return;
                 }
 
-                self.button = self.container.find('.vt-messenger-button');
-                self.popup = self.container.find('.vt-messenger-popup');
-                self.chatWindows = self.container.find('.vt-messenger-chat-windows');
-                self.badge = self.container.find('.vt-messenger-badge');
+                self.button = self.container.find('.vt-messenger-button').first();
+                self.popup = self.container.find('.vt-messenger-popup').first();
+                self.chatWindows = self.container.find('.vt-messenger-chat-windows').first();
+                self.badge = self.container.find('.vt-messenger-badge').first();
 
                 // Get configuration
                 self.config = window.vtMessenger || {};
@@ -230,7 +231,7 @@
                 return;
             }
 
-            var $list = self.popup.find('.vt-messenger-chat-list');
+            var $list = self.popup.find('.vt-messenger-chat-list').first();
 
             // Check if already exists in DOM
             if ($list.find('.vt-persistent-admin-chat').length > 0) {
@@ -468,7 +469,7 @@
                 return;
             }
 
-            var $list = self.popup.find('.vt-messenger-chat-list');
+            var $list = self.popup.find('.vt-messenger-chat-list').first();
 
             // Check if already exists in DOM
             if ($list.find('.vt-ai-bot-chat-circle').length > 0) {
@@ -1472,18 +1473,33 @@
 
         renderChatList: function() {
             var self = this;
-            var $list = self.popup.find('.vt-messenger-chat-list');
+            // Use .first() to ensure we only work with one list, preventing clone issues
+            var $list = self.popup.find('.vt-messenger-chat-list').first();
             var chats = self.state.searchTerm ? self.filterChatsByTerm(self.state.chats, self.state.searchTerm) : self.state.chats;
 
             // Preserve special circles before updating (persistent admin and AI Bot)
-            var $persistentCircle = $list.find('.vt-persistent-admin-chat').detach();
-            var $aiBotCircle = $list.find('.vt-ai-bot-chat-circle').detach();
+            // Remove ALL duplicates first, then detach the one we want to keep
+            var $allPersistentCircles = $list.find('.vt-persistent-admin-chat');
+            var $persistentCircle = $();
+            if ($allPersistentCircles.length > 0) {
+                // Keep only the first one, remove all others immediately
+                $allPersistentCircles.slice(1).remove();
+                $persistentCircle = $allPersistentCircles.first().detach();
+            }
+
+            var $allAiBotCircles = $list.find('.vt-ai-bot-chat-circle');
+            var $aiBotCircle = $();
+            if ($allAiBotCircles.length > 0) {
+                // Keep only the first one, remove all others immediately
+                $allAiBotCircles.slice(1).remove();
+                $aiBotCircle = $allAiBotCircles.first().detach();
+            }
 
             if (chats.length === 0) {
                 if ($list.children().length > 0) {
                     $list.empty();
                 }
-                // Re-add special circles
+                // Re-add special circles (list is empty so no duplicate check needed)
                 if ($aiBotCircle.length > 0) {
                     $list.prepend($aiBotCircle);
                 }
@@ -1560,10 +1576,11 @@
             }
 
             // Re-add special circles at top (AI Bot after persistent admin)
-            if ($aiBotCircle.length > 0) {
+            // Double-check no duplicates exist before prepending
+            if ($aiBotCircle.length > 0 && $list.find('.vt-ai-bot-chat-circle').length === 0) {
                 $list.prepend($aiBotCircle);
             }
-            if ($persistentCircle.length > 0) {
+            if ($persistentCircle.length > 0 && $list.find('.vt-persistent-admin-chat').length === 0) {
                 $list.prepend($persistentCircle);
             }
         },

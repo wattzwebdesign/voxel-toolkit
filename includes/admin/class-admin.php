@@ -1835,14 +1835,22 @@ class Voxel_Toolkit_Admin {
                         $color_fields = array(
                             'modal_bg', 'title_color', 'message_color',
                             'icon_bg', 'icon_color',
-                            'continue_bg', 'continue_text_color',
-                            'cancel_bg', 'cancel_text_color'
+                            'continue_bg', 'continue_text_color', 'continue_border_color',
+                            'cancel_bg', 'cancel_text_color', 'cancel_border_color'
                         );
                         foreach ($color_fields as $color_field) {
                             if (isset($function_input[$color_field]) && !empty($function_input[$color_field])) {
                                 $sanitized_function[$color_field] = sanitize_text_field($function_input[$color_field]);
                             }
                         }
+
+                        // Button styling (border radius and width)
+                        $sanitized_function['button_border_radius'] = isset($function_input['button_border_radius'])
+                            ? max(0, min(50, absint($function_input['button_border_radius'])))
+                            : 8;
+                        $sanitized_function['button_border_width'] = isset($function_input['button_border_width'])
+                            ? max(0, min(10, absint($function_input['button_border_width'])))
+                            : 0;
                         break;
 
                     case 'saved_search':
