@@ -1952,6 +1952,12 @@ class Voxel_Toolkit_Admin {
                         $sanitized_function['anthropic_model'] = isset($function_input['anthropic_model']) && in_array($function_input['anthropic_model'], $allowed_anthropic, true)
                             ? $function_input['anthropic_model']
                             : 'claude-3-5-haiku-20241022';
+
+                        // Response Language
+                        $allowed_languages = array('en', 'es', 'fr', 'de', 'it', 'pt', 'nl', 'pl', 'ru', 'uk', 'ja', 'ko', 'zh', 'ar', 'hi', 'tr', 'vi', 'th', 'id', 'ms', 'sv', 'da', 'no', 'fi', 'el', 'cs', 'ro', 'hu', 'he');
+                        $sanitized_function['response_language'] = isset($function_input['response_language']) && in_array($function_input['response_language'], $allowed_languages, true)
+                            ? $function_input['response_language']
+                            : 'en';
                         break;
 
                     case 'ai_post_summary':
