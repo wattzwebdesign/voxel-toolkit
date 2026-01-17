@@ -144,6 +144,7 @@ class Voxel_Toolkit_AI_Bot_Search_Handler {
                                 'label' => $term->name,
                             );
                         }
+                        $filter_data['hint'] = 'Use the "value" field from options (the slug), not the "label". Match user query to the closest label, then use its corresponding value.';
                     }
                 }
             }
@@ -221,7 +222,7 @@ class Voxel_Toolkit_AI_Bot_Search_Handler {
                             }
                         }
                     }
-                    $field_data['hint'] = 'Use _field:' . $field_key . ' with the option value';
+                    $field_data['hint'] = 'Use _field:' . $field_key . ' with the "value" from options (not the label). Match user query to closest label, use its value.';
                     break;
 
                 case 'taxonomy':
@@ -242,7 +243,7 @@ class Voxel_Toolkit_AI_Bot_Search_Handler {
                             }
                         }
                     }
-                    $field_data['hint'] = 'Use _field:' . $field_key . ' with the term slug';
+                    $field_data['hint'] = 'Use _field:' . $field_key . ' with the "value" from options (the slug, not the label). Match user query to closest label, use its value.';
                     break;
 
                 default:
@@ -354,6 +355,14 @@ Important rules:
 - Always respond with ONLY the JSON object, no additional text before or after
 - NEVER add comments in the JSON (no // or /* */ comments)
 - The JSON must be valid and parseable
+
+CRITICAL - Filter Options (value vs label):
+When a filter has an \"options\" array with \"value\" and \"label\" fields:
+- The \"label\" is what users see (may be in any language, e.g., \"Тент\", \"Open Box\", \"Refrigerated\")
+- The \"value\" is the internal slug/key (always in English/ASCII, e.g., \"tent\", \"open-box\", \"refrigerated\")
+- YOU MUST USE THE \"value\" (slug) IN YOUR SEARCH, NOT THE \"label\"
+- Match the user's query to the closest \"label\", then use the corresponding \"value\" in your filter
+- Example: User asks about \"тентованный\" (Russian for tented) → find \"label\": \"Тент\" → use \"value\": \"tent\"
 
 Handling \"related to\", \"about\", \"involving\" queries:
 - When users say something is \"related to X\", \"about X\", \"involving X\", or \"X-related\":
@@ -538,6 +547,23 @@ User question: \"businesses in the medical field near me\"
     }
   ]
 }
+
+Example 9 - Using option VALUE (slug) instead of label for taxonomy/select filters
+User question (in Russian): \"покажи грузы для тентованного транспорта\" (show cargo for tented vehicles)
+Given filter options: [{\"value\": \"tent\", \"label\": \"Тент\"}, {\"value\": \"refrigerator\", \"label\": \"Рефрижератор\"}]
+{
+  \"explanation\": \"User is looking for cargo compatible with tented/covered vehicles. Matched 'тентованного' to label 'Тент', using its value 'tent'.\",
+  \"searches\": [
+    {
+      \"post_type\": \"USE_EXACT_KEY_FROM_SCHEMA\",
+      \"filters\": {
+        \"vehicle_type\": \"tent\"
+      },
+      \"limit\": {$max_results}
+    }
+  ]
+}
+Note: The filter uses \"tent\" (the value/slug) NOT \"Тент\" (the label). Always use the \"value\" field from options.
 
 REMEMBER: Replace \"USE_EXACT_KEY_FROM_SCHEMA\" with the actual post_type key from the schema. Look at the schema above and use the exact key shown there.";
 
