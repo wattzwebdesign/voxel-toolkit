@@ -47,6 +47,7 @@
 ### Promotion Create Form
 
 - **Package Icons Fix** - Custom SVG icons from promotion package settings now display correctly in the create form
+- **Duration Color Control** - New Elementor color control for styling the duration text independently from other card elements
 
 ### Bulk Resize
 

@@ -361,6 +361,17 @@ class Voxel_Toolkit_Promotion_Create_Form {
             )
         );
 
+        $element->add_control(
+            'vt_promo_card_duration_color',
+            array(
+                'label' => __('Duration Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => array(
+                    '{{WRAPPER}} .vt-promotion-card-duration' => 'color: {{VALUE}};',
+                ),
+            )
+        );
+
         // Skip Link
         $element->add_control(
             'vt_promo_skip_heading',
