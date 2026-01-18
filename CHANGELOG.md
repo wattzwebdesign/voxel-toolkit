@@ -9,6 +9,10 @@
 - **Show Accepted in All View** - Accepted suggestions now display when "All" filter is selected
 - **Accepted Status Badge** - Added green status badge for accepted suggestions
 
+### Translations
+
+- **Complete POT File Generation** - New `generate-pot.php` script scans all PHP files and extracts 3,775+ translatable strings (previously only ~60 strings were in the POT file)
+
 ## 1.6.1.1
 
 ### Suggest Edits Improvements
