@@ -16,8 +16,9 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
     public function __construct($data = [], $args = null) {
         parent::__construct($data, $args);
 
-        // Enqueue styles only (no JS needed - backend handles Accept/Reject)
+        // Enqueue styles and JS for filtering
         wp_enqueue_style('voxel-toolkit-suggest-edits', VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/suggest-edits.css', array(), VOXEL_TOOLKIT_VERSION);
+        wp_enqueue_script('voxel-toolkit-pending-suggestions', VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/pending-suggestions.js', array('jquery'), VOXEL_TOOLKIT_VERSION, true);
     }
 
     public function get_name() {
@@ -475,22 +476,12 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
             return;
         }
 
-        // Check if current user is the post author
-        $current_user_id = get_current_user_id();
-        $post_author_id = get_post_field('post_author', $post_id);
-
-        if ($current_user_id != $post_author_id && !current_user_can('edit_others_posts')) {
-            if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-                echo '<p>' . __('Only the post author can see pending suggestions.', 'voxel-toolkit') . '</p>';
-            }
-            return;
-        }
-
         // Get suggestions
         $suggest_edits = Voxel_Toolkit_Suggest_Edits::instance();
         $pending_suggestions = $suggest_edits->get_suggestions_by_post($post_id, 'pending');
         $queued_suggestions = $suggest_edits->get_suggestions_by_post($post_id, 'queued');
-        $all_suggestions = array_merge($pending_suggestions, $queued_suggestions);
+        $approved_suggestions = $suggest_edits->get_suggestions_by_post($post_id, 'accepted');
+        $all_suggestions = array_merge($pending_suggestions, $queued_suggestions, $approved_suggestions);
 
         $widget_title = !empty($settings['widget_title']) ? $settings['widget_title'] : __('Pending Edit Suggestions', 'voxel-toolkit');
         ?>
@@ -501,9 +492,10 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
                 <?php if ($settings['show_status_filter'] === 'yes' && !empty($all_suggestions)): ?>
                     <div class="vt-status-filter">
                         <select class="vt-filter-select">
-                            <option value="all"><?php _e('All', 'voxel-toolkit'); ?></option>
-                            <option value="pending" selected><?php _e('Pending', 'voxel-toolkit'); ?></option>
+                            <option value="all" selected><?php _e('All', 'voxel-toolkit'); ?></option>
+                            <option value="pending"><?php _e('Pending', 'voxel-toolkit'); ?></option>
                             <option value="queued"><?php _e('Queued', 'voxel-toolkit'); ?></option>
+                            <option value="accepted"><?php _e('Accepted', 'voxel-toolkit'); ?></option>
                         </select>
                     </div>
                 <?php endif; ?>
@@ -543,6 +535,8 @@ class Voxel_Toolkit_Pending_Suggestions_Widget extends \Elementor\Widget_Base {
                                 <div class="vt-suggestion-status">
                                     <?php if ($suggestion->status === 'queued'): ?>
                                         <span class="vt-status-badge vt-status-queued"><?php _e('Queued', 'voxel-toolkit'); ?></span>
+                                    <?php elseif ($suggestion->status === 'accepted'): ?>
+                                        <span class="vt-status-badge vt-status-accepted"><?php _e('Accepted', 'voxel-toolkit'); ?></span>
                                     <?php endif; ?>
                                 </div>
                             </div>
