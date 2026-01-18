@@ -688,6 +688,11 @@ body.vt-modal-open {
     color: #721c24;
 }
 
+.vt-suggestion-item.vt-status-accepted {
+    border-color: #28a745;
+    background: #f0fff4;
+}
+
 .vt-suggestion-body {
     margin-bottom: 15px;
 }

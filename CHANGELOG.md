@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.6.1.2
+
+### Pending Suggestions Widget
+
+- **Removed Built-in Visibility Conditions** - Removed logged-in, admin, and post author checks; use Voxel's Elementor conditions instead for flexible visibility control
+- **Added Accepted Status Filter** - Status dropdown now includes All, Pending, Queued, and Accepted options
+- **Show Accepted in All View** - Accepted suggestions now display when "All" filter is selected
+- **Accepted Status Badge** - Added green status badge for accepted suggestions
+
 ## 1.6.1.1
 
 ### Suggest Edits Improvements
