@@ -23,6 +23,12 @@
 - **Overlay Background Setting** - New setting to customize the overlay/backdrop color
 - **CSS Variables for All Styling** - All modal styling now uses CSS variables; no more hardcoded values
 
+### AI Bot
+
+- **Localized UI Messages** - "No results", "error", "rate limit", and "login required" messages now respect the AI Response Language setting (supports 15 languages including Russian, Ukrainian, Polish, Arabic, Japanese, Chinese, etc.)
+- **Improved Taxonomy Search** - Schema now includes `taxonomy_name` for taxonomy/term fields so AI knows the correct WordPress taxonomy to use with `_taxonomy:` filter
+- **Better Taxonomy Hints** - Field hints now explicitly tell the AI to use `_taxonomy:taxonomy_name` format with term slugs
+
 ## 1.6.1.1
 
 ### Suggest Edits Improvements

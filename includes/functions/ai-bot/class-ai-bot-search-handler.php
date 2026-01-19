@@ -130,6 +130,9 @@ class Voxel_Toolkit_AI_Bot_Search_Handler {
             if (in_array($type, array('terms', 'taxonomy'), true)) {
                 $taxonomy = $filter->get_prop('taxonomy');
                 if ($taxonomy) {
+                    // Include taxonomy name for _taxonomy: special filter usage
+                    $filter_data['taxonomy_name'] = $taxonomy;
+
                     $terms = get_terms(array(
                         'taxonomy' => $taxonomy,
                         'hide_empty' => false,
@@ -144,7 +147,7 @@ class Voxel_Toolkit_AI_Bot_Search_Handler {
                                 'label' => $term->name,
                             );
                         }
-                        $filter_data['hint'] = 'Use the "value" field from options (the slug), not the "label". Match user query to the closest label, then use its corresponding value.';
+                        $filter_data['hint'] = 'Use the "value" field from options (the slug), not the "label". Match user query to the closest label, then use its corresponding value. For special _taxonomy: filter, use "_taxonomy:' . $taxonomy . '".';
                     }
                 }
             }
@@ -226,12 +229,16 @@ class Voxel_Toolkit_AI_Bot_Search_Handler {
                     break;
 
                 case 'taxonomy':
+                case 'term':
                     $taxonomy = $field->get_prop('taxonomy');
                     if ($taxonomy) {
+                        // Include taxonomy name for _taxonomy: special filter usage
+                        $field_data['taxonomy_name'] = $taxonomy;
+
                         $terms = get_terms(array(
                             'taxonomy' => $taxonomy,
                             'hide_empty' => false,
-                            'number' => 30,
+                            'number' => 50,
                         ));
                         if (!is_wp_error($terms) && !empty($terms)) {
                             $field_data['options'] = array();
@@ -242,8 +249,8 @@ class Voxel_Toolkit_AI_Bot_Search_Handler {
                                 );
                             }
                         }
+                        $field_data['hint'] = 'IMPORTANT: For taxonomy search, use "_taxonomy:' . $taxonomy . '" with the term "value" (slug). Match user query to closest "label", use its "value". Example: "_taxonomy:' . $taxonomy . '": "term-slug"';
                     }
-                    $field_data['hint'] = 'Use _field:' . $field_key . ' with the "value" from options (the slug, not the label). Match user query to closest label, use its value.';
                     break;
 
                 default:
@@ -393,6 +400,7 @@ Special filters (prefixed with underscore):
   - \"_field:name\": {\"contains\": \"medical\"} - field contains this text
 
 - \"_taxonomy:taxonomy_name\": Search by taxonomy/category/tag assignments:
+  IMPORTANT: Use the \"taxonomy_name\" value from the filter schema (e.g., if schema shows \"taxonomy_name\": \"voxel_body_type\", use \"_taxonomy:voxel_body_type\")
 
   Basic taxonomy searches:
   - \"_taxonomy:category\": \"news\" - post has this specific term
