@@ -17,6 +17,12 @@
 
 - **Address Part Localization** - The `address_part` method now returns address components (city, country, etc.) in the site's current language by re-geocoding with Google/Mapbox API; supports WPML, Polylang, TranslatePress, and WordPress locale with 24-hour caching
 
+### External Link Warning
+
+- **Modal Border Radius Setting** - New setting to customize modal border radius (was hardcoded to 12px)
+- **Overlay Background Setting** - New setting to customize the overlay/backdrop color
+- **CSS Variables for All Styling** - All modal styling now uses CSS variables; no more hardcoded values
+
 ## 1.6.1.1
 
 ### Suggest Edits Improvements
