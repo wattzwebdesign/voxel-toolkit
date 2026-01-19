@@ -13,6 +13,10 @@
 
 - **Complete POT File Generation** - New `generate-pot.php` script scans all PHP files and extracts 3,775+ translatable strings (previously only ~60 strings were in the POT file)
 
+### Dynamic Tags
+
+- **Address Part Localization** - The `address_part` method now returns address components (city, country, etc.) in the site's current language by re-geocoding with Google/Mapbox API; supports WPML, Polylang, TranslatePress, and WordPress locale with 24-hour caching
+
 ## 1.6.1.1
 
 ### Suggest Edits Improvements
