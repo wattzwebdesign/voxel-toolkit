@@ -74,6 +74,7 @@ class Voxel_Toolkit_Link_Management {
 
         // Default colors and styles
         $styles = array(
+            'overlay_bg' => isset($function_settings['overlay_color']) ? $function_settings['overlay_color'] : 'rgba(0,0,0,0.6)',
             'modal_bg' => isset($function_settings['modal_bg']) ? $function_settings['modal_bg'] : '#ffffff',
             'title_color' => isset($function_settings['title_color']) ? $function_settings['title_color'] : '#1e293b',
             'message_color' => isset($function_settings['message_color']) ? $function_settings['message_color'] : '#64748b',
@@ -87,6 +88,7 @@ class Voxel_Toolkit_Link_Management {
             'cancel_border_color' => isset($function_settings['cancel_border_color']) && !empty($function_settings['cancel_border_color']) ? $function_settings['cancel_border_color'] : 'transparent',
             'button_border_radius' => isset($function_settings['button_border_radius']) ? $function_settings['button_border_radius'] : '8',
             'button_border_width' => isset($function_settings['button_border_width']) ? $function_settings['button_border_width'] : '0',
+            'modal_border_radius' => isset($function_settings['modal_border_radius']) ? $function_settings['modal_border_radius'] : '12',
         );
 
         // Add inline CSS for custom colors and styles
@@ -104,6 +106,10 @@ class Voxel_Toolkit_Link_Management {
             --vt-lm-cancel-border-color: ' . esc_attr($styles['cancel_border_color']) . ';
             --vt-lm-button-border-radius: ' . esc_attr($styles['button_border_radius']) . 'px;
             --vt-lm-button-border-width: ' . esc_attr($styles['button_border_width']) . 'px;
+            --vt-lm-modal-border-radius: ' . esc_attr($styles['modal_border_radius']) . 'px;
+            --vt-lm-overlay-bg: ' . esc_attr($styles['overlay_bg']) . ';
+            --vt-lm-url-bg: ' . esc_attr($styles['cancel_bg']) . ';
+            --vt-lm-url-color: ' . esc_attr($styles['cancel_text_color']) . ';
         }';
         wp_add_inline_style('vt-link-management', $custom_css);
 

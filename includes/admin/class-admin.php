@@ -1833,7 +1833,7 @@ class Voxel_Toolkit_Admin {
 
                         // Color settings
                         $color_fields = array(
-                            'modal_bg', 'title_color', 'message_color',
+                            'overlay_color', 'modal_bg', 'title_color', 'message_color',
                             'icon_bg', 'icon_color',
                             'continue_bg', 'continue_text_color', 'continue_border_color',
                             'cancel_bg', 'cancel_text_color', 'cancel_border_color'
@@ -1851,6 +1851,11 @@ class Voxel_Toolkit_Admin {
                         $sanitized_function['button_border_width'] = isset($function_input['button_border_width'])
                             ? max(0, min(10, absint($function_input['button_border_width'])))
                             : 0;
+
+                        // Modal border radius
+                        $sanitized_function['modal_border_radius'] = isset($function_input['modal_border_radius'])
+                            ? max(0, min(50, absint($function_input['modal_border_radius'])))
+                            : 12;
                         break;
 
                     case 'saved_search':

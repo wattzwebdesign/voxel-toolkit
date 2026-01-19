@@ -6820,6 +6820,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             'cancel_border_color' => '',
             'button_border_radius' => '8',
             'button_border_width' => '0',
+            'modal_border_radius' => '12',
         );
 
         // Get current values with defaults
@@ -6837,6 +6838,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         $cancel_border_color = isset($settings['cancel_border_color']) ? $settings['cancel_border_color'] : $defaults['cancel_border_color'];
         $button_border_radius = isset($settings['button_border_radius']) ? $settings['button_border_radius'] : $defaults['button_border_radius'];
         $button_border_width = isset($settings['button_border_width']) ? $settings['button_border_width'] : $defaults['button_border_width'];
+        $modal_border_radius = isset($settings['modal_border_radius']) ? $settings['modal_border_radius'] : $defaults['modal_border_radius'];
 
         $title_val = isset($settings['title']) && !empty($settings['title']) ? $settings['title'] : $default_title;
         $message_val = isset($settings['message']) && !empty($settings['message']) ? $settings['message'] : $default_message;
@@ -6917,6 +6919,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
                         <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Overlay Background', 'voxel-toolkit'); ?></label>
+                            <input type="text"
+                                   name="voxel_toolkit_options[link_management][overlay_color]"
+                                   id="lm-overlay-color"
+                                   value="<?php echo esc_attr($overlay_color); ?>"
+                                   placeholder="rgba(0,0,0,0.6)"
+                                   class="vt-text-input lm-color-input"
+                                   style="width: 140px; font-family: monospace;" />
+                        </div>
+                        <div class="vt-field-group">
                             <label class="vt-field-label"><?php _e('Modal Background', 'voxel-toolkit'); ?></label>
                             <input type="text"
                                    name="voxel_toolkit_options[link_management][modal_bg]"
@@ -6945,6 +6957,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                    placeholder="#64748b"
                                    class="vt-text-input lm-color-input"
                                    style="width: 120px; font-family: monospace;" />
+                        </div>
+                        <div class="vt-field-group">
+                            <label class="vt-field-label"><?php _e('Modal Border Radius (px)', 'voxel-toolkit'); ?></label>
+                            <input type="number"
+                                   name="voxel_toolkit_options[link_management][modal_border_radius]"
+                                   id="lm-modal-border-radius"
+                                   value="<?php echo esc_attr($modal_border_radius); ?>"
+                                   placeholder="12"
+                                   class="vt-text-input lm-style-input"
+                                   style="width: 80px;"
+                                   min="0"
+                                   max="50" />
                         </div>
                     </div>
 

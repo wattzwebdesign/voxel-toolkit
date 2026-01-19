@@ -17,6 +17,10 @@
     --vt-lm-cancel-border-color: transparent;
     --vt-lm-button-border-radius: 8px;
     --vt-lm-button-border-width: 0px;
+    --vt-lm-modal-border-radius: 12px;
+    --vt-lm-overlay-bg: rgba(0, 0, 0, 0.6);
+    --vt-lm-url-bg: #f1f5f9;
+    --vt-lm-url-color: #475569;
 }
 
 /* Prevent body scroll when modal is open */
@@ -31,7 +35,7 @@ body.vt-link-modal-open {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: var(--vt-lm-overlay-bg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -51,7 +55,7 @@ body.vt-link-modal-open {
 /* Modal box */
 .vt-link-modal {
     background: var(--vt-lm-modal-bg);
-    border-radius: 12px;
+    border-radius: var(--vt-lm-modal-border-radius);
     padding: 32px;
     max-width: 440px;
     width: 100%;
@@ -104,10 +108,10 @@ body.vt-link-modal-open {
 .vt-link-modal-url {
     margin: 0 0 20px;
     padding: 10px 14px;
-    background: #f1f5f9;
+    background: var(--vt-lm-url-bg);
     border-radius: 6px;
     font-size: 13px;
-    color: #475569;
+    color: var(--vt-lm-url-color);
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     word-break: break-all;
     text-align: left;
