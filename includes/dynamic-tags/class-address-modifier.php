@@ -70,6 +70,32 @@ class Voxel_Toolkit_Address_Part_Modifier extends \Voxel\Dynamic_Data\Modifiers\
             $part = $part['content'];
         }
 
+        // Handle array value (Voxel address field data)
+        if (is_array($value)) {
+            // If we have address_components already, use them directly
+            if (!empty($value['address_components'])) {
+                return $this->extract_address_part($value['address_components'], $part);
+            }
+
+            // If we have coordinates, try reverse geocoding
+            if (!empty($value['latitude']) && !empty($value['longitude'])) {
+                $address_components = $this->get_address_components_from_coords(
+                    $value['latitude'],
+                    $value['longitude']
+                );
+                if ($address_components) {
+                    return $this->extract_address_part($address_components, $part);
+                }
+            }
+
+            // If we have an address string in the array, use that
+            if (!empty($value['address'])) {
+                $value = $value['address'];
+            } else {
+                return '';
+            }
+        }
+
         // Value should be the formatted address string
         if (!is_string($value) || empty($value)) {
             return '';
@@ -78,12 +104,123 @@ class Voxel_Toolkit_Address_Part_Modifier extends \Voxel\Dynamic_Data\Modifiers\
         // Get address components from the formatted address string
         $address_components = $this->get_address_components_from_address($value);
 
-        if (!$address_components) {
+        if ($address_components) {
+            $result = $this->extract_address_part($address_components, $part);
+            if (!empty($result)) {
+                return $result;
+            }
+        }
+
+        // Fallback: try to parse the address string directly (useful when geocoding fails)
+        return $this->parse_address_string_fallback($value, $part);
+    }
+
+    /**
+     * Fallback parser for when geocoding fails
+     * Attempts to extract address parts directly from the formatted string
+     *
+     * @param string $address Formatted address string
+     * @param string $part Which part to extract
+     * @return string Extracted part or empty string
+     */
+    private function parse_address_string_fallback($address, $part) {
+        // Split address by commas
+        $parts = array_map('trim', explode(',', $address));
+
+        if (empty($parts)) {
             return '';
         }
 
-        // Extract the requested part
-        return $this->extract_address_part($address_components, $part);
+        switch ($part) {
+            case 'country':
+                // Country is typically the last part
+                $last_part = end($parts);
+                // Check if it looks like a country (not a postcode)
+                if (!preg_match('/\d/', $last_part) || strlen($last_part) > 20) {
+                    return $last_part;
+                }
+                return '';
+
+            case 'postal_code':
+                // Look for postal code patterns
+                foreach ($parts as $p) {
+                    // UK postcode pattern: AA9A 9AA, A9A 9AA, A9 9AA, A99 9AA, AA9 9AA, AA99 9AA
+                    if (preg_match('/\b([A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2})\b/i', $p, $matches)) {
+                        return strtoupper($matches[1]);
+                    }
+                    // US ZIP code pattern
+                    if (preg_match('/\b(\d{5}(?:-\d{4})?)\b/', $p, $matches)) {
+                        return $matches[1];
+                    }
+                    // Generic postal code (digits)
+                    if (preg_match('/\b(\d{4,6})\b/', $p, $matches)) {
+                        return $matches[1];
+                    }
+                }
+                return '';
+
+            case 'city':
+                // For UK addresses: city is usually before the postcode
+                // Pattern: "City POSTCODE" or "City, POSTCODE"
+                foreach ($parts as $p) {
+                    // Check if this part contains a UK postcode
+                    if (preg_match('/^(.+?)\s+([A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2})$/i', $p, $matches)) {
+                        return trim($matches[1]);
+                    }
+                }
+                // If no postcode pattern found, city is often the second-to-last part
+                if (count($parts) >= 2) {
+                    $candidate = $parts[count($parts) - 2];
+                    // Make sure it's not a street (doesn't start with a number)
+                    if (!preg_match('/^\d/', $candidate)) {
+                        // Remove any trailing postcode
+                        $candidate = preg_replace('/\s+[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i', '', $candidate);
+                        return trim($candidate);
+                    }
+                }
+                // Try the last part if it looks like a city
+                if (count($parts) >= 1) {
+                    $last = end($parts);
+                    // Extract city from "City POSTCODE" format
+                    if (preg_match('/^([A-Za-z\s]+?)(?:\s+[A-Z]{1,2}\d|$)/i', $last, $matches)) {
+                        $city = trim($matches[1]);
+                        if (!empty($city) && !preg_match('/^\d/', $city)) {
+                            return $city;
+                        }
+                    }
+                }
+                return '';
+
+            case 'street':
+                // Street is typically the first part (may include number)
+                if (!empty($parts[0])) {
+                    $street = $parts[0];
+                    // Remove leading street number
+                    $street = preg_replace('/^\d+\s*/', '', $street);
+                    return trim($street);
+                }
+                return '';
+
+            case 'number':
+                // Street number is at the beginning
+                if (!empty($parts[0]) && preg_match('/^(\d+[A-Za-z]?)\s/', $parts[0], $matches)) {
+                    return $matches[1];
+                }
+                return '';
+
+            case 'state':
+                // State/province is harder to extract without geocoding
+                // For US addresses, it's typically a 2-letter code before ZIP
+                foreach ($parts as $p) {
+                    if (preg_match('/\b([A-Z]{2})\s+\d{5}\b/', $p, $matches)) {
+                        return $matches[1];
+                    }
+                }
+                return '';
+
+            default:
+                return '';
+        }
     }
 
     /**
