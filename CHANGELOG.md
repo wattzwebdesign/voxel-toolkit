@@ -50,10 +50,15 @@
 ### Online Status
 
 - **Display Location Settings Fix** - Fixed "Display Locations" checkboxes not saving when unchecked; messenger/inbox/dashboard toggles now work correctly
+- **Notification Avatar Fix** - Fixed avatars becoming square in notification popup when Online Status is enabled
 
 ### App Events
 
 - **Admin Page Crash Fix** - Fixed PHP Fatal error on Voxel App Events admin page caused by `dynamic_tags()` methods returning arrays instead of proper data group instances
+
+### Active Filters Widget
+
+- **AJAX Label Fix** - Fixed filter labels showing field key (e.g., "terms") instead of field label (e.g., "Category") during AJAX search; labels now read from Voxel's Vue search form at runtime
 
 ## 1.6.1.1
 
