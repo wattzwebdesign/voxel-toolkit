@@ -39,6 +39,10 @@
 
 - **Hide When Empty** - Load Search button now automatically hides when user is logged out or has no saved searches
 
+### Phone Field
+
+- **New Caledonia Missing** - Added New Caledonia to backend country selection list (was only available on frontend)
+
 ## 1.6.1.1
 
 ### Suggest Edits Improvements
