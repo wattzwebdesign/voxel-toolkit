@@ -1,29 +1,23 @@
 /**
  * Schedule Posts - Styling
  *
- * Uses Voxel's native popup styling with minimal overrides
+ * Simple styling for native date/time inputs
  */
 
-/* Field Container - Multiple selectors for specificity */
+/* Field Container */
 .vt-schedule-field {
-    margin-top: 25px !important;
+    margin-top: 15px !important;
 }
 
 .ts-form-group.vt-schedule-field {
-    margin-top: 25px !important;
+    margin-top: 15px !important;
 }
 
 .ts-form-group.vt-schedule-field > label {
     display: block;
-    margin-top: 25px !important;
-    padding-top: 0;
     margin-bottom: 8px;
     font-weight: 500;
     color: var(--ts-shade-1);
-}
-
-div.vt-schedule-field > label {
-    margin-top: 25px !important;
 }
 
 /* Grid Layout - Inline date and time */
@@ -52,89 +46,38 @@ div.vt-schedule-field > label {
     width: auto !important;
 }
 
-.vt-schedule-field .vx-2-3 {
-    position: relative;
-}
-
-/* Popup Container - Position absolutely */
-.vt-schedule-popup-container {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    z-index: 1000;
-    min-width: 300px;
-}
-
-.vt-schedule-popup-container .ts-field-popup {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    border-radius: 10px;
-    overflow: visible;
-}
-
-/* Remove scroll from calendar popup */
-.vt-schedule-popup-container .ts-popup-content-wrapper {
-    max-height: none !important;
-    overflow: visible !important;
-}
-
-/* Calendar Container */
-.vt-schedule-calendar {
-    padding: 15px;
-}
-
-.vt-schedule-calendar .pika-single {
-    border: none !important;
-    background: transparent !important;
-    font-family: inherit;
-    box-shadow: none !important;
-}
-
-/* Calendar Navigation Arrows - Add padding from edges */
-.vt-schedule-popup-container .pika-prev,
-.ts-field-popup .pika-prev,
-.pika-single .pika-prev {
-    left: 10px !important;
-}
-
-.vt-schedule-popup-container .pika-next,
-.ts-field-popup .pika-next,
-.pika-single .pika-next {
-    right: 10px !important;
-}
-
-/* Time Input - Match date selector height */
-.vt-schedule-field .vt-schedule-time {
-    height: 100% !important;
+/* Date and Time Inputs */
+.vt-schedule-field input[type="date"],
+.vt-schedule-field input[type="time"] {
+    height: 44px !important;
+    min-height: 44px;
     width: 100%;
-    min-height: 44px;
-    padding: 8px !important;
+    padding: 8px 12px !important;
+    font-size: 15px;
+    border: 1px solid var(--ts-shade-5, #e2e8f0);
+    border-radius: var(--ts-border-radius, 8px);
+    background: var(--ts-shade-7, #fff);
+    color: var(--ts-shade-1, #1e293b);
+    cursor: pointer;
 }
 
-.vt-schedule-field .form-field-grid .vx-1-3 {
-    display: flex !important;
-    align-items: stretch !important;
+.vt-schedule-field input[type="date"]:focus,
+.vt-schedule-field input[type="time"]:focus {
+    outline: none;
+    border-color: var(--ts-primary, #3b82f6);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.vt-schedule-field .vx-1-3 .ts-filter,
-.vt-schedule-field .vx-1-3 input[type="time"] {
-    height: 100% !important;
-    min-height: 44px;
-    padding: 8px !important;
-}
-
-/* Hide success message until replaced when scheduling */
-body.vt-schedule-pending .ts-edit-success h4 {
-    visibility: hidden;
-}
 
 /* Responsive */
 @media (max-width: 520px) {
     .vt-schedule-field .form-field-grid {
-        grid-template-columns: 1fr;
+        flex-direction: column !important;
     }
 
-    .vt-schedule-popup-container {
-        min-width: 100%;
-        right: 0;
+    .vt-schedule-field .form-field-grid .vx-2-3,
+    .vt-schedule-field .form-field-grid .vx-1-3 {
+        flex: none !important;
+        width: 100% !important;
     }
 }

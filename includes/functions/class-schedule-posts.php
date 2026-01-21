@@ -312,18 +312,12 @@ class Voxel_Toolkit_Schedule_Posts {
             return;
         }
 
-        // Get Pikaday URLs from Voxel theme
-        $pikaday_js = get_template_directory_uri() . '/assets/vendor/pikaday/pikaday.prod.js';
-        $pikaday_css = get_template_directory_uri() . '/assets/vendor/pikaday/pikaday.prod.css';
-
         // Schedule posts CSS
         $schedule_css = VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/schedule-posts.css?ver=' . VOXEL_TOOLKIT_VERSION;
 
-        // Output CSS and JS
+        // Output CSS
         ?>
-        <link rel="stylesheet" href="<?php echo esc_url($pikaday_css); ?>" media="all">
         <link rel="stylesheet" href="<?php echo esc_url($schedule_css); ?>" media="all">
-        <script src="<?php echo esc_url($pikaday_js); ?>"></script>
         <?php
 
         $widgets_data = array();
@@ -353,8 +347,9 @@ class Voxel_Toolkit_Schedule_Posts {
             const existingDate = '<?php echo esc_js($scheduled_date); ?>';
             const existingTime = '<?php echo esc_js($scheduled_time); ?>';
 
-            // Calendar icon SVG
-            const calendarIcon = '<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20"><path d="M1 4c0-1.1.9-2 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4zm2 2v12h14V6H3zm2-6h2v2H5V0zm8 0h2v2h-2V0zM5 9h2v2H5V9zm0 4h2v2H5v-2zm4-4h2v2H9V9zm0 4h2v2H9v-2zm4-4h2v2h-2V9zm0 4h2v2h-2v-2z"/></svg>';
+            // Get today's date in YYYY-MM-DD format for min attribute
+            const today = new Date();
+            const minDate = today.toISOString().split('T')[0];
 
             // Get the first widget's success message for scheduled posts
             let scheduledSuccessMessage = '<?php _e('Your post has been scheduled.', 'voxel-toolkit'); ?>';
@@ -365,45 +360,82 @@ class Voxel_Toolkit_Schedule_Posts {
                 }
             }
 
+            // Helper to get schedule values from DOM
+            function getScheduleValues() {
+                const visibleDateInput = document.querySelector('.vt-schedule-date');
+                const visibleTimeInput = document.querySelector('.vt-schedule-time');
+                const hiddenDateInput = document.querySelector('.vt-schedule-date-input');
+                const hiddenTimeInput = document.querySelector('.vt-schedule-time-input');
+
+                console.log('VT Schedule: visibleDateInput found:', !!visibleDateInput);
+                console.log('VT Schedule: visibleDateInput value:', visibleDateInput ? visibleDateInput.value : 'N/A');
+                console.log('VT Schedule: hiddenDateInput found:', !!hiddenDateInput);
+                console.log('VT Schedule: hiddenDateInput value:', hiddenDateInput ? hiddenDateInput.value : 'N/A');
+
+                const scheduleDate = (visibleDateInput && visibleDateInput.value) || (hiddenDateInput && hiddenDateInput.value) || '';
+                const scheduleTime = (visibleTimeInput && visibleTimeInput.value) || (hiddenTimeInput && hiddenTimeInput.value) || '00:00';
+
+                console.log('VT Schedule: Final values - date:', scheduleDate, 'time:', scheduleTime);
+                return { scheduleDate, scheduleTime };
+            }
+
             // Intercept XHR to inject schedule data - do this ONCE globally
             if (!window._vtScheduleXHRPatched) {
                 window._vtScheduleXHRPatched = true;
                 const originalXHRSend = XMLHttpRequest.prototype.send;
 
                 XMLHttpRequest.prototype.send = function(data) {
-                    // Check if this is an admin-ajax request with data
+                    let modifiedData = data;
                     if (data) {
-                        // Find schedule inputs in DOM
-                        const dateInput = document.querySelector('.vt-schedule-date-input');
-                        const timeInput = document.querySelector('.vt-schedule-time-input');
+                        const { scheduleDate, scheduleTime } = getScheduleValues();
 
-                        if (dateInput && dateInput.value) {
-                            const scheduleDate = dateInput.value;
-                            const scheduleTime = timeInput ? timeInput.value : '00:00';
-
+                        if (scheduleDate) {
                             console.log('VT Schedule: XHR send intercepted');
                             console.log('VT Schedule: Date:', scheduleDate, 'Time:', scheduleTime);
 
-                            // Mark that we're submitting a scheduled post and store the success message
                             window._vtSchedulePending = true;
                             window._vtScheduleSuccessMessage = scheduledSuccessMessage;
 
-                            // Add class to body to hide the success message until we replace it
-                            document.body.classList.add('vt-schedule-pending');
-
                             if (data instanceof FormData) {
-                                console.log('VT Schedule: Appending to FormData');
+                                console.log('VT Schedule: Appending to FormData (XHR)');
                                 data.append('vt_schedule_date', scheduleDate);
                                 data.append('vt_schedule_time', scheduleTime);
+                                modifiedData = data;
                             } else if (typeof data === 'string' && data.includes('action=')) {
-                                console.log('VT Schedule: Appending to string data');
-                                data += '&vt_schedule_date=' + encodeURIComponent(scheduleDate);
-                                data += '&vt_schedule_time=' + encodeURIComponent(scheduleTime);
+                                console.log('VT Schedule: Appending to string data (XHR)');
+                                modifiedData = data + '&vt_schedule_date=' + encodeURIComponent(scheduleDate) + '&vt_schedule_time=' + encodeURIComponent(scheduleTime);
+                                console.log('VT Schedule: Modified data:', modifiedData);
                             }
-
                         }
                     }
-                    return originalXHRSend.call(this, data);
+                    return originalXHRSend.call(this, modifiedData);
+                };
+
+                // Also intercept fetch API
+                const originalFetch = window.fetch;
+                window.fetch = function(url, options) {
+                    const { scheduleDate, scheduleTime } = getScheduleValues();
+
+                    if (scheduleDate && options && options.body) {
+                        console.log('VT Schedule: Fetch intercepted');
+                        console.log('VT Schedule: Date:', scheduleDate, 'Time:', scheduleTime);
+
+                        window._vtSchedulePending = true;
+                        window._vtScheduleSuccessMessage = scheduledSuccessMessage;
+
+                        if (options.body instanceof FormData) {
+                            console.log('VT Schedule: Appending to FormData (fetch)');
+                            options.body.append('vt_schedule_date', scheduleDate);
+                            options.body.append('vt_schedule_time', scheduleTime);
+                        } else if (typeof options.body === 'string') {
+                            console.log('VT Schedule: Appending to string body (fetch)');
+                            if (options.body.includes('=')) {
+                                options.body += '&vt_schedule_date=' + encodeURIComponent(scheduleDate);
+                                options.body += '&vt_schedule_time=' + encodeURIComponent(scheduleTime);
+                            }
+                        }
+                    }
+                    return originalFetch.call(this, url, options);
                 };
             }
 
@@ -435,54 +467,6 @@ class Voxel_Toolkit_Schedule_Posts {
                 });
             }
 
-            // Check if we're on confirmation page - more robust detection
-            function isConfirmationPage(form) {
-                if (!form) return false;
-
-                // Method 1: Check for Voxel's success icon (SVG with checkmark/circle classes)
-                const hasSuccessIcon = form.querySelector('.ts-checkmark-circle, .success-icon, svg.checkmark, .ts-icon-check');
-                if (hasSuccessIcon) {
-                    console.log('VT Schedule: Confirmation detected via success icon');
-                    return true;
-                }
-
-                // Method 2: Check for SVG that looks like a checkmark (has circle or check path)
-                const allSvgs = form.querySelectorAll('svg');
-                for (const svg of allSvgs) {
-                    // Check if SVG contains circle element (common in success icons)
-                    if (svg.querySelector('circle') && !svg.closest('.vt-schedule-field')) {
-                        // Make sure it's a large icon (success icons are typically 48px+)
-                        const rect = svg.getBoundingClientRect();
-                        if (rect.width >= 40 && rect.height >= 40) {
-                            console.log('VT Schedule: Confirmation detected via large SVG with circle');
-                            return true;
-                        }
-                    }
-                }
-
-                // Method 3: Check for confirmation page structure - has link button but no submit-form
-                const hasSubmitForm = form.querySelector('.ts-form-group.submit-form');
-                const hasViewLink = form.querySelector('a.ts-btn[href]:not([href="#"]):not([href^="javascript"])');
-                if (!hasSubmitForm && hasViewLink) {
-                    // Check if the link goes to a post (not admin or action URL)
-                    const href = hasViewLink.getAttribute('href') || '';
-                    if (href && !href.includes('wp-admin') && !href.includes('action=')) {
-                        console.log('VT Schedule: Confirmation detected via view link without submit form');
-                        return true;
-                    }
-                }
-
-                // Method 4: Check if form has very few form groups (confirmation pages are simple)
-                const formGroups = form.querySelectorAll('.ts-form-group');
-                const hasInputs = form.querySelector('input[type="text"], input[type="email"], textarea, select');
-                if (formGroups.length <= 3 && !hasInputs) {
-                    console.log('VT Schedule: Confirmation detected via minimal form structure');
-                    return true;
-                }
-
-                return false;
-            }
-
             function initScheduleField(widgetId, settings) {
                 const widget = document.querySelector('[data-id="' + widgetId + '"]');
                 if (!widget) {
@@ -496,8 +480,13 @@ class Voxel_Toolkit_Schedule_Posts {
                     return;
                 }
 
-                // Check if we're on confirmation page
-                if (isConfirmationPage(form)) {
+                // Check if we're on a confirmation/success page by looking for specific elements
+                const hasSuccessIcon = form.querySelector('.ts-checkmark-circle, .success-icon, svg.checkmark');
+                const formText = form.textContent || '';
+                const isConfirmationPage = hasSuccessIcon ||
+                    (formText.includes('has been published') && formText.includes('View'));
+
+                if (isConfirmationPage) {
                     console.log('VT Schedule: On confirmation page, skipping');
                     const existingField = form.querySelector('.vt-schedule-field');
                     if (existingField) existingField.remove();
@@ -545,37 +534,17 @@ class Voxel_Toolkit_Schedule_Posts {
                     return;
                 }
 
-                // Create schedule field HTML using Voxel's popup structure
+                // Create schedule field HTML using native date/time inputs
                 const scheduleField = document.createElement('div');
                 scheduleField.className = 'ts-form-group vt-schedule-field';
                 scheduleField.innerHTML = `
-                    <label style="margin-top: 25px;">${settings.label}</label>
-                    <div class="form-field-grid medium">
-                        <div class="ts-form-group vx-2-3" style="position: relative;">
-                            <div class="ts-filter ts-popup-target vt-schedule-date-trigger" data-filled="false">
-                                ${calendarIcon}
-                                <div class="ts-filter-text">${settings.date_placeholder}</div>
-                            </div>
-                            <div class="ts-field-popup-container vt-schedule-popup-container" style="display: none;">
-                                <div class="ts-field-popup ts-popup-fit">
-                                    <div class="ts-popup-content-wrapper min-scroll">
-                                        <div class="ts-booking-date ts-booking-date-single vt-schedule-calendar"></div>
-                                    </div>
-                                    <div class="ts-popup-controller">
-                                        <ul class="flexify simplify-ul">
-                                            <li class="flexify">
-                                                <a href="#" class="ts-btn ts-btn-1 vt-schedule-clear"><?php _e('Clear', 'voxel-toolkit'); ?></a>
-                                            </li>
-                                            <li class="flexify">
-                                                <a href="#" class="ts-btn ts-btn-2 vt-schedule-save"><?php _e('Save', 'voxel-toolkit'); ?></a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
+                    <label>${settings.label}</label>
+                    <div class="form-field-grid medium vt-schedule-inputs">
+                        <div class="ts-form-group vx-2-3">
+                            <input type="date" class="ts-filter vt-schedule-date" min="${minDate}" value="${existingDate}" placeholder="${settings.date_placeholder}">
                         </div>
                         <div class="ts-form-group vx-1-3">
-                            <input type="time" class="ts-filter vt-schedule-time" value="${existingTime || settings.time_placeholder}">
+                            <input type="time" class="ts-filter vt-schedule-time" value="${existingTime || '00:00'}">
                         </div>
                     </div>
                     <input type="hidden" name="vt_schedule_date" class="vt-schedule-date-input" value="${existingDate}">
@@ -585,130 +554,50 @@ class Voxel_Toolkit_Schedule_Posts {
                 // Insert before submit button
                 submitWrapper.parentNode.insertBefore(scheduleField, submitWrapper);
 
-                // Initialize Pikaday
-                const calendarContainer = scheduleField.querySelector('.vt-schedule-calendar');
-                const dateTrigger = scheduleField.querySelector('.vt-schedule-date-trigger');
-                const dateText = dateTrigger.querySelector('.ts-filter-text');
-                const popup = scheduleField.querySelector('.vt-schedule-popup-container');
+                // Get input elements
+                const dateInput = scheduleField.querySelector('.vt-schedule-date');
                 const timeInput = scheduleField.querySelector('.vt-schedule-time');
                 const hiddenDateInput = scheduleField.querySelector('.vt-schedule-date-input');
                 const hiddenTimeInput = scheduleField.querySelector('.vt-schedule-time-input');
-                const clearBtn = scheduleField.querySelector('.vt-schedule-clear');
-                const saveBtn = scheduleField.querySelector('.vt-schedule-save');
 
-                let selectedDate = existingDate ? new Date(existingDate + 'T00:00:00') : null;
-                let picker = null;
-
-                // Store original button text and get button reference for text changes
+                // Store original button text
                 const originalBtnText = submitBtn.textContent.trim();
                 const scheduleBtnText = settings.button_text || 'Schedule';
 
-                // Initialize Pikaday when available
-                function initPikaday() {
-                    if (typeof Pikaday !== 'undefined' && !picker) {
-                        picker = new Pikaday({
-                            field: document.createElement('input'), // Dummy field
-                            container: calendarContainer,
-                            bound: false,
-                            firstDay: 1,
-                            minDate: new Date(),
-                            keyboardInput: false,
-                            defaultDate: selectedDate || new Date(),
-                            setDefaultDate: !!selectedDate,
-                            onSelect: function(date) {
-                                selectedDate = date;
-                            }
-                        });
-                        console.log('VT Schedule: Pikaday initialized');
-                    }
-                }
-
-                // Try immediately, then poll if not available
-                initPikaday();
-                if (!picker) {
-                    const pikadayCheck = setInterval(function() {
-                        if (typeof Pikaday !== 'undefined') {
-                            initPikaday();
-                            clearInterval(pikadayCheck);
-                        }
-                    }, 100);
-                    // Stop checking after 5 seconds
-                    setTimeout(function() { clearInterval(pikadayCheck); }, 5000);
-                }
-
-                // Update display if existing date
-                if (existingDate) {
-                    dateText.textContent = formatDate(selectedDate);
-                    dateTrigger.setAttribute('data-filled', 'true');
-                    dateTrigger.classList.add('ts-filled');
-                }
-
-                // Toggle popup
-                dateTrigger.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
-                });
-
-                // Stop propagation on popup clicks (calendar, buttons, etc.)
-                popup.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                });
-
-                // Close popup when clicking outside
-                document.addEventListener('click', function(e) {
-                    if (!scheduleField.contains(e.target)) {
-                        popup.style.display = 'none';
-                    }
-                });
-
-                // Clear button
-                clearBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    selectedDate = null;
-                    hiddenDateInput.value = '';
-                    hiddenTimeInput.value = '';
-                    dateText.textContent = settings.date_placeholder;
-                    dateTrigger.setAttribute('data-filled', 'false');
-                    dateTrigger.classList.remove('ts-filled');
-                    timeInput.value = settings.time_placeholder;
-                    popup.style.display = 'none';
-
-                    // Restore original button text
-                    submitBtn.textContent = originalBtnText;
-                    if (picker) {
-                        picker.setDate(null);
-                    }
-                });
-
-                // Save button
-                saveBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (selectedDate) {
-                        const year = selectedDate.getFullYear();
-                        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-                        const day = String(selectedDate.getDate()).padStart(2, '0');
-                        hiddenDateInput.value = `${year}-${month}-${day}`;
-                        hiddenTimeInput.value = timeInput.value || '00:00';
-                        dateText.textContent = formatDate(selectedDate);
-                        dateTrigger.setAttribute('data-filled', 'true');
-                        dateTrigger.classList.add('ts-filled');
-
-                        // Change submit button text to schedule text
+                // Update button text based on date selection
+                function updateButtonText() {
+                    if (dateInput.value) {
                         submitBtn.textContent = scheduleBtnText;
+                    } else {
+                        submitBtn.textContent = originalBtnText;
                     }
-                    popup.style.display = 'none';
+                }
+
+                // Sync date input to hidden field (on both input and change for reliability)
+                dateInput.addEventListener('input', function() {
+                    hiddenDateInput.value = this.value;
+                    updateButtonText();
+                });
+                dateInput.addEventListener('change', function() {
+                    hiddenDateInput.value = this.value;
+                    updateButtonText();
                 });
 
-                // Sync time input
+                // Sync time input to hidden field
+                timeInput.addEventListener('input', function() {
+                    hiddenTimeInput.value = this.value;
+                });
                 timeInput.addEventListener('change', function() {
                     hiddenTimeInput.value = this.value;
                 });
 
-                function formatDate(date) {
-                    if (!date) return settings.date_placeholder;
-                    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-                    return date.toLocaleDateString(undefined, options);
+                // Initialize hidden fields if values exist
+                if (existingDate) {
+                    hiddenDateInput.value = existingDate;
+                    updateButtonText();
+                }
+                if (existingTime) {
+                    hiddenTimeInput.value = existingTime;
                 }
 
             }
@@ -719,7 +608,9 @@ class Voxel_Toolkit_Schedule_Posts {
                 if (!form) return false;
 
                 // Check if we're on confirmation page
-                if (isConfirmationPage(form)) {
+                const formText = form.textContent || '';
+                const hasSuccessIcon = form.querySelector('.ts-checkmark-circle, .success-icon, svg.checkmark');
+                if (hasSuccessIcon || (formText.includes('has been published') && formText.includes('View'))) {
                     return false;
                 }
 
@@ -753,7 +644,11 @@ class Voxel_Toolkit_Schedule_Posts {
                 const existingField = widget.querySelector('.vt-schedule-field');
 
                 // Check if we're on confirmation page
-                if (isConfirmationPage(form) && existingField) {
+                const formText = form ? (form.textContent || '') : '';
+                const hasSuccessIcon = form ? form.querySelector('.ts-checkmark-circle, .success-icon, svg.checkmark') : false;
+                const isConfirmation = hasSuccessIcon || (formText.includes('has been published') && formText.includes('View'));
+
+                if (isConfirmation && existingField) {
                     // On confirmation page - remove scheduler
                     existingField.remove();
                     return;
@@ -824,13 +719,13 @@ class Voxel_Toolkit_Schedule_Posts {
         $schedule_date = sanitize_text_field($_POST['vt_schedule_date']);
         $schedule_time = isset($_POST['vt_schedule_time']) ? sanitize_text_field($_POST['vt_schedule_time']) : '00:00';
 
-        // Validate date format
+        // Validate date format (YYYY-MM-DD)
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $schedule_date)) {
             return $data;
         }
 
-        // Validate time format
-        if (!preg_match('/^\d{2}:\d{2}$/', $schedule_time)) {
+        // Validate time format (HH:MM or HH:MM:SS)
+        if (!preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $schedule_time)) {
             $schedule_time = '00:00';
         }
 
@@ -839,9 +734,9 @@ class Voxel_Toolkit_Schedule_Posts {
         $schedule_timestamp = strtotime($schedule_datetime);
 
         // Only schedule if:
-        // 1. Post would be published (not pending)
+        // 1. Post would be published or pending
         // 2. Schedule time is in the future
-        if ($data['post_status'] === 'publish' && $schedule_timestamp > time()) {
+        if (in_array($data['post_status'], ['publish', 'pending'], true) && $schedule_timestamp > time()) {
             $data['post_status'] = 'future';
             $data['post_date'] = $schedule_datetime;
             $data['post_date_gmt'] = get_gmt_from_date($schedule_datetime);
@@ -854,13 +749,6 @@ class Voxel_Toolkit_Schedule_Posts {
      * Handle scheduled post via Voxel's hook (runs after post is saved)
      */
     public function handle_voxel_scheduled_post($args) {
-        // Debug logging
-        error_log('VT Schedule: ========== Voxel hook triggered ==========');
-        error_log('VT Schedule: Args: ' . print_r($args, true));
-        error_log('VT Schedule: POST keys: ' . implode(', ', array_keys($_POST)));
-        error_log('VT Schedule: vt_schedule_date in POST: ' . (isset($_POST['vt_schedule_date']) ? $_POST['vt_schedule_date'] : 'NOT SET'));
-        error_log('VT Schedule: REQUEST keys: ' . implode(', ', array_keys($_REQUEST)));
-
         // Check if schedule data was submitted
         $schedule_date = isset($_POST['vt_schedule_date']) ? sanitize_text_field($_POST['vt_schedule_date']) : '';
         $schedule_time = isset($_POST['vt_schedule_time']) ? sanitize_text_field($_POST['vt_schedule_time']) : '00:00';
@@ -906,27 +794,17 @@ class Voxel_Toolkit_Schedule_Posts {
         $current_timestamp = $current_dt->getTimestamp();
 
         // Only schedule if:
-        // 1. Post is currently published
+        // 1. Post is currently published or pending
         // 2. Schedule time is in the future
-        error_log('VT Schedule: Current status: ' . $current_status);
-        error_log('VT Schedule: Schedule datetime: ' . $schedule_datetime);
-        error_log('VT Schedule: Schedule timestamp: ' . $schedule_timestamp . ' vs current time: ' . $current_timestamp);
-        error_log('VT Schedule: WP Timezone: ' . $wp_timezone->getName());
-        error_log('VT Schedule: Is future? ' . ($schedule_timestamp > $current_timestamp ? 'YES' : 'NO'));
-
-        if ($current_status === 'publish' && $schedule_timestamp > $current_timestamp) {
-            error_log('VT Schedule: Updating post ' . $post_id . ' to future status');
+        if (in_array($current_status, ['publish', 'pending'], true) && $schedule_timestamp > $current_timestamp) {
             // Update post to scheduled status
-            $result = wp_update_post(array(
+            wp_update_post(array(
                 'ID' => $post_id,
                 'post_status' => 'future',
                 'post_date' => $schedule_datetime,
                 'post_date_gmt' => get_gmt_from_date($schedule_datetime),
                 'edit_date' => true,
             ));
-            error_log('VT Schedule: wp_update_post result: ' . print_r($result, true));
-        } else {
-            error_log('VT Schedule: NOT scheduling - status=' . $current_status . ' or time not in future');
         }
     }
 }
