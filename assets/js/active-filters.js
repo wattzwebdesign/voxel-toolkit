@@ -191,9 +191,19 @@
      * Get label prefix for a filter key
      */
     function getFilterLabelPrefix(config, key) {
-        // First check Voxel filter labels
+        // First check Voxel filter labels from data attribute
         if (config.filterLabels && config.filterLabels[key]) {
             return config.filterLabels[key];
+        }
+
+        // Try to get label from Voxel's Vue search form at runtime
+        var voxelLabel = getVoxelFilterLabel(key);
+        if (voxelLabel) {
+            // Cache it for future use
+            if (config.filterLabels) {
+                config.filterLabels[key] = voxelLabel;
+            }
+            return voxelLabel;
         }
 
         // Fallback to custom widget labels
@@ -206,6 +216,50 @@
 
         // Default: capitalize and replace dashes/underscores
         return capitalize(key.replace(/[-_]/g, ' '));
+    }
+
+    /**
+     * Get filter label from Voxel's Vue search form
+     */
+    function getVoxelFilterLabel(key) {
+        try {
+            // Try multiple selectors for Voxel search form (be specific to avoid matching notifications widget)
+            var searchForm = document.querySelector('.ts-form.ts-search-form')
+                || document.querySelector('form.ts-search-form')
+                || document.querySelector('.elementor-widget-ts-search-form .ts-form')
+                || document.querySelector('.ts-search-widget .ts-form');
+
+            if (!searchForm || !searchForm.__vue_app__) {
+                return null;
+            }
+
+            var vueApp = searchForm.__vue_app__;
+            var component = vueApp._container._vnode.component;
+            if (!component || !component.proxy) {
+                return null;
+            }
+
+            var proxy = component.proxy;
+
+            // Method 1: Check $refs for filter with matching key (format: posttype:filterkey)
+            if (proxy.$refs) {
+                var refKeys = Object.keys(proxy.$refs);
+                for (var r = 0; r < refKeys.length; r++) {
+                    var refKey = refKeys[r];
+                    // Check if this ref ends with :key (e.g., "places:terms" for key "terms")
+                    if (refKey.endsWith(':' + key)) {
+                        var filterRef = proxy.$refs[refKey];
+                        if (filterRef && filterRef.filter && filterRef.filter.label) {
+                            return filterRef.filter.label;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        } catch (e) {
+            return null;
+        }
     }
 
     /**
