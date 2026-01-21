@@ -431,6 +431,7 @@ class Voxel_Toolkit_Extended_Phone_Field extends \Voxel\Post_Types\Fields\Phone_
             'mm' => 'Myanmar',
             'np' => 'Nepal',
             'nl' => 'Netherlands',
+            'nc' => 'New Caledonia',
             'nz' => 'New Zealand',
             'ni' => 'Nicaragua',
             'ng' => 'Nigeria',
