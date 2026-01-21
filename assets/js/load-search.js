@@ -68,8 +68,10 @@ document.addEventListener("voxel/search-form/init", (e) => {
         mounted() {
             if (!this.config?.enableLoadSearch) return;
 
-            this.showTopPopupButton = this.config?.showLoadTopPopupButton?.[this.breakpoint];
-            this.showMainButton = this.config?.showLoadMainButton?.[this.breakpoint];
+            // Hide button if user is logged out or has no saved searches
+            const userHasSearches = this.config?.userHasSearches;
+            this.showTopPopupButton = userHasSearches && this.config?.showLoadTopPopupButton?.[this.breakpoint];
+            this.showMainButton = userHasSearches && this.config?.showLoadMainButton?.[this.breakpoint];
 
             // Move popup button to top popup area
             const popupActions = document.querySelector(
