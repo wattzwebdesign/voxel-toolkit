@@ -1,0 +1,600 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">AI Bot (Updated for 1.6.1)</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The AI Bot function adds an intelligent search assistant to your Voxel site. Users can ask natural language questions like "find me a hotel near the beach" or "show apartments under $1000" and receive relevant results displayed as Voxel preview cards. Version 1.6.1 adds user location awareness, taxonomy search, comprehensive field searching, and an embeddable chat widget.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">What's New in 1.6.1</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>User Location Awareness:</strong> AI can use the user's location for proximity-based searches</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Taxonomy/Category Search:</strong> Full support for searching by taxonomy terms and categories</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Comprehensive Search:</strong> Field-level searching beyond just filters</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Thinking Text:</strong> Customizable "AI is thinking" message</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Chat Window Mode:</strong> Choose between sidebar panel or messenger-style chat window</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Response Language:</strong> 19 language options for AI responses</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Embed Widget:</strong> New Elementor widget to embed the chatbot directly on pages</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Panel Width:</strong> Adjustable panel width setting</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Suggested Questions:</strong> Enhanced configuration options</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">New Feature: User Location</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The AI Bot can now detect and use the user's location for location-based searches like "restaurants near me" or "hotels within 5 miles."</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">How Location Works</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Browser Geolocation:</strong> Prompts user for location permission, provides precise coordinates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>IP Geolocation:</strong> Falls back to IP-based location if browser permission is denied</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Location Data:</strong> City, state, latitude, and longitude are sent to the AI</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Example Queries</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>"Find restaurants near me"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Hotels within 10 miles of my location"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Closest gym to me"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Nearby coffee shops"</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">New Feature: Taxonomy Search</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>AI Bot now fully supports searching by taxonomy terms and categories. Users can ask for specific categories, tags, or any custom taxonomy.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Example Queries</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>"Show Italian restaurants"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Find hotels in the luxury category"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"List all beach properties"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Show me vegetarian-friendly places"</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">New Feature: Comprehensive Search</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Beyond filter-based searching, AI Bot can now perform comprehensive field-level searches across all indexed fields in your post types.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>This allows the AI to search content within specific fields, not just fields that have filters configured.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">New Feature: Thinking Text</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Customize the message displayed while the AI processes a query.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Thinking Text</strong></td><td>Message shown while AI is processing</td><td>"Thinking..."</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:paragraph -->
+<p>Examples: "Searching...", "Finding results...", "Let me check..."</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">New Feature: Chat Window Mode</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Choose how the AI Bot interface appears:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Mode</th><th>Description</th></tr></thead><tbody><tr><td><strong>Sidebar</strong></td><td>Traditional side panel that slides in from left or right</td></tr><tr><td><strong>Chat Window</strong></td><td>Messenger-style floating chat window that can be positioned anywhere</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:paragraph -->
+<p>The chat window mode provides a more familiar messaging experience similar to live chat widgets.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">New Feature: Response Language</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Configure the AI to respond in a specific language, regardless of what language the user asks in.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Supported Languages</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>English</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Spanish</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>French</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>German</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Italian</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Portuguese</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dutch</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Russian</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Chinese (Simplified)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Japanese</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Korean</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Arabic</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Hindi</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Turkish</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Polish</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Vietnamese</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Thai</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Indonesian</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Greek</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">New Feature: AI Bot Embed Widget</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A new Elementor widget allows you to embed the AI Bot chatbot directly on any page, rather than using the slide-in panel.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Adding the Embed Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit a page in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>AI Bot Embed (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to your page</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure settings and styling</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the page</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Embed Widget Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Show Header</strong></td><td>Display header bar with title</td><td>Yes</td></tr><tr><td><strong>Header Title</strong></td><td>Custom title (uses AI Bot panel title if empty)</td><td>Empty</td></tr><tr><td><strong>Show Suggested Queries</strong></td><td>Display suggestion chips</td><td>Yes</td></tr><tr><td><strong>Container Height</strong></td><td>Height of the chat container (responsive)</td><td>500px</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Embed Widget Styling</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Container:</strong> Background, border radius, border, box shadow</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Header:</strong> Background color, text color, typography, padding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Messages:</strong> User and AI bubble colors, border radius, typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Input:</strong> Background, text color, border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Send Button:</strong> Background and icon color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Suggested Queries:</strong> Background, text color, hover state, border radius</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">New Feature: Panel Width</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The panel width is now configurable with a slider control, allowing you to set the exact width that works best for your site design.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Panel Width</strong></td><td>Width of the side panel in pixels</td><td>400px</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Enhanced: Suggested Questions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Suggested queries now have enhanced configuration options:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Add multiple suggestions easily</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Control display in both panel and embed widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Style suggestion chips independently</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Show/hide per widget instance</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Configuration Settings (Updated)</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Panel Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Panel Position</strong></td><td>Which side of the screen the panel appears</td><td>Right</td></tr><tr><td><strong>Panel Behavior</strong></td><td>Push content aside or overlay on top</td><td>Push</td></tr><tr><td><strong>Display Mode</strong></td><td>Sidebar panel or chat window (NEW)</td><td>Sidebar</td></tr><tr><td><strong>Panel Title</strong></td><td>Header text shown in the panel</td><td>"AI Assistant"</td></tr><tr><td><strong>Panel Width</strong></td><td>Width of the panel in pixels (NEW)</td><td>400px</td></tr><tr><td><strong>Thinking Text</strong></td><td>Message while AI processes (NEW)</td><td>"Thinking..."</td></tr><tr><td><strong>Response Language</strong></td><td>Language for AI responses (NEW)</td><td>English</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Search Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Post Types</strong></td><td>Which Voxel post types the AI can search</td><td>None (must select)</td></tr><tr><td><strong>Card Templates</strong></td><td>Preview card template for each post type</td><td>Default template</td></tr><tr><td><strong>Max Results</strong></td><td>Maximum results to show per search</td><td>6</td></tr><tr><td><strong>Enable Location</strong></td><td>Use user location for searches (NEW)</td><td>Yes</td></tr><tr><td><strong>Enable Taxonomy Search</strong></td><td>Search by categories/taxonomies (NEW)</td><td>Yes</td></tr><tr><td><strong>Enable Comprehensive Search</strong></td><td>Field-level searching (NEW)</td><td>Yes</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases for New Features</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Location-Based Directory</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>User asks "Find gyms near me with a pool" - AI uses their location to find nearby gyms with pool amenities.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Multi-Language Site</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Set response language to match your site's primary language - users can ask in any language and get responses in your configured language.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Embedded Help Center</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use the embed widget on a dedicated help/search page to provide an always-visible search assistant.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Category Navigation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>User asks "Show me all Italian restaurants in the downtown category" - AI filters by both cuisine type and location category.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting New Features</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Location Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure site is served over HTTPS (required for geolocation)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that browser location permissions are granted</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>IP geolocation may be less accurate than browser</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Some VPNs may affect location detection</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Embed Widget Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify AI Bot function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check AI Settings are properly configured</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure widget is added to a visible section</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check access control settings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Wrong Response Language</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check the Response Language setting</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any caching</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>AI may occasionally respond in the query language for very short responses</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>AI Settings configured with valid API key</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>OpenAI or Anthropic API account</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>HTTPS for browser geolocation (location feature)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

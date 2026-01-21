@@ -1,0 +1,456 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Checklist Field</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Checklist Field is a custom post field that allows users to create interactive checklists with items that can be checked off. Perfect for task lists, to-do items, requirements tracking, and progress monitoring.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This field type adds a new "Checklist" option when configuring post fields in Voxel. Users can create multiple checklist items, each with an optional title and description. Items can be reordered via drag-and-drop and checked off by authorized users.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Create unlimited checklist items with titles and descriptions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag-and-drop reordering of items</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Interactive checkbox toggle functionality</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable permissions (author, logged-in users, everyone)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>App event integration for automation</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dynamic tags for displaying checklist data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Vue.js frontend and backend templates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Checklist Display Widget for Elementor</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Field</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Post Fields</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Checklist Field</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add Field to Post Type</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Go to <strong>Voxel &gt; Post Types</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select the post type to configure</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Navigate to <strong>Fields</strong> tab</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Add Field</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select <strong>Checklist (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure field settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the post type</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Field Configuration</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Label</strong></td><td>Display name for the field</td><td>Checklist</td></tr><tr><td><strong>Key</strong></td><td>Unique identifier for the field</td><td>checklist</td></tr><tr><td><strong>Description</strong></td><td>Help text shown to users</td><td>Empty</td></tr><tr><td><strong>Required</strong></td><td>Whether at least one item is required</td><td>No</td></tr><tr><td><strong>Toggle Permission</strong></td><td>Who can check/uncheck items</td><td>Author only</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Toggle Permission Options</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Author only:</strong> Only the post author can toggle checkboxes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Logged-in users:</strong> Any logged-in user can toggle items</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Everyone:</strong> All visitors (including guests) can toggle items</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Checklist Display Widget</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Checklist Display Widget is an Elementor widget that renders checklist fields on the frontend with full interactive functionality and styling controls.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Checklist Field</strong></td><td>Select which checklist field to display</td><td>First available</td></tr><tr><td><strong>Hide If Empty</strong></td><td>Don't show widget if no items exist</td><td>No</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Styling Options</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The widget includes comprehensive styling controls:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Container:</strong> Background, padding, border, border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Items:</strong> Background, padding, border, spacing between items</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Checkbox:</strong> Size, colors (unchecked, checked, hover states)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Title:</strong> Color, typography, spacing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Description:</strong> Color, typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Checked Items:</strong> Opacity, strikethrough effect</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">App Events</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Checklist Field registers app events that can trigger automations:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Checklist Item Toggled</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Fires when a user checks or unchecks a checklist item.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>Event Key:</strong> <code>voxel_toolkit/checklist:item_toggled</code></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>Available Data:</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Post information</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User who toggled the item</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Item title and description</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>New checked status</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Dynamic Tags</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Access checklist data through dynamic tags:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><code>@post.field_key.total_count</code> - Total number of items</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><code>@post.field_key.checked_count</code> - Number of checked items</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><code>@post.field_key.unchecked_count</code> - Number of unchecked items</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><code>@post.field_key.progress</code> - Completion percentage</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Task Management</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Create project tasks or to-do lists that team members can check off as they complete work.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Property Amenities</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use as a visual checklist of amenities or features included with a property listing.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Event Requirements</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Track requirements or preparations for events, allowing organizers to mark items as complete.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Service Deliverables</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Track deliverables for service-based businesses, letting clients see progress on their order.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Onboarding Checklists</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Guide new users through onboarding steps they can check off as they complete each task.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Field Not Appearing in Post Type</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the Checklist Field is enabled in Voxel Toolkit</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any object caches</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that Voxel theme is active and up to date</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Cannot Toggle Items</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check the Toggle Permission setting on the field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify you are logged in (if permission requires)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure JavaScript is enabled and no errors in console</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Drag-and-Drop Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure you are on the create/edit post form</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for JavaScript conflicts with other plugins</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try a different browser to rule out browser-specific issues</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Not Showing Data</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the correct checklist field is selected in widget settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the post has checklist items added</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>If "Hide If Empty" is enabled, add items to see the widget</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for display widget)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

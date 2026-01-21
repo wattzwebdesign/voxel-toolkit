@@ -74,17 +74,18 @@
 
     /**
      * Get the posts per page limit from the post feed widget
+     * Priority: Use the count of initially rendered cards since that's the most reliable
+     * The server already applied the correct limit when rendering
      */
     function getPostsPerPageLimit() {
-        // Look for the post feed widget with data-per-page attribute
-        const postFeed = document.querySelector('[data-per-page]');
-        if (postFeed) {
-            const limit = parseInt(postFeed.dataset.perPage, 10);
-            if (!isNaN(limit) && limit > 0) {
-                return limit;
-            }
+        // Primary method: Use the count of initially rendered cards
+        // This is the most reliable since the server already applied the widget's limit
+        const initialCards = document.querySelectorAll('.ts-preview[data-post-id]:not([data-vt-expanded])').length;
+        if (initialCards > 0) {
+            return initialCards;
         }
-        return 0; // No limit
+
+        return 0; // No limit found
     }
 
     /**
@@ -144,17 +145,24 @@
             return dateA.localeCompare(dateB);
         });
 
-        // Apply posts per page limit
+        // Apply posts per page limit - total cards should not exceed what was initially rendered
+        // The server already applied the correct limit, so don't create more cards than that
         if (postsPerPage > 0) {
-            // We need to account for cards that don't have recurring dates
-            const nonRecurringCards = document.querySelectorAll('.ts-preview[data-post-id]:not([data-vt-expanded])').length -
-                                      Object.keys(data).length;
-            const availableSlots = postsPerPage - nonRecurringCards;
+            // Each post with recurring data already has 1 card rendered
+            // We can only show (postsPerPage) total cards
+            // So for recurring posts, we limit to 1 occurrence each (the original card)
+            // This means: just update dates on existing cards, don't clone
 
-            if (availableSlots > 0 && allOccurrences.length > availableSlots) {
-                allOccurrences = allOccurrences.slice(0, availableSlots);
-                console.log('VT Recurring Events: Limited to', availableSlots, 'occurrences due to posts per page setting');
-            }
+            console.log('VT Recurring Events: Limit is', postsPerPage, '- not expanding beyond initial cards');
+
+            // Only keep the first occurrence for each post (no cloning)
+            const firstOccurrenceByPost = {};
+            allOccurrences.forEach(occ => {
+                if (!firstOccurrenceByPost[occ.postId]) {
+                    firstOccurrenceByPost[occ.postId] = occ;
+                }
+            });
+            allOccurrences = Object.values(firstOccurrenceByPost);
         }
 
         // Group occurrences by postId for processing
@@ -209,6 +217,9 @@
 
             console.log('VT Recurring Events: Expanded post', postId, 'with', postOccurrences.length, 'of', fullOccurrences.length, 'occurrences');
         });
+
+        // Reorder DOM cards by occurrence start date (soonest first)
+        sortCardsByOccurrenceDate();
 
         // Clear the data to prevent re-processing
         window.vtRecurringEventsData = {};
@@ -565,27 +576,31 @@
 
     /**
      * Sort cards by occurrence date within their container
+     * Handles both recurring events (with occurrence data) and regular events
      */
     function sortCardsByOccurrenceDate() {
-        // Find containers with recurring event cards
+        // Find containers with event cards (look for post feed containers)
         const containers = new Set();
-        document.querySelectorAll('[data-vt-occurrence-start]').forEach(card => {
+        document.querySelectorAll('.ts-preview[data-post-id]').forEach(card => {
             if (card.parentElement) {
                 containers.add(card.parentElement);
             }
         });
 
         containers.forEach(container => {
-            const cards = Array.from(container.querySelectorAll('.ts-preview[data-vt-occurrence-start]'));
+            // Get all preview cards in this container
+            const cards = Array.from(container.querySelectorAll('.ts-preview[data-post-id]'));
 
             if (cards.length < 2) {
                 return;
             }
 
-            // Sort by occurrence start date
+            // Sort by occurrence start date (soonest first)
+            // For recurring events, use data-vt-occurrence-start
+            // For regular events, try to extract date from card content
             cards.sort((a, b) => {
-                const startA = a.dataset.vtOccurrenceStart || '9999-12-31';
-                const startB = b.dataset.vtOccurrenceStart || '9999-12-31';
+                const startA = getCardSortDate(a);
+                const startB = getCardSortDate(b);
                 return startA.localeCompare(startB);
             });
 
@@ -593,7 +608,38 @@
             cards.forEach(card => {
                 container.appendChild(card);
             });
+
+            console.log('VT Recurring Events: Sorted', cards.length, 'cards by date');
         });
+    }
+
+    /**
+     * Get the date to use for sorting a card
+     * Priority: data-vt-occurrence-start > extracted date from content > fallback
+     */
+    function getCardSortDate(card) {
+        // First check for occurrence data (recurring events)
+        if (card.dataset.vtOccurrenceStart) {
+            return card.dataset.vtOccurrenceStart;
+        }
+
+        // Try to extract date from visible text content (for regular events)
+        // Look for ISO date patterns in data attributes or content
+        const datePattern = /(\d{4}-\d{2}-\d{2})/;
+
+        // Check common date-related data attributes
+        const attrs = ['data-date', 'data-start-date', 'data-event-date'];
+        for (const attr of attrs) {
+            const val = card.getAttribute(attr);
+            if (val) {
+                const match = val.match(datePattern);
+                if (match) return match[1];
+            }
+        }
+
+        // Fallback: keep original position by using a default far-future date
+        // This preserves server-side ordering for non-recurring events
+        return '9999-12-31';
     }
 
     /**

@@ -1,0 +1,396 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Visitor Location (Updated for 1.6.1)</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Visitor Location function detects and provides access to visitor geographic location data through dynamic tags. Version 1.6.1 adds latitude and longitude dynamic tags for precise coordinate access.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">What's New in 1.6.1</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>@site.visitor.latitude:</strong> New dynamic tag for geographic latitude</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>@site.visitor.longitude:</strong> New dynamic tag for geographic longitude</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Visitor Location detects the geographic location of site visitors using either browser geolocation or IP-based detection. The location data is then available through dynamic tags for use in templates, widgets, and conditional logic.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Automatic visitor location detection</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Browser geolocation (precise) with IP fallback</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Multiple IP geolocation APIs with consensus</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable cache duration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dynamic tags for all location components</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Local IP detection filtering</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Available Dynamic Tags</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Tag</th><th>Description</th><th>Example Output</th></tr></thead><tbody><tr><td><code>@site.visitor.location</code></td><td>Full location string</td><td>"Los Angeles, California, United States"</td></tr><tr><td><code>@site.visitor.city</code></td><td>City name only</td><td>"Los Angeles"</td></tr><tr><td><code>@site.visitor.state</code></td><td>State/Region name</td><td>"California"</td></tr><tr><td><code>@site.visitor.country</code></td><td>Country name</td><td>"United States"</td></tr><tr><td><code>@site.visitor.latitude</code></td><td>Geographic latitude (NEW)</td><td>"34.0522"</td></tr><tr><td><code>@site.visitor.longitude</code></td><td>Geographic longitude (NEW)</td><td>"-118.2437"</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Visitor Location</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Click the settings icon next to Visitor Location</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select detection mode (IP or Browser)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set cache duration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save your changes</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Configuration Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Detection Mode</strong></td><td>IP-based or Browser geolocation</td><td>IP</td></tr><tr><td><strong>Cache Duration</strong></td><td>How long to cache location data (seconds)</td><td>3600 (1 hour)</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Detection Modes</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p><strong>IP Mode (Default):</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Uses multiple free geolocation APIs (geojs.io, ipapi.co, ip-api.com)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Consensus-based results for accuracy</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>No user permission required</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>City-level accuracy</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p><strong>Browser Mode:</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Uses HTML5 Geolocation API</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Prompts user for permission</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Precise coordinates (street-level)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Falls back to IP mode if denied</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Using Latitude &amp; Longitude (New)</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The new latitude and longitude tags enable powerful location-based functionality:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Pre-fill Search Coordinates</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use the coordinates to pre-fill location search fields or map center points.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Distance Calculations</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Pass coordinates to external services for distance-based sorting or filtering.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Map Integration</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Center maps on the visitor's location using the coordinate tags.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Example Usage</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Your coordinates: @site.visitor.latitude, @site.visitor.longitude</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Personalized Welcome</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display "Welcome visitor from [City]!" messages using the city tag.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Location-Based Content</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show different content or promotions based on visitor location using visibility conditions.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Auto-Center Maps</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use latitude and longitude to automatically center maps on the visitor's location.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Pre-fill Search Forms</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Pre-populate location search fields with the visitor's detected location.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Nearby Listings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use coordinates to sort or filter listings by proximity to the visitor.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tags Return Empty</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that Visitor Location function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Wait for initial detection (may take a moment)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Local development IPs (127.0.0.1, localhost) are filtered out</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try clearing the cache</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Inaccurate Location</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>IP detection is typically city-level accurate</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>VPNs and proxies affect IP-based detection</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Switch to Browser mode for more precision</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Mobile networks may show ISP location instead</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Browser Mode Permission Denied</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Falls back to IP detection automatically</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure site is served over HTTPS</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User may have blocked location for all sites</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>HTTPS for browser geolocation mode</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

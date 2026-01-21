@@ -1,0 +1,352 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Online Status</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Online Status function tracks and displays real-time user online/offline status indicators throughout your Voxel site. Show visitors which users are currently active.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This feature adds online status indicators that show whether users are currently active on your site. The system tracks last activity timestamps and displays visual indicators in various locations including the dashboard, inbox, messenger, and admin areas.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Real-time online/offline status tracking</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable timeout period (default 3 minutes)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Visual status indicators (green dot for online)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Display in dashboard, inbox, messenger, and admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>AJAX-powered heartbeat for accurate tracking</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Last seen timestamps</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Visibility rules for conditional display</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dynamic tag for author online status</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Online Status</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Click the settings icon next to Online Status</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure display locations and timeout</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save your changes</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Configuration Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Show in Dashboard</strong></td><td>Display online indicators in user dashboard</td><td>Yes</td></tr><tr><td><strong>Show in Inbox</strong></td><td>Display online indicators in Voxel inbox</td><td>Yes</td></tr><tr><td><strong>Show in Messenger</strong></td><td>Display online indicators in messenger chat</td><td>Yes</td></tr><tr><td><strong>Show in Admin</strong></td><td>Display online indicators in WordPress admin</td><td>Yes</td></tr><tr><td><strong>Timeout Minutes</strong></td><td>Minutes of inactivity before user is marked offline</td><td>3 minutes</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Activity Tracking</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>When a logged-in user loads any page, their last activity timestamp is updated</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>A JavaScript heartbeat sends periodic updates to keep the timestamp current</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Updates are throttled (minimum 30 seconds between writes) to reduce database load</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Online Status Check</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A user is considered "online" if their last activity timestamp is within the configured timeout period. For example, with a 3-minute timeout, users are shown as online if they had activity in the last 3 minutes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Visual Indicators</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Online status is displayed as a small green dot indicator next to user avatars or names in the configured locations.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Dynamic Tags & Visibility Rules</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Visibility Rules</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Two visibility rules are available for conditional element display:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>user:is_online</strong> - Check if current user is online</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>author:is_online</strong> - Check if post author is online</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Dynamic Tag</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Access last seen timestamp via dynamic tag:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>@author.last_seen</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>Returns the datetime when the author was last active.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Real-Time Communication</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show users which contacts are currently online before starting a conversation.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Service Availability</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Indicate which service providers or businesses are currently active and likely to respond quickly.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Community Engagement</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display online community members to encourage real-time interaction and engagement.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Support Availability</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show support team availability to set expectations for response times.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Status Not Updating</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify JavaScript is loading without errors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure AJAX heartbeat is functioning</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any caching plugins</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Indicators Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that the display location is enabled in settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify CSS is loading properly</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for CSS conflicts with your theme</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Users Always Showing Offline</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Increase the timeout period in settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure heartbeat AJAX is not being blocked</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that user meta is being updated (vt_last_activity)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Users must be logged in to track and display status</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>JavaScript enabled in browser</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

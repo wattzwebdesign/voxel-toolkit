@@ -27,6 +27,16 @@ class Voxel_Toolkit_Profile_Progress_Widget {
 
         // Add shortcode
         add_shortcode('voxel_profile_progress', array($this, 'render_shortcode'));
+
+        // Clear cache when Elementor saves content
+        add_action('elementor/editor/after_save', array($this, 'clear_widget_cache'));
+    }
+
+    /**
+     * Clear widget in-use cache when Elementor content is saved
+     */
+    public function clear_widget_cache() {
+        delete_transient('vt_profile_progress_widget_in_use');
     }
     
     /**
@@ -44,9 +54,15 @@ class Voxel_Toolkit_Profile_Progress_Widget {
     }
 
     /**
-     * Check if widget is already in use on the site
+     * Check if widget is already in use on the site (cached)
      */
     private function is_widget_in_use() {
+        // Check transient cache first
+        $cached = get_transient('vt_profile_progress_widget_in_use');
+        if ($cached !== false) {
+            return $cached === 'yes';
+        }
+
         global $wpdb;
 
         // Check if widget exists in any Elementor data
@@ -58,8 +74,12 @@ class Voxel_Toolkit_Profile_Progress_Widget {
         );
 
         $count = $wpdb->get_var($query);
+        $in_use = $count > 0;
 
-        return $count > 0;
+        // Cache for 24 hours
+        set_transient('vt_profile_progress_widget_in_use', $in_use ? 'yes' : 'no', DAY_IN_SECONDS);
+
+        return $in_use;
     }
 
     /**

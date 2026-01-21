@@ -1,0 +1,561 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">SMS Notifications</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The SMS Notifications function sends SMS text messages when Voxel app events occur. This provides instant mobile notifications for critical events like new orders, submissions, or messages.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Extend Voxel's notification system beyond email and in-app notifications to include SMS. Configure which events trigger SMS and customize messages with dynamic tags. Supports multiple SMS providers.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>SMS notifications for all Voxel app events</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Multiple provider support (Twilio, Vonage, MessageBird, Telnyx, Solapi)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Per-event SMS configuration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Dynamic tags in SMS messages</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>International phone number support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Test SMS functionality</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enhanced phone input with country code detection</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list"><!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>SMS Notifications</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item --></ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure SMS Provider</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Choose and configure your SMS provider:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">Twilio</h4>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list"><!-- wp:list-item -->
+<li>Sign up at <a href="https://www.twilio.com">twilio.com</a></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Get your Account SID and Auth Token from the console</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Purchase a phone number for sending SMS</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter credentials in Voxel Toolkit settings</li>
+<!-- /wp:list-item --></ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">Vonage (Nexmo)</h4>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list"><!-- wp:list-item -->
+<li>Sign up at <a href="https://www.vonage.com">vonage.com</a></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Get your API Key and API Secret</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure a sender ID or phone number</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter credentials in Voxel Toolkit settings</li>
+<!-- /wp:list-item --></ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">MessageBird</h4>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list"><!-- wp:list-item -->
+<li>Sign up at <a href="https://www.messagebird.com">messagebird.com</a></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Get your API Key</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure an originator (sender name or number)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter credentials in Voxel Toolkit settings</li>
+<!-- /wp:list-item --></ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">Telnyx (New in 1.6.1)</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Telnyx is a global telecommunications provider with competitive SMS rates and reliable delivery worldwide.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list"><!-- wp:list-item -->
+<li>Sign up at <a href="https://www.telnyx.com">telnyx.com</a></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Purchase a phone number in the Mission Control Portal</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Generate an API v2 key under API Keys section</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter your API Key and From Number in Voxel Toolkit settings</li>
+<!-- /wp:list-item --></ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">Solapi (New in 1.6.1)</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Solapi is a Korean SMS provider optimized for the Korean market with local phone number support and regulatory compliance.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list"><!-- wp:list-item -->
+<li>Sign up at <a href="https://www.solapi.com">solapi.com</a></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify your account and business information</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Register a sender phone number</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Generate API credentials (API Key and API Secret) in the console</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter your API Key, API Secret, and From Number in Voxel Toolkit settings</li>
+<!-- /wp:list-item --></ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Configure Phone Number Field</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Select which Voxel profile field contains user phone numbers:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list"><!-- wp:list-item -->
+<li>In the <strong>Phone Field</strong> setting, select the profile field that stores phone numbers</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set a default <strong>Country Code</strong> for numbers without international prefix</li>
+<!-- /wp:list-item --></ol>
+<!-- /wp:list -->
+
+
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 4: Configure Event SMS</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Configure SMS for each event in <strong>Voxel &gt; App Events</strong>:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list"><!-- wp:list-item -->
+<li>Navigate to any event configuration</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>You'll see an SMS toggle for each notification destination</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enable SMS and enter your message template</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use dynamic tags to personalize messages</li>
+<!-- /wp:list-item --></ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Provider Configuration</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table {"hasFixedLayout":false} -->
+<figure class="wp-block-table"><table><thead><tr><th>Provider</th><th>Required Settings</th><th>Best For</th></tr></thead><tbody><tr><td><strong>Twilio</strong></td><td>Account SID, Auth Token, From Number</td><td>Global coverage, popular choice</td></tr><tr><td><strong>Vonage</strong></td><td>API Key, API Secret, From Name/Number</td><td>Enterprise, international</td></tr><tr><td><strong>MessageBird</strong></td><td>API Key, Originator</td><td>European markets</td></tr><tr><td><strong>Telnyx</strong></td><td>API Key, From Number</td><td>Cost-effective global SMS</td></tr><tr><td><strong>Solapi</strong></td><td>API Key, API Secret, From Number</td><td>Korean market</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Dynamic Tags</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>SMS messages support Voxel's dynamic tags. Available tags depend on the event type. Common tags include:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li><code>@user(display_name)</code> - User's display name</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><code>@post(title)</code> - Post/listing title</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><code>@order(id)</code> - Order ID</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><code>@site(name)</code> - Site name</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Example SMS Templates</h3>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>New listing submitted: @post(title) - Review at @site(url)
+
+Order #@order(id) received from @user(display_name). Total: @order(total)
+
+New message from @user(display_name) regarding @post(title)</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">International Phone Support</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function includes enhanced international phone number handling:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li><strong>Country Code Detection:</strong> Automatically detects and stores country codes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>E.164 Format:</strong> Normalizes numbers to international format</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Default Country:</strong> Falls back to configured default country</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Enhanced Input:</strong> Provides intl-tel-input integration for phone fields</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Solapi Phone Format Note</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Solapi uses Korean phone number format. The provider automatically handles format conversion - international format (+821012345678) is converted to local format for sending.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Testing SMS</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Before going live, test your SMS configuration:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list"><!-- wp:list-item -->
+<li>In the SMS Notifications settings, find the <strong>Test SMS</strong> section</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Enter a phone number to receive the test</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Send Test SMS</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the message arrives correctly</li>
+<!-- /wp:list-item --></ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Order Notifications</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Instantly notify vendors when they receive new orders.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Booking Alerts</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Alert hosts immediately when bookings are made.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Admin Alerts</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Get critical notifications via SMS when you're away from email.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Customer Updates</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Send order confirmations and status updates directly to customers' phones.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Korean Market (Solapi)</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Reach Korean customers with locally compliant SMS using Solapi's Korean infrastructure.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">SMS Not Sending</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>Verify provider credentials are correct</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the phone field is configured</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure recipient has a valid phone number in their profile</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify event SMS is enabled in App Events</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check provider account balance and limits</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Invalid Phone Number Errors</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>Ensure country code is configured correctly</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that phone numbers include country prefix or default is set</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify phone number format matches provider requirements</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Test SMS Works But Events Don't</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>Enable SMS for the specific event in App Events</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the notification destination (customer/vendor/admin) is configured</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the event is actually triggering (check email notifications)</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Telnyx Authentication Failed</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>Verify you're using an API v2 key (starts with KEY...)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the key has SMS permissions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure account balance is sufficient</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Solapi Authentication Failed</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>Verify both API Key and API Secret are correct</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check server time is synchronized (HMAC authentication is time-sensitive)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure sender number is registered and approved in Solapi console</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>Voxel Theme (active and configured)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>SMS provider account (Twilio, Vonage, MessageBird, Telnyx, or Solapi)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Phone number field in user profiles</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->

@@ -1,0 +1,320 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Title Notification Badge</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Title Notification Badge displays unread notification and message counts in the browser tab title. Users can see at a glance if they have new notifications without needing to check the page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This function adds a notification badge to the browser tab title that shows unread counts for notifications and/or messages. The badge updates in real-time via polling, and optionally flashes to alert users of new notifications.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Display unread count in browser tab title (e.g., "(3) Site Title")</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Real-time updates via configurable polling interval</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Include notifications, messages, or both</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Flash effect for new notifications</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Customizable flash text message</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works on all pages for logged-in users</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Title Notification Badge</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Click the settings icon next to the function</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure your preferred options</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save your changes</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Configuration Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Poll Interval</strong></td><td>How often to check for new notifications (in seconds)</td><td>15 seconds</td></tr><tr><td><strong>Include Notifications</strong></td><td>Count unread notifications in the badge</td><td>Yes</td></tr><tr><td><strong>Include Messages</strong></td><td>Count unread messages in the badge</td><td>Yes</td></tr><tr><td><strong>Flash on New</strong></td><td>Flash the title when new notifications arrive</td><td>Yes</td></tr><tr><td><strong>Flash Text</strong></td><td>Text to flash in the title</td><td>"New notification!"</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Badge Display</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When a user has unread items, the browser tab title changes from:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>My Website</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>To:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>(5) My Website</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:paragraph -->
+<p>Where "5" is the total count of unread notifications and messages.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Flash Effect</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When new notifications arrive and flash is enabled, the title alternates between:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>The flash text (e.g., "New notification!")</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The normal badge title (e.g., "(5) My Website")</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>This creates an attention-grabbing effect in the browser tab.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Polling</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The function polls the server at your configured interval to check for new notifications. Shorter intervals provide faster updates but increase server load. The default of 15 seconds provides a good balance.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Real-Time Communication</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let users know they have new messages without requiring them to keep checking the inbox.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Engagement Notifications</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Alert users to new likes, comments, or follows on their posts.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Order Updates</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Notify vendors of new orders or order status changes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Background Monitoring</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users can work in other tabs while keeping an eye on notification counts.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Badge Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify you are logged in</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure you have unread notifications or messages</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser cache</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Badge Not Updating</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Wait for the poll interval to pass</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for JavaScript errors in browser console</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify AJAX requests are not being blocked</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Flash Not Working</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure "Flash on New" setting is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Flash only triggers when count increases from previous check</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Some browsers may limit title change frequency</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User must be logged in</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>JavaScript enabled in browser</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

@@ -1,0 +1,308 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Notification Dynamic Tags</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Notification Dynamic Tags add new dynamic tag properties for accessing user notification and message counts. Display unread counts anywhere on your site using Voxel's dynamic data system.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>These dynamic tags extend Voxel's user data properties to include notification and message counts. Use them in templates, widgets, or anywhere dynamic tags are supported to display personalized notification information.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Access unread notification count via dynamic tags</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Access unread message count via dynamic tags</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with current user data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Use in any element supporting dynamic content</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Combine with conditional logic for dynamic displays</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Available Tags</h2>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Tag</th><th>Description</th><th>Returns</th></tr></thead><tbody><tr><td><code>@user.unread_notifications</code></td><td>Number of unread notifications for the current user</td><td>Number</td></tr><tr><td><code>@user.unread_messages</code></td><td>Number of unread messages for the current user</td><td>Number</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Dynamic Tags</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Notification Tags</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Use the Tags</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Once enabled, use the tags in any element that supports dynamic content, such as:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Elementor text widgets with dynamic tags</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel template buttons and links</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Menu items with dynamic labels</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Conditional visibility rules</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Usage Examples</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Display Notification Count</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show the number of unread notifications:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>You have @user.unread_notifications unread notifications</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Badge Display</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Create a notification badge that shows the count:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Notifications (@user.unread_notifications)</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Messages Count</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display unread messages:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>Messages: @user.unread_messages</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Conditional Display</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use with Voxel's visibility conditions to show elements only when there are unread items. Set visibility condition to show when <code>@user.unread_notifications</code> is greater than 0.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Custom Notification Badges</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Create custom notification badges in your header or navigation that match your site's design.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Dashboard Widgets</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Display notification counts on user dashboard pages to keep users informed.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Conditional Navigation</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Show or highlight menu items based on whether the user has unread notifications.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Welcome Messages</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Include notification counts in personalized welcome messages for logged-in users.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tags Not Showing Data</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the user is logged in (tags return 0 for guests)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the Notification Tags function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the tag syntax is correct</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any object caches</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Count Seems Incorrect</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Counts reflect the Voxel notification system data</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check user meta for voxel:notifications and voxel:dms</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Mark notifications as read to update the count</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Tags Not Available</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure Voxel Toolkit is active</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Tags register under the @user group</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that dynamic tags are supported in the element you're using</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User must be logged in to retrieve counts</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

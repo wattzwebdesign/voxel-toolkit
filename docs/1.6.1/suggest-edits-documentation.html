@@ -1,0 +1,536 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Suggest Edits Widget (Updated for 1.6.1)</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Suggest Edits Widget allows visitors to suggest corrections or updates to post data. Version 1.6.1 adds a comment field for users to provide context with their suggestions.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">What's New in 1.6.1</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Comment Field:</strong> New optional field for users to explain their suggestion</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Comment Display:</strong> Admin review shows the suggester's comment</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Exclude Team Members:</strong> Team members don't see suggestions on their own posts</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This feature enables crowdsourced data maintenance by allowing users to suggest corrections to post fields. Site administrators can review, approve, or reject suggestions, keeping your directory data accurate and up-to-date.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Crowdsourced data corrections</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable fields per post type</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Proof image uploads</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Comment field for context (NEW)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Don't know" checkbox option</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>"Permanently closed" option</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Admin review interface</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>App event notifications</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Guest and logged-in user support</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Comment Field (New)</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The new comment field allows users to provide additional context or explanation with their suggestions.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Benefits</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Users can explain why the data is incorrect</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Provide source information for the correction</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Add details that help administrators verify the suggestion</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Reduces back-and-forth communication</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Show Comment Field</strong></td><td>Enable the comment input field</td><td>Yes</td></tr><tr><td><strong>Comment Label</strong></td><td>Label text for the comment field</td><td>"Additional Comments"</td></tr><tr><td><strong>Comment Placeholder</strong></td><td>Placeholder text for the field</td><td>"Tell us more about this suggestion..."</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Admin Display</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When reviewing suggestions in the admin panel, the suggester's comment appears in the suggestion detail view, helping administrators make informed decisions about accepting or rejecting changes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Suggest Edits</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Post Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Click the settings icon next to Suggest Edits</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select which post types allow suggestions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure fields available for suggestions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set user permissions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save your changes</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 3: Add Widget to Template</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your post type template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Suggest Edits (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to your desired location</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure widget options including the new comment field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the template</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Display Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Button Text</strong></td><td>Text on the trigger button</td><td>"Suggest an Edit"</td></tr><tr><td><strong>Button Icon</strong></td><td>Icon for the button</td><td>Edit icon</td></tr><tr><td><strong>Modal Title</strong></td><td>Title in the suggestion modal</td><td>"Suggest an Edit"</td></tr><tr><td><strong>Fields to Show</strong></td><td>Which fields users can suggest edits for</td><td>All enabled</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Form Options</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Show Comment Field</strong></td><td>Enable comment input (NEW)</td><td>Yes</td></tr><tr><td><strong>Show "Don't Know" Checkbox</strong></td><td>Allow marking data as incorrect without replacement</td><td>Yes</td></tr><tr><td><strong>Show "Permanently Closed"</strong></td><td>Option to report business as closed</td><td>Yes</td></tr><tr><td><strong>Enable Photo Upload</strong></td><td>Allow proof images</td><td>Yes</td></tr><tr><td><strong>Max Photos</strong></td><td>Maximum proof images allowed</td><td>5</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Supported Field Types</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Title</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Description</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Taxonomy fields (single/multi-term)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select/Multiselect</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Work hours</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Location/Address</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Custom text fields</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Featured image</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Admin Review</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Review pending suggestions from the WordPress admin:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to the post type menu</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Suggested Edits</strong> submenu</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>View pending suggestions (badge shows count)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click a suggestion to see details including the new comment field</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Review current vs. suggested values</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>View proof images and suggester comment</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Accept, reject, or delete the suggestion</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Bulk Actions</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Accept selected suggestions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Reject selected suggestions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Delete selected suggestions</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Business Directory</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let users report outdated business information like changed hours, addresses, or phone numbers. The comment field helps them explain when they noticed the change.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Community-Maintained Data</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Enable community members to help keep listings accurate, with comments providing verification details.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Permanently Closed Businesses</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Users can report when businesses have closed permanently, helping keep your directory current.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">App Events</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Suggest Edits function integrates with Voxel's app event system:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>Event:</strong> <code>voxel_toolkit/suggestion:submitted</code></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>Available Data:</strong></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Post information</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Author details</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Suggester information</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Suggestion details including comment</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Use this to send notifications to post authors when suggestions are submitted.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Not Showing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify Suggest Edits function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check post type is enabled for suggestions</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure user meets permission requirements</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Team members don't see widget on their own posts</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Comment Not Saving</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check that "Show Comment Field" is enabled in widget settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify database table has the suggester_comment column</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any caching</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Suggestions Not Appearing in Admin</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check you're looking at the correct post type's submenu</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify suggestions were submitted successfully</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check status filter in the admin view</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Post type configured for suggestions</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

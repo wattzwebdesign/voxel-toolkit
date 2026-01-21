@@ -1,0 +1,512 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Coupon Manager Widget</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Coupon Manager widget enables users to create and manage Stripe discount coupons directly from the frontend. Perfect for vendors, store owners, and marketplace sellers who need to offer promotional discounts to their customers.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This Elementor widget integrates with Stripe's coupon system to allow logged-in users to create, view, and delete discount codes. Coupons are created directly in Stripe and can be used at checkout for products and services on your Voxel site.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Create percent-off or fixed-amount discounts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set coupon duration (once, repeating, forever)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure maximum redemptions and expiration dates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Set minimum order value requirements</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Restrict to specific customer emails</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>First-time customer only option</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Custom or auto-generated promo codes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>View all created coupons with redemption statistics</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Delete coupons when no longer needed</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Full styling controls in Elementor</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Before using the Coupon Manager widget, ensure the following:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Stripe must be configured as your payment provider in Voxel</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Users must be logged in to create and manage coupons</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Valid Stripe API keys configured in Voxel settings</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Widget</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Widgets</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Coupon Manager</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable the widget</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Add Widget to Page</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Edit your page or template in Elementor</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Search for <strong>Coupon Manager (VT)</strong></li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Drag the widget to your desired location</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure display options and styling</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save the page</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Widget Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Content Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Form Heading</strong></td><td>Heading displayed above the create form</td><td>"Create Coupon"</td></tr><tr><td><strong>List Heading</strong></td><td>Heading displayed above the coupon list</td><td>"Your Coupons"</td></tr><tr><td><strong>Submit Button Text</strong></td><td>Text on the form submit button</td><td>"Create Coupon"</td></tr><tr><td><strong>Show Create Form</strong></td><td>Toggle visibility of the creation form</td><td>Yes</td></tr><tr><td><strong>Show Coupon List</strong></td><td>Toggle visibility of existing coupons list</td><td>Yes</td></tr><tr><td><strong>Login Required Message</strong></td><td>Message shown to logged-out users</td><td>"Please log in to manage coupons."</td></tr><tr><td><strong>Stripe Not Enabled Message</strong></td><td>Message when Stripe is not configured</td><td>"Stripe payment gateway must be enabled..."</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Coupon Form Fields</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Field</th><th>Description</th><th>Required</th></tr></thead><tbody><tr><td><strong>Coupon Name</strong></td><td>Internal name for the coupon</td><td>Yes</td></tr><tr><td><strong>Promo Code</strong></td><td>Customer-facing code (auto-generated if empty)</td><td>No</td></tr><tr><td><strong>Discount Type</strong></td><td>Percent Off or Fixed Amount</td><td>Yes</td></tr><tr><td><strong>Percent Off</strong></td><td>Percentage discount (1-100)</td><td>If percent type</td></tr><tr><td><strong>Amount Off</strong></td><td>Fixed amount in currency</td><td>If fixed type</td></tr><tr><td><strong>Duration</strong></td><td>Once, Repeating, or Forever</td><td>Yes</td></tr><tr><td><strong>Duration Months</strong></td><td>Number of months (for repeating)</td><td>If repeating</td></tr><tr><td><strong>Max Redemptions</strong></td><td>Total times coupon can be used</td><td>No (unlimited)</td></tr><tr><td><strong>Expiration Date</strong></td><td>Date when coupon becomes invalid</td><td>No</td></tr><tr><td><strong>Minimum Order Value</strong></td><td>Minimum cart total required</td><td>No</td></tr><tr><td><strong>Customer Email</strong></td><td>Restrict to specific customer</td><td>No</td></tr><tr><td><strong>First-time Only</strong></td><td>Only for first-time customers</td><td>No</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Styling Options</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Container</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Padding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Background color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border (type, width, color)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Border radius</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Headings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Spacing</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Form</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Label color and typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Input background and text color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Input border color and radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Input padding</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Submit Button</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding and border radius</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Normal state (text color, background)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Hover state (text color, background)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Coupon List</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Card background and border</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Card border radius and padding</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Card spacing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Coupon name color and typography</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Details text color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Discount badge colors</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Delete Button</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Normal state (text/border color)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Hover state (text color, background)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Expired Coupons</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Opacity</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Card background</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Discount badge background</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Expired badge color</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Promo Codes</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Background and text color</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Padding and border radius</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Marketplace Vendors</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allow vendors to create promotional codes for their products to boost sales and attract new customers.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Subscription Services</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Offer recurring discounts for subscription-based products using the "repeating" or "forever" duration options.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Loyalty Programs</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Create exclusive discount codes for loyal customers by restricting coupons to specific email addresses.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">New Customer Acquisition</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use the "first-time customers only" option to offer special discounts to attract new buyers.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Widget Shows "Stripe Not Enabled"</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify Stripe is selected as the payment provider in Voxel settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that Stripe API keys are properly configured</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure Stripe account is active and verified</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Coupon Creation Fails</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure all required fields are filled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that percentage is between 1-100</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify expiration date is in the future</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for JavaScript errors</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Coupons Not Loading</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify AJAX is working properly on your site</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any caching plugins</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for JavaScript conflicts</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Elementor (for widget placement)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Stripe configured as payment provider</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User must be logged in to use the widget</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

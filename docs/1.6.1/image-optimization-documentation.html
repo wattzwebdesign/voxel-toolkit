@@ -1,0 +1,452 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Image Optimization</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Image Optimization function provides comprehensive image handling including client-side optimization, WebP conversion, watermarking, automatic SEO metadata, and a server-side bulk resize tool for your existing media library.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This feature combines two powerful capabilities: real-time client-side image optimization during upload, and a bulk resize tool for optimizing existing images in your media library. Images are processed before upload to reduce server load and storage costs.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Client-side image resizing before upload</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>WebP conversion for smaller file sizes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configurable maximum dimensions and quality</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Text or image watermark support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Automatic SEO-friendly alt text generation</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Smart file renaming based on post titles</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Disable WordPress auto-scaling</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toast notifications during optimization</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Bulk resize tool for existing media</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Batch processing with progress tracking</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Optimization status column in media library</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Image Optimization</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Configure Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Click the settings icon next to Image Optimization</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure your preferred optimization settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Save your changes</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Configuration Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Image Processing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Max File Size</strong></td><td>Maximum file size in MB (larger files are compressed)</td><td>10 MB</td></tr><tr><td><strong>Max Width</strong></td><td>Maximum image width in pixels</td><td>1600 px</td></tr><tr><td><strong>Max Height</strong></td><td>Maximum image height in pixels</td><td>1600 px</td></tr><tr><td><strong>Output Quality</strong></td><td>JPEG/WebP compression quality (1-100)</td><td>80%</td></tr><tr><td><strong>Optimization Mode</strong></td><td>How to handle different image formats</td><td>All to WebP</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Optimization Modes</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>All to WebP:</strong> Convert all images to WebP format</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Keep Original Format:</strong> Maintain original format while optimizing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Smart:</strong> Use WebP for photos, keep PNG for graphics with transparency</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">SEO & Naming</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Rename Format</strong></td><td>How to rename uploaded files</td><td>Post Title</td></tr><tr><td><strong>Set Alt Text</strong></td><td>Auto-generate SEO-friendly alt text</td><td>Yes</td></tr><tr><td><strong>Alt Text Format</strong></td><td>Format for auto-generated alt text</td><td>Title + Counter + Date</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Alt Text Formats</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Title Only:</strong> "My Post Title"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Title + Counter:</strong> "My Post Title - Image 01"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Title + Date:</strong> "My Post Title (January 13, 2026)"</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Title + Counter + Date:</strong> "My Post Title - Image 01 (January 13, 2026)"</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Watermark Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Watermark Type</strong></td><td>None, Text, or Image watermark</td><td>None</td></tr><tr><td><strong>Watermark Text</strong></td><td>Text to display (if type is Text)</td><td>Empty</td></tr><tr><td><strong>Watermark Image</strong></td><td>URL of watermark image (if type is Image)</td><td>Empty</td></tr><tr><td><strong>Position</strong></td><td>Corner position for watermark</td><td>Bottom Right</td></tr><tr><td><strong>Scale</strong></td><td>Watermark size as percentage of image</td><td>15%</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Other Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>Setting</th><th>Description</th><th>Default</th></tr></thead><tbody><tr><td><strong>Disable WP Scaling</strong></td><td>Prevent WordPress from creating scaled versions</td><td>Yes</td></tr><tr><td><strong>Show Toast</strong></td><td>Display notification during optimization</td><td>Yes</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Bulk Resize Tool</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Bulk Resize tool allows you to optimize existing images in your media library that were uploaded before enabling Image Optimization.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Accessing Bulk Resize</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Media &gt; Bulk Resize</strong> in WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Configure target dimensions and quality</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Select images to process or run on all unoptimized images</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Start the batch process</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Bulk Resize Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li><strong>Batch Processing:</strong> Process multiple images automatically</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Progress Tracking:</strong> Visual progress bar and status updates</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Size Comparison:</strong> See before/after file sizes</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Status Column:</strong> Media library shows optimization status</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Safe Processing:</strong> Original images are backed up</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">User-Generated Content</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Automatically optimize images uploaded by users through frontend forms without requiring manual intervention.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Photography Sites</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Add watermarks to protect your images while maintaining quality with configurable compression.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">SEO Optimization</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Automatically generate descriptive alt text and file names to improve image SEO.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Storage Optimization</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Reduce storage costs and improve page load times by converting to WebP and limiting maximum dimensions.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Legacy Media Cleanup</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Use bulk resize to optimize thousands of existing images uploaded before optimization was enabled.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Images Not Being Optimized</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that JavaScript is loading without errors</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the image exceeds the file size threshold</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear browser cache</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Watermark Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check watermark type is set to Text or Image</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify watermark text or image URL is provided</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure watermark image URL is accessible</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Try increasing the watermark scale</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Alt Text Not Generated</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Enable the "Set Alt Text" option</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Ensure the image is attached to a post (for post title fallback)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Alt text is set server-side after upload completes</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Bulk Resize Fails</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Check PHP memory limits</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Increase PHP max execution time</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Process smaller batches</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check server error logs</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Modern browser with Canvas API support</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>JavaScript enabled</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>GD or Imagick PHP extension (for bulk resize)</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+

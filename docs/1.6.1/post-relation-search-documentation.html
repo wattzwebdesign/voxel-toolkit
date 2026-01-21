@@ -1,0 +1,296 @@
+<!-- wp:heading {"level":1} -->
+<h1 class="wp-block-heading">Post Relation Search</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The Post Relation Search function adds a searchable dropdown to post relation filters in Voxel search forms. Instead of scrolling through long lists, users can type to quickly find and select related posts.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Overview</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When using post relation filters in search forms, the default behavior requires users to scroll through all available posts. This function enhances that experience by adding AJAX-powered search functionality, making it much easier to find specific posts in large datasets.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Key Features</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Real-time AJAX search within post relation dropdowns</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works with all post relation filters in search forms</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Searches post titles and user display names</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Supports pagination with "load more" functionality</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Respects post type and status settings</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Scope support: any post or current user's posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Works in Elementor preview mode</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Setup Instructions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 1: Enable the Function</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>Navigate to <strong>Voxel Toolkit &gt; Functions</strong> in your WordPress admin</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Find <strong>Post Relation Search</strong> in the list</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Toggle the switch to enable</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Click <strong>Save Changes</strong></li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Step 2: Use It</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Once enabled, the search functionality automatically activates on all post relation filters in Voxel search forms. No additional configuration is needed.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How It Works</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list">
+<!-- wp:list-item -->
+<li>User clicks on a post relation filter in a search form</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>A search input appears at the top of the dropdown</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User types to search for specific posts</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Results update in real-time via AJAX</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>User selects the desired post to filter by</li>
+<!-- /wp:list-item -->
+</ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Search Behavior</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Searches match against post titles using MySQL fulltext search</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>For profile post types, also searches user display names</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Results are ordered by relevance to the search query</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Initial results load 10 posts with "load more" for additional results</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Use Cases</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Large Directories</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When you have hundreds or thousands of posts to filter by, search makes it much faster to find the specific one you need.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Related Business Search</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Let users search for a specific business when filtering events, products, or services by their associated business.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">User Profile Filtering</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When filtering by user profiles, search by name makes it easy to find specific people.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Location-Based Filters</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When posts are related to locations, quickly search for specific places instead of scrolling through long lists.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Troubleshooting</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Search Not Appearing</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Verify the function is enabled in Voxel Toolkit</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that the filter is a post relations type filter</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Clear any caching plugins</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check browser console for JavaScript errors</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Search Returns No Results</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Ensure posts exist with matching titles</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check that related posts are published</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Verify the search term is spelled correctly</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>MySQL fulltext search requires at least 3-4 characters</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Slow Search Performance</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Large databases may benefit from database indexing</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Consider server performance and hosting capabilities</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Check for database optimization opportunities</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Requirements</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul class="wp-block-list">
+<!-- wp:list-item -->
+<li>Voxel Theme (active)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Voxel Toolkit plugin (enabled)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Post type with post relation filters configured</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>MySQL fulltext indexing on post_title column</li>
+<!-- /wp:list-item -->
+</ul>
+<!-- /wp:list -->
+
