@@ -889,12 +889,59 @@ class Voxel_Toolkit_Breadcrumbs_Widget extends \Elementor\Widget_Base {
                 ];
             }
         } elseif (is_author()) {
-            if ($settings['show_current'] === 'yes') {
-                $breadcrumbs[] = [
-                    'title' => __('Author: ', 'voxel-toolkit') . get_the_author(),
-                    'url' => '',
-                    'is_current' => true,
-                ];
+            // Check if this is a Voxel profile page
+            $author_id = get_queried_object_id();
+            $voxel_profile = null;
+            $profile_post_type = null;
+
+            // Try to get the Voxel user's profile post
+            if (class_exists('\Voxel\User') && class_exists('\Voxel\Post_Type')) {
+                $voxel_user = \Voxel\User::get($author_id);
+                if ($voxel_user) {
+                    $voxel_profile = $voxel_user->get_profile();
+                    if ($voxel_profile) {
+                        $profile_post_type = \Voxel\Post_Type::get('profile');
+                    }
+                }
+            }
+
+            if ($voxel_profile && $profile_post_type) {
+                // Show Voxel profile breadcrumbs: Profiles > Username
+                if ($settings['include_archive'] === 'yes') {
+                    $archive_link = get_post_type_archive_link('profile');
+                    if ($archive_link) {
+                        $breadcrumbs[] = [
+                            'title' => $profile_post_type->get_label(),
+                            'url' => $archive_link,
+                            'is_current' => false,
+                        ];
+                    }
+                }
+
+                if ($settings['show_current'] === 'yes') {
+                    // Use user's display name for profile breadcrumb
+                    $display_name = $voxel_user->get_display_name();
+                    if (empty($display_name)) {
+                        $display_name = $voxel_profile->get_title();
+                    }
+                    if (empty($display_name)) {
+                        $display_name = get_the_author();
+                    }
+                    $breadcrumbs[] = [
+                        'title' => $display_name,
+                        'url' => '',
+                        'is_current' => true,
+                    ];
+                }
+            } else {
+                // Fallback to standard author breadcrumb
+                if ($settings['show_current'] === 'yes') {
+                    $breadcrumbs[] = [
+                        'title' => __('Author: ', 'voxel-toolkit') . get_the_author(),
+                        'url' => '',
+                        'is_current' => true,
+                    ];
+                }
             }
         } elseif (is_date()) {
             if (is_day()) {
