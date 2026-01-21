@@ -151,6 +151,13 @@
     overflow: visible !important;
 }
 
+/* Preserve rounded avatar when overflow is visible */
+.ts-convo-list li .convo-avatar img,
+.ts-message-notifications .notification-image img,
+.ts-notification-list .notification-image img {
+    border-radius: 50%;
+}
+
 .ts-convo-list .vt-online-indicator,
 .ts-message-notifications .vt-online-indicator,
 .ts-notification-list .vt-online-indicator {
