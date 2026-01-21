@@ -35,6 +35,10 @@
 - **Pending Status Support** - Posts with "pending" status can now be scheduled (previously only worked with "publish" status)
 - **Translated Sites Fix** - Fixed scheduling field incorrectly appearing on confirmation page for translated sites
 
+### Load Search
+
+- **Hide When Empty** - Load Search button now automatically hides when user is logged out or has no saved searches
+
 ## 1.6.1.1
 
 ### Suggest Edits Improvements
