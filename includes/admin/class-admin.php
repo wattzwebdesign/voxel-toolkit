@@ -2004,6 +2004,18 @@ class Voxel_Toolkit_Admin {
                         $sanitized_function = Voxel_Toolkit_Image_Optimization::sanitize_settings($function_input);
                         break;
 
+                    case 'online_status':
+                        // Checkboxes - explicitly set to false when unchecked
+                        $sanitized_function['show_in_dashboard'] = !empty($function_input['show_in_dashboard']);
+                        $sanitized_function['show_in_inbox'] = !empty($function_input['show_in_inbox']);
+                        $sanitized_function['show_in_messenger'] = !empty($function_input['show_in_messenger']);
+                        $sanitized_function['show_in_admin'] = !empty($function_input['show_in_admin']);
+                        // Timeout setting
+                        $sanitized_function['timeout_minutes'] = isset($function_input['timeout_minutes'])
+                            ? max(1, min(60, intval($function_input['timeout_minutes'])))
+                            : 3;
+                        break;
+
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(

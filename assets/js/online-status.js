@@ -35,10 +35,9 @@
             // Set up MutationObserver for Voxel's dynamic content
             if (this.config.locations && this.config.locations.inbox) {
                 this.setupObserver();
+                // Initial scan for inbox elements
+                this.scanForInboxElements();
             }
-
-            // Initial scan for inbox elements
-            this.scanForInboxElements();
         },
 
         /**
