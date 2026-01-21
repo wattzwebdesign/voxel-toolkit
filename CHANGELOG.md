@@ -29,6 +29,11 @@
 - **Improved Taxonomy Search** - Schema now includes `taxonomy_name` for taxonomy/term fields so AI knows the correct WordPress taxonomy to use with `_taxonomy:` filter
 - **Better Taxonomy Hints** - Field hints now explicitly tell the AI to use `_taxonomy:taxonomy_name` format with term slugs
 
+### Saved Search
+
+- **Improved Notification Reliability** - Fixed timing issue where notifications could fail when admins publish posts from wp-admin; now uses deferred processing at request shutdown to ensure all post data is saved before matching
+- **Debug Logging** - Added comprehensive debug logging (enable with `define('VT_SAVED_SEARCH_DEBUG', true)` in wp-config.php) to trace notification failures
+
 ## 1.6.1.1
 
 ### Suggest Edits Improvements
