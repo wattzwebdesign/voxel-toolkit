@@ -1102,6 +1102,16 @@ if (class_exists('\Voxel\Events\Base_Event')) {
                 ],
             ];
         }
+
+        public function dynamic_tags(): array {
+            return [
+                'submitter' => \Voxel\Dynamic_Data\Group::User($this->submitter ?: \Voxel\User::mock()),
+            ];
+        }
+
+        public function set_mock_props(): void {
+            $this->submitter = \Voxel\User::get(get_current_user_id()) ?: \Voxel\User::mock();
+        }
     }
 
     /**
@@ -1200,6 +1210,16 @@ if (class_exists('\Voxel\Events\Base_Event')) {
                 ],
             ];
         }
+
+        public function dynamic_tags(): array {
+            return [
+                'submitter' => \Voxel\Dynamic_Data\Group::User($this->submitter ?: \Voxel\User::mock()),
+            ];
+        }
+
+        public function set_mock_props(): void {
+            $this->submitter = \Voxel\User::get(get_current_user_id()) ?: \Voxel\User::mock();
+        }
     }
 
     /**
@@ -1286,6 +1306,16 @@ if (class_exists('\Voxel\Events\Base_Event')) {
                     ],
                 ],
             ];
+        }
+
+        public function dynamic_tags(): array {
+            return [
+                'submitter' => \Voxel\Dynamic_Data\Group::User($this->submitter ?: \Voxel\User::mock()),
+            ];
+        }
+
+        public function set_mock_props(): void {
+            $this->submitter = \Voxel\User::get(get_current_user_id()) ?: \Voxel\User::mock();
         }
     }
 
