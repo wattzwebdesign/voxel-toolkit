@@ -31,7 +31,9 @@
 
 ### Schedule Posts
 
-- **Translated Sites Fix** - Fixed scheduling field incorrectly appearing on confirmation page for translated sites; replaced text-based detection with robust structural detection that works in all languages
+- **Native Date Input** - Replaced Pikaday calendar popup with native HTML date input; eliminates z-index/positioning issues with footers and other elements
+- **Pending Status Support** - Posts with "pending" status can now be scheduled (previously only worked with "publish" status)
+- **Translated Sites Fix** - Fixed scheduling field incorrectly appearing on confirmation page for translated sites
 
 ## 1.6.1.1
 
