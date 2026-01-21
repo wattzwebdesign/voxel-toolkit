@@ -99,14 +99,15 @@ class Voxel_Toolkit_Admin_Notifications extends \Voxel\Controllers\Base_Controll
 
         $recipients_config = $this->get_notification_recipients();
 
-        $voxel_default_admin = \Voxel\get('settings.notifications.admin_user');
+        $voxel_default_admin = (int) \Voxel\get('settings.notifications.admin_user');
 
         foreach ($recipients_config as $recipient_config) {
 
             if (!$recipient_config['enabled']) {
                 continue;
             }
-            if ($recipient_config['id'] === $voxel_default_admin) {
+            // Skip Voxel's default admin to avoid duplicate notifications
+            if ((int) $recipient_config['id'] === $voxel_default_admin) {
                 continue;
             }
 
@@ -178,24 +179,21 @@ class Voxel_Toolkit_Admin_Notifications extends \Voxel\Controllers\Base_Controll
             }
         }
 
-        // Add individual users
+        // Add individual users (cast to int to ensure type consistency)
         if (!empty($user_accounts)) {
             foreach ($user_accounts as $user_id) {
-                $user_ids[] = $user_id;
-                $user = get_userdata($user_id);
-                if ($user) {
-                }
+                $user_ids[] = (int) $user_id;
             }
         }
-        
-        $user_ids = array_unique($user_ids);
-        
+
+        $user_ids = array_unique($user_ids, SORT_NUMERIC);
+
         // Convert to array of config objects for processing
         $recipients = [];
         foreach ($user_ids as $user_id) {
             $recipients[] = [
                 'enabled' => true,
-                'id' => $user_id
+                'id' => (int) $user_id
             ];
         }
         
