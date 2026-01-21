@@ -43,6 +43,10 @@
 
 - **New Caledonia Missing** - Added New Caledonia to backend country selection list (was only available on frontend)
 
+### Admin Notifications
+
+- **Individual Users Fix** - Fixed individual users not receiving email notifications due to type mismatch
+
 ## 1.6.1.1
 
 ### Suggest Edits Improvements
