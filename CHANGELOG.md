@@ -47,6 +47,10 @@
 
 - **Individual Users Fix** - Fixed individual users not receiving email notifications due to type mismatch
 
+### Online Status
+
+- **Display Location Settings Fix** - Fixed "Display Locations" checkboxes not saving when unchecked; messenger/inbox/dashboard toggles now work correctly
+
 ## 1.6.1.1
 
 ### Suggest Edits Improvements
