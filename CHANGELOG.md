@@ -51,6 +51,10 @@
 
 - **Display Location Settings Fix** - Fixed "Display Locations" checkboxes not saving when unchecked; messenger/inbox/dashboard toggles now work correctly
 
+### App Events
+
+- **Admin Page Crash Fix** - Fixed PHP Fatal error on Voxel App Events admin page caused by `dynamic_tags()` methods returning arrays instead of proper data group instances
+
 ## 1.6.1.1
 
 ### Suggest Edits Improvements
