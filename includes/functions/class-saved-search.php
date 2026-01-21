@@ -69,7 +69,11 @@ class Voxel_Toolkit_Saved_Search {
         add_action('init', array($this, 'register_notification_hooks'), 100);
 
         // Fallback: WordPress post status transitions (for wp-admin posts)
-        add_action('transition_post_status', array($this, 'on_post_status_change'), 10, 3);
+        // Use high priority (9999) to ensure all post data is saved before we process
+        add_action('transition_post_status', array($this, 'on_post_status_change'), 9999, 3);
+
+        // Deferred notification processing (for wp-admin posts where meta saves after status change)
+        add_action('vt_saved_search_deferred_notify', array($this, 'process_deferred_notification'), 10, 1);
 
         // Note: App events are registered early in main plugin file (voxel-toolkit.php)
         // to ensure they're added before Voxel caches events
@@ -321,9 +325,27 @@ class Voxel_Toolkit_Saved_Search {
             $hook_created = 'voxel/app-events/post-types/' . $post_type->get_key() . '/post:created';
             $hook_approved = 'voxel/app-events/post-types/' . $post_type->get_key() . '/post:approved';
 
-            add_action($hook_created, array($this, 'add_cron_event'), 999, 1);
-            add_action($hook_approved, array($this, 'add_cron_event'), 999, 1);
+            add_action($hook_created, array($this, 'handle_voxel_event'), 999, 1);
+            add_action($hook_approved, array($this, 'handle_voxel_event'), 999, 1);
         }
+    }
+
+    /**
+     * Handle Voxel app events (post:created, post:approved)
+     * This is separate from the WordPress transition_post_status fallback
+     */
+    public function handle_voxel_event($event) {
+        $this->debug_log('handle_voxel_event: Received Voxel app event');
+
+        // Skip if we're already processing via deferred queue (transition_post_status)
+        // The deferred queue will handle it at shutdown
+        if (!empty($this->deferred_posts)) {
+            $post_id = isset($event->post) ? $event->post->get_id() : 'unknown';
+            $this->debug_log(sprintf('handle_voxel_event: Skipping post %s - deferred queue will handle it', $post_id));
+            return;
+        }
+
+        $this->add_cron_event($event);
     }
 
     /**
@@ -1248,10 +1270,16 @@ class Voxel_Toolkit_Saved_Search {
     }
 
     /**
+     * Store post IDs for deferred processing
+     */
+    private $deferred_posts = [];
+
+    /**
      * Handle post status transitions (fallback for backend/wp-admin posts)
      */
     public function on_post_status_change($new_status, $old_status, $post) {
         if (!class_exists('\Voxel\Post_Type')) {
+            $this->debug_log('on_post_status_change: Voxel Post_Type class not found');
             return;
         }
 
@@ -1262,7 +1290,70 @@ class Voxel_Toolkit_Saved_Search {
 
         // Trigger on new publish or transition to publish
         if ($new_status === 'publish' && $old_status !== 'publish') {
-            $this->add_cron_event($post->ID);
+            $this->debug_log(sprintf(
+                'on_post_status_change: Post %d transitioning from %s to %s',
+                $post->ID,
+                $old_status,
+                $new_status
+            ));
+
+            // Add to deferred processing queue
+            // Processing at shutdown ensures all post data (meta, terms, etc.) is saved
+            if (!in_array($post->ID, $this->deferred_posts)) {
+                $this->deferred_posts[] = $post->ID;
+                $this->debug_log(sprintf('on_post_status_change: Added post %d to deferred queue', $post->ID));
+
+                // Register shutdown handler if not already registered
+                static $shutdown_registered = false;
+                if (!$shutdown_registered) {
+                    add_action('shutdown', array($this, 'process_deferred_notifications'), 100);
+                    $shutdown_registered = true;
+                    $this->debug_log('on_post_status_change: Registered shutdown handler');
+                }
+            }
+        }
+    }
+
+    /**
+     * Process deferred notifications at shutdown
+     * This ensures all post data is saved before we process
+     */
+    public function process_deferred_notifications() {
+        if (empty($this->deferred_posts)) {
+            return;
+        }
+
+        $this->debug_log(sprintf('process_deferred_notifications: Processing %d deferred posts', count($this->deferred_posts)));
+
+        foreach ($this->deferred_posts as $post_id) {
+            $this->debug_log(sprintf('process_deferred_notifications: Processing post %d', $post_id));
+            $this->add_cron_event($post_id);
+        }
+
+        // Clear the queue
+        $this->deferred_posts = [];
+    }
+
+    /**
+     * Handle deferred notification processing (cron fallback)
+     * This is kept as a fallback for scheduled events
+     */
+    public function process_deferred_notification($post_id) {
+        $this->debug_log(sprintf('process_deferred_notification (cron): Processing post %d', $post_id));
+        $this->add_cron_event($post_id);
+    }
+
+    /**
+     * Debug logging helper
+     * Only logs when WP_DEBUG and VT_SAVED_SEARCH_DEBUG are enabled
+     */
+    private function debug_log($message) {
+        if (defined('WP_DEBUG') && WP_DEBUG && defined('VT_SAVED_SEARCH_DEBUG') && VT_SAVED_SEARCH_DEBUG) {
+            if (function_exists('\Voxel\log')) {
+                \Voxel\log('[VT Saved Search Debug] ' . $message);
+            } else {
+                error_log('[VT Saved Search Debug] ' . $message);
+            }
         }
     }
 
@@ -1274,23 +1365,30 @@ class Voxel_Toolkit_Saved_Search {
         if (!is_numeric($post_id)) {
             $event = $post_id;
             if (!isset($event->post)) {
+                $this->debug_log('add_cron_event: Event object missing post property');
                 return;
             }
             $post = $event->post;
             if ($post->get_status() !== 'publish') {
+                $this->debug_log(sprintf('add_cron_event: Post %d status is %s, not publish', $post->get_id(), $post->get_status()));
                 return;
             }
             $post_id = $post->get_id();
+            $this->debug_log(sprintf('add_cron_event: Received Voxel event for post %d', $post_id));
+        } else {
+            $this->debug_log(sprintf('add_cron_event: Received numeric post ID %d', $post_id));
         }
 
         // Check if we've already processed this post to prevent duplicate notifications
         $processed_key = 'vt_ss_processed_' . $post_id;
         if (get_transient($processed_key)) {
+            $this->debug_log(sprintf('add_cron_event: Post %d already processed (transient exists)', $post_id));
             return;
         }
 
         // Mark as processed for 60 seconds to prevent duplicates
         set_transient($processed_key, true, 60);
+        $this->debug_log(sprintf('add_cron_event: Set transient for post %d, calling send_notifications', $post_id));
 
         // Process notifications immediately
         $this->send_notifications($post_id);
@@ -1300,37 +1398,52 @@ class Voxel_Toolkit_Saved_Search {
      * Send notifications for matching saved searches
      */
     public function send_notifications($post_id) {
+        $this->debug_log(sprintf('send_notifications: Starting for post %d', $post_id));
+
         if (!class_exists('\Voxel\Post')) {
+            $this->debug_log('send_notifications: Voxel Post class not found');
             return;
         }
 
         $post = \Voxel\Post::get($post_id);
         if (!$post) {
+            $this->debug_log(sprintf('send_notifications: Could not get Voxel Post for ID %d', $post_id));
             return;
         }
 
         // Only process published posts
         if ($post->get_status() !== 'publish') {
+            $this->debug_log(sprintf('send_notifications: Post %d status is %s, skipping', $post_id, $post->get_status()));
             return;
         }
 
         // Index the post to ensure it's searchable
+        $this->debug_log(sprintf('send_notifications: Indexing post %d', $post_id));
         $post->index();
         $post_type = $post->post_type;
 
         if (!$post_type) {
+            $this->debug_log(sprintf('send_notifications: Post %d has no post_type', $post_id));
             return;
         }
 
+        $this->debug_log(sprintf('send_notifications: Post type is %s', $post_type->get_key()));
+
         // Query saved searches for this post type (excluding post author)
+        $author_id = $post->get_author_id();
+        $this->debug_log(sprintf('send_notifications: Querying saved searches for post_type=%s, excluding author=%d', $post_type->get_key(), $author_id));
+
         $saved_searches = Voxel_Toolkit_Saved_Search_Model::query([
             'limit' => PHP_INT_MAX,
-            'user_id' => -(int) $post->get_author_id(),
+            'user_id' => -(int) $author_id,
             'post_type' => $post_type->get_key(),
             'notification' => 1,
         ]);
 
+        $this->debug_log(sprintf('send_notifications: Found %d saved searches with notifications enabled', count($saved_searches)));
+
         if (empty($saved_searches)) {
+            $this->debug_log('send_notifications: No matching saved searches found');
             return;
         }
 
@@ -1340,9 +1453,14 @@ class Voxel_Toolkit_Saved_Search {
 
         // Check if email batching is enabled
         $batch_settings = $this->get_email_batch_settings();
+        $this->debug_log(sprintf('send_notifications: Email batching enabled=%s', $batch_settings['enabled'] ? 'yes' : 'no'));
+
+        $matches_found = 0;
+        $notifications_sent = 0;
 
         foreach ($saved_searches as $search) {
             if (!$search->get_notification()) {
+                $this->debug_log(sprintf('send_notifications: Search %d has notifications disabled, skipping', $search->get_id()));
                 continue;
             }
 
@@ -1359,6 +1477,8 @@ class Voxel_Toolkit_Saved_Search {
                     }
                 }
 
+                $this->debug_log(sprintf('send_notifications: Search %d (user %d) - checking with %d filter args', $search->get_id(), $search->get_user_id(), count($args)));
+
                 $cb = function($query) use ($post_id) {
                     $query->where(sprintf(
                         '`%s`.post_id = %d',
@@ -1370,6 +1490,9 @@ class Voxel_Toolkit_Saved_Search {
                 $match = $post_type->query($args, $cb);
 
                 if (!empty($match)) {
+                    $matches_found++;
+                    $this->debug_log(sprintf('send_notifications: Post %d MATCHES search %d (user %d)', $post_id, $search->get_id(), $search->get_user_id()));
+
                     if ($batch_settings['enabled']) {
                         // BATCHED MODE: Dispatch in-app/SMS immediately, queue email
                         $event = new Voxel_Toolkit_Saved_Search_Event_No_Email($post_type);
@@ -1382,18 +1505,26 @@ class Voxel_Toolkit_Saved_Search {
                         $event = new Voxel_Toolkit_Saved_Search_Event($post_type);
                         $event->dispatch($post->get_id(), $search->get_user_id(), $search->get_id());
                     }
+                    $notifications_sent++;
+                    $this->debug_log(sprintf('send_notifications: Dispatched notification for search %d', $search->get_id()));
+                } else {
+                    $this->debug_log(sprintf('send_notifications: Post %d does NOT match search %d', $post_id, $search->get_id()));
                 }
             } catch (\Exception $e) {
                 // Log error but continue processing other searches
+                $error_msg = sprintf(
+                    '[VT Saved Search] Error processing search %d: %s',
+                    $search->get_id(),
+                    $e->getMessage()
+                );
+                $this->debug_log($error_msg);
                 if (function_exists('\Voxel\log')) {
-                    \Voxel\log(sprintf(
-                        '[VT Saved Search] Error processing search %d: %s',
-                        $search->get_id(),
-                        $e->getMessage()
-                    ));
+                    \Voxel\log($error_msg);
                 }
             }
         }
+
+        $this->debug_log(sprintf('send_notifications: Complete - %d matches found, %d notifications sent', $matches_found, $notifications_sent));
     }
 
     /**

@@ -60,6 +60,11 @@
 
 - **AJAX Label Fix** - Fixed filter labels showing field key (e.g., "terms") instead of field label (e.g., "Category") during AJAX search; labels now read from Voxel's Vue search form at runtime
 
+### Saved Search
+
+- **Improved Notification Reliability** - Fixed timing issue where notifications could fail when admins publish posts from wp-admin; now uses deferred processing at request shutdown to ensure all post data is saved before matching
+- **Debug Logging** - Added comprehensive debug logging (enable with `define('VT_SAVED_SEARCH_DEBUG', true)` in wp-config.php) to trace notification failures
+
 ## 1.6.1.1
 
 ### Suggest Edits Improvements
