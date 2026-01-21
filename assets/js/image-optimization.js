@@ -385,7 +385,9 @@
                         lastModified: Date.now()
                     });
 
+                    // Mark as processed for both change handler (WeakSet) and plupload handler (_vtOptimized)
                     processedFiles.add(optimized);
+                    optimized._vtOptimized = true;
                     resolve(optimized);
                 };
 
@@ -527,7 +529,8 @@
                 const plFile = imageFiles[i];
                 const nativeFile = plFile.getNative ? plFile.getNative() : null;
 
-                if (!nativeFile) continue;
+                // Skip if no native file or if native file was already optimized
+                if (!nativeFile || nativeFile._vtOptimized) continue;
 
                 const originalSize = nativeFile.size;
                 const originalId = plFile.id;
@@ -707,6 +710,10 @@
      */
     function hookWPUploaderPrototype() {
         if (typeof wp === 'undefined' || !wp.Uploader) return;
+
+        // Prevent double-wrapping the prototype
+        if (wp.Uploader.prototype._vtHooked) return;
+        wp.Uploader.prototype._vtHooked = true;
 
         const originalInit = wp.Uploader.prototype.init;
         wp.Uploader.prototype.init = function() {
