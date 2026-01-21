@@ -165,7 +165,8 @@
                 var $li = $(this);
                 var $avatar = $li.find('.notification-image').first();
 
-                if ($avatar.length && !$avatar.find('.vt-online-indicator').length) {
+                // Only add indicator if there's an actual user photo (img tag), not just an icon
+                if ($avatar.length && $avatar.find('img').length && !$avatar.find('.vt-online-indicator').length) {
                     // Get the name from notification
                     var name = $li.find('.notification-details b').first().text().trim();
 
