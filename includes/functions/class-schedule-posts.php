@@ -435,6 +435,54 @@ class Voxel_Toolkit_Schedule_Posts {
                 });
             }
 
+            // Check if we're on confirmation page - more robust detection
+            function isConfirmationPage(form) {
+                if (!form) return false;
+
+                // Method 1: Check for Voxel's success icon (SVG with checkmark/circle classes)
+                const hasSuccessIcon = form.querySelector('.ts-checkmark-circle, .success-icon, svg.checkmark, .ts-icon-check');
+                if (hasSuccessIcon) {
+                    console.log('VT Schedule: Confirmation detected via success icon');
+                    return true;
+                }
+
+                // Method 2: Check for SVG that looks like a checkmark (has circle or check path)
+                const allSvgs = form.querySelectorAll('svg');
+                for (const svg of allSvgs) {
+                    // Check if SVG contains circle element (common in success icons)
+                    if (svg.querySelector('circle') && !svg.closest('.vt-schedule-field')) {
+                        // Make sure it's a large icon (success icons are typically 48px+)
+                        const rect = svg.getBoundingClientRect();
+                        if (rect.width >= 40 && rect.height >= 40) {
+                            console.log('VT Schedule: Confirmation detected via large SVG with circle');
+                            return true;
+                        }
+                    }
+                }
+
+                // Method 3: Check for confirmation page structure - has link button but no submit-form
+                const hasSubmitForm = form.querySelector('.ts-form-group.submit-form');
+                const hasViewLink = form.querySelector('a.ts-btn[href]:not([href="#"]):not([href^="javascript"])');
+                if (!hasSubmitForm && hasViewLink) {
+                    // Check if the link goes to a post (not admin or action URL)
+                    const href = hasViewLink.getAttribute('href') || '';
+                    if (href && !href.includes('wp-admin') && !href.includes('action=')) {
+                        console.log('VT Schedule: Confirmation detected via view link without submit form');
+                        return true;
+                    }
+                }
+
+                // Method 4: Check if form has very few form groups (confirmation pages are simple)
+                const formGroups = form.querySelectorAll('.ts-form-group');
+                const hasInputs = form.querySelector('input[type="text"], input[type="email"], textarea, select');
+                if (formGroups.length <= 3 && !hasInputs) {
+                    console.log('VT Schedule: Confirmation detected via minimal form structure');
+                    return true;
+                }
+
+                return false;
+            }
+
             function initScheduleField(widgetId, settings) {
                 const widget = document.querySelector('[data-id="' + widgetId + '"]');
                 if (!widget) {
@@ -448,13 +496,8 @@ class Voxel_Toolkit_Schedule_Posts {
                     return;
                 }
 
-                // Check if we're on a confirmation/success page by looking for specific elements
-                const hasSuccessIcon = form.querySelector('.ts-checkmark-circle, .success-icon, svg.checkmark');
-                const formText = form.textContent || '';
-                const isConfirmationPage = hasSuccessIcon ||
-                    (formText.includes('has been published') && formText.includes('View'));
-
-                if (isConfirmationPage) {
+                // Check if we're on confirmation page
+                if (isConfirmationPage(form)) {
                     console.log('VT Schedule: On confirmation page, skipping');
                     const existingField = form.querySelector('.vt-schedule-field');
                     if (existingField) existingField.remove();
@@ -676,9 +719,7 @@ class Voxel_Toolkit_Schedule_Posts {
                 if (!form) return false;
 
                 // Check if we're on confirmation page
-                const formText = form.textContent || '';
-                const hasSuccessIcon = form.querySelector('.ts-checkmark-circle, .success-icon, svg.checkmark');
-                if (hasSuccessIcon || (formText.includes('has been published') && formText.includes('View'))) {
+                if (isConfirmationPage(form)) {
                     return false;
                 }
 
@@ -712,11 +753,7 @@ class Voxel_Toolkit_Schedule_Posts {
                 const existingField = widget.querySelector('.vt-schedule-field');
 
                 // Check if we're on confirmation page
-                const formText = form ? (form.textContent || '') : '';
-                const hasSuccessIcon = form ? form.querySelector('.ts-checkmark-circle, .success-icon, svg.checkmark') : false;
-                const isConfirmation = hasSuccessIcon || (formText.includes('has been published') && formText.includes('View'));
-
-                if (isConfirmation && existingField) {
+                if (isConfirmationPage(form) && existingField) {
                     // On confirmation page - remove scheduler
                     existingField.remove();
                     return;
