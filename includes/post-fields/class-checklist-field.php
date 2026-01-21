@@ -994,23 +994,16 @@ class Voxel_Toolkit_Checklist_Item_Checked_Event extends \Voxel\Events\Base_Even
     }
 
     public function dynamic_tags(): array {
+        // Use mock data as fallback when event data isn't prepared
+        $post = $this->post ?: \Voxel\Post::mock(['post_type' => $this->post_type->get_key()]);
+        $author = $post ? $post->get_author() : \Voxel\User::mock();
+        $user = $this->user ?: \Voxel\User::mock();
+
         return [
-            'post' => [
-                'type' => \Voxel\Dynamic_Data\Data_Groups\Post_Data_Group::class,
-                'args' => [$this->post],
-            ],
-            'author' => [
-                'type' => \Voxel\Dynamic_Data\Data_Groups\User_Data_Group::class,
-                'args' => [$this->post ? $this->post->get_author() : null],
-            ],
-            'user' => [
-                'type' => \Voxel\Dynamic_Data\Data_Groups\User_Data_Group::class,
-                'args' => [$this->user],
-            ],
-            'checklist' => [
-                'type' => Voxel_Toolkit_Checklist_Event_Data_Group::class,
-                'args' => [$this->item_data],
-            ],
+            'post' => \Voxel\Dynamic_Data\Group::Post($post),
+            'author' => \Voxel\Dynamic_Data\Group::User($author ?: \Voxel\User::mock()),
+            'user' => \Voxel\Dynamic_Data\Group::User($user),
+            'checklist' => new Voxel_Toolkit_Checklist_Event_Data_Group($this->item_data),
         ];
     }
 
