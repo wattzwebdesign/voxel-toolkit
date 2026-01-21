@@ -29,6 +29,10 @@
 - **Improved Taxonomy Search** - Schema now includes `taxonomy_name` for taxonomy/term fields so AI knows the correct WordPress taxonomy to use with `_taxonomy:` filter
 - **Better Taxonomy Hints** - Field hints now explicitly tell the AI to use `_taxonomy:taxonomy_name` format with term slugs
 
+### Schedule Posts
+
+- **Translated Sites Fix** - Fixed scheduling field incorrectly appearing on confirmation page for translated sites; replaced text-based detection with robust structural detection that works in all languages
+
 ## 1.6.1.1
 
 ### Suggest Edits Improvements
