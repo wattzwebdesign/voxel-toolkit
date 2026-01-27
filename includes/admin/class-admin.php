@@ -2016,6 +2016,13 @@ class Voxel_Toolkit_Admin {
                             : 3;
                         break;
 
+                    case 'synonym_search':
+                        // Number of synonyms to generate (1-20)
+                        $sanitized_function['synonym_count'] = isset($function_input['synonym_count'])
+                            ? max(1, min(20, intval($function_input['synonym_count'])))
+                            : 5;
+                        break;
+
                     default:
                         // Allow filtering for custom functions
                         $sanitized_function = apply_filters(
