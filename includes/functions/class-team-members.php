@@ -1780,31 +1780,24 @@ if (class_exists('\Voxel\Dynamic_Data\Visibility_Rules\Base_Visibility_Rule')) {
         }
 
         public function evaluate(): bool {
+            // Must be logged in
+            if (!is_user_logged_in()) {
+                return false;
+            }
+
+            // Get current post
             $post = \Voxel\get_current_post();
-            if (!($post && is_user_logged_in())) {
+            if (!$post) {
                 return false;
             }
 
-            $user_id = get_current_user_id();
             $post_id = $post->get_id();
+            $user_id = get_current_user_id();
 
-            // Check if user is a team member (not including author)
-            $team_members = get_post_meta($post_id, '_vt_team_members', true);
-            if (empty($team_members) || !is_array($team_members)) {
-                return false;
-            }
-
-            $user = get_userdata($user_id);
-            if (!$user || empty($user->user_email)) {
-                return false;
-            }
-
-            foreach ($team_members as $member) {
-                if (isset($member['email']) &&
-                    strtolower($member['email']) === strtolower($user->user_email) &&
-                    isset($member['status']) && $member['status'] === 'accepted') {
-                    return true;
-                }
+            // Use the main class's is_team_member method for consistency
+            $team_members_instance = \Voxel_Toolkit_Team_Members::instance();
+            if ($team_members_instance) {
+                return $team_members_instance->is_team_member($post_id, $user_id);
             }
 
             return false;
