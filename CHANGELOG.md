@@ -52,6 +52,7 @@
 ### Phone Field
 
 - **New Caledonia Missing** - Added New Caledonia to backend country selection list (was only available on frontend)
+- **Liechtenstein Missing** - Added Liechtenstein to backend country selection list (was only available on frontend)
 
 ### Admin Notifications
 

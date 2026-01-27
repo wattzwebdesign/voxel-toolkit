@@ -416,6 +416,7 @@ class Voxel_Toolkit_Extended_Phone_Field extends \Voxel\Post_Types\Fields\Phone_
             'lv' => 'Latvia',
             'lb' => 'Lebanon',
             'ly' => 'Libya',
+            'li' => 'Liechtenstein',
             'lt' => 'Lithuania',
             'lu' => 'Luxembourg',
             'mo' => 'Macau',
