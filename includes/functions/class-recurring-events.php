@@ -63,6 +63,67 @@ class Voxel_Toolkit_Recurring_Events {
         // Register AJAX endpoint for fetching occurrence data
         add_action('wp_ajax_vt_get_occurrences', [$this, 'ajax_get_occurrences']);
         add_action('wp_ajax_nopriv_vt_get_occurrences', [$this, 'ajax_get_occurrences']);
+
+        // Apply default recurring-date filter on initial page load for post types with recurring dates
+        add_action('template_redirect', [$this, 'apply_default_recurring_filter'], 5);
+    }
+
+    /**
+     * Apply default recurring-date=upcoming filter on archives for post types with recurring date fields
+     * This ensures recurring events appear on initial page load without requiring a filter to be set
+     */
+    public function apply_default_recurring_filter() {
+        // Skip AJAX requests (handled by search_posts_handler)
+        if (wp_doing_ajax()) {
+            return;
+        }
+
+        // Skip if recurring-date filter is already set
+        if (isset($_GET['recurring-date'])) {
+            return;
+        }
+
+        // Check if we're on a Voxel post type archive or search page
+        if (!class_exists('\Voxel\Post_Type')) {
+            return;
+        }
+
+        // Get post type from URL parameter or current archive
+        $post_type_key = $_GET['type'] ?? null;
+
+        if (!$post_type_key) {
+            // Try to detect from archive
+            $queried_object = get_queried_object();
+            if ($queried_object instanceof \WP_Post_Type) {
+                $post_type_key = $queried_object->name;
+            }
+        }
+
+        if (!$post_type_key) {
+            return;
+        }
+
+        // Check if this post type has a recurring-date field
+        $post_type = \Voxel\Post_Type::get($post_type_key);
+        if (!$post_type) {
+            return;
+        }
+
+        $has_recurring_field = false;
+        foreach ($post_type->get_fields() as $field) {
+            if ($field->get_type() === 'recurring-date') {
+                $has_recurring_field = true;
+                break;
+            }
+        }
+
+        if (!$has_recurring_field) {
+            return;
+        }
+
+        // Apply the default filter by modifying $_GET
+        // This will be picked up by Voxel's search when the page renders
+        $_GET['recurring-date'] = 'upcoming';
     }
 
     /**
