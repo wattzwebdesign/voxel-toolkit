@@ -140,7 +140,8 @@ $template = $config['template'] ?? 'detailed';
                     </div>
                 </div>
 
-                <!-- Card Footer -->
+                <!-- Card Footer (only show if at least one element is enabled) -->
+                <?php if ($this->get_settings_for_display('vt_ss_show_post_type') || $this->get_settings_for_display('vt_ss_show_created_date') === 'yes'): ?>
                 <div class="vt-search-card-footer">
                     <?php if ($this->get_settings_for_display('vt_ss_show_post_type')): ?>
                         <span class="vt-search-post-type-label" v-html="search.post_type.label"></span>
@@ -151,6 +152,7 @@ $template = $config['template'] ?? 'detailed';
                         </span>
                     <?php endif; ?>
                 </div>
+                <?php endif; ?>
 
             </div>
 
