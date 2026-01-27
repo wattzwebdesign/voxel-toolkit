@@ -95,6 +95,12 @@ class Voxel_Toolkit_Show_Field_Description {
                         const dialogContent = field.querySelector(".vx-dialog-content");
                         const label = field.querySelector("label");
 
+                        // Verify the dialogContent belongs to THIS field, not a nested child field
+                        // Check that the closest .ts-form-group parent of dialogContent is the current field
+                        if (dialogContent && dialogContent.closest(".ts-form-group") !== field) {
+                            return; // Skip - this description belongs to a child field
+                        }
+
                         // If there's a description in the dialog content, convert it to subtitle
                         if (dialogContent && dialogContent.innerHTML.trim() && label) {
                             const subtitle = document.createElement("div");
