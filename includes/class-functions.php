@@ -7803,9 +7803,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                            name="voxel_toolkit_options[ai_post_summary][max_tokens]"
                            value="<?php echo esc_attr($max_tokens); ?>"
                            min="50"
-                           max="1000"
+                           max="5000"
                            class="small-text">
-                    <p class="description"><?php _e('Maximum tokens for the summary (50-1000). Higher = longer summaries.', 'voxel-toolkit'); ?></p>
+                    <p class="description"><?php _e('Maximum tokens for the summary (50-5000). Higher = longer summaries.', 'voxel-toolkit'); ?></p>
                 </td>
             </tr>
             <tr>

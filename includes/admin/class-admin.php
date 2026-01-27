@@ -1980,7 +1980,7 @@ class Voxel_Toolkit_Admin {
 
                         // Max tokens (50-1000)
                         $sanitized_function['max_tokens'] = isset($function_input['max_tokens'])
-                            ? max(50, min(1000, absint($function_input['max_tokens'])))
+                            ? max(50, min(5000, absint($function_input['max_tokens'])))
                             : 300;
 
                         // Prompt template
