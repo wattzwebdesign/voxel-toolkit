@@ -2,6 +2,10 @@
 
 ## 1.6.1.3
 
+### AI Post Summary
+
+- **Increased Max Token Limit** - Raised the maximum token limit from 1,000 to 5,000 for longer AI-generated summaries
+
 ### Dynamic Tags
 
 - **Address Part City Fix** - Fixed `address_part(city)` returning state/county instead of city for Polish and other addresses by adding fallbacks for `sublocality`, `sublocality_level_1`, and `administrative_area_level_3` (municipality/gmina) before falling back to `administrative_area_level_2` (county)
