@@ -755,13 +755,22 @@ class Voxel_Toolkit_Address_Part_Modifier extends \Voxel\Dynamic_Data\Modifiers\
                 return $this->get_component($address_data, 'route');
 
             case 'city':
-                // Try locality first, then postal_town, then administrative_area_level_2
+                // Try locality first (main city name)
                 $city = $this->get_component($address_data, 'locality');
                 if (empty($city)) {
-                    $city = $this->get_component($address_data, 'postal_town');
+                    $city = $this->get_component($address_data, 'postal_town'); // UK specific
                 }
                 if (empty($city)) {
-                    $city = $this->get_component($address_data, 'administrative_area_level_2');
+                    $city = $this->get_component($address_data, 'sublocality'); // District/neighborhood
+                }
+                if (empty($city)) {
+                    $city = $this->get_component($address_data, 'sublocality_level_1');
+                }
+                if (empty($city)) {
+                    $city = $this->get_component($address_data, 'administrative_area_level_3'); // Municipality (gmina)
+                }
+                if (empty($city)) {
+                    $city = $this->get_component($address_data, 'administrative_area_level_2'); // County (last resort)
                 }
                 return $city;
 
