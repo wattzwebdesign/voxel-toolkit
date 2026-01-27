@@ -2,6 +2,10 @@
 
 ## 1.6.1.3
 
+### Show Field Description
+
+- **Repeater Child Description Fix** - Fixed child field descriptions (e.g., image field) incorrectly appearing on parent repeater fields that have no description
+
 ### Dynamic Tags
 
 - **Address Part City Fix** - Fixed `address_part(city)` returning state/county instead of city for Polish and other addresses by adding fallbacks for `sublocality`, `sublocality_level_1`, and `administrative_area_level_3` (municipality/gmina) before falling back to `administrative_area_level_2` (county)
