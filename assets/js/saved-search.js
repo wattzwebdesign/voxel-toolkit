@@ -187,7 +187,8 @@
                         });
                     },
                     deleteSearch(search_id) {
-                        if (!confirm("Are you sure you want to delete this search?")) {
+                        const confirmMessage = this.config.labels?.confirmDelete || "Are you sure you want to delete this search?";
+                        if (!confirm(confirmMessage)) {
                             return;
                         }
 

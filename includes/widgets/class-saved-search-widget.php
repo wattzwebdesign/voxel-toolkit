@@ -267,6 +267,15 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'vt_ss_label_confirm_delete',
+            [
+                'label' => __('Delete Confirmation', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Are you sure you want to delete this search?', 'voxel-toolkit'),
+            ]
+        );
+
         $this->end_controls_section();
 
         // Icons Section
@@ -1045,6 +1054,7 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
                 'delete' => $this->get_settings_for_display('vt_ss_label_delete') ?: __('Delete', 'voxel-toolkit'),
                 'noResult' => $this->get_settings_for_display('vt_ss_label_no_result') ?: __('Nothing found!', 'voxel-toolkit'),
                 'noFilter' => $this->get_settings_for_display('vt_ss_label_no_filter') ?: __('No filters found!', 'voxel-toolkit'),
+                'confirmDelete' => $this->get_settings_for_display('vt_ss_label_confirm_delete') ?: __('Are you sure you want to delete this search?', 'voxel-toolkit'),
             ],
             'icons' => [
                 'arrowLeft' => $this->get_icon_markup('vt_ss_icon_arrow_left'),
