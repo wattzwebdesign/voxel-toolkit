@@ -15,6 +15,7 @@
     const processedFiles = new WeakSet();
     let isWorking = false;
     let fileCounter = 0;
+    const uploadSession = Date.now().toString(36).slice(-4); // Unique session ID to prevent filename collisions
 
     /**
      * Get translated string with sprintf-like replacement
@@ -377,9 +378,9 @@
 
                     let newName;
                     if (Settings.renameFormat === 'post_title' && title) {
-                        newName = `${this.slugify(title)}-${counterStr}.${ext}`;
+                        newName = `${this.slugify(title)}-${counterStr}-${uploadSession}.${ext}`;
                     } else {
-                        newName = `${baseName}-${counterStr}.${ext}`;
+                        newName = `${baseName}-${counterStr}-${uploadSession}.${ext}`;
                     }
 
                     const optimized = new File([blob], newName, {
@@ -417,7 +418,6 @@
      */
     async function processAndTrigger(files, target, eventType) {
         isWorking = true;
-        fileCounter = 0;
         let totalSaved = 0;
 
         const allFiles = Array.from(files);
@@ -530,7 +530,6 @@
         e.stopImmediatePropagation();
 
         isWorking = true;
-        fileCounter = 0;
         let totalSaved = 0;
 
         const imageFiles = files.filter(f => f.type.match(/^image\/(jpeg|png|webp)$/));
@@ -665,7 +664,6 @@
             }
 
             isWorking = true;
-            fileCounter = 0;
             let totalSaved = 0;
 
             // Stop auto-start
