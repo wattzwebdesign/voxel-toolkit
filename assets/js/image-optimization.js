@@ -294,21 +294,23 @@
          * Optimize a single image file
          */
         async optimize(file, index, total) {
-            // Check file size limit
             const maxBytes = Settings.maxFileSizeMB * 1024 * 1024;
-            if (file.size > maxBytes) {
-                Toast.show(
-                    i18n.fileTooLarge || 'File too large!',
-                    __('exceedsMbLimit', file.name, Settings.maxFileSizeMB),
-                    'error'
-                );
-                return null;
-            }
 
             // Skip non-image files and already processed files
             if (!file.type.match(/^image\/(jpeg|png|webp)$/) || processedFiles.has(file)) {
+                // For non-image files, apply size limit check
+                if (file.size > maxBytes) {
+                    Toast.show(
+                        i18n.fileTooLarge || 'File too large!',
+                        __('exceedsMbLimit', file.name, Settings.maxFileSizeMB),
+                        'error'
+                    );
+                    return null;
+                }
                 return file;
             }
+
+            // For image files, we'll compress first and check size after
 
             Toast.update(
                 i18n.optimizingImages || 'Optimizing images...',
@@ -384,6 +386,17 @@
                         type: actualType,
                         lastModified: Date.now()
                     });
+
+                    // Check if compressed file still exceeds size limit
+                    if (optimized.size > maxBytes) {
+                        Toast.show(
+                            i18n.fileTooLarge || 'File too large!',
+                            __('exceedsMbLimit', file.name, Settings.maxFileSizeMB) + ' ' + (i18n.evenAfterCompression || 'Even after compression.'),
+                            'error'
+                        );
+                        resolve(null);
+                        return;
+                    }
 
                     // Mark as processed for both change handler (WeakSet) and plupload handler (_vtOptimized)
                     processedFiles.add(optimized);
