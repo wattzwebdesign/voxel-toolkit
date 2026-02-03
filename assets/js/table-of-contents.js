@@ -84,6 +84,9 @@
 
             // Update active state to first visible item if current active is hidden
             this.ensureActiveVisible();
+
+            // Sync field-level conditional visibility
+            this.syncFieldConditions();
         }
 
         /**
@@ -154,9 +157,184 @@
 
                 return activeSteps;
             } catch (e) {
-                console.warn('VT TOC: Error getting active steps', e);
+                // Silently fail if Vue structure changed
                 return [];
             }
+        }
+
+        /**
+         * Get visible field keys by checking Voxel's Vue app data
+         * For conditional fields, check if Voxel is showing them in the DOM
+         */
+        getVisibleFieldKeys() {
+            const formElement = document.querySelector('.ts-form.ts-create-post.create-post-form');
+            if (!formElement || !formElement.__vue_app__) {
+                return [];
+            }
+
+            try {
+                const form_app = formElement.__vue_app__;
+                const node_data = form_app._container._vnode.component.data;
+
+                if (!node_data || !node_data.fields) {
+                    return [];
+                }
+
+                const visibleFields = [];
+
+                // Iterate through all fields
+                $.each(node_data.fields, (fieldKey, field_data) => {
+                    // Skip step-type fields (they're handled separately)
+                    if (field_data.type === 'ui-step') {
+                        return true; // continue
+                    }
+
+                    let include_field = true;
+
+                    // Check if field has conditions
+                    if (field_data.conditions && field_data.conditions.length) {
+                        // For conditional fields, check if Voxel is showing them in the DOM
+                        // This leverages Voxel's own condition evaluation
+                        const $formField = $(`.field-key-${fieldKey}`);
+
+                        if ($formField.length > 0) {
+                            // Field exists in DOM - check if it's visible
+                            include_field = $formField.is(':visible') && $formField.css('display') !== 'none';
+                        } else {
+                            // Field not in DOM - Voxel hasn't rendered it, so condition not met
+                            include_field = false;
+                        }
+                    }
+                    // Fields without conditions are always included
+
+                    if (include_field) {
+                        visibleFields.push(fieldKey);
+                    }
+                });
+
+                return visibleFields;
+            } catch (e) {
+                // Silently fail if Vue structure changed
+                return [];
+            }
+        }
+
+        /**
+         * Evaluate a condition ourselves as fallback when _passes isn't updated
+         */
+        evaluateCondition(sourceField, conditionType, sourceFieldKey) {
+            if (!sourceField) return false;
+
+            // Get the field value - check multiple possible locations
+            let fieldValue = sourceField.value;
+
+            // For some field types, value might be in props
+            if ((fieldValue === null || fieldValue === undefined) && sourceField.props) {
+                fieldValue = sourceField.props.value || sourceField.props.modelValue;
+            }
+
+            // Check for 'input' property (Voxel might store current input here)
+            if ((fieldValue === null || fieldValue === undefined || fieldValue === '') && sourceField.input !== undefined) {
+                fieldValue = sourceField.input;
+            }
+
+            // Check for 'modelValue' directly on field
+            if ((fieldValue === null || fieldValue === undefined || fieldValue === '') && sourceField.modelValue !== undefined) {
+                fieldValue = sourceField.modelValue;
+            }
+
+            // If still null, check if the source field's TOC indicator shows filled
+            // This leverages the existing completion detection which IS working
+            if ((fieldValue === null || fieldValue === undefined || fieldValue === '') && sourceFieldKey) {
+                const $tocField = $(`.vt-toc-field[data-field-key="${sourceFieldKey}"]`);
+                if ($tocField.length && $tocField.hasClass('is-filled')) {
+                    fieldValue = '__HAS_VALUE__';
+                }
+            }
+
+            // Parse condition type (e.g., "text:not_empty", "text:empty", "number:gt:5")
+            const parts = conditionType.split(':');
+            const operator = parts[1];
+            const compareValue = parts[2];
+
+            switch (operator) {
+                case 'not_empty':
+                    if (fieldValue === null || fieldValue === undefined) return false;
+                    if (typeof fieldValue === 'string') return fieldValue.trim().length > 0;
+                    if (Array.isArray(fieldValue)) return fieldValue.length > 0;
+                    if (typeof fieldValue === 'object') return Object.keys(fieldValue).length > 0;
+                    return !!fieldValue;
+
+                case 'empty':
+                    if (fieldValue === null || fieldValue === undefined) return true;
+                    if (typeof fieldValue === 'string') return fieldValue.trim().length === 0;
+                    if (Array.isArray(fieldValue)) return fieldValue.length === 0;
+                    return !fieldValue;
+
+                case 'equals':
+                case 'eq':
+                    return String(fieldValue) === String(compareValue);
+
+                case 'not_equals':
+                case 'neq':
+                    return String(fieldValue) !== String(compareValue);
+
+                case 'gt':
+                    return Number(fieldValue) > Number(compareValue);
+
+                case 'gte':
+                    return Number(fieldValue) >= Number(compareValue);
+
+                case 'lt':
+                    return Number(fieldValue) < Number(compareValue);
+
+                case 'lte':
+                    return Number(fieldValue) <= Number(compareValue);
+
+                case 'checked':
+                    return fieldValue === true || fieldValue === 1 || fieldValue === '1';
+
+                case 'unchecked':
+                    return fieldValue === false || fieldValue === 0 || fieldValue === '0' || !fieldValue;
+
+                default:
+                    // For unknown operators, fall back to checking if field has any value
+                    return fieldValue !== null && fieldValue !== undefined && fieldValue !== '';
+            }
+        }
+
+        /**
+         * Sync field visibility in TOC based on Voxel conditional logic
+         */
+        syncFieldConditions() {
+            const $tocs = $('.voxel-table-of-contents[data-show-fields="true"]');
+            if (!$tocs.length) return;
+
+            const visibleFieldKeys = this.getVisibleFieldKeys();
+
+            // If we couldn't determine visibility, show all fields
+            if (visibleFieldKeys.length === 0) {
+                $tocs.find('.vt-toc-field').removeClass('vt-toc-hidden');
+                return;
+            }
+
+            $tocs.each((index, tocElement) => {
+                const $toc = $(tocElement);
+                const $fields = $toc.find('.vt-toc-field');
+
+                $fields.each((i, fieldElement) => {
+                    const $field = $(fieldElement);
+                    const fieldKey = $field.data('field-key');
+
+                    if (!fieldKey) return;
+
+                    if (visibleFieldKeys.includes(fieldKey)) {
+                        $field.removeClass('vt-toc-hidden');
+                    } else {
+                        $field.addClass('vt-toc-hidden');
+                    }
+                });
+            });
         }
 
         /**
@@ -185,13 +363,15 @@
 
             const observer = new MutationObserver(() => {
                 // Debounce the sync to prevent excessive updates
+                // Use 250ms to give Vue time to finish rendering conditional fields
                 if (this.syncDebounceTimer) {
                     clearTimeout(this.syncDebounceTimer);
                 }
                 this.syncDebounceTimer = setTimeout(() => {
                     this.syncWithVoxelForm();
                     this.checkFieldCompletion();
-                }, 100);
+                    this.syncFieldConditions();
+                }, 250);
             });
 
             observer.observe(formContainer, {
@@ -240,6 +420,7 @@
             // Check every 300ms for Vue data changes
             setInterval(() => {
                 this.checkFieldCompletionFromVue();
+                this.syncFieldConditions();
             }, 300);
         }
 
@@ -290,6 +471,16 @@
         isFieldFilledFromVueData(fieldData, fieldKey) {
             if (!fieldData) return false;
 
+            const fieldType = fieldData.type;
+
+            // Handle repeater fields FIRST - they have empty 'value' but items in props.rows
+            if (fieldType === 'repeater') {
+                if (fieldData.props && fieldData.props.rows && Array.isArray(fieldData.props.rows) && fieldData.props.rows.length > 0) {
+                    return true;
+                }
+                return false;
+            }
+
             // Check for 'value' property which Voxel uses for most fields
             if (fieldData.hasOwnProperty('value')) {
                 const value = fieldData.value;
@@ -322,8 +513,29 @@
             }
 
             // Check for 'items' property (used by repeater fields)
-            if (fieldData.hasOwnProperty('items')) {
-                return Array.isArray(fieldData.items) && fieldData.items.length > 0;
+            if (fieldData.items && Array.isArray(fieldData.items) && fieldData.items.length > 0) {
+                return true;
+            }
+
+            // Check for 'rows' property (also used by repeater fields)
+            if (fieldData.rows && Array.isArray(fieldData.rows) && fieldData.rows.length > 0) {
+                return true;
+            }
+
+            // Check for repeater items inside 'props' object
+            // Vue Proxy objects need direct property access, not hasOwnProperty
+            if (fieldData.props) {
+                const props = fieldData.props;
+                // Check rows first (most common for repeaters)
+                if (props.rows && Array.isArray(props.rows) && props.rows.length > 0) {
+                    return true;
+                }
+                if (props.items && Array.isArray(props.items) && props.items.length > 0) {
+                    return true;
+                }
+                if (props.value && Array.isArray(props.value) && props.value.length > 0) {
+                    return true;
+                }
             }
 
             return false;
@@ -343,6 +555,7 @@
                 }
                 this.fieldCheckDebounceTimer = setTimeout(() => {
                     this.checkFieldCompletion();
+                    this.syncFieldConditions();
                 }, 150);
             });
 
@@ -550,6 +763,19 @@
                     if ($workDays.length > 0) return true;
                     break;
 
+                case 'repeater':
+                    // Check for repeater items in DOM - Voxel uses .ts-repeater-container children
+                    const $repeaterContainer = $field.find('.ts-repeater-container');
+                    if ($repeaterContainer.length && $repeaterContainer.children().length > 0) {
+                        return true;
+                    }
+                    // Fallback: check for various repeater item classes
+                    const $repeaterItems = $field.find('.ts-repeater-item, .ts-object-list-item, .ts-field-repeater-item');
+                    if ($repeaterItems.length > 0) {
+                        return true;
+                    }
+                    break;
+
                 case 'color':
                     const $colorInput = $field.find('input[type="color"], input[type="text"]');
                     if ($colorInput.length && $colorInput.val()) return true;
@@ -611,6 +837,7 @@
                     lastUrl = currentUrl;
                     this.updateActiveStates();
                     this.syncWithVoxelForm();
+                    this.syncFieldConditions();
                 }
             }, 100);
 
@@ -622,12 +849,14 @@
                 originalPushState.apply(history, args);
                 this.updateActiveStates();
                 this.syncWithVoxelForm();
+                this.syncFieldConditions();
             };
 
             history.replaceState = (...args) => {
                 originalReplaceState.apply(history, args);
                 this.updateActiveStates();
                 this.syncWithVoxelForm();
+                this.syncFieldConditions();
             };
         }
 
