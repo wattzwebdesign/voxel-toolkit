@@ -271,27 +271,44 @@
 
             // Build days buttons HTML with active states
             var days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-            var dayLabels = {mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun'};
+            var dayLabels = {
+                mon: vtSuggestEdits.i18n.dayMon || 'Mon',
+                tue: vtSuggestEdits.i18n.dayTue || 'Tue',
+                wed: vtSuggestEdits.i18n.dayWed || 'Wed',
+                thu: vtSuggestEdits.i18n.dayThu || 'Thu',
+                fri: vtSuggestEdits.i18n.dayFri || 'Fri',
+                sat: vtSuggestEdits.i18n.daySat || 'Sat',
+                sun: vtSuggestEdits.i18n.daySun || 'Sun'
+            };
             var daysHtml = '';
             days.forEach(function(day) {
                 var isActive = groupData.days && groupData.days.indexOf(day) !== -1 ? ' active' : '';
                 daysHtml += '<button type="button" class="vt-wh-day-btn' + isActive + '" data-day="' + day + '">' + dayLabels[day] + '</button>';
             });
 
+            // Get localized status labels
+            var statusLabels = {
+                hours: vtSuggestEdits.i18n.statusSpecificHours || 'Specific hours',
+                open: vtSuggestEdits.i18n.statusOpen24 || 'Open 24 hours',
+                closed: vtSuggestEdits.i18n.statusClosed || 'Closed',
+                appointments: vtSuggestEdits.i18n.statusAppointments || 'Appointments only'
+            };
+            var addHoursLabel = vtSuggestEdits.i18n.addHours || '+ Add hours';
+
             var groupHtml = '<div class="vt-wh-group">' +
                 '<div class="vt-wh-group-header">' +
                     '<div class="vt-wh-days">' + daysHtml + '</div>' +
                     '<select class="vt-wh-status">' +
-                        '<option value="hours"' + (groupData.status === 'hours' ? ' selected' : '') + '>Specific hours</option>' +
-                        '<option value="open"' + (groupData.status === 'open' ? ' selected' : '') + '>Open 24 hours</option>' +
-                        '<option value="closed"' + (groupData.status === 'closed' ? ' selected' : '') + '>Closed</option>' +
-                        '<option value="appointments_only"' + (groupData.status === 'appointments_only' ? ' selected' : '') + '>Appointments only</option>' +
+                        '<option value="hours"' + (groupData.status === 'hours' ? ' selected' : '') + '>' + statusLabels.hours + '</option>' +
+                        '<option value="open"' + (groupData.status === 'open' ? ' selected' : '') + '>' + statusLabels.open + '</option>' +
+                        '<option value="closed"' + (groupData.status === 'closed' ? ' selected' : '') + '>' + statusLabels.closed + '</option>' +
+                        '<option value="appointments_only"' + (groupData.status === 'appointments_only' ? ' selected' : '') + '>' + statusLabels.appointments + '</option>' +
                     '</select>' +
                     '<button type="button" class="vt-wh-remove-group">×</button>' +
                 '</div>' +
                 '<div class="vt-wh-hours-container" style="' + (groupData.status !== 'hours' ? 'display: none;' : '') + '">' +
                     '<div class="vt-wh-time-slots"></div>' +
-                    '<button type="button" class="vt-wh-add-time">+ Add hours</button>' +
+                    '<button type="button" class="vt-wh-add-time">' + addHoursLabel + '</button>' +
                 '</div>' +
             '</div>';
 
@@ -313,9 +330,10 @@
             // Default time slot if not provided
             timeSlotData = timeSlotData || {from: '09:00', to: '17:00'};
 
+            var timeToLabel = vtSuggestEdits.i18n.timeTo || 'to';
             var timeSlotHtml = '<div class="vt-wh-time-slot">' +
                 '<input type="time" class="vt-wh-time-from" value="' + timeSlotData.from + '">' +
-                '<span>to</span>' +
+                '<span>' + timeToLabel + '</span>' +
                 '<input type="time" class="vt-wh-time-to" value="' + timeSlotData.to + '">' +
                 '<button type="button" class="vt-wh-remove-time">×</button>' +
             '</div>';

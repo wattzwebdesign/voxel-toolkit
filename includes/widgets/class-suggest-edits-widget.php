@@ -31,6 +31,20 @@ class Voxel_Toolkit_Suggest_Edits_Widget extends \Elementor\Widget_Base {
                 'submitError' => __('Failed to submit suggestions. Please try again.', 'voxel-toolkit'),
                 'noChanges' => __('Please make at least one change before submitting.', 'voxel-toolkit'),
                 'emailRequired' => __('Please provide your email address.', 'voxel-toolkit'),
+                // Work hours popup strings
+                'dayMon' => __('Mon', 'voxel-toolkit'),
+                'dayTue' => __('Tue', 'voxel-toolkit'),
+                'dayWed' => __('Wed', 'voxel-toolkit'),
+                'dayThu' => __('Thu', 'voxel-toolkit'),
+                'dayFri' => __('Fri', 'voxel-toolkit'),
+                'daySat' => __('Sat', 'voxel-toolkit'),
+                'daySun' => __('Sun', 'voxel-toolkit'),
+                'statusSpecificHours' => __('Specific hours', 'voxel-toolkit'),
+                'statusOpen24' => __('Open 24 hours', 'voxel-toolkit'),
+                'statusClosed' => __('Closed', 'voxel-toolkit'),
+                'statusAppointments' => __('Appointments only', 'voxel-toolkit'),
+                'addHours' => __('+ Add hours', 'voxel-toolkit'),
+                'timeTo' => __('to', 'voxel-toolkit'),
             ),
         ));
     }
