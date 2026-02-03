@@ -32,6 +32,11 @@
     display: none !important;
 }
 
+/* Hidden fields (filtered by Voxel conditional logic) */
+.vt-toc-field.vt-toc-hidden {
+    display: none !important;
+}
+
 /* CSS counter-based numbering for visible items only (numbered lists) */
 .voxel-toc-list.vt-toc-numbered {
     counter-reset: toc-counter;
