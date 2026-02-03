@@ -896,6 +896,23 @@ class Voxel_Toolkit_Admin_Columns {
             'filterable' => true,
         );
 
+        // Add Featured Posts column if enabled for this post type
+        $settings = get_option('voxel_toolkit_options', array());
+        $featured_settings = isset($settings['featured_posts']) ? $settings['featured_posts'] : array();
+        $featured_enabled = isset($featured_settings['enabled']) && $featured_settings['enabled'];
+        $featured_post_types = isset($featured_settings['post_types']) ? $featured_settings['post_types'] : array();
+
+        if ($featured_enabled && in_array($post_type_key, $featured_post_types)) {
+            $grouped_fields['toolkit']['fields'][] = array(
+                'key' => ':featured',
+                'label' => __('Featured', 'voxel-toolkit'),
+                'type' => 'featured-post',
+                'type_label' => __('Voxel Toolkit', 'voxel-toolkit'),
+                'sortable' => true,
+                'filterable' => true,
+            );
+        }
+
         // Remove empty groups
         $grouped_fields = array_filter($grouped_fields, function($group) {
             return !empty($group['fields']);
@@ -966,8 +983,23 @@ class Voxel_Toolkit_Admin_Columns {
 
     /**
      * Get default column configuration for a post type
+     * Detects the actual columns from WordPress instead of using hardcoded defaults
      */
     private function get_default_config($post_type) {
+        // Try to get actual WordPress columns for this post type
+        $actual_columns = $this->get_actual_wp_columns($post_type);
+
+        if (!empty($actual_columns)) {
+            return array(
+                'columns' => $actual_columns,
+                'settings' => array(
+                    'default_sort' => array('column' => 'date', 'order' => 'desc'),
+                    'primary_column' => 'title',
+                ),
+            );
+        }
+
+        // Fallback to basic defaults if we can't detect columns
         $default_columns = array(
             array(
                 'id' => 'col_title',
@@ -986,9 +1018,9 @@ class Voxel_Toolkit_Admin_Columns {
                 'filterable' => false,
             ),
             array(
-                'id' => 'col_author',
-                'field_key' => ':author',
-                'label' => __('Author', 'voxel-toolkit'),
+                'id' => 'col_comments',
+                'field_key' => ':comments',
+                'label' => __('Comments', 'voxel-toolkit'),
                 'width' => array('mode' => 'auto', 'value' => null),
                 'sortable' => true,
                 'filterable' => false,
@@ -1002,6 +1034,79 @@ class Voxel_Toolkit_Admin_Columns {
                 'primary_column' => 'title',
             ),
         );
+    }
+
+    /**
+     * Get the actual columns that WordPress would display for a post type
+     */
+    private function get_actual_wp_columns($post_type) {
+        // Create a temporary WP_Posts_List_Table to get real columns
+        if (!class_exists('WP_Posts_List_Table')) {
+            require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+            require_once ABSPATH . 'wp-admin/includes/class-wp-posts-list-table.php';
+        }
+
+        // Temporarily set the screen
+        $original_screen = get_current_screen();
+        set_current_screen("edit-{$post_type}");
+
+        // Get columns via filter
+        $columns = apply_filters("manage_{$post_type}_posts_columns", array(
+            'cb' => '<input type="checkbox" />',
+            'title' => __('Title'),
+            'author' => __('Author'),
+            'date' => __('Date'),
+        ));
+
+        // Also check for comments column which is common
+        if (post_type_supports($post_type, 'comments')) {
+            $columns['comments'] = '<span class="vers comment-grey-bubble" title="' . esc_attr__('Comments') . '"><span class="screen-reader-text">' . __('Comments') . '</span></span>';
+        }
+
+        // Restore original screen
+        if ($original_screen) {
+            set_current_screen($original_screen);
+        }
+
+        // Map WordPress columns to our format
+        $mapped_columns = array();
+        $column_map = array(
+            'title' => array('field_key' => 'title', 'label' => __('Title', 'voxel-toolkit'), 'sortable' => true),
+            'author' => array('field_key' => ':author', 'label' => __('Author', 'voxel-toolkit'), 'sortable' => true),
+            'date' => array('field_key' => ':date', 'label' => __('Date Published', 'voxel-toolkit'), 'sortable' => true),
+            'comments' => array('field_key' => ':comments', 'label' => __('Comments', 'voxel-toolkit'), 'sortable' => true),
+            'featured' => array('field_key' => ':featured', 'label' => __('Featured', 'voxel-toolkit'), 'sortable' => true),
+            'categories' => array('field_key' => ':categories', 'label' => __('Categories', 'voxel-toolkit'), 'sortable' => false),
+            'tags' => array('field_key' => ':tags', 'label' => __('Tags', 'voxel-toolkit'), 'sortable' => false),
+        );
+
+        $counter = 0;
+        foreach ($columns as $key => $label) {
+            // Skip checkbox column
+            if ($key === 'cb') {
+                continue;
+            }
+
+            // Skip Voxel's custom columns that we handle separately
+            if (strpos($key, 'vx_') === 0) {
+                continue;
+            }
+
+            $counter++;
+
+            if (isset($column_map[$key])) {
+                $mapped_columns[] = array(
+                    'id' => 'col_' . $key,
+                    'field_key' => $column_map[$key]['field_key'],
+                    'label' => $column_map[$key]['label'],
+                    'width' => array('mode' => 'auto', 'value' => null),
+                    'sortable' => $column_map[$key]['sortable'],
+                    'filterable' => false,
+                );
+            }
+        }
+
+        return $mapped_columns;
     }
 
     /**
