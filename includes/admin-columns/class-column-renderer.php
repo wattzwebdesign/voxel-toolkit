@@ -193,6 +193,9 @@ class Voxel_Toolkit_Column_Renderer {
             case ':verification_status':
                 return $this->render_verification_status($post_id, $column_config);
 
+            case ':featured':
+                return $this->render_featured_toggle($post_id);
+
             default:
                 return $this->empty_value();
         }
@@ -475,6 +478,38 @@ class Voxel_Toolkit_Column_Renderer {
         }
         $output .= '</span>';
         return $output;
+    }
+
+    /**
+     * Render Featured Post toggle
+     */
+    private function render_featured_toggle($post_id) {
+        // Get Featured Posts settings
+        $settings = get_option('voxel_toolkit_options', array());
+        $featured_settings = isset($settings['featured_posts']) ? $settings['featured_posts'] : array();
+        $featured_enabled = isset($featured_settings['enabled']) && $featured_settings['enabled'];
+        $featured_post_types = isset($featured_settings['post_types']) ? $featured_settings['post_types'] : array();
+        $priority_values = isset($featured_settings['priority_values']) ? $featured_settings['priority_values'] : array();
+
+        $post_type = get_post_type($post_id);
+
+        // Check if Featured Posts is enabled for this post type
+        if (!$featured_enabled || !in_array($post_type, $featured_post_types)) {
+            return $this->empty_value();
+        }
+
+        // Get current priority and expected priority
+        $priority = get_post_meta($post_id, 'voxel:priority', true);
+        $expected_priority = isset($priority_values[$post_type]) ? $priority_values[$post_type] : 10;
+        $is_featured = ($priority == $expected_priority);
+
+        $star_class = $is_featured ? 'dashicons-star-filled featured-active' : 'dashicons-star-empty';
+        $nonce = wp_create_nonce('toggle_featured_' . $post_id);
+        $title = $is_featured ? __('Remove from featured', 'voxel-toolkit') : __('Make featured', 'voxel-toolkit');
+
+        return '<a href="#" class="toggle-featured" data-post-id="' . esc_attr($post_id) . '" data-nonce="' . esc_attr($nonce) . '" title="' . esc_attr($title) . '">' .
+               '<span class="dashicons ' . esc_attr($star_class) . '"></span>' .
+               '</a>';
     }
 
     /**
