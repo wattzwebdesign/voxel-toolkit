@@ -480,11 +480,19 @@ class Voxel_Toolkit_Schedule_Posts {
                     return;
                 }
 
-                // Check if we're on a confirmation/success page by looking for specific elements
-                const hasSuccessIcon = form.querySelector('.ts-checkmark-circle, .success-icon, svg.checkmark');
-                const formText = form.textContent || '';
-                const isConfirmationPage = hasSuccessIcon ||
-                    (formText.includes('has been published') && formText.includes('View'));
+                // Check if we're on a confirmation/success page by looking for structural elements
+                // Language-agnostic detection - don't rely on text content
+                const hasSuccessIcon = form.querySelector('.ts-checkmark-circle, .success-icon, svg.checkmark, [class*="checkmark"], .ts-icon-check');
+
+                // Check if primary button is a link (View button) rather than a submit button
+                // Confirmation pages use anchor tags styled as buttons, create form uses actual buttons
+                const primaryBtn = form.querySelector('.ts-form-group .ts-btn, .submit-form .ts-btn');
+                const isPrimaryBtnLink = primaryBtn && primaryBtn.tagName === 'A';
+
+                // Check for "back to edit" type link structure (second button/link in the form)
+                const hasBackLink = form.querySelector('a.ts-btn-1, a.ts-btn[class*="back"], .ts-form-group a + a');
+
+                const isConfirmationPage = hasSuccessIcon || isPrimaryBtnLink || (primaryBtn && hasBackLink && primaryBtn.tagName === 'A');
 
                 if (isConfirmationPage) {
                     console.log('VT Schedule: On confirmation page, skipping');
@@ -607,10 +615,9 @@ class Voxel_Toolkit_Schedule_Posts {
                 const form = widget.querySelector('.ts-form.create-post-form, .ts-create-post, .ts-form');
                 if (!form) return false;
 
-                // Check if we're on confirmation page
-                const formText = form.textContent || '';
-                const hasSuccessIcon = form.querySelector('.ts-checkmark-circle, .success-icon, svg.checkmark');
-                if (hasSuccessIcon || (formText.includes('has been published') && formText.includes('View'))) {
+                // Check if we're on confirmation page (language-agnostic)
+                const hasSuccessIcon = form.querySelector('.ts-checkmark-circle, .success-icon, svg.checkmark, [class*="checkmark"], .ts-icon-check');
+                if (hasSuccessIcon) {
                     return false;
                 }
 
@@ -624,9 +631,9 @@ class Voxel_Toolkit_Schedule_Posts {
                 }
                 if (!submitBtn) return false;
 
-                // Make sure it's not a View or Back button
-                const btnText = submitBtn.textContent.toLowerCase().trim();
-                if (btnText === 'view' || btnText.includes('back to')) {
+                // Make sure it's not a View or Back button (check if it's a link, not a button)
+                // Confirmation pages use anchor tags, create forms use buttons
+                if (submitBtn.tagName === 'A') {
                     return false;
                 }
 
@@ -643,10 +650,11 @@ class Voxel_Toolkit_Schedule_Posts {
                 const form = widget.querySelector('.ts-form.create-post-form, .ts-create-post, .ts-form');
                 const existingField = widget.querySelector('.vt-schedule-field');
 
-                // Check if we're on confirmation page
-                const formText = form ? (form.textContent || '') : '';
-                const hasSuccessIcon = form ? form.querySelector('.ts-checkmark-circle, .success-icon, svg.checkmark') : false;
-                const isConfirmation = hasSuccessIcon || (formText.includes('has been published') && formText.includes('View'));
+                // Check if we're on confirmation page (language-agnostic)
+                const hasSuccessIcon = form ? form.querySelector('.ts-checkmark-circle, .success-icon, svg.checkmark, [class*="checkmark"], .ts-icon-check') : false;
+                const primaryBtn = form ? form.querySelector('.ts-form-group .ts-btn, .submit-form .ts-btn') : null;
+                const isPrimaryBtnLink = primaryBtn && primaryBtn.tagName === 'A';
+                const isConfirmation = hasSuccessIcon || isPrimaryBtnLink;
 
                 if (isConfirmation && existingField) {
                     // On confirmation page - remove scheduler

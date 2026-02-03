@@ -798,10 +798,8 @@
                             : (i18n.success_added || 'Term added successfully');
                         showMessage(msg, 'success');
 
-                        // If not pending, try to select the term
-                        if (!term.pending) {
-                            selectNewTerm(wrapper, term);
-                        }
+                        // Select the term (even if pending, so the field is populated)
+                        selectNewTerm(wrapper, term, dropdown);
 
                         // Reset form after short delay
                         setTimeout(function() {
@@ -843,39 +841,254 @@
     }
 
     /**
-     * Select the newly added term in the field
+     * Find Vue instance on an element (supports Vue 2 and Vue 3)
      */
-    function selectNewTerm(wrapper, term) {
-        const formGroup = wrapper.closest('.ts-form-group');
-        if (!formGroup) return;
-
-        let el = formGroup;
+    function findVueInstance(element) {
+        // First, search upward from the element
+        let el = element;
         while (el) {
-            if (el.__vue__) {
-                const vue = el.__vue__;
-                // Try selectTerm method
-                if (vue.selectTerm) {
-                    vue.selectTerm({
-                        id: term.id,
-                        slug: term.slug,
-                        label: term.name,
-                        icon: ''
-                    });
-                    return;
-                }
-                // Try adding to value directly
-                if (vue.value && typeof vue.value === 'object') {
-                    vue.value[term.slug] = {
-                        id: term.id,
-                        label: term.name,
-                        slug: term.slug,
-                        icon: ''
-                    };
-                    return;
-                }
-            }
+            const instance = getVueFromElement(el);
+            if (instance) return instance;
             el = el.parentElement;
         }
+
+        // If not found, search downward within the formGroup
+        const allElements = element.querySelectorAll('*');
+        for (let i = 0; i < allElements.length; i++) {
+            const instance = getVueFromElement(allElements[i]);
+            if (instance) return instance;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get Vue instance from a single element
+     */
+    function getVueFromElement(el) {
+        // Vue 3
+        if (el.__vueParentComponent) {
+            const proxy = el.__vueParentComponent.proxy;
+            if (proxy && (proxy.selectTerm || proxy.terms)) {
+                return proxy;
+            }
+        }
+        // Vue 2
+        if (el.__vue__) {
+            const vue = el.__vue__;
+            if (vue.selectTerm || vue.terms) {
+                return vue;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Recursively find all Vue 3 components in the virtual DOM tree
+     */
+    function findAllComponents(vnode, targetFieldKey, termObj, depth) {
+        if (!vnode || depth > 30) return false;
+
+        const component = vnode.component;
+        if (component) {
+            const proxy = component.proxy;
+            if (proxy) {
+                // Check if this is a field component
+                if (proxy.field && proxy.field.key) {
+                    if (proxy.field.key === targetFieldKey) {
+                        // Build term object matching existing structure
+                        const newTermObj = {
+                            id: termObj.id,
+                            slug: termObj.slug,
+                            label: termObj.label,
+                            icon: termObj.icon || ''
+                        };
+
+                        // Add the term to the terms array if it exists
+                        if (proxy.terms && Array.isArray(proxy.terms)) {
+                            proxy.terms.push(newTermObj);
+                        }
+
+                        // Call selectTerm to select the new term
+                        if (typeof proxy.selectTerm === 'function') {
+                            try {
+                                proxy.selectTerm(newTermObj);
+                                if (typeof proxy.saveValue === 'function') {
+                                    proxy.saveValue();
+                                }
+                            } catch (e) {
+                                // Silently fail
+                            }
+                            return true;
+                        }
+
+                        // Fallback: direct value update
+                        if (proxy.value !== undefined && typeof proxy.value === 'object') {
+                            proxy.value[termObj.slug] = newTermObj;
+                            if (typeof proxy.saveValue === 'function') {
+                                proxy.saveValue();
+                            }
+                            return true;
+                        }
+                    }
+                }
+
+                // Check for terms/selectTerm directly
+                if (proxy.selectTerm && typeof proxy.selectTerm === 'function') {
+                    proxy.selectTerm(termObj);
+                    return true;
+                }
+            }
+
+            // Recurse into component's subTree
+            if (component.subTree) {
+                if (findAllComponents(component.subTree, targetFieldKey, termObj, depth + 1)) {
+                    return true;
+                }
+            }
+        }
+
+        // Check children array
+        if (Array.isArray(vnode.children)) {
+            for (const child of vnode.children) {
+                if (typeof child === 'object' && child !== null) {
+                    if (findAllComponents(child, targetFieldKey, termObj, depth + 1)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // Check dynamicChildren
+        if (vnode.dynamicChildren) {
+            for (const child of vnode.dynamicChildren) {
+                if (findAllComponents(child, targetFieldKey, termObj, depth + 1)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Select term by accessing Vue 3 component tree
+     */
+    function selectTermViaDOM(formGroup, dropdown, term) {
+        const termSlug = term.slug;
+        const termName = term.name;
+        const termId = term.id;
+
+        // Build term object matching Voxel's structure
+        const termObj = {
+            id: termId,
+            label: termName,
+            slug: termSlug,
+            icon: ''
+        };
+
+        // Find the field key from the form group
+        const fieldKeyMatch = formGroup.className.match(/field-key-(\S+)/);
+        const fieldKey = fieldKeyMatch ? fieldKeyMatch[1] : 'taxonomy';
+
+        // Find the create post form
+        const createPostForm = formGroup.closest('.ts-create-post, .ts-form');
+        if (!createPostForm) {
+            return;
+        }
+
+        // Find the Vue 3 app
+        const vueAppEl = createPostForm.closest('[data-v-app]') || createPostForm;
+        const vueApp = vueAppEl.__vue_app__;
+
+        if (vueApp) {
+            // Try different ways to access root component
+            const container = vueApp._container;
+            let rootInstance = vueApp._instance;
+
+            // Check container for __vue_instance__
+            if (!rootInstance && container && container.__vue_instance__) {
+                rootInstance = container.__vue_instance__;
+            }
+
+            if (rootInstance) {
+                // Check for fields directly on root instance
+                if (rootInstance.fields) {
+                    const fieldData = rootInstance.fields[fieldKey];
+                    if (fieldData && typeof fieldData.selectTerm === 'function') {
+                        fieldData.selectTerm(termObj);
+                        return;
+                    }
+                }
+
+                // Try to access the internal component (the _ property)
+                const internalInstance = rootInstance._ || rootInstance.$;
+                if (internalInstance && internalInstance.subTree) {
+                    if (findAllComponents(internalInstance.subTree, fieldKey, termObj, 0)) {
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Select the newly added term in the field
+     */
+    function selectNewTerm(wrapper, term, dropdown) {
+        // For teleported popups, use findRelatedFormGroup; otherwise use closest
+        let formGroup = wrapper.closest('.ts-form-group');
+        if (!formGroup && dropdown) {
+            formGroup = findRelatedFormGroup(dropdown);
+        }
+        if (!formGroup) {
+            return;
+        }
+
+        // Find Vue instance (Vue 2 or Vue 3)
+        let vueInstance = findVueInstance(formGroup);
+
+        // For Vue 3 apps, try to access via __vue_app__
+        if (!vueInstance) {
+            const vueApp = formGroup.closest('[data-v-app]');
+            if (vueApp && vueApp.__vue_app__) {
+                selectTermViaDOM(formGroup, dropdown, term);
+                return;
+            }
+        }
+
+        if (!vueInstance) {
+            selectTermViaDOM(formGroup, dropdown, term);
+            return;
+        }
+
+        // Build properly structured term object
+        const termObj = {
+            id: term.id,
+            label: term.name,
+            slug: term.slug,
+            icon: '',
+            children: [],
+            parentRef: null
+        };
+
+        // Inject into terms array so it appears in the list
+        if (vueInstance.terms && Array.isArray(vueInstance.terms)) {
+            vueInstance.terms.push(termObj);
+        }
+
+        // Use setTimeout to ensure Vue has processed the terms update, then select
+        setTimeout(function() {
+            if (typeof vueInstance.selectTerm === 'function') {
+                vueInstance.selectTerm(termObj);
+            } else if (vueInstance.value) {
+                // Fallback: direct value manipulation
+                vueInstance.value[termObj.slug] = termObj;
+                if (typeof vueInstance.saveValue === 'function') {
+                    vueInstance.saveValue();
+                }
+            }
+        }, 50);
     }
 
     // Initialize when DOM is ready

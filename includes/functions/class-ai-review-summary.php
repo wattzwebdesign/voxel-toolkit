@@ -98,7 +98,8 @@ class Voxel_Toolkit_AI_Review_Summary {
         
         // Wrap the summary in a titled container.
         $output = '<div class="review-summary-wrapper">';
-        $output .= '<div class="review-summary">' . wpautop(esc_html($summary)) . '</div>';
+        $html_summary = $this->convert_markdown_to_html(esc_html($summary));
+        $output .= '<div class="review-summary">' . wpautop($html_summary) . '</div>';
         $output .= '</div>';
         
         return $output;
@@ -192,6 +193,42 @@ class Voxel_Toolkit_AI_Review_Summary {
         return $output;
     }
     
+    /**
+     * Convert markdown formatting to HTML
+     * Handles **bold** and - list items
+     */
+    private function convert_markdown_to_html($text) {
+        // Convert **bold** to <strong>
+        $text = preg_replace('/\*\*(.+?)\*\*/', '<strong>$1</strong>', $text);
+
+        // Convert markdown lists (- item) to HTML lists
+        $lines = explode("\n", $text);
+        $in_list = false;
+        $result = array();
+
+        foreach ($lines as $line) {
+            if (preg_match('/^-\s+(.+)$/', $line, $matches)) {
+                if (!$in_list) {
+                    $result[] = '<ul>';
+                    $in_list = true;
+                }
+                $result[] = '<li>' . $matches[1] . '</li>';
+            } else {
+                if ($in_list) {
+                    $result[] = '</ul>';
+                    $in_list = false;
+                }
+                $result[] = $line;
+            }
+        }
+
+        if ($in_list) {
+            $result[] = '</ul>';
+        }
+
+        return implode("\n", $result);
+    }
+
     /**
      * Get the language name for AI prompts from central AI Settings
      */

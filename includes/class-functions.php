@@ -7803,9 +7803,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                            name="voxel_toolkit_options[ai_post_summary][max_tokens]"
                            value="<?php echo esc_attr($max_tokens); ?>"
                            min="50"
-                           max="1000"
+                           max="5000"
                            class="small-text">
-                    <p class="description"><?php _e('Maximum tokens for the summary (50-1000). Higher = longer summaries.', 'voxel-toolkit'); ?></p>
+                    <p class="description"><?php _e('Maximum tokens for the summary (50-5000). Higher = longer summaries.', 'voxel-toolkit'); ?></p>
                 </td>
             </tr>
             <tr>
@@ -8843,12 +8843,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <div class="vt-field-group">
                 <label class="vt-field-label"><?php _e('Alt Text Format', 'voxel-toolkit'); ?></label>
                 <select name="voxel_toolkit_options[image_optimization][alt_text_format]" class="vt-select-input">
-                    <option value="title_only" <?php selected($alt_text_format, 'title_only'); ?>><?php _e('Post title only', 'voxel-toolkit'); ?></option>
-                    <option value="title_counter" <?php selected($alt_text_format, 'title_counter'); ?>><?php _e('Title - Image 01', 'voxel-toolkit'); ?></option>
-                    <option value="title_date" <?php selected($alt_text_format, 'title_date'); ?>><?php _e('Title (Date)', 'voxel-toolkit'); ?></option>
-                    <option value="title_counter_date" <?php selected($alt_text_format, 'title_counter_date'); ?>><?php _e('Title - Image 01 (Date)', 'voxel-toolkit'); ?></option>
+                    <optgroup label="<?php esc_attr_e('Based on Post Title', 'voxel-toolkit'); ?>">
+                        <option value="title_only" <?php selected($alt_text_format, 'title_only'); ?>><?php _e('Post title only', 'voxel-toolkit'); ?></option>
+                        <option value="title_counter" <?php selected($alt_text_format, 'title_counter'); ?>><?php _e('Title - Image 01', 'voxel-toolkit'); ?></option>
+                        <option value="title_date" <?php selected($alt_text_format, 'title_date'); ?>><?php _e('Title (Date)', 'voxel-toolkit'); ?></option>
+                        <option value="title_counter_date" <?php selected($alt_text_format, 'title_counter_date'); ?>><?php _e('Title - Image 01 (Date)', 'voxel-toolkit'); ?></option>
+                    </optgroup>
+                    <optgroup label="<?php esc_attr_e('Based on Original Filename', 'voxel-toolkit'); ?>">
+                        <option value="filename_only" <?php selected($alt_text_format, 'filename_only'); ?>><?php _e('Original filename only', 'voxel-toolkit'); ?></option>
+                        <option value="filename_counter" <?php selected($alt_text_format, 'filename_counter'); ?>><?php _e('Filename - Image 01', 'voxel-toolkit'); ?></option>
+                        <option value="filename_date" <?php selected($alt_text_format, 'filename_date'); ?>><?php _e('Filename (Date)', 'voxel-toolkit'); ?></option>
+                        <option value="filename_counter_date" <?php selected($alt_text_format, 'filename_counter_date'); ?>><?php _e('Filename - Image 01 (Date)', 'voxel-toolkit'); ?></option>
+                    </optgroup>
                 </select>
-                <p class="vt-field-description"><?php _e('Format for auto-generated alt text.', 'voxel-toolkit'); ?></p>
+                <p class="vt-field-description"><?php _e('Format for auto-generated alt text. Use filename-based options for better results with timeline uploads.', 'voxel-toolkit'); ?></p>
             </div>
         </div>
 

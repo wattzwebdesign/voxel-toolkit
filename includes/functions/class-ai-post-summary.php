@@ -427,7 +427,7 @@ class Voxel_Toolkit_AI_Post_Summary {
 
         // Generate summary
         $max_tokens = isset($settings['max_tokens']) ? absint($settings['max_tokens']) : 300;
-        $max_tokens = max(50, min(1000, $max_tokens));
+        $max_tokens = max(50, min(5000, $max_tokens));
 
         $result = $ai_settings->generate_completion($prompt, $max_tokens);
 
@@ -599,7 +599,7 @@ class Voxel_Toolkit_AI_Post_Summary {
         $sanitized['max_tokens'] = isset($input['max_tokens'])
             ? absint($input['max_tokens'])
             : 300;
-        $sanitized['max_tokens'] = max(50, min(1000, $sanitized['max_tokens']));
+        $sanitized['max_tokens'] = max(50, min(5000, $sanitized['max_tokens']));
 
         // Prompt template
         $sanitized['prompt_template'] = isset($input['prompt_template'])

@@ -160,7 +160,8 @@ class Voxel_Toolkit_Saved_Search_Model {
         foreach ($slugs as $slug) {
             $term = get_term_by('slug', $slug, $taxonomy_key);
             if ($term && !is_wp_error($term)) {
-                $names[] = $term->name;
+                // Decode HTML entities (e.g., &amp; -> &) for clean display
+                $names[] = html_entity_decode($term->name, ENT_QUOTES, 'UTF-8');
             } else {
                 $names[] = ucfirst(str_replace(['-', '_'], ' ', $slug));
             }

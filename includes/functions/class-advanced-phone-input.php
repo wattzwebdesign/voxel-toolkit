@@ -416,6 +416,7 @@ class Voxel_Toolkit_Extended_Phone_Field extends \Voxel\Post_Types\Fields\Phone_
             'lv' => 'Latvia',
             'lb' => 'Lebanon',
             'ly' => 'Libya',
+            'li' => 'Liechtenstein',
             'lt' => 'Lithuania',
             'lu' => 'Luxembourg',
             'mo' => 'Macau',
@@ -520,5 +521,61 @@ class Voxel_Toolkit_Extended_Phone_Field extends \Voxel\Post_Types\Fields\Phone_
         $countries = array_filter($countries);
 
         return array_values($countries);
+    }
+
+    /**
+     * Override dynamic_data to add sub-properties for phone fields
+     *
+     * Enables usage like:
+     * - @post(phone.number) - local phone number
+     * - @post(phone.code) - country dial code (e.g., "1", "44")
+     * - @post(phone.full) - full E.164 format (+15551234567)
+     *
+     * @return \Voxel\Dynamic_Data\Data_Types\Data_Object
+     */
+    public function dynamic_data() {
+        // Check if Tag class exists
+        if (!class_exists('\Voxel\Dynamic_Data\Tag')) {
+            return parent::dynamic_data();
+        }
+
+        $Tag = '\Voxel\Dynamic_Data\Tag';
+
+        return $Tag::Object($this->get_label())->properties(function() use ($Tag) {
+            return [
+                'number' => $Tag::String('Phone number (local format)')->render(function() {
+                    return $this->get_value();
+                }),
+
+                'code' => $Tag::String('Country dial code')->render(function() {
+                    $country_key = $this->get_key() . '_country_code';
+                    return get_post_meta($this->post->get_id(), $country_key, true);
+                }),
+
+                'full' => $Tag::String('Full phone with country code (E.164)')->render(function() {
+                    $phone = $this->get_value();
+                    $country_key = $this->get_key() . '_country_code';
+                    $country_code = get_post_meta($this->post->get_id(), $country_key, true);
+
+                    if (empty($phone)) {
+                        return '';
+                    }
+
+                    // Clean phone number - remove non-digits
+                    $phone = preg_replace('/[^0-9]/', '', $phone);
+
+                    if (empty($country_code)) {
+                        return $phone;
+                    }
+
+                    // Remove leading 0 if present (common in local formats)
+                    if (strpos($phone, '0') === 0) {
+                        $phone = substr($phone, 1);
+                    }
+
+                    return '+' . $country_code . $phone;
+                }),
+            ];
+        });
     }
 }

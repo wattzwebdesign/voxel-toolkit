@@ -15,6 +15,7 @@
     const processedFiles = new WeakSet();
     let isWorking = false;
     let fileCounter = 0;
+    const uploadSession = Date.now().toString(36).slice(-4); // Unique session ID to prevent filename collisions
 
     /**
      * Get translated string with sprintf-like replacement
@@ -294,21 +295,23 @@
          * Optimize a single image file
          */
         async optimize(file, index, total) {
-            // Check file size limit
             const maxBytes = Settings.maxFileSizeMB * 1024 * 1024;
-            if (file.size > maxBytes) {
-                Toast.show(
-                    i18n.fileTooLarge || 'File too large!',
-                    __('exceedsMbLimit', file.name, Settings.maxFileSizeMB),
-                    'error'
-                );
-                return null;
-            }
 
             // Skip non-image files and already processed files
             if (!file.type.match(/^image\/(jpeg|png|webp)$/) || processedFiles.has(file)) {
+                // For non-image files, apply size limit check
+                if (file.size > maxBytes) {
+                    Toast.show(
+                        i18n.fileTooLarge || 'File too large!',
+                        __('exceedsMbLimit', file.name, Settings.maxFileSizeMB),
+                        'error'
+                    );
+                    return null;
+                }
                 return file;
             }
+
+            // For image files, we'll compress first and check size after
 
             Toast.update(
                 i18n.optimizingImages || 'Optimizing images...',
@@ -375,15 +378,26 @@
 
                     let newName;
                     if (Settings.renameFormat === 'post_title' && title) {
-                        newName = `${this.slugify(title)}-${counterStr}.${ext}`;
+                        newName = `${this.slugify(title)}-${counterStr}-${uploadSession}.${ext}`;
                     } else {
-                        newName = `${baseName}-${counterStr}.${ext}`;
+                        newName = `${baseName}-${counterStr}-${uploadSession}.${ext}`;
                     }
 
                     const optimized = new File([blob], newName, {
                         type: actualType,
                         lastModified: Date.now()
                     });
+
+                    // Check if compressed file still exceeds size limit
+                    if (optimized.size > maxBytes) {
+                        Toast.show(
+                            i18n.fileTooLarge || 'File too large!',
+                            __('exceedsMbLimit', file.name, Settings.maxFileSizeMB) + ' ' + (i18n.evenAfterCompression || 'Even after compression.'),
+                            'error'
+                        );
+                        resolve(null);
+                        return;
+                    }
 
                     // Mark as processed for both change handler (WeakSet) and plupload handler (_vtOptimized)
                     processedFiles.add(optimized);
@@ -404,7 +418,6 @@
      */
     async function processAndTrigger(files, target, eventType) {
         isWorking = true;
-        fileCounter = 0;
         let totalSaved = 0;
 
         const allFiles = Array.from(files);
@@ -473,9 +486,14 @@
     }, true);
 
     /**
-     * Handle drag and drop events
+     * Handle drag and drop events for non-Voxel drop zones
      */
     document.addEventListener('drop', async (e) => {
+        // Skip Voxel file upload components - handled separately below
+        if (e.target.closest && e.target.closest('.ts-file-upload, .inline-file-field, .drop-mask')) {
+            return;
+        }
+
         if (!isWorking && e.dataTransfer && e.dataTransfer.files.length) {
             const files = Array.from(e.dataTransfer.files);
             if (files.some(f => f.type.match(/^image\/(jpeg|png|webp)$/) && !processedFiles.has(f))) {
@@ -485,6 +503,141 @@
             }
         }
     }, true);
+
+    /**
+     * Intercept Voxel drop events and optimize files before Vue processes them
+     * This works by capturing the drop event early, processing files, and replacing
+     * the dataTransfer.files with optimized versions
+     */
+    let pendingVoxelFiles = null;
+
+    document.addEventListener('drop', async (e) => {
+        // Only handle Voxel file upload drop zones
+        const dropMask = e.target.closest && e.target.closest('.drop-mask');
+        const fileUpload = e.target.closest && e.target.closest('.ts-file-upload, .inline-file-field');
+
+        if (!dropMask && !fileUpload) return;
+        if (!e.dataTransfer || !e.dataTransfer.files.length) return;
+        if (isWorking) return;
+
+        const files = Array.from(e.dataTransfer.files);
+        const hasImages = files.some(f => f.type.match(/^image\/(jpeg|png|webp)$/) && !processedFiles.has(f));
+
+        if (!hasImages) return;
+
+        // Prevent the original event
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        isWorking = true;
+        let totalSaved = 0;
+
+        const imageFiles = files.filter(f => f.type.match(/^image\/(jpeg|png|webp)$/));
+
+        Toast.show(
+            i18n.optimizing || 'Optimizing...',
+            __('processingImages', imageFiles.length)
+        );
+
+        // Process all files
+        const optimizedFiles = [];
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+
+            if (file.type.match(/^image\/(jpeg|png|webp)$/) && !processedFiles.has(file)) {
+                const originalSize = file.size;
+                const optimized = await ImageOptimizer.optimize(file, i, files.length);
+
+                if (optimized && optimized !== file) {
+                    totalSaved += (originalSize - optimized.size);
+                    optimizedFiles.push(optimized);
+                } else if (optimized) {
+                    optimizedFiles.push(optimized);
+                } else {
+                    // Optimization returned null (file too large even after compression)
+                    isWorking = false;
+                    return;
+                }
+            } else {
+                optimizedFiles.push(file);
+            }
+        }
+
+        Toast.success(
+            i18n.done || 'Done!',
+            __('imagesOptimized', imageFiles.length, ImageOptimizer.formatBytes(totalSaved))
+        );
+
+        isWorking = false;
+
+        // Now we need to get the optimized files to Voxel's Vue component
+        // Find the file input and trigger a change event with our files
+        const container = fileUpload || dropMask.closest('.ts-file-upload, .inline-file-field');
+        const fileInput = container ? container.querySelector('input[type="file"]') : null;
+
+        if (fileInput) {
+            // Create a new DataTransfer and add our optimized files
+            const dt = new DataTransfer();
+            optimizedFiles.forEach(f => dt.items.add(f));
+
+            // Set the files on the input
+            fileInput.files = dt.files;
+
+            // Trigger change event - this will be caught by our change handler
+            // which will then let the files through since they're already optimized
+            fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+            // Fallback: Try to access Vue component directly
+            await injectFilesIntoVoxelComponent(container, optimizedFiles);
+        }
+    }, true);
+
+    /**
+     * Inject optimized files directly into Voxel's Vue component
+     */
+    async function injectFilesIntoVoxelComponent(container, files) {
+        if (!container) return;
+
+        // Try to find Vue component instance
+        // Vue 3 stores component on __vueParentComponent
+        let vueInstance = null;
+        let el = container;
+
+        while (el && !vueInstance) {
+            // Vue 3
+            if (el.__vueParentComponent) {
+                vueInstance = el.__vueParentComponent.ctx || el.__vueParentComponent.proxy;
+            }
+            // Vue 2 fallback
+            if (!vueInstance && el.__vue__) {
+                vueInstance = el.__vue__;
+            }
+            el = el.parentElement;
+        }
+
+        if (!vueInstance) {
+            console.warn('VT Image Optimization: Could not find Vue component');
+            return;
+        }
+
+        // Add files to Vue's value array
+        const valueArray = vueInstance.value || vueInstance.files;
+        if (Array.isArray(valueArray)) {
+            for (const file of files) {
+                // Create file object with Voxel's expected properties
+                const voxelFile = file;
+                voxelFile._id = Math.random().toString(36).substr(2, 9);
+                voxelFile.id = voxelFile._id;
+                voxelFile._vtOptimized = true;
+
+                if (file.type.startsWith('image/')) {
+                    voxelFile.preview = URL.createObjectURL(file);
+                }
+
+                valueArray.push(voxelFile);
+            }
+        }
+    }
 
     /**
      * Hook into WordPress Media Library uploads (wp.Uploader/plupload)
@@ -511,7 +664,6 @@
             }
 
             isWorking = true;
-            fileCounter = 0;
             let totalSaved = 0;
 
             // Stop auto-start

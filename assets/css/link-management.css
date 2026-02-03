@@ -128,7 +128,7 @@ body.vt-link-modal-open {
 /* Base button styles */
 .vt-link-modal-buttons button {
     padding: 12px 24px;
-    border-radius: var(--vt-lm-button-border-radius);
+    border-radius: var(--vt-lm-button-border-radius) !important;
     font-size: 15px;
     font-weight: 500;
     cursor: pointer;
@@ -151,6 +151,10 @@ body.vt-link-modal-open {
 }
 
 .vt-link-modal-cancel:focus {
+    outline: none;
+}
+
+.vt-link-modal-cancel:focus-visible {
     outline: 2px solid var(--vt-lm-continue-bg);
     outline-offset: 2px;
 }
@@ -167,6 +171,10 @@ body.vt-link-modal-open {
 }
 
 .vt-link-modal-continue:focus {
+    outline: none;
+}
+
+.vt-link-modal-continue:focus-visible {
     outline: 2px solid var(--vt-lm-continue-bg);
     outline-offset: 2px;
 }

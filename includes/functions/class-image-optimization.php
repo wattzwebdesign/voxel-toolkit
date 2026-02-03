@@ -123,12 +123,15 @@ class Voxel_Toolkit_Image_Optimization {
         // International date format
         $date = date('F j, Y');
 
+        // Always get filename for filename-based formats
+        $filename = pathinfo(get_attached_file($attachment_id), PATHINFO_FILENAME);
+        $clean_filename = ucwords(str_replace(array('-', '_'), ' ', $filename));
+
+        // Get parent title (or use filename if no parent)
         if (!$parent_id) {
-            // Use filename as base title if no parent
-            $filename = pathinfo(get_attached_file($attachment_id), PATHINFO_FILENAME);
-            $base_title = ucwords(str_replace(array('-', '_'), ' ', $filename));
+            $parent_title = $clean_filename;
         } else {
-            $base_title = get_the_title($parent_id);
+            $parent_title = get_the_title($parent_id);
         }
 
         // Count existing attachments for counter
@@ -143,18 +146,36 @@ class Voxel_Toolkit_Image_Optimization {
         // Generate alt text based on format
         $format = isset($settings['alt_text_format']) ? $settings['alt_text_format'] : 'title_counter_date';
         switch ($format) {
+            // Title-based formats (use parent post title)
             case 'title_only':
-                $alt_text = $base_title;
+                $alt_text = $parent_title;
                 break;
             case 'title_counter':
-                $alt_text = $base_title . ' - Image ' . $counter;
+                $alt_text = $parent_title . ' - Image ' . $counter;
                 break;
             case 'title_date':
-                $alt_text = $base_title . ' (' . $date . ')';
+                $alt_text = $parent_title . ' (' . $date . ')';
                 break;
             case 'title_counter_date':
+                $alt_text = $parent_title . ' - Image ' . $counter . ' (' . $date . ')';
+                break;
+
+            // Filename-based formats (always use original filename)
+            case 'filename_only':
+                $alt_text = $clean_filename;
+                break;
+            case 'filename_counter':
+                $alt_text = $clean_filename . ' - Image ' . $counter;
+                break;
+            case 'filename_date':
+                $alt_text = $clean_filename . ' (' . $date . ')';
+                break;
+            case 'filename_counter_date':
+                $alt_text = $clean_filename . ' - Image ' . $counter . ' (' . $date . ')';
+                break;
+
             default:
-                $alt_text = $base_title . ' - Image ' . $counter . ' (' . $date . ')';
+                $alt_text = $parent_title . ' - Image ' . $counter . ' (' . $date . ')';
                 break;
         }
 
@@ -164,7 +185,7 @@ class Voxel_Toolkit_Image_Optimization {
         if ($settings['rename_format'] === 'post_title') {
             wp_update_post(array(
                 'ID' => $attachment_id,
-                'post_title' => $base_title . ' ' . $counter,
+                'post_title' => $parent_title . ' ' . $counter,
             ));
         }
     }
@@ -214,6 +235,7 @@ class Voxel_Toolkit_Image_Optimization {
             'i18n' => array(
                 'fileTooLarge' => __('File too large!', 'voxel-toolkit'),
                 'exceedsMbLimit' => __('%s exceeds %dMB limit.', 'voxel-toolkit'),
+                'evenAfterCompression' => __('Even after compression.', 'voxel-toolkit'),
                 'optimizingImages' => __('Optimizing images...', 'voxel-toolkit'),
                 'imageXOfY' => __('Image %1$d of %2$d: %3$s', 'voxel-toolkit'),
                 'optimizing' => __('Optimizing...', 'voxel-toolkit'),
@@ -261,7 +283,10 @@ class Voxel_Toolkit_Image_Optimization {
             : 'post_title';
 
         // Alt text format
-        $allowed_alt_formats = array('title_only', 'title_counter', 'title_date', 'title_counter_date');
+        $allowed_alt_formats = array(
+            'title_only', 'title_counter', 'title_date', 'title_counter_date',
+            'filename_only', 'filename_counter', 'filename_date', 'filename_counter_date'
+        );
         $sanitized['alt_text_format'] = isset($input['alt_text_format']) && in_array($input['alt_text_format'], $allowed_alt_formats)
             ? $input['alt_text_format']
             : 'title_counter_date';

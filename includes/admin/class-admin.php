@@ -1980,7 +1980,7 @@ class Voxel_Toolkit_Admin {
 
                         // Max tokens (50-1000)
                         $sanitized_function['max_tokens'] = isset($function_input['max_tokens'])
-                            ? max(50, min(1000, absint($function_input['max_tokens'])))
+                            ? max(50, min(5000, absint($function_input['max_tokens'])))
                             : 300;
 
                         // Prompt template
@@ -2014,6 +2014,13 @@ class Voxel_Toolkit_Admin {
                         $sanitized_function['timeout_minutes'] = isset($function_input['timeout_minutes'])
                             ? max(1, min(60, intval($function_input['timeout_minutes'])))
                             : 3;
+                        break;
+
+                    case 'synonym_search':
+                        // Number of synonyms to generate (1-20)
+                        $sanitized_function['synonym_count'] = isset($function_input['synonym_count'])
+                            ? max(1, min(20, intval($function_input['synonym_count'])))
+                            : 5;
                         break;
 
                     default:
@@ -2665,6 +2672,53 @@ class Voxel_Toolkit_Admin {
                     <em><?php _e('After editing a preview card template in Elementor, refresh the page with the post feed to see correct numbering. This tag only works inside post feed preview cards.', 'voxel-toolkit'); ?></em>
                 </p>
             </div>
+
+            <!-- Phone Field Properties -->
+            <?php if (Voxel_Toolkit_Settings::instance()->is_function_enabled('advanced_phone_input')): ?>
+            <div class="settings-section" style="margin-top: 30px;">
+                <h2><?php _e('Phone Field Properties', 'voxel-toolkit'); ?></h2>
+                <p class="description"><?php _e('Sub-properties for phone fields with country code support. Replace "phone" with your actual phone field key.', 'voxel-toolkit'); ?></p>
+
+                <table class="widefat striped">
+                    <thead>
+                        <tr>
+                            <th><?php _e('Property', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Description', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Usage Example', 'voxel-toolkit'); ?></th>
+                            <th><?php _e('Output Example', 'voxel-toolkit'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>phone.number</code></td>
+                            <td><?php _e('Phone number in local format (as entered by user)', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(phone.number)</code></td>
+                            <td><em>5551234567</em></td>
+                        </tr>
+                        <tr>
+                            <td><code>phone.code</code></td>
+                            <td><?php _e('Country dial code (without + prefix)', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(phone.code)</code></td>
+                            <td><em>1</em> (US), <em>44</em> (UK), <em>49</em> (DE)</td>
+                        </tr>
+                        <tr>
+                            <td><code>phone.full</code></td>
+                            <td><?php _e('Full phone number in E.164 international format', 'voxel-toolkit'); ?></td>
+                            <td><code>@post(phone.full)</code></td>
+                            <td><em>+15551234567</em></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 15px;">
+                    <strong><?php _e('Usage Tips:', 'voxel-toolkit'); ?></strong>
+                </p>
+                <ul style="margin-top: 5px; margin-left: 20px; list-style-type: disc;">
+                    <li><?php _e('Use <code>@post(phone.full)</code> for tel: links: <code>&lt;a href="tel:@post(phone.full)"&gt;</code>', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('Display with prefix: <code>+@post(phone.code) @post(phone.number)</code> outputs "+1 5551234567"', 'voxel-toolkit'); ?></li>
+                    <li><?php _e('The country code is captured when users select their country in the phone input dropdown.', 'voxel-toolkit'); ?></li>
+                </ul>
+            </div>
+            <?php endif; ?>
 
             <?php if (Voxel_Toolkit_Settings::instance()->is_function_enabled('ai_post_summary')): ?>
             <!-- AI Properties -->

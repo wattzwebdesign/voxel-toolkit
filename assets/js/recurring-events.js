@@ -74,18 +74,17 @@
 
     /**
      * Get the posts per page limit from the post feed widget
-     * Priority: Use the count of initially rendered cards since that's the most reliable
-     * The server already applied the correct limit when rendering
      */
     function getPostsPerPageLimit() {
-        // Primary method: Use the count of initially rendered cards
-        // This is the most reliable since the server already applied the widget's limit
-        const initialCards = document.querySelectorAll('.ts-preview[data-post-id]:not([data-vt-expanded])').length;
-        if (initialCards > 0) {
-            return initialCards;
+        // Look for the post feed widget with data-per-page attribute
+        const postFeed = document.querySelector('[data-per-page]');
+        if (postFeed) {
+            const limit = parseInt(postFeed.dataset.perPage, 10);
+            if (!isNaN(limit) && limit > 0) {
+                return limit;
+            }
         }
-
-        return 0; // No limit found
+        return 0; // No limit
     }
 
     /**
@@ -145,24 +144,17 @@
             return dateA.localeCompare(dateB);
         });
 
-        // Apply posts per page limit - total cards should not exceed what was initially rendered
-        // The server already applied the correct limit, so don't create more cards than that
+        // Apply posts per page limit
         if (postsPerPage > 0) {
-            // Each post with recurring data already has 1 card rendered
-            // We can only show (postsPerPage) total cards
-            // So for recurring posts, we limit to 1 occurrence each (the original card)
-            // This means: just update dates on existing cards, don't clone
+            // We need to account for cards that don't have recurring dates
+            const nonRecurringCards = document.querySelectorAll('.ts-preview[data-post-id]:not([data-vt-expanded])').length -
+                                      Object.keys(data).length;
+            const availableSlots = postsPerPage - nonRecurringCards;
 
-            console.log('VT Recurring Events: Limit is', postsPerPage, '- not expanding beyond initial cards');
-
-            // Only keep the first occurrence for each post (no cloning)
-            const firstOccurrenceByPost = {};
-            allOccurrences.forEach(occ => {
-                if (!firstOccurrenceByPost[occ.postId]) {
-                    firstOccurrenceByPost[occ.postId] = occ;
-                }
-            });
-            allOccurrences = Object.values(firstOccurrenceByPost);
+            if (availableSlots > 0 && allOccurrences.length > availableSlots) {
+                allOccurrences = allOccurrences.slice(0, availableSlots);
+                console.log('VT Recurring Events: Limited to', availableSlots, 'occurrences due to posts per page setting');
+            }
         }
 
         // Group occurrences by postId for processing
@@ -217,9 +209,6 @@
 
             console.log('VT Recurring Events: Expanded post', postId, 'with', postOccurrences.length, 'of', fullOccurrences.length, 'occurrences');
         });
-
-        // Reorder DOM cards by occurrence start date (soonest first)
-        sortCardsByOccurrenceDate();
 
         // Clear the data to prevent re-processing
         window.vtRecurringEventsData = {};
@@ -359,11 +348,14 @@
     }
 
     /**
-     * Replace date text in a cloned card
+     * Replace date text in a card (for AJAX-rendered cards where all show the same date)
      */
     function replaceDateTextInCard(card, originalOcc, newOcc) {
-        const originalFormats = formatOccurrenceDateForSearch(originalOcc.start);
+        // Only use full date formats (longer strings) to avoid false matches
+        const originalFormats = formatOccurrenceDateForSearch(originalOcc.start).filter(f => f && f.length >= 6);
         const newFormats = formatOccurrenceDateForSearch(newOcc.start);
+
+        let replacementMade = false;
 
         // Walk through all text nodes in the card
         const walker = document.createTreeWalker(
@@ -384,7 +376,7 @@
             let text = textNode.textContent;
             let replaced = false;
 
-            // Try each original format
+            // Try each original format (longest first for accuracy)
             for (let i = 0; i < originalFormats.length; i++) {
                 const originalText = originalFormats[i];
                 if (originalText && text.includes(originalText)) {
@@ -392,6 +384,7 @@
                     const newText = newFormats[i] || newFormats[0];
                     text = text.replace(originalText, newText);
                     replaced = true;
+                    replacementMade = true;
                     break;
                 }
             }
@@ -403,7 +396,7 @@
 
         // Also handle end dates if present
         if (originalOcc.end && newOcc.end) {
-            const originalEndFormats = formatOccurrenceDateForSearch(originalOcc.end);
+            const originalEndFormats = formatOccurrenceDateForSearch(originalOcc.end).filter(f => f && f.length >= 6);
             const newEndFormats = formatOccurrenceDateForSearch(newOcc.end);
 
             const walker2 = document.createTreeWalker(card, NodeFilter.SHOW_TEXT, null, false);
@@ -421,10 +414,58 @@
                         const newText = newEndFormats[i] || newEndFormats[0];
                         text = text.replace(originalText, newText);
                         textNode.textContent = text;
+                        replacementMade = true;
                         break;
                     }
                 }
             });
+        }
+
+        // If no text replacement worked, try updating specific date elements
+        if (!replacementMade) {
+            updateDateElementsInCard(card, newOcc.start, newOcc.end);
+        }
+    }
+
+    /**
+     * Fallback: Update elements that commonly contain dates
+     */
+    function updateDateElementsInCard(card, startDate, endDate) {
+        // Look for elements that commonly contain dates in Voxel templates
+        const dateSelectors = [
+            // Icon-based date displays
+            '.ts-icon-date + span',
+            '.ts-icon-date ~ span',
+            'i.las.la-calendar + span',
+            'i.las.la-calendar ~ span',
+            '[class*="icon-calendar"] + span',
+            '[class*="icon-calendar"] ~ span',
+            // Time elements
+            'time',
+            '[datetime]',
+            // Common class patterns
+            '[class*="event-date"]',
+            '[class*="date-display"]',
+            '[class*="recurring-date"] span',
+            // Elementor patterns
+            '.elementor-icon-list-text',
+        ];
+
+        for (const selector of dateSelectors) {
+            try {
+                const elements = card.querySelectorAll(selector);
+                elements.forEach(el => {
+                    const text = el.textContent.trim();
+                    // Check if this looks like a date element (has date-like content)
+                    if (looksLikeDate(text)) {
+                        // Format the new date to match common patterns
+                        el.textContent = formatOccurrenceDate(startDate);
+                        el.dataset.vtDateUpdated = 'true';
+                    }
+                });
+            } catch (e) {
+                // Ignore selector errors
+            }
         }
     }
 
@@ -456,10 +497,30 @@
     }
 
     /**
+     * Store first occurrence dates for reference when updating later cards
+     */
+    var firstOccurrenceDates = {};
+
+    /**
      * Process cards with occurrence data to show only the relevant date
      */
     function processOccurrenceCards() {
         const cards = document.querySelectorAll('[data-vt-occurrence-index]');
+
+        // First pass: collect first occurrence dates for each post
+        cards.forEach(card => {
+            const postId = card.dataset.postId;
+            const occurrenceIndex = parseInt(card.dataset.vtOccurrenceIndex, 10);
+            const occurrenceStart = card.dataset.vtOccurrenceStart;
+            const occurrenceEnd = card.dataset.vtOccurrenceEnd;
+
+            if (postId && occurrenceIndex === 0 && occurrenceStart) {
+                firstOccurrenceDates[postId] = {
+                    start: occurrenceStart,
+                    end: occurrenceEnd
+                };
+            }
+        });
 
         cards.forEach(card => {
             // Skip if already processed
@@ -467,6 +528,7 @@
                 return;
             }
 
+            const postId = card.dataset.postId;
             const occurrenceIndex = parseInt(card.dataset.vtOccurrenceIndex, 10);
             const occurrenceStart = card.dataset.vtOccurrenceStart;
             const occurrenceEnd = card.dataset.vtOccurrenceEnd;
@@ -517,10 +579,29 @@
                 }
             });
 
-            // Method 3: For cloned cards (index > 0), try to find and update date text
-            // Look for common date patterns in the card
-            if (occurrenceIndex > 0 && occurrenceStart) {
-                updateDateInCard(card, occurrenceStart, occurrenceEnd);
+            // Method 3: For AJAX-rendered cards (index > 0), replace the first occurrence's
+            // date with this occurrence's date. All AJAX cards are rendered with the same
+            // template showing the first date, so we need to update them.
+            if (occurrenceIndex > 0 && occurrenceStart && postId) {
+                const firstDates = firstOccurrenceDates[postId];
+                console.log('VT Recurring Events: Updating card', postId, 'occurrence', occurrenceIndex,
+                    'from', firstDates ? firstDates.start : 'unknown', 'to', occurrenceStart);
+
+                if (firstDates && firstDates.start) {
+                    // Replace first occurrence date with this occurrence's date
+                    replaceDateTextInCard(card,
+                        { start: firstDates.start, end: firstDates.end },
+                        { start: occurrenceStart, end: occurrenceEnd }
+                    );
+                } else {
+                    // Fallback: just try to update generic date elements
+                    updateDateInCard(card, occurrenceStart, occurrenceEnd);
+                }
+            }
+
+            // Debug: Log if date items were found and hidden
+            if (dateItems && dateItems.length > 1) {
+                console.log('VT Recurring Events: Found', dateItems.length, 'date items in card, showing index', occurrenceIndex);
             }
 
             // Mark as processed
@@ -529,31 +610,10 @@
     }
 
     /**
-     * Try to find and update date text in a cloned card
+     * Alias for backwards compatibility
      */
     function updateDateInCard(card, startDate, endDate) {
-        // Look for elements that might contain dates
-        // Common selectors for date display in Voxel cards
-        const possibleDateSelectors = [
-            '.ts-icon-date + span',
-            '.ts-icon-date ~ span',
-            '[class*="date"]',
-            '.elementor-icon-list-text',
-            '.ts-term-icon + span',
-            'time',
-        ];
-
-        for (const selector of possibleDateSelectors) {
-            const elements = card.querySelectorAll(selector);
-            elements.forEach(el => {
-                // Check if this looks like a date element (has date-like content)
-                const text = el.textContent.trim();
-                if (looksLikeDate(text)) {
-                    el.textContent = formatOccurrenceDate(startDate);
-                    el.dataset.vtDateUpdated = 'true';
-                }
-            });
-        }
+        updateDateElementsInCard(card, startDate, endDate);
     }
 
     /**
@@ -576,31 +636,27 @@
 
     /**
      * Sort cards by occurrence date within their container
-     * Handles both recurring events (with occurrence data) and regular events
      */
     function sortCardsByOccurrenceDate() {
-        // Find containers with event cards (look for post feed containers)
+        // Find containers with recurring event cards
         const containers = new Set();
-        document.querySelectorAll('.ts-preview[data-post-id]').forEach(card => {
+        document.querySelectorAll('[data-vt-occurrence-start]').forEach(card => {
             if (card.parentElement) {
                 containers.add(card.parentElement);
             }
         });
 
         containers.forEach(container => {
-            // Get all preview cards in this container
-            const cards = Array.from(container.querySelectorAll('.ts-preview[data-post-id]'));
+            const cards = Array.from(container.querySelectorAll('.ts-preview[data-vt-occurrence-start]'));
 
             if (cards.length < 2) {
                 return;
             }
 
-            // Sort by occurrence start date (soonest first)
-            // For recurring events, use data-vt-occurrence-start
-            // For regular events, try to extract date from card content
+            // Sort by occurrence start date
             cards.sort((a, b) => {
-                const startA = getCardSortDate(a);
-                const startB = getCardSortDate(b);
+                const startA = a.dataset.vtOccurrenceStart || '9999-12-31';
+                const startB = b.dataset.vtOccurrenceStart || '9999-12-31';
                 return startA.localeCompare(startB);
             });
 
@@ -608,38 +664,90 @@
             cards.forEach(card => {
                 container.appendChild(card);
             });
-
-            console.log('VT Recurring Events: Sorted', cards.length, 'cards by date');
         });
     }
 
     /**
-     * Get the date to use for sorting a card
-     * Priority: data-vt-occurrence-start > extracted date from content > fallback
+     * Check if this is an initial page load that needs AJAX refresh
+     * This handles the case where Voxel's initial query doesn't include
+     * recurring events properly until a filter triggers AJAX
      */
-    function getCardSortDate(card) {
-        // First check for occurrence data (recurring events)
-        if (card.dataset.vtOccurrenceStart) {
-            return card.dataset.vtOccurrenceStart;
+    function shouldTriggerInitialRefresh() {
+        // Look for Voxel post feed components that handle recurring events
+        const postFeeds = document.querySelectorAll('[data-post-feed], .ts-post-feed, [data-search-form]');
+        if (postFeeds.length === 0) {
+            return false;
         }
 
-        // Try to extract date from visible text content (for regular events)
-        // Look for ISO date patterns in data attributes or content
-        const datePattern = /(\d{4}-\d{2}-\d{2})/;
+        // Check if URL has any filter parameters already (if so, AJAX will handle it)
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasFilters = urlParams.toString().length > 0;
 
-        // Check common date-related data attributes
-        const attrs = ['data-date', 'data-start-date', 'data-event-date'];
-        for (const attr of attrs) {
-            const val = card.getAttribute(attr);
-            if (val) {
-                const match = val.match(datePattern);
-                if (match) return match[1];
+        if (hasFilters) {
+            return false; // Filters present, AJAX will handle
+        }
+
+        // Check if there are any event cards on the page
+        const cards = document.querySelectorAll('.ts-preview[data-post-id]');
+
+        // If we have cards, we should refresh to properly expand recurring events
+        // If we have NO cards but have a search form, we should still try to refresh
+        // (Voxel might have excluded events from initial query)
+        if (cards.length > 0) {
+            return true;
+        }
+
+        // Check if we have a search form (might need refresh even with no initial cards)
+        const searchForms = document.querySelectorAll('[data-search-form]');
+        return searchForms.length > 0;
+    }
+
+    /**
+     * Trigger Voxel's AJAX search refresh
+     * This makes the page go through our search_posts_handler for proper expansion
+     */
+    function triggerVoxelRefresh() {
+        let refreshTriggered = false;
+
+        // Find Voxel's Vue component
+        const searchForms = document.querySelectorAll('[data-search-form]');
+
+        searchForms.forEach(form => {
+            // Try to access Voxel's Vue instance and trigger a search
+            if (form.__vue__ || form._vnode) {
+                const vueInstance = form.__vue__ || form._vnode;
+                if (vueInstance && typeof vueInstance.submit === 'function') {
+                    console.log('VT Recurring Events: Triggering Voxel refresh via search form');
+                    vueInstance.submit();
+                    refreshTriggered = true;
+                    return;
+                }
             }
+        });
+
+        if (!refreshTriggered) {
+            // Alternative: Find post feed widgets and trigger their refresh
+            const postFeeds = document.querySelectorAll('.ts-post-feed');
+            postFeeds.forEach(feed => {
+                if (feed.__vue__) {
+                    const vueInstance = feed.__vue__;
+                    if (typeof vueInstance.getResults === 'function') {
+                        console.log('VT Recurring Events: Triggering post feed refresh');
+                        vueInstance.getResults();
+                        refreshTriggered = true;
+                    } else if (typeof vueInstance.search === 'function') {
+                        vueInstance.search();
+                        refreshTriggered = true;
+                    }
+                }
+            });
         }
 
-        // Fallback: keep original position by using a default far-future date
-        // This preserves server-side ordering for non-recurring events
-        return '9999-12-31';
+        // If we couldn't trigger a Voxel refresh, fall back to client-side expansion
+        if (!refreshTriggered) {
+            console.log('VT Recurring Events: Could not trigger Voxel refresh, falling back to client-side expansion');
+            fetchAndExpandCards();
+        }
     }
 
     /**
@@ -653,8 +761,17 @@
             processOccurrenceCards();
             sortCardsByOccurrenceDate();
         } else {
-            // Need to fetch via AJAX
-            fetchAndExpandCards();
+            // Try to trigger Voxel refresh first (to use server-side expansion)
+            // This ensures recurring events show on initial load without filters
+            if (shouldTriggerInitialRefresh()) {
+                // Give Voxel's Vue a moment to initialize
+                setTimeout(function() {
+                    triggerVoxelRefresh();
+                }, 100);
+            } else {
+                // Fall back to AJAX fetch for expansion data
+                fetchAndExpandCards();
+            }
         }
 
         // Process after Voxel AJAX loads new results
