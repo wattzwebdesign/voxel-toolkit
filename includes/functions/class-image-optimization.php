@@ -214,6 +214,7 @@ class Voxel_Toolkit_Image_Optimization {
             'i18n' => array(
                 'fileTooLarge' => __('File too large!', 'voxel-toolkit'),
                 'exceedsMbLimit' => __('%s exceeds %dMB limit.', 'voxel-toolkit'),
+                'evenAfterCompression' => __('Even after compression.', 'voxel-toolkit'),
                 'optimizingImages' => __('Optimizing images...', 'voxel-toolkit'),
                 'imageXOfY' => __('Image %1$d of %2$d: %3$s', 'voxel-toolkit'),
                 'optimizing' => __('Optimizing...', 'voxel-toolkit'),
