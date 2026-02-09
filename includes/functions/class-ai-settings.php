@@ -80,15 +80,15 @@ class Voxel_Toolkit_AI_Settings {
         $provider = $this->get_provider();
 
         if ($provider === 'anthropic') {
-            $model = isset($settings['anthropic_model']) ? $settings['anthropic_model'] : 'claude-3-5-haiku-20241022';
-            $allowed = array('claude-3-5-haiku-20241022', 'claude-3-5-sonnet-20241022', 'claude-sonnet-4-20250514', 'claude-opus-4-20250514', 'claude-3-opus-20240229');
-            return in_array($model, $allowed, true) ? $model : 'claude-3-5-haiku-20241022';
+            $model = isset($settings['anthropic_model']) ? $settings['anthropic_model'] : 'claude-haiku-4-5-20251001';
+            $allowed = array('claude-haiku-4-5-20251001', 'claude-sonnet-4-5-20250929', 'claude-sonnet-4-20250514', 'claude-opus-4-20250514', 'claude-opus-4-5-20251101', 'claude-opus-4-6');
+            return in_array($model, $allowed, true) ? $model : 'claude-haiku-4-5-20251001';
         }
 
         // OpenAI
-        $model = isset($settings['openai_model']) ? $settings['openai_model'] : 'gpt-4o-mini';
-        $allowed = array('gpt-4o-mini', 'gpt-4o', 'gpt-4.1', 'gpt-4.1-mini', 'o1', 'o1-mini', 'o3-mini', 'gpt-4-turbo');
-        return in_array($model, $allowed, true) ? $model : 'gpt-4o-mini';
+        $model = isset($settings['openai_model']) ? $settings['openai_model'] : 'gpt-5-mini';
+        $allowed = array('gpt-5-mini', 'gpt-5.2', 'gpt-5-nano', 'o4-mini');
+        return in_array($model, $allowed, true) ? $model : 'gpt-5-mini';
     }
 
     /**
@@ -263,19 +263,19 @@ class Voxel_Toolkit_AI_Settings {
         // OpenAI Model
         $sanitized['openai_model'] = isset($input['openai_model'])
             ? sanitize_text_field($input['openai_model'])
-            : 'gpt-4o-mini';
-        $allowed_openai = array('gpt-4o-mini', 'gpt-4o', 'gpt-4.1', 'gpt-4.1-mini', 'o1', 'o1-mini', 'o3-mini', 'gpt-4-turbo');
+            : 'gpt-5-mini';
+        $allowed_openai = array('gpt-5-mini', 'gpt-5.2', 'gpt-5-nano', 'o4-mini');
         if (!in_array($sanitized['openai_model'], $allowed_openai, true)) {
-            $sanitized['openai_model'] = 'gpt-4o-mini';
+            $sanitized['openai_model'] = 'gpt-5-mini';
         }
 
         // Anthropic Model
         $sanitized['anthropic_model'] = isset($input['anthropic_model'])
             ? sanitize_text_field($input['anthropic_model'])
-            : 'claude-3-5-haiku-20241022';
-        $allowed_anthropic = array('claude-3-5-haiku-20241022', 'claude-3-5-sonnet-20241022', 'claude-sonnet-4-20250514', 'claude-opus-4-20250514', 'claude-3-opus-20240229');
+            : 'claude-haiku-4-5-20251001';
+        $allowed_anthropic = array('claude-haiku-4-5-20251001', 'claude-sonnet-4-5-20250929', 'claude-sonnet-4-20250514', 'claude-opus-4-20250514', 'claude-opus-4-5-20251101', 'claude-opus-4-6');
         if (!in_array($sanitized['anthropic_model'], $allowed_anthropic, true)) {
-            $sanitized['anthropic_model'] = 'claude-3-5-haiku-20241022';
+            $sanitized['anthropic_model'] = 'claude-haiku-4-5-20251001';
         }
 
         return $sanitized;

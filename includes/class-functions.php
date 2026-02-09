@@ -7635,8 +7635,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     public function render_ai_settings($settings) {
         $provider = isset($settings['provider']) ? $settings['provider'] : 'openai';
         $api_key = isset($settings['api_key']) ? $settings['api_key'] : '';
-        $openai_model = isset($settings['openai_model']) ? $settings['openai_model'] : 'gpt-4o-mini';
-        $anthropic_model = isset($settings['anthropic_model']) ? $settings['anthropic_model'] : 'claude-3-5-haiku-20241022';
+        $openai_model = isset($settings['openai_model']) ? $settings['openai_model'] : 'gpt-5-mini';
+        $anthropic_model = isset($settings['anthropic_model']) ? $settings['anthropic_model'] : 'claude-haiku-4-5-20251001';
         $response_language = isset($settings['response_language']) ? $settings['response_language'] : 'en';
         ?>
 
@@ -7666,14 +7666,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <th scope="row"><?php _e('OpenAI Model', 'voxel-toolkit'); ?></th>
                 <td>
                     <select name="voxel_toolkit_options[ai_settings][openai_model]" class="vt-select" style="width: 300px;">
-                        <option value="gpt-4o-mini" <?php selected($openai_model, 'gpt-4o-mini'); ?>>GPT-4o Mini (Recommended)</option>
-                        <option value="gpt-4o" <?php selected($openai_model, 'gpt-4o'); ?>>GPT-4o</option>
-                        <option value="gpt-4.1" <?php selected($openai_model, 'gpt-4.1'); ?>>GPT-4.1</option>
-                        <option value="gpt-4.1-mini" <?php selected($openai_model, 'gpt-4.1-mini'); ?>>GPT-4.1 Mini</option>
-                        <option value="o1" <?php selected($openai_model, 'o1'); ?>>o1</option>
-                        <option value="o1-mini" <?php selected($openai_model, 'o1-mini'); ?>>o1-mini</option>
-                        <option value="o3-mini" <?php selected($openai_model, 'o3-mini'); ?>>o3-mini</option>
-                        <option value="gpt-4-turbo" <?php selected($openai_model, 'gpt-4-turbo'); ?>>GPT-4 Turbo</option>
+                        <option value="gpt-5-mini" <?php selected($openai_model, 'gpt-5-mini'); ?>>GPT-5 Mini (Recommended)</option>
+                        <option value="gpt-5.2" <?php selected($openai_model, 'gpt-5.2'); ?>>GPT-5.2</option>
+                        <option value="gpt-5-nano" <?php selected($openai_model, 'gpt-5-nano'); ?>>GPT-5 Nano</option>
+                        <option value="o4-mini" <?php selected($openai_model, 'o4-mini'); ?>>o4-mini</option>
                     </select>
                     <p class="description"><?php _e('Used when OpenAI is selected as provider.', 'voxel-toolkit'); ?></p>
                 </td>
@@ -7682,11 +7678,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <th scope="row"><?php _e('Anthropic Model', 'voxel-toolkit'); ?></th>
                 <td>
                     <select name="voxel_toolkit_options[ai_settings][anthropic_model]" class="vt-select" style="width: 300px;">
-                        <option value="claude-3-5-haiku-20241022" <?php selected($anthropic_model, 'claude-3-5-haiku-20241022'); ?>>Claude 3.5 Haiku (Recommended)</option>
-                        <option value="claude-3-5-sonnet-20241022" <?php selected($anthropic_model, 'claude-3-5-sonnet-20241022'); ?>>Claude 3.5 Sonnet</option>
+                        <option value="claude-haiku-4-5-20251001" <?php selected($anthropic_model, 'claude-haiku-4-5-20251001'); ?>>Claude Haiku 4.5 (Recommended)</option>
+                        <option value="claude-sonnet-4-5-20250929" <?php selected($anthropic_model, 'claude-sonnet-4-5-20250929'); ?>>Claude Sonnet 4.5</option>
                         <option value="claude-sonnet-4-20250514" <?php selected($anthropic_model, 'claude-sonnet-4-20250514'); ?>>Claude Sonnet 4</option>
                         <option value="claude-opus-4-20250514" <?php selected($anthropic_model, 'claude-opus-4-20250514'); ?>>Claude Opus 4</option>
-                        <option value="claude-3-opus-20240229" <?php selected($anthropic_model, 'claude-3-opus-20240229'); ?>>Claude 3 Opus</option>
+                        <option value="claude-opus-4-5-20251101" <?php selected($anthropic_model, 'claude-opus-4-5-20251101'); ?>>Claude Opus 4.5</option>
+                        <option value="claude-opus-4-6" <?php selected($anthropic_model, 'claude-opus-4-6'); ?>>Claude Opus 4.6</option>
                     </select>
                     <p class="description"><?php _e('Used when Anthropic is selected as provider.', 'voxel-toolkit'); ?></p>
                 </td>

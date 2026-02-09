@@ -1002,7 +1002,7 @@ class Voxel_Toolkit {
                 }
                 $options['ai_settings']['api_key'] = $review_summary_key;
                 $options['ai_settings']['provider'] = 'openai'; // AI Review Summary only supported OpenAI
-                $options['ai_settings']['openai_model'] = 'gpt-4o-mini'; // Default model
+                $options['ai_settings']['openai_model'] = 'gpt-5-mini'; // Default model
 
                 update_option('voxel_toolkit_options', $options);
             } else {
@@ -1021,8 +1021,8 @@ class Voxel_Toolkit {
                     $options['ai_settings']['provider'] = $provider;
 
                     // Set default models
-                    $options['ai_settings']['openai_model'] = 'gpt-4o-mini';
-                    $options['ai_settings']['anthropic_model'] = 'claude-3-5-haiku-20241022';
+                    $options['ai_settings']['openai_model'] = 'gpt-5-mini';
+                    $options['ai_settings']['anthropic_model'] = 'claude-haiku-4-5-20251001';
 
                     update_option('voxel_toolkit_options', $options);
                 }

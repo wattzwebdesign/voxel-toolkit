@@ -1947,16 +1947,16 @@ class Voxel_Toolkit_Admin {
                         }
 
                         // OpenAI Model
-                        $allowed_openai = array('gpt-4o-mini', 'gpt-4o', 'gpt-4.1', 'gpt-4.1-mini', 'o1', 'o1-mini', 'o3-mini', 'gpt-4-turbo');
+                        $allowed_openai = array('gpt-5-mini', 'gpt-5.2', 'gpt-5-nano', 'o4-mini');
                         $sanitized_function['openai_model'] = isset($function_input['openai_model']) && in_array($function_input['openai_model'], $allowed_openai, true)
                             ? $function_input['openai_model']
-                            : 'gpt-4o-mini';
+                            : 'gpt-5-mini';
 
                         // Anthropic Model
-                        $allowed_anthropic = array('claude-3-5-haiku-20241022', 'claude-3-5-sonnet-20241022', 'claude-sonnet-4-20250514', 'claude-opus-4-20250514', 'claude-3-opus-20240229');
+                        $allowed_anthropic = array('claude-haiku-4-5-20251001', 'claude-sonnet-4-5-20250929', 'claude-sonnet-4-20250514', 'claude-opus-4-20250514', 'claude-opus-4-5-20251101', 'claude-opus-4-6');
                         $sanitized_function['anthropic_model'] = isset($function_input['anthropic_model']) && in_array($function_input['anthropic_model'], $allowed_anthropic, true)
                             ? $function_input['anthropic_model']
-                            : 'claude-3-5-haiku-20241022';
+                            : 'claude-haiku-4-5-20251001';
 
                         // Response Language
                         $allowed_languages = array('en', 'es', 'fr', 'de', 'it', 'pt', 'nl', 'pl', 'ru', 'uk', 'ja', 'ko', 'zh', 'ar', 'hi', 'tr', 'vi', 'th', 'id', 'ms', 'sv', 'da', 'no', 'fi', 'el', 'cs', 'ro', 'hu', 'he');
