@@ -10,6 +10,10 @@
 
 - **Updated AI Model Lists** - Replaced outdated OpenAI models with GPT-5 Mini, GPT-5.2, GPT-5 Nano, and o4-mini; replaced outdated Anthropic models with Claude Haiku 4.5, Sonnet 4.5, Sonnet 4, Opus 4, Opus 4.5, and Opus 4.6
 
+### Weather Widget
+
+- **Kelvin Units Fix** - Fixed "Error loading weather data" when Kelvin units selected by mapping to the correct OpenWeatherMap API parameter
+
 ## 1.6.1.3
 
 ### Table of Contents Widget
