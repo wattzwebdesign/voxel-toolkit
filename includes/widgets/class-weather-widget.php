@@ -423,11 +423,14 @@ class Voxel_Toolkit_Weather_Widget extends \Elementor\Widget_Base {
             return $cached_data;
         }
         
+        // Map units to API-compatible values (OpenWeatherMap uses 'standard' for Kelvin)
+        $api_units = ($units === 'kelvin') ? 'standard' : $units;
+
         // Determine API endpoint using lat/lng
         if ($view_type === 'current') {
-            $api_url = "https://api.openweathermap.org/data/2.5/weather?lat={$latitude}&lon={$longitude}&appid={$api_key}&units={$units}&lang={$language}";
+            $api_url = "https://api.openweathermap.org/data/2.5/weather?lat={$latitude}&lon={$longitude}&appid={$api_key}&units={$api_units}&lang={$language}";
         } else {
-            $api_url = "https://api.openweathermap.org/data/2.5/forecast?lat={$latitude}&lon={$longitude}&appid={$api_key}&units={$units}&lang={$language}";
+            $api_url = "https://api.openweathermap.org/data/2.5/forecast?lat={$latitude}&lon={$longitude}&appid={$api_key}&units={$api_units}&lang={$language}";
         }
         
         // Make API request
