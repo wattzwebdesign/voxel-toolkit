@@ -14,6 +14,11 @@
 
 - **Kelvin Units Fix** - Fixed "Error loading weather data" when Kelvin units selected by mapping to the correct OpenWeatherMap API parameter
 
+### Image Optimization
+
+- **WebP Upload Inflation Fix** - Fixed client-side optimization inflating WebP files by re-encoding through canvas; same-format files that don't need resize or watermark now skip the canvas pipeline entirely, preserving original file size
+- **Size Comparison Fallback** - Added safety net that keeps the original file when canvas re-encoding produces a larger result (e.g., resize/watermark applied but output is still bigger)
+
 ## 1.6.1.3
 
 ### Table of Contents Widget
