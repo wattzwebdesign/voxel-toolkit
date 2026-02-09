@@ -28,6 +28,28 @@ class Voxel_Toolkit_Enhanced_Editor {
     public function __construct() {
         add_filter('voxel/texteditor-field/tinymce/config', array($this, 'enhance_editor_config'), 10, 2);
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_filter('user_has_cap', array($this, 'grant_upload_capability'), 10, 4);
+    }
+
+    /**
+     * Dynamically grant upload_files capability to all logged-in users.
+     *
+     * WordPress's wp.media() requires the upload_files capability. Roles like
+     * Voxel's "visitor" (mapped to subscriber) don't have it by default, so
+     * media uploads silently fail. This filter grants it dynamically — it's
+     * not stored in the DB and only runs while Enhanced Editor is active.
+     *
+     * @param array $allcaps All capabilities for the user.
+     * @param array $caps    Required capabilities for the requested check.
+     * @param array $args    Additional arguments passed to the capability check.
+     * @param WP_User $user  The user object.
+     * @return array Modified capabilities.
+     */
+    public function grant_upload_capability($allcaps, $caps, $args, $user) {
+        if (is_user_logged_in() && in_array('upload_files', $caps, true)) {
+            $allcaps['upload_files'] = true;
+        }
+        return $allcaps;
     }
 
     /**

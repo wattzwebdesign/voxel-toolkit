@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.6.1.4
+
+### Enhanced TinyMCE Editor
+
+- **Upload Capability for All Users** - Dynamically grants `upload_files` capability to all logged-in users when Enhanced Editor is active; fixes media uploads silently failing for roles like Voxel's "visitor" (mapped to subscriber) that lack this capability by default
+
 ## 1.6.1.3
 
 ### Table of Contents Widget
