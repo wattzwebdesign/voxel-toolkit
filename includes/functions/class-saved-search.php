@@ -1893,6 +1893,12 @@ class Voxel_Toolkit_Saved_Search {
         }
 
         $this->debug_log(sprintf('send_notifications: Complete - %d matches found, %d notifications sent', $matches_found, $notifications_sent));
+
+        // Process queued batch emails immediately (don't rely solely on WP-Cron)
+        if ($batch_settings['enabled'] && $notifications_sent > 0) {
+            $this->debug_log('send_notifications: Processing queued batch emails immediately');
+            Voxel_Toolkit_Email_Batch_Processor::instance()->process_batch();
+        }
     }
 
     /**
@@ -1933,24 +1939,33 @@ class Voxel_Toolkit_Saved_Search {
         }
 
         try {
-            // Create event to prepare dynamic tags
+            // Create event to prepare dynamic tags and get admin-configured template
             $event = new Voxel_Toolkit_Saved_Search_Event($post_type);
             $event->prepare($post->get_id(), $search->get_user_id(), $search->get_id());
 
-            // Get email template from event notifications config
-            $notifications = Voxel_Toolkit_Saved_Search_Event::notifications();
+            // Get email template from instance method (includes admin customizations)
+            $notifications = $event->get_notifications();
             $email_config = isset($notifications['notify-subscriber']['email'])
                 ? $notifications['notify-subscriber']['email']
                 : array();
 
-            if (empty($email_config['subject']) || empty($email_config['message'])) {
+            // Respect admin's email enabled/disabled setting
+            if (empty($email_config['enabled'])) {
                 return;
             }
 
-            // Render subject and message with dynamic tags
-            $dynamic_tags = $event->dynamic_tags();
-            $subject = \Voxel\render($email_config['subject'], $dynamic_tags);
-            $message = \Voxel\render($email_config['message'], $dynamic_tags);
+            // Use admin-configured template, fall back to defaults
+            $subject_template = !empty($email_config['subject']) ? $email_config['subject'] : (!empty($email_config['default_subject']) ? $email_config['default_subject'] : '');
+            $message_template = !empty($email_config['message']) ? $email_config['message'] : (!empty($email_config['default_message']) ? $email_config['default_message'] : '');
+
+            if (empty($subject_template) || empty($message_template)) {
+                return;
+            }
+
+            // Render subject and message with dynamic tags (get_dynamic_tags includes recipient, admin, site)
+            $dynamic_tags = $event->get_dynamic_tags();
+            $subject = \Voxel\render($subject_template, $dynamic_tags);
+            $message = \Voxel\render($message_template, $dynamic_tags);
 
             // Queue the email
             Voxel_Toolkit_Email_Queue::queue(array(

@@ -154,8 +154,12 @@ class Voxel_Toolkit_Email_Batch_Processor {
                 'Content-Type: text/html; charset=UTF-8',
             );
 
-            // Apply Voxel's email styling if available
-            $message = $this->wrap_email_content($email->message);
+            // Apply Voxel's styled email template if available, otherwise basic wrapper
+            if (function_exists('\Voxel\email_template')) {
+                $message = \Voxel\email_template($email->message);
+            } else {
+                $message = $this->wrap_email_content($email->message);
+            }
 
             // Send the email
             $sent = wp_mail(
