@@ -204,7 +204,7 @@
                             }
                         });
                     },
-                    viewSearch(search_id) {
+                    buildSearchUrl(search_id) {
                         const searchParams = { ...this.searches[search_id].params };
 
                         const orderedParams = {};
@@ -249,7 +249,39 @@
                             url += '?' + queryString;
                         }
 
-                        window.location.href = url;
+                        return url;
+                    },
+                    viewSearch(search_id) {
+                        window.location.href = this.buildSearchUrl(search_id);
+                    },
+                    shareSearch(search_id) {
+                        const url = this.buildSearchUrl(search_id);
+                        const successMsg = this.config.labels?.shareSuccess || 'Link copied to clipboard!';
+
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText(url).then(() => {
+                                Voxel.alert(successMsg, 'success', [], 4000);
+                            }).catch(() => {
+                                this.fallbackCopyToClipboard(url, successMsg);
+                            });
+                        } else {
+                            this.fallbackCopyToClipboard(url, successMsg);
+                        }
+                    },
+                    fallbackCopyToClipboard(text, successMsg) {
+                        const textarea = document.createElement('textarea');
+                        textarea.value = text;
+                        textarea.style.position = 'fixed';
+                        textarea.style.opacity = '0';
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        try {
+                            document.execCommand('copy');
+                            Voxel.alert(successMsg, 'success', [], 4000);
+                        } catch (err) {
+                            Voxel.alert('Failed to copy link', 'error');
+                        }
+                        document.body.removeChild(textarea);
                     },
                     toggleNotification(search_id) {
                         this.searches[search_id].isTogglingNotification = true;

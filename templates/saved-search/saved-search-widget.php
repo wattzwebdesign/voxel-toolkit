@@ -55,6 +55,13 @@ $template = $config['template'] ?? 'detailed';
                         </a>
                         <?php endif; ?>
 
+                        <?php if ($this->get_settings_for_display('vt_ss_show_share_btn') === 'yes'): ?>
+                        <!-- Share Search -->
+                        <a href="#" class="vt-action-btn vt-action-share" @click.prevent="shareSearch(search.id)" :title="'<?php echo esc_attr($labels['share']); ?>'">
+                            <?php echo $icons['share'] ?: ($defaultIcons['share'] ?? '<i class="las la-share-alt"></i>'); ?>
+                        </a>
+                        <?php endif; ?>
+
                         <?php if ($this->get_settings_for_display('vt_ss_show_notification_btn') === 'yes'): ?>
                         <!-- Toggle Notification -->
                         <a href="#" class="vt-action-btn" :class="search.notification ? 'vt-action-notification-on' : 'vt-action-notification-off'"

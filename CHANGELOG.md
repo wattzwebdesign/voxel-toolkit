@@ -8,6 +8,7 @@
 
 ### Saved Search Widget
 
+- **Share Search Button** - Added a Share button to each saved search card that copies the search URL to the clipboard; includes Elementor toggle, custom label, success message, and icon controls
 - **Action Button Hover & Active States** - Added Normal/Hover/Active tab controls for action button background, icon color, and border color styling
 
 ### AI Settings

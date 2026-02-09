@@ -33,6 +33,7 @@ document.addEventListener("voxel/search-form/init", (e) => {
                 el: el,
                 showTopPopupButton: null,
                 showMainButton: null,
+                showModal: false,
                 breakpoint: this.$root.breakpoint,
             };
         },
@@ -70,10 +71,21 @@ document.addEventListener("voxel/search-form/init", (e) => {
                     return Voxel.authRequired();
                 }
                 if (this.config?.askForTitle) {
-                    this.$root.activePopup = this.widget_id + "_save_search";
+                    this.showModal = true;
+                    this.$nextTick(() => {
+                        this.$refs.modalInput?.focus();
+                    });
                 } else {
                     this.saveSearch("");
                 }
+            },
+            closeModal() {
+                this.showModal = false;
+                this.value = "";
+            },
+            onModalSave() {
+                this.saveSearch(this.value);
+                this.closeModal();
             },
             saveSearch(title) {
                 if (!Voxel_Config.is_logged_in) {
@@ -101,25 +113,6 @@ document.addEventListener("voxel/search-form/init", (e) => {
                         Voxel.alert(response.message || "Error saving search", "error");
                     }
                 });
-            },
-            saveValue() {
-                this.saveSearch(this.value);
-            },
-            onPopupSave() {
-                this.saveValue();
-                this.$refs.formGroup?.blur();
-                this.value = "";
-            },
-            onPopupClear() {
-                this.value = "";
-                this.$refs.input?.focus();
-            },
-            onReset() {
-                this.value = this.filter?.resets_to || "";
-                this.saveValue();
-            },
-            onEnter() {
-                this.submitsToPage && this.submit();
             },
         },
     };

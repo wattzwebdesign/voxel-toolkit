@@ -163,6 +163,16 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'vt_ss_show_share_btn',
+            [
+                'label' => __('Show Share Button', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'return_value' => 'yes',
+            ]
+        );
+
+        $this->add_control(
             'vt_ss_show_delete_btn',
             [
                 'label' => __('Show Delete Button', 'voxel-toolkit'),
@@ -246,6 +256,24 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
                 'label' => __('Delete', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => __('Delete', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_label_share',
+            [
+                'label' => __('Share', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Share', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_label_share_success',
+            [
+                'label' => __('Share success message', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Link copied to clipboard!', 'voxel-toolkit'),
             ]
         );
 
@@ -351,6 +379,16 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
             'vt_ss_icon_search',
             [
                 'label' => __('Search icon', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'skin' => 'inline',
+                'label_block' => false,
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_icon_share',
+            [
+                'label' => __('Share icon', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::ICONS,
                 'skin' => 'inline',
                 'label_block' => false,
@@ -1157,6 +1195,8 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
                 'noResult' => $this->get_settings_for_display('vt_ss_label_no_result') ?: __('Nothing found!', 'voxel-toolkit'),
                 'noFilter' => $this->get_settings_for_display('vt_ss_label_no_filter') ?: __('No filters found!', 'voxel-toolkit'),
                 'confirmDelete' => $this->get_settings_for_display('vt_ss_label_confirm_delete') ?: __('Are you sure you want to delete this search?', 'voxel-toolkit'),
+                'share' => $this->get_settings_for_display('vt_ss_label_share') ?: __('Share', 'voxel-toolkit'),
+                'shareSuccess' => $this->get_settings_for_display('vt_ss_label_share_success') ?: __('Link copied to clipboard!', 'voxel-toolkit'),
             ],
             'icons' => [
                 'arrowLeft' => $this->get_icon_markup('vt_ss_icon_arrow_left'),
@@ -1166,12 +1206,14 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
                 'editTitle' => $this->get_icon_markup('vt_ss_icon_edit_title'),
                 'disableNotification' => $this->get_icon_markup('vt_ss_icon_disable_notification'),
                 'search' => $this->get_icon_markup('vt_ss_icon_search'),
+                'share' => $this->get_icon_markup('vt_ss_icon_share'),
             ],
             'defaultIcons' => [
                 'editTitle' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M22.853,1.148a3.626,3.626,0,0,0-5.124,0L1.465,17.412A4.968,4.968,0,0,0,0,20.947V23a1,1,0,0,0,1,1H3.053a4.966,4.966,0,0,0,3.535-1.464L22.853,6.271A3.626,3.626,0,0,0,22.853,1.148ZM5.174,21.122A3.022,3.022,0,0,1,3.053,22H2V20.947a2.98,2.98,0,0,1,.879-2.121L15.222,6.483l2.3,2.3ZM21.438,4.857,18.932,7.364l-2.3-2.295,2.507-2.507a1.623,1.623,0,1,1,2.295,2.3Z"/></svg>',
                 'search' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/></svg>',
                 'delete' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M21,4H17.9A5.009,5.009,0,0,0,13,0H11A5.009,5.009,0,0,0,6.1,4H3A1,1,0,0,0,3,6H4V19a5.006,5.006,0,0,0,5,5h6a5.006,5.006,0,0,0,5-5V6h1a1,1,0,0,0,0-2ZM11,2h2a3.006,3.006,0,0,1,2.829,2H8.171A3.006,3.006,0,0,1,11,2Zm7,17a3,3,0,0,1-3,3H9a3,3,0,0,1-3-3V6H18Z"/><path d="M10,18a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,10,18Z"/><path d="M14,18a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,14,18Z"/></svg>',
                 'notification' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M22.555,13.662l-1.9-6.836A9.321,9.321,0,0,0,2.576,7.3L1.105,13.915A5,5,0,0,0,5.986,20H7.1a5,5,0,0,0,9.8,0h.838a5,5,0,0,0,4.818-6.338ZM12,22a3,3,0,0,1-2.816-2h5.632A3,3,0,0,1,12,22Zm8.126-5.185A2.977,2.977,0,0,1,17.737,18H5.986a3,3,0,0,1-2.928-3.651l1.47-6.616a7.321,7.321,0,0,1,14.2-.372l1.9,6.836A2.977,2.977,0,0,1,20.126,16.815Z"/></svg>',
+                'share' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M19.333,14.667a4.66,4.66,0,0,0-3.839,2.024L8.985,13.752a4.574,4.574,0,0,0,0-3.5l6.509-2.94A4.66,4.66,0,0,0,19.333,9.333,4.667,4.667,0,1,0,14.667,4.667a4.574,4.574,0,0,0,.182,1.235L8.34,8.842a4.667,4.667,0,1,0,0,6.316l6.509,2.94a4.574,4.574,0,0,0-.182,1.235,4.667,4.667,0,1,0,4.666-4.666Zm0-12.667a2.667,2.667,0,1,1-2.666,2.667A2.669,2.669,0,0,1,19.333,2ZM4.667,14.667A2.667,2.667,0,1,1,7.333,12,2.67,2.67,0,0,1,4.667,14.667ZM19.333,22a2.667,2.667,0,1,1,2.667-2.667A2.669,2.669,0,0,1,19.333,22Z"/></svg>',
             ],
         ];
 
