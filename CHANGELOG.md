@@ -18,6 +18,7 @@
 
 - **WebP Upload Inflation Fix** - Fixed client-side optimization inflating WebP files by re-encoding through canvas; same-format files that don't need resize or watermark now skip the canvas pipeline entirely, preserving original file size
 - **Size Comparison Fallback** - Added safety net that keeps the original file when canvas re-encoding produces a larger result (e.g., resize/watermark applied but output is still bigger)
+- **Keep Original Name Fix** - Fixed "Keep original name" filename format still appending counter and session suffix (e.g., `-01-djsv`); now preserves the original filename with only the extension changed when format conversion occurs
 
 ## 1.6.1.3
 
