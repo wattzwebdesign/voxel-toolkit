@@ -367,6 +367,46 @@
                     }
                     // 'originals_only' keeps the original format
 
+                    // Skip re-encoding if source format matches target and no resize/watermark needed
+                    const wasResized = (img.width > Settings.maxWidth || img.height > Settings.maxHeight);
+                    const hasWatermark = (Settings.wmType === 'text' && Settings.wmText) || (Settings.wmType === 'image' && Settings.wmImg);
+
+                    if (file.type === targetMime && !wasResized && !hasWatermark) {
+                        // Already optimal format, no resize, no watermark — use original file with new name
+                        const ext = file.type.split('/')[1].replace('jpeg', 'jpg');
+                        const baseName = file.name.replace(/\.[^/.]+$/, '');
+                        fileCounter++;
+                        const counterStr = String(fileCounter).padStart(2, '0');
+                        const title = this.getPostTitle();
+
+                        let newName;
+                        if (Settings.renameFormat === 'post_title' && title) {
+                            newName = `${this.slugify(title)}-${counterStr}-${uploadSession}.${ext}`;
+                        } else {
+                            newName = `${baseName}-${counterStr}-${uploadSession}.${ext}`;
+                        }
+
+                        const renamed = new File([file], newName, {
+                            type: file.type,
+                            lastModified: Date.now()
+                        });
+
+                        if (renamed.size > maxBytes) {
+                            Toast.show(
+                                i18n.fileTooLarge || 'File too large!',
+                                __('exceedsMbLimit', file.name, Settings.maxFileSizeMB),
+                                'error'
+                            );
+                            resolve(null);
+                            return;
+                        }
+
+                        processedFiles.add(renamed);
+                        renamed._vtOptimized = true;
+                        resolve(renamed);
+                        return;
+                    }
+
                     // Use canvasToBlob which handles Safari WebP encoding
                     const blob = await canvasToBlob(canvas, targetMime, Settings.outputQuality);
                     const actualType = blob.type || targetMime;
@@ -387,6 +427,18 @@
                         type: actualType,
                         lastModified: Date.now()
                     });
+
+                    // If optimized file is larger than original and format didn't change, keep original (renamed)
+                    if (optimized.size >= file.size && file.type === targetMime) {
+                        const fallback = new File([file], newName, {
+                            type: file.type,
+                            lastModified: Date.now()
+                        });
+                        processedFiles.add(fallback);
+                        fallback._vtOptimized = true;
+                        resolve(fallback);
+                        return;
+                    }
 
                     // Check if compressed file still exceeds size limit
                     if (optimized.size > maxBytes) {
