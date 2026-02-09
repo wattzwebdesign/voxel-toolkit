@@ -15,6 +15,14 @@
 
 - **Updated AI Model Lists** - Replaced outdated OpenAI models with GPT-5 Mini, GPT-5.2, GPT-5 Nano, and o4-mini; replaced outdated Anthropic models with Claude Haiku 4.5, Sonnet 4.5, Sonnet 4, Opus 4, Opus 4.5, and Opus 4.6
 
+### Saved Search Notifications
+
+- **Double Email Fix** - Fixed users receiving two emails (one from Voxel async, one from batch processor) when email batching is enabled; Voxel's async email is now properly suppressed even after admin config merge
+- **Batch Email Reliability** - Batch emails now process immediately after queuing instead of relying solely on WP-Cron, ensuring timely delivery
+- **Voxel Email Template** - Batch emails now use Voxel's styled email template (logo, accent colors, footer) instead of a basic HTML wrapper
+- **Admin Template Support** - Batch emails now respect admin-customized email subject/message from Voxel's app events settings
+- **Dynamic Tag Fix** - Fixed `@recipient(display_name)` and other recipient/site tags not rendering in batch emails
+
 ### Weather Widget
 
 - **Kelvin Units Fix** - Fixed "Error loading weather data" when Kelvin units selected by mapping to the correct OpenWeatherMap API parameter
