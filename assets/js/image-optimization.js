@@ -382,6 +382,8 @@
                         let newName;
                         if (Settings.renameFormat === 'post_title' && title) {
                             newName = `${this.slugify(title)}-${counterStr}-${uploadSession}.${ext}`;
+                        } else if (Settings.renameFormat === 'original') {
+                            newName = `${baseName}.${ext}`;
                         } else {
                             newName = `${baseName}-${counterStr}-${uploadSession}.${ext}`;
                         }
@@ -419,6 +421,8 @@
                     let newName;
                     if (Settings.renameFormat === 'post_title' && title) {
                         newName = `${this.slugify(title)}-${counterStr}-${uploadSession}.${ext}`;
+                    } else if (Settings.renameFormat === 'original') {
+                        newName = `${baseName}.${ext}`;
                     } else {
                         newName = `${baseName}-${counterStr}-${uploadSession}.${ext}`;
                     }
