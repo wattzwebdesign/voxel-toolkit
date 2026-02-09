@@ -618,6 +618,16 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->start_controls_tabs('vt_ss_action_tabs');
+
+        // Normal Tab
+        $this->start_controls_tab(
+            'vt_ss_action_tab_normal',
+            [
+                'label' => __('Normal', 'voxel-toolkit'),
+            ]
+        );
+
         $this->add_control(
             'vt_ss_action_bg',
             [
@@ -649,6 +659,98 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
                 'selector' => '{{WRAPPER}} .vt-action-btn',
             ]
         );
+
+        $this->end_controls_tab();
+
+        // Hover Tab
+        $this->start_controls_tab(
+            'vt_ss_action_tab_hover',
+            [
+                'label' => __('Hover', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_action_bg_hover',
+            [
+                'label' => __('Background Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-action-btn:hover' => 'background: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_action_icon_color_hover',
+            [
+                'label' => __('Icon Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-action-btn:hover svg' => 'fill: {{VALUE}}',
+                    '{{WRAPPER}} .vt-action-btn:hover i' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_action_border_color_hover',
+            [
+                'label' => __('Border Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-action-btn:hover' => 'border-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->end_controls_tab();
+
+        // Active Tab
+        $this->start_controls_tab(
+            'vt_ss_action_tab_active',
+            [
+                'label' => __('Active', 'voxel-toolkit'),
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_action_bg_active',
+            [
+                'label' => __('Background Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-action-btn:active' => 'background: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_action_icon_color_active',
+            [
+                'label' => __('Icon Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-action-btn:active svg' => 'fill: {{VALUE}}',
+                    '{{WRAPPER}} .vt-action-btn:active i' => 'color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'vt_ss_action_border_color_active',
+            [
+                'label' => __('Border Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vt-action-btn:active' => 'border-color: {{VALUE}}',
+                ],
+            ]
+        );
+
+        $this->end_controls_tab();
+
+        $this->end_controls_tabs();
 
         $this->end_controls_section();
 
