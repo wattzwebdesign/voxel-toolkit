@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.6.1.4
+
+### Saved Search Widget
+
+- **Action Button Hover & Active States** - Added Normal/Hover/Active tab controls for action button background, icon color, and border color styling
+
+### AI Settings
+
+- **Updated AI Model Lists** - Replaced outdated OpenAI models with GPT-5 Mini, GPT-5.2, GPT-5 Nano, and o4-mini; replaced outdated Anthropic models with Claude Haiku 4.5, Sonnet 4.5, Sonnet 4, Opus 4, Opus 4.5, and Opus 4.6
+
 ## 1.6.1.3
 
 ### Table of Contents Widget
