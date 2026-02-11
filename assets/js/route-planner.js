@@ -210,6 +210,7 @@
                     this.waypoints = response.data.waypoints;
                     this.processStartPoint();
                 } else {
+                    console.warn('Route Planner: No waypoints returned', response.data?.debug || response);
                     this.showEmptyState();
                 }
             } catch (error) {
@@ -512,13 +513,22 @@
                 steps: true,
             };
 
-            const response = await $.get(url, params);
+            try {
+                const response = await $.get(url, params);
 
-            if (response.routes && response.routes.length > 0) {
-                return this.parseOSRMDirections(response.routes[0], waypoints);
+                if (response.routes && response.routes.length > 0) {
+                    return this.parseOSRMDirections(response.routes[0], waypoints);
+                }
+
+                throw new Error('No route found');
+            } catch (error) {
+                // Public OSRM server only reliably supports car profile; fall back if non-car fails
+                if (profile !== 'car') {
+                    console.warn(`Route Planner: OSRM ${profile} profile failed, falling back to car`);
+                    return this.getOSRMRoute(waypoints, 'driving');
+                }
+                throw error;
             }
-
-            throw new Error('No route found');
         }
 
         /**
@@ -1119,7 +1129,10 @@
          */
         showEmptyState() {
             this.$wrapper.find('.vt-route-content').html(
-                `<div class="vt-route-empty">${voxelRoutePlanner.i18n.noWaypoints}</div>`
+                `<div class="vt-route-empty">
+                    <p>${voxelRoutePlanner.i18n.noWaypoints}</p>
+                    ${voxelRoutePlanner.i18n.checkConfig ? `<p class="vt-route-hint">${voxelRoutePlanner.i18n.checkConfig}</p>` : ''}
+                </div>`
             );
         }
 

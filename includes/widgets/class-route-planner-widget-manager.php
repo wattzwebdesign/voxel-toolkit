@@ -98,6 +98,7 @@ class Voxel_Toolkit_Route_Planner_Widget_Manager {
                 'routeFailed' => __('Could not calculate route', 'voxel-toolkit'),
                 'locationDenied' => __('Location access denied', 'voxel-toolkit'),
                 'loading' => __('Calculating route...', 'voxel-toolkit'),
+                'checkConfig' => __('Please verify your field keys match your post type configuration.', 'voxel-toolkit'),
             ),
         ));
     }
@@ -162,6 +163,55 @@ class Voxel_Toolkit_Route_Planner_Widget_Manager {
             $waypoints = $this->get_waypoints_from_post_fields($post, $post_fields_list);
         }
 
+        // Include debug info when no waypoints found to help diagnose configuration issues
+        if (empty($waypoints)) {
+            $debug = array(
+                'data_source' => $data_source,
+                'post_id' => $post_id,
+                'post_type' => $post->post_type ? $post->post_type->get_key() : 'unknown',
+            );
+
+            if ($data_source === 'repeater') {
+                $debug['repeater_key'] = $repeater_key;
+                $debug['location_key'] = $location_key;
+                $field = $post->get_field($repeater_key);
+                $debug['field_found'] = $field !== null;
+                $debug['field_type'] = $field ? get_class($field) : null;
+                if ($field) {
+                    $val = $field->get_value();
+                    $debug['value_type'] = gettype($val);
+                    $debug['row_count'] = is_array($val) ? count($val) : 0;
+                }
+            } elseif ($data_source === 'post_relation') {
+                $debug['relation_key'] = $relation_key;
+                $debug['location_key'] = $location_key;
+                $field = $post->get_field($relation_key);
+                $debug['field_found'] = $field !== null;
+                $debug['field_type'] = $field ? get_class($field) : null;
+                if ($field) {
+                    $val = $field->get_value();
+                    $debug['value_type'] = gettype($val);
+                    $debug['related_count'] = is_array($val) ? count($val) : 0;
+                }
+            } elseif ($data_source === 'post_fields') {
+                $debug['fields_count'] = is_array($post_fields_list) ? count($post_fields_list) : 0;
+                $debug['fields_list'] = array();
+                if (is_array($post_fields_list)) {
+                    foreach ($post_fields_list as $fd) {
+                        $fk = isset($fd['field_key']) ? $fd['field_key'] : '';
+                        $f = $fk ? $post->get_field($fk) : null;
+                        $debug['fields_list'][] = array(
+                            'key' => $fk,
+                            'found' => $f !== null,
+                            'type' => $f ? get_class($f) : null,
+                        );
+                    }
+                }
+            }
+
+            wp_send_json_success(array('waypoints' => array(), 'debug' => $debug));
+        }
+
         wp_send_json_success(array('waypoints' => $waypoints));
     }
 
@@ -185,6 +235,9 @@ class Voxel_Toolkit_Route_Planner_Widget_Manager {
         }
 
         $rows = $field->get_value();
+        if (is_string($rows)) {
+            $rows = json_decode($rows, true);
+        }
         if (!is_array($rows)) {
             return array();
         }
@@ -192,11 +245,20 @@ class Voxel_Toolkit_Route_Planner_Widget_Manager {
         $waypoints = array();
 
         foreach ($rows as $index => $row) {
-            if (!isset($row[$location_key]) || !is_array($row[$location_key])) {
+            if (!isset($row[$location_key])) {
                 continue;
             }
 
             $loc = $row[$location_key];
+
+            // Handle JSON-encoded location data (can happen in some Voxel configurations)
+            if (is_string($loc)) {
+                $loc = json_decode($loc, true);
+            }
+
+            if (!is_array($loc)) {
+                continue;
+            }
 
             // Validate coordinates
             if (empty($loc['latitude']) || empty($loc['longitude'])) {
@@ -254,6 +316,9 @@ class Voxel_Toolkit_Route_Planner_Widget_Manager {
         }
 
         $related_ids = $field->get_value();
+        if (is_numeric($related_ids)) {
+            $related_ids = array($related_ids);
+        }
         if (!is_array($related_ids) || empty($related_ids)) {
             return array();
         }
@@ -280,6 +345,9 @@ class Voxel_Toolkit_Route_Planner_Widget_Manager {
             }
 
             $loc = $loc_field->get_value();
+            if (is_string($loc)) {
+                $loc = json_decode($loc, true);
+            }
             if (!is_array($loc) || empty($loc['latitude']) || empty($loc['longitude'])) {
                 continue;
             }
@@ -335,6 +403,9 @@ class Voxel_Toolkit_Route_Planner_Widget_Manager {
             }
 
             $loc = $field->get_value();
+            if (is_string($loc)) {
+                $loc = json_decode($loc, true);
+            }
             if (!is_array($loc)) {
                 continue;
             }
