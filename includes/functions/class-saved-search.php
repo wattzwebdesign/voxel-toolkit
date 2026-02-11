@@ -235,47 +235,18 @@ class Voxel_Toolkit_Saved_Search {
      * Register assets
      */
     public function register_assets() {
+        // New unified assets (vtk-search-vault)
         wp_register_script(
-            'vt-save-search',
-            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/save-search.js',
+            'vtk-search-vault',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/vtk-search-vault.js',
             array('jquery'),
             VOXEL_TOOLKIT_VERSION,
             true
         );
 
         wp_register_style(
-            'vt-save-search',
-            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/save-search.css',
-            array(),
-            VOXEL_TOOLKIT_VERSION
-        );
-
-        wp_register_script(
-            'vt-load-search',
-            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/load-search.js',
-            array('jquery'),
-            VOXEL_TOOLKIT_VERSION,
-            true
-        );
-
-        wp_register_style(
-            'vt-load-search',
-            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/load-search.css',
-            array(),
-            VOXEL_TOOLKIT_VERSION
-        );
-
-        wp_register_script(
-            'vt-saved-search',
-            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/js/saved-search.js',
-            array('jquery'),
-            VOXEL_TOOLKIT_VERSION,
-            true
-        );
-
-        wp_register_style(
-            'vt-saved-search',
-            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/saved-search.css',
+            'vtk-search-vault',
+            VOXEL_TOOLKIT_PLUGIN_URL . 'assets/css/vtk-search-vault-base.css',
             array(),
             VOXEL_TOOLKIT_VERSION
         );
@@ -286,10 +257,8 @@ class Voxel_Toolkit_Saved_Search {
      */
     public function enqueue_assets_elementor_iframe($widget) {
         if (function_exists('\Voxel\is_elementor_preview') && \Voxel\is_elementor_preview()) {
-            wp_enqueue_script('vt-save-search');
-            wp_enqueue_style('vt-save-search');
-            wp_enqueue_script('vt-load-search');
-            wp_enqueue_style('vt-load-search');
+            wp_enqueue_script('vtk-search-vault');
+            wp_enqueue_style('vtk-search-vault');
         }
     }
 
@@ -441,7 +410,7 @@ class Voxel_Toolkit_Saved_Search {
                 'default' => 'center',
                 'toggle' => true,
                 'selectors' => [
-                    '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'justify-content: {{VALUE}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--save .vtk-trigger__btn' => 'justify-content: {{VALUE}}!important;',
                 ],
             ]
         );
@@ -454,8 +423,8 @@ class Voxel_Toolkit_Saved_Search {
                 'size_units' => ['px'],
                 'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_save_search .ts-popup-target i' => 'font-size: {{SIZE}}{{UNIT}}!important;',
-                    '{{WRAPPER}} .vt_save_search .ts-popup-target svg' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--save .vtk-trigger__btn i' => 'font-size: {{SIZE}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--save .vtk-trigger__btn svg' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}}!important;',
                 ],
             ]
         );
@@ -468,7 +437,7 @@ class Voxel_Toolkit_Saved_Search {
                 'size_units' => ['px'],
                 'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'height: {{SIZE}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--save .vtk-trigger__btn' => 'height: {{SIZE}}{{UNIT}}!important;',
                 ],
             ]
         );
@@ -481,7 +450,7 @@ class Voxel_Toolkit_Saved_Search {
                 'size_units' => ['px', '%'],
                 'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1], '%' => ['min' => 0, 'max' => 100]],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'border-radius: {{SIZE}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--save .vtk-trigger__btn' => 'border-radius: {{SIZE}}{{UNIT}}!important;',
                 ],
             ]
         );
@@ -491,7 +460,7 @@ class Voxel_Toolkit_Saved_Search {
             [
                 'name' => 'vt_ss_btn_typo',
                 'label' => __('Typography', 'voxel-toolkit'),
-                'selector' => '{{WRAPPER}} .vt_save_search .ts-popup-target',
+                'selector' => '{{WRAPPER}} .vtk-trigger--save .vtk-trigger__btn',
             ]
         );
 
@@ -502,8 +471,8 @@ class Voxel_Toolkit_Saved_Search {
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'default' => '#000000',
                 'selectors' => [
-                    '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'color: {{VALUE}}!important',
-                    '{{WRAPPER}} .vt_save_search .ts-popup-target svg' => 'fill: {{VALUE}}!important',
+                    '{{WRAPPER}} .vtk-trigger--save .vtk-trigger__btn' => 'color: {{VALUE}}!important',
+                    '{{WRAPPER}} .vtk-trigger--save .vtk-trigger__btn svg' => 'fill: {{VALUE}}!important',
                 ],
             ]
         );
@@ -514,7 +483,7 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Background color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt_save_search div.ts-popup-target' => 'background-color: {{VALUE}}!important',
+                    '{{WRAPPER}} .vtk-trigger--save .vtk-trigger__btn' => 'background-color: {{VALUE}}!important',
                 ],
             ]
         );
@@ -526,7 +495,7 @@ class Voxel_Toolkit_Saved_Search {
                 'type' => \Elementor\Controls_Manager::DIMENSIONS,
                 'size_units' => ['px', '%', 'em'],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--save .vtk-trigger__btn' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
                 ],
             ]
         );
@@ -538,7 +507,7 @@ class Voxel_Toolkit_Saved_Search {
                 'type' => \Elementor\Controls_Manager::DIMENSIONS,
                 'size_units' => ['px', '%', 'em'],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--save .vtk-trigger__btn' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
                 ],
             ]
         );
@@ -548,7 +517,7 @@ class Voxel_Toolkit_Saved_Search {
             [
                 'name' => 'vt_ss_btn_border',
                 'label' => __('Border', 'voxel-toolkit'),
-                'selector' => '{{WRAPPER}} .vt_save_search .ts-popup-target',
+                'selector' => '{{WRAPPER}} .vtk-trigger--save .vtk-trigger__btn',
             ]
         );
 
@@ -557,7 +526,7 @@ class Voxel_Toolkit_Saved_Search {
             [
                 'name' => 'vt_ss_btn_shadow',
                 'label' => __('Box Shadow', 'voxel-toolkit'),
-                'selector' => '{{WRAPPER}} .vt_save_search .ts-popup-target',
+                'selector' => '{{WRAPPER}} .vtk-trigger--save .vtk-trigger__btn',
             ]
         );
 
@@ -569,7 +538,7 @@ class Voxel_Toolkit_Saved_Search {
                 'size_units' => ['px'],
                 'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_save_search .ts-popup-target' => 'grid-gap: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vtk-trigger--save .vtk-trigger__btn' => 'grid-gap: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -588,8 +557,8 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt_save_search:hover .ts-popup-target' => 'color: {{VALUE}}!important',
-                    '{{WRAPPER}} .vt_save_search:hover .ts-popup-target svg' => 'fill: {{VALUE}}!important',
+                    '{{WRAPPER}} .vtk-trigger--save:hover .vtk-trigger__btn' => 'color: {{VALUE}}!important',
+                    '{{WRAPPER}} .vtk-trigger--save:hover .vtk-trigger__btn svg' => 'fill: {{VALUE}}!important',
                 ],
             ]
         );
@@ -600,7 +569,7 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Background color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt_save_search:hover .ts-popup-target' => 'background: {{VALUE}}!important',
+                    '{{WRAPPER}} .vtk-trigger--save:hover .vtk-trigger__btn' => 'background: {{VALUE}}!important',
                 ],
             ]
         );
@@ -773,7 +742,7 @@ class Voxel_Toolkit_Saved_Search {
                     'vw' => ['min' => 0, 'max' => 100, 'step' => 1],
                 ],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_save_search' => 'width: {{SIZE}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--save' => 'width: {{SIZE}}{{UNIT}}!important;',
                 ],
                 'condition' => ['vt_ss_show_save_search_btn' => 'yes'],
             ]
@@ -806,7 +775,7 @@ class Voxel_Toolkit_Saved_Search {
             [
                 'label' => __('Input placeholder', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => __('Leave a short note...', 'voxel-toolkit'),
+                'default' => __('Name your search...', 'voxel-toolkit'),
                 'placeholder' => __('Type your text', 'voxel-toolkit'),
                 'condition' => [
                     'vt_ss_ask_for_title' => 'true',
@@ -1003,7 +972,7 @@ class Voxel_Toolkit_Saved_Search {
                     'vw' => ['min' => 0, 'max' => 100, 'step' => 1],
                 ],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_load_search' => 'width: {{SIZE}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--load' => 'width: {{SIZE}}{{UNIT}}!important;',
                 ],
                 'condition' => ['vt_ls_enable' => 'yes'],
             ]
@@ -1051,7 +1020,7 @@ class Voxel_Toolkit_Saved_Search {
                 'default' => 'center',
                 'toggle' => true,
                 'selectors' => [
-                    '{{WRAPPER}} .vt_load_search .ts-popup-target' => 'justify-content: {{VALUE}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'justify-content: {{VALUE}}!important;',
                 ],
             ]
         );
@@ -1064,8 +1033,8 @@ class Voxel_Toolkit_Saved_Search {
                 'size_units' => ['px'],
                 'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_load_search .ts-popup-target i' => 'font-size: {{SIZE}}{{UNIT}}!important;',
-                    '{{WRAPPER}} .vt_load_search .ts-popup-target svg' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn i' => 'font-size: {{SIZE}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn svg' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}}!important;',
                 ],
             ]
         );
@@ -1078,7 +1047,7 @@ class Voxel_Toolkit_Saved_Search {
                 'size_units' => ['px'],
                 'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_load_search .ts-popup-target' => 'height: {{SIZE}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'height: {{SIZE}}{{UNIT}}!important;',
                 ],
             ]
         );
@@ -1091,7 +1060,7 @@ class Voxel_Toolkit_Saved_Search {
                 'size_units' => ['px', '%'],
                 'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1], '%' => ['min' => 0, 'max' => 100]],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_load_search .ts-popup-target' => 'border-radius: {{SIZE}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'border-radius: {{SIZE}}{{UNIT}}!important;',
                 ],
             ]
         );
@@ -1101,7 +1070,7 @@ class Voxel_Toolkit_Saved_Search {
             [
                 'name' => 'vt_ls_btn_typo',
                 'label' => __('Typography', 'voxel-toolkit'),
-                'selector' => '{{WRAPPER}} .vt_load_search .ts-popup-target',
+                'selector' => '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn',
             ]
         );
 
@@ -1112,8 +1081,8 @@ class Voxel_Toolkit_Saved_Search {
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'default' => '#000000',
                 'selectors' => [
-                    '{{WRAPPER}} .vt_load_search .ts-popup-target' => 'color: {{VALUE}}!important',
-                    '{{WRAPPER}} .vt_load_search .ts-popup-target svg' => 'fill: {{VALUE}}!important',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'color: {{VALUE}}!important',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn svg' => 'fill: {{VALUE}}!important',
                 ],
             ]
         );
@@ -1124,7 +1093,7 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Background color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt_load_search div.ts-popup-target' => 'background-color: {{VALUE}}!important',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'background-color: {{VALUE}}!important',
                 ],
             ]
         );
@@ -1136,7 +1105,7 @@ class Voxel_Toolkit_Saved_Search {
                 'type' => \Elementor\Controls_Manager::DIMENSIONS,
                 'size_units' => ['px', '%', 'em'],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_load_search .ts-popup-target' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
                 ],
             ]
         );
@@ -1148,7 +1117,7 @@ class Voxel_Toolkit_Saved_Search {
                 'type' => \Elementor\Controls_Manager::DIMENSIONS,
                 'size_units' => ['px', '%', 'em'],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_load_search .ts-popup-target' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
                 ],
             ]
         );
@@ -1158,7 +1127,7 @@ class Voxel_Toolkit_Saved_Search {
             [
                 'name' => 'vt_ls_btn_border',
                 'label' => __('Border', 'voxel-toolkit'),
-                'selector' => '{{WRAPPER}} .vt_load_search .ts-popup-target',
+                'selector' => '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn',
             ]
         );
 
@@ -1167,7 +1136,7 @@ class Voxel_Toolkit_Saved_Search {
             [
                 'name' => 'vt_ls_btn_shadow',
                 'label' => __('Box Shadow', 'voxel-toolkit'),
-                'selector' => '{{WRAPPER}} .vt_load_search .ts-popup-target',
+                'selector' => '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn',
             ]
         );
 
@@ -1179,7 +1148,7 @@ class Voxel_Toolkit_Saved_Search {
                 'size_units' => ['px'],
                 'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_load_search .ts-popup-target' => 'grid-gap: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'grid-gap: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -1198,8 +1167,8 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt_load_search:hover .ts-popup-target' => 'color: {{VALUE}}!important',
-                    '{{WRAPPER}} .vt_load_search:hover .ts-popup-target svg' => 'fill: {{VALUE}}!important',
+                    '{{WRAPPER}} .vtk-trigger--load:hover .vtk-trigger__btn' => 'color: {{VALUE}}!important',
+                    '{{WRAPPER}} .vtk-trigger--load:hover .vtk-trigger__btn svg' => 'fill: {{VALUE}}!important',
                 ],
             ]
         );
@@ -1210,7 +1179,7 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Background color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt_load_search:hover .ts-popup-target' => 'background: {{VALUE}}!important',
+                    '{{WRAPPER}} .vtk-trigger--load:hover .vtk-trigger__btn' => 'background: {{VALUE}}!important',
                 ],
             ]
         );
@@ -1237,8 +1206,8 @@ class Voxel_Toolkit_Saved_Search {
                 'range' => ['px' => ['min' => 4, 'max' => 20, 'step' => 1]],
                 'default' => ['unit' => 'px', 'size' => 8],
                 'selectors' => [
-                    '{{WRAPPER}} .vt_load_search .ts-filter.vt-has-active::after' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
-                    '{{WRAPPER}} .vt-load-search-link.vt-has-active::after' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger--has-active::after' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vtk-trigger__icon.vtk-trigger--has-active::after' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -1250,8 +1219,8 @@ class Voxel_Toolkit_Saved_Search {
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'default' => '#3b82f6',
                 'selectors' => [
-                    '{{WRAPPER}} .vt_load_search .ts-filter.vt-has-active::after' => 'background: {{VALUE}};',
-                    '{{WRAPPER}} .vt-load-search-link.vt-has-active::after' => 'background: {{VALUE}};',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger--has-active::after' => 'background: {{VALUE}};',
+                    '{{WRAPPER}} .vtk-trigger__icon.vtk-trigger--has-active::after' => 'background: {{VALUE}};',
                 ],
             ]
         );
@@ -1272,11 +1241,9 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Popup Background', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt-load-search-popup .ts-sticky-top' => 'background: {{VALUE}};',
-                    '{{WRAPPER}} .vt-load-search-list' => 'background: {{VALUE}};',
-                    '{{WRAPPER}} .vt-load-search-item' => 'background: {{VALUE}};',
-                    '{{WRAPPER}} .vt-load-search-empty' => 'background: {{VALUE}};',
-                    '{{WRAPPER}} .vt-load-search-loading' => 'background: {{VALUE}};',
+                    '.vtk-dialog__panel' => 'background: {{VALUE}};',
+                    '.vtk-dialog__item' => 'background: {{VALUE}};',
+                    '.vtk-dialog__empty' => 'background: {{VALUE}};',
                 ],
             ]
         );
@@ -1287,8 +1254,8 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Text Color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt-load-search-title' => 'color: {{VALUE}};',
-                    '{{WRAPPER}} .vt-load-search-popup .ts-sticky-top input' => 'color: {{VALUE}};',
+                    '.vtk-dialog__item-title' => 'color: {{VALUE}};',
+                    '.vtk-dialog__input' => 'color: {{VALUE}};',
                 ],
             ]
         );
@@ -1299,9 +1266,9 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Meta Text Color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt-load-search-meta' => 'color: {{VALUE}};',
-                    '{{WRAPPER}} .vt-load-search-empty' => 'color: {{VALUE}};',
-                    '{{WRAPPER}} .vt-load-search-popup .ts-sticky-top input::placeholder' => 'color: {{VALUE}};',
+                    '.vtk-dialog__item-meta' => 'color: {{VALUE}};',
+                    '.vtk-dialog__empty' => 'color: {{VALUE}};',
+                    '.vtk-dialog__input::placeholder' => 'color: {{VALUE}};',
                 ],
             ]
         );
@@ -1312,8 +1279,8 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Border Color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt-load-search-popup .ts-sticky-top' => 'border-bottom-color: {{VALUE}};',
-                    '{{WRAPPER}} .vt-load-search-item' => 'border-bottom-color: {{VALUE}};',
+                    '.vtk-dialog__search' => 'border-bottom-color: {{VALUE}};',
+                    '.vtk-dialog__item' => 'border-bottom-color: {{VALUE}};',
                 ],
             ]
         );
@@ -1324,8 +1291,8 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Item Hover Background', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt-load-search-item:hover' => 'background: {{VALUE}};',
-                    '{{WRAPPER}} .vt-load-search-item.vt-active' => 'background: {{VALUE}};',
+                    '.vtk-dialog__item:hover' => 'background: {{VALUE}};',
+                    '.vtk-dialog__item--active' => 'background: {{VALUE}};',
                 ],
             ]
         );
@@ -1336,7 +1303,7 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Search Input Background', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt-load-search-popup .ts-sticky-top .ts-input-icon' => 'background: {{VALUE}};',
+                    '.vtk-dialog__search' => 'background: {{VALUE}};',
                 ],
             ]
         );
@@ -1347,7 +1314,7 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Icon Background', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt-load-search-icon' => 'background: {{VALUE}};',
+                    '.vtk-dialog__item-icon' => 'background: {{VALUE}};',
                 ],
             ]
         );
@@ -1358,8 +1325,8 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Icon Color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt-load-search-icon' => 'color: {{VALUE}};',
-                    '{{WRAPPER}} .vt-load-search-icon svg' => 'fill: {{VALUE}};',
+                    '.vtk-dialog__item-icon' => 'color: {{VALUE}};',
+                    '.vtk-dialog__item-icon svg' => 'fill: {{VALUE}};',
                 ],
             ]
         );
@@ -1370,8 +1337,8 @@ class Voxel_Toolkit_Saved_Search {
                 'label' => __('Active Check Color', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .vt-load-search-check' => 'color: {{VALUE}};',
-                    '{{WRAPPER}} .vt-load-search-check svg' => 'fill: {{VALUE}};',
+                    '.vtk-dialog__check' => 'color: {{VALUE}};',
+                    '.vtk-dialog__check svg' => 'fill: {{VALUE}};',
                 ],
             ]
         );
@@ -1407,7 +1374,7 @@ class Voxel_Toolkit_Saved_Search {
             // Save Search config
             'enable' => $widget->get_settings_for_display('vt_ss_show_save_search_btn') === 'yes',
             'label' => $widget->get_settings_for_display('vt_ss_btn_text') ?: 'Save Search',
-            'placeholder' => $widget->get_settings_for_display('vt_ss_placeholder') ?: 'Leave a short note...',
+            'placeholder' => $widget->get_settings_for_display('vt_ss_placeholder') ?: 'Name your search...',
             'askForTitle' => $widget->get_settings_for_display('vt_ss_ask_for_title') === 'true',
             'icon' => $save_icon && !empty($save_icon['value']) ? \Voxel\get_icon_markup($save_icon) : $default_save_icon,
             'link' => $saved_search_page ? get_permalink($saved_search_page) : '#',
@@ -1446,24 +1413,14 @@ class Voxel_Toolkit_Saved_Search {
             'userHasSearches' => is_user_logged_in() && self::user_has_saved_searches(),
         ];
 
-        // Include Save Search template and assets
-        if ($config['enable']) {
-            $template_path = VOXEL_TOOLKIT_PLUGIN_DIR . 'templates/saved-search/save-search-button.php';
+        // Include unified vault-trigger template and assets
+        if ($config['enable'] || $config['enableLoadSearch']) {
+            $template_path = VOXEL_TOOLKIT_PLUGIN_DIR . 'templates/saved-search/vault-trigger.php';
             if (file_exists($template_path)) {
                 include $template_path;
             }
-            wp_enqueue_script('vt-save-search');
-            wp_enqueue_style('vt-save-search');
-        }
-
-        // Include Load Search template and assets
-        if ($config['enableLoadSearch']) {
-            $template_path = VOXEL_TOOLKIT_PLUGIN_DIR . 'templates/saved-search/load-search-button.php';
-            if (file_exists($template_path)) {
-                include $template_path;
-            }
-            wp_enqueue_script('vt-load-search');
-            wp_enqueue_style('vt-load-search');
+            wp_enqueue_script('vtk-search-vault');
+            wp_enqueue_style('vtk-search-vault');
         }
 
         ?>

@@ -1,0 +1,411 @@
+/* vtk-search-vault-base.css — Default styles for VTK Search Vault */
+/* Visual properties can be overridden via Elementor controls */
+
+[v-cloak]{display:none!important}
+
+/* ═══════════════════════════════════════════
+   DIALOG / MODAL
+   ═══════════════════════════════════════════ */
+
+/* Overlay */
+.vtk-dialog__overlay{
+  position:fixed;inset:0;z-index:99999;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  background:rgba(0,0,0,.5);
+  animation:vtk-fade-in .15s ease;
+}
+
+/* Panel */
+.vtk-dialog__panel{
+  position:relative;width:100%;
+  max-height:85vh;overflow-y:auto;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 20px 60px rgba(0,0,0,.2),0 2px 8px rgba(0,0,0,.08);
+  animation:vtk-slide-up .2s ease;
+}
+.vtk-dialog__panel--sm{max-width:420px}
+.vtk-dialog__panel--md{max-width:560px}
+.vtk-dialog__panel--lg{max-width:720px}
+
+/* Header */
+.vtk-dialog__header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px;
+  border-bottom:1px solid #eee;
+}
+.vtk-dialog__title{
+  font-size:16px;font-weight:600;color:#1a1a2e;
+  margin:0;line-height:1.3;
+}
+.vtk-dialog__close{
+  background:none;border:none;cursor:pointer;
+  font-size:22px;line-height:1;
+  color:#888;padding:0 0 0 12px;
+  transition:color .15s;
+}
+.vtk-dialog__close:hover{color:#333}
+
+/* Body */
+.vtk-dialog__body{
+  padding:18px 22px;
+  overflow-y:auto;
+}
+
+/* Footer */
+.vtk-dialog__footer{
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;
+  padding:14px 22px;
+  border-top:1px solid #eee;
+}
+
+/* Field (input wrapper) */
+.vtk-dialog__field{
+  margin-bottom:12px;
+}
+
+/* Inputs */
+.vtk-dialog__input{
+  width:100%;
+  padding:10px 14px;
+  font-size:14px;line-height:1.5;
+  border:1px solid #ddd;
+  border-radius:8px;
+  background:#fafafa;
+  color:#333;
+  outline:none;
+  transition:border-color .15s,box-shadow .15s;
+  box-sizing:border-box;
+}
+.vtk-dialog__input:focus{
+  border-color:#4f46e5;
+  box-shadow:0 0 0 3px rgba(79,70,229,.12);
+  background:#fff;
+}
+.vtk-dialog__input::placeholder{color:#aaa}
+
+/* Search box in load modal */
+.vtk-dialog__search{
+  margin-bottom:12px;
+}
+
+/* Toggle (notification checkbox) */
+.vtk-dialog__toggle{
+  display:flex;align-items:center;gap:8px;
+  cursor:pointer;font-size:14px;color:#555;
+  padding:4px 0 0;
+  user-select:none;
+}
+.vtk-dialog__toggle input[type="checkbox"]{
+  width:16px;height:16px;cursor:pointer;
+  accent-color:#4f46e5;
+}
+
+/* Buttons */
+.vtk-dialog__btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:9px 18px;
+  font-size:14px;font-weight:500;line-height:1.4;
+  border:none;border-radius:8px;
+  cursor:pointer;
+  transition:background .15s,opacity .15s;
+  min-height:38px;
+}
+.vtk-dialog__btn:disabled{opacity:.55;cursor:not-allowed}
+.vtk-dialog__btn--primary{
+  background:#4f46e5;color:#fff;
+}
+.vtk-dialog__btn--primary:hover:not(:disabled){background:#4338ca}
+.vtk-dialog__btn--secondary{
+  background:#f3f4f6;color:#374151;
+}
+.vtk-dialog__btn--secondary:hover:not(:disabled){background:#e5e7eb}
+.vtk-dialog__btn--danger{
+  background:#ef4444;color:#fff;
+}
+.vtk-dialog__btn--danger:hover:not(:disabled){background:#dc2626}
+
+/* Scrollable list in load modal */
+.vtk-dialog__scroll{
+  max-height:320px;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  margin:0 -22px;padding:0 22px;
+}
+
+/* List items (load search list) */
+.vtk-dialog__item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;
+  border-radius:8px;
+  cursor:pointer;
+  transition:background .12s;
+}
+.vtk-dialog__item:hover{background:#f5f5ff}
+.vtk-dialog__item--active{background:#eef2ff}
+.vtk-dialog__item--clear{
+  color:#ef4444;font-weight:500;
+}
+.vtk-dialog__item--clear svg{
+  fill:#ef4444;flex-shrink:0;
+}
+.vtk-dialog__item+.vtk-dialog__item{
+  border-top:1px solid #f0f0f0;
+}
+
+.vtk-dialog__item-icon{
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  width:32px;height:32px;min-width:32px;
+  border-radius:6px;
+  background:var(--e-global-color-accent,var(--ts-accent-1,#4A7CFF));
+  color:#fff;
+}
+.vtk-dialog__item-icon svg{width:16px;height:16px;fill:currentColor}
+.vtk-dialog__item-icon i{font-size:16px;color:inherit}
+
+.vtk-dialog__item-body{
+  flex:1;min-width:0;
+  display:flex;flex-direction:column;gap:2px;
+}
+.vtk-dialog__item-title{
+  font-size:14px;font-weight:500;color:#1a1a2e;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.vtk-dialog__item-meta{
+  font-size:12px;color:#888;
+}
+
+.vtk-dialog__check{
+  flex-shrink:0;fill:#4f46e5;
+}
+
+.vtk-dialog__empty{
+  padding:24px 14px;
+  text-align:center;
+  color:#999;font-size:14px;
+}
+
+
+/* ═══════════════════════════════════════════
+   TRIGGER (Save/Load buttons in search form)
+   ═══════════════════════════════════════════ */
+
+.vtk-trigger{
+  display:inline-flex;
+}
+.vtk-trigger.hidden{display:none}
+
+.vtk-trigger__icon{
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.vtk-trigger__icon svg{width:18px;height:18px}
+
+.vtk-trigger__label{
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  max-width:160px;
+}
+
+.vtk-trigger--has-active{
+  color:#4f46e5;
+}
+
+
+/* ═══════════════════════════════════════════
+   VAULT (Management Widget — card grid)
+   ═══════════════════════════════════════════ */
+
+/* Grid */
+.vtk-vault__grid{
+  display:grid;
+  grid-template-columns:repeat(1,1fr);
+  gap:16px;
+}
+
+/* Card */
+.vtk-vault__card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  overflow:hidden;
+  transition:box-shadow .15s,border-color .15s;
+}
+.vtk-vault__card:hover{
+  border-color:#d1d5db;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+
+/* Card Header */
+.vtk-vault__header{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;
+  padding:14px 16px;
+  border-bottom:1px solid #f0f0f0;
+}
+.vtk-vault__header-left{
+  display:flex;align-items:center;gap:10px;
+  min-width:0;flex:1;
+}
+
+/* Post type badge */
+.vtk-vault__badge{
+  flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:36px;height:36px;min-width:36px;
+  border-radius:8px;
+  background:var(--e-global-color-accent,var(--ts-accent-1,#4A7CFF));
+  color:#fff;
+}
+.vtk-vault__badge svg,
+.vtk-vault__badge img{width:18px;height:18px;fill:currentColor}
+.vtk-vault__badge i{font-size:18px;color:inherit}
+
+/* Title */
+.vtk-vault__title{
+  font-size:15px;font-weight:600;color:#1a1a2e;
+  margin:0;line-height:1.3;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* Action buttons row */
+.vtk-vault__actions{
+  display:flex;align-items:center;gap:4px;
+  flex-shrink:0;
+}
+
+/* Individual action button */
+.vtk-vault__action{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;
+  border-radius:6px;
+  color:#6b7280;
+  --ts-icon-color:#6b7280;
+  text-decoration:none;
+  transition:background .12s,color .12s;
+}
+.vtk-vault__action:hover{
+  background:#f3f4f6;color:#374151;
+}
+.vtk-vault__action svg{width:16px;height:16px;fill:currentColor}
+.vtk-vault__action i{font-size:16px}
+
+/* Notification-specific colors */
+.vtk-vault__action--notif-on{color:#4f46e5}
+.vtk-vault__action--notif-on:hover{background:#eef2ff;color:#4338ca}
+
+/* Delete action */
+.vtk-vault__action--delete:hover{background:#fef2f2;color:#ef4444}
+
+/* Card Body */
+.vtk-vault__body{
+  padding:14px 16px;
+}
+
+/* Criteria (detailed template) */
+.vtk-vault__criteria{
+  display:flex;flex-wrap:wrap;
+  gap:8px;
+}
+
+/* Summary (simple template) */
+.vtk-vault__summary{
+  font-size:13px;line-height:1.6;color:#555;
+}
+
+/* Individual criterion tag */
+.vtk-vault__criterion{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 10px;
+  background:#f3f4f6;
+  border-radius:6px;
+  font-size:13px;line-height:1.4;
+  color:#555;
+}
+.vtk-vault__criterion-icon{
+  display:inline-flex;align-items:center;
+  flex-shrink:0;
+  color:#888;
+  --ts-icon-color:#888;
+}
+.vtk-vault__criterion-icon svg{width:14px;height:14px;fill:currentColor}
+.vtk-vault__criterion-icon i{font-size:14px}
+
+.vtk-vault__criterion-label{
+  font-weight:600;color:#374151;
+  white-space:nowrap;
+}
+.vtk-vault__criterion-value{
+  color:#6b7280;
+}
+
+/* No filters message */
+.vtk-vault__no-filters{
+  font-size:13px;color:#aaa;font-style:italic;
+}
+
+/* Card Footer */
+.vtk-vault__footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;
+  border-top:1px solid #f0f0f0;
+  font-size:12px;color:#888;
+}
+.vtk-vault__pt-label{font-weight:500;color:#6b7280}
+.vtk-vault__date{color:#aaa}
+
+/* Pagination */
+.vtk-vault__pagination{
+  display:flex;align-items:center;justify-content:center;
+  gap:10px;
+  margin-top:20px;
+}
+
+/* Loading spinner */
+.vtk-vault__spinner{
+  display:flex;align-items:center;justify-content:center;
+  padding:32px;
+}
+
+/* Empty state */
+.vtk-vault__empty{
+  text-align:center;
+  padding:40px 20px;
+  color:#999;
+}
+.vtk-vault__empty svg,
+.vtk-vault__empty i{
+  display:block;margin:0 auto 12px;
+  font-size:32px;color:#ccc;
+}
+.vtk-vault__empty svg{width:32px;height:32px;fill:#ccc}
+.vtk-vault__empty p{
+  margin:0;font-size:14px;line-height:1.5;
+}
+
+
+/* ═══════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════ */
+
+.vtk-toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:100000;
+  padding:10px 20px;border-radius:8px;
+  background:#1e293b;color:#fff;font-size:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+  animation:vtk-fade-in .2s ease;pointer-events:none;
+}
+
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════ */
+
+@keyframes vtk-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes vtk-slide-up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+
+/* ═══════════════════════════════════════════
+   DISABLED STATE
+   ═══════════════════════════════════════════ */
+
+.vx-disabled{pointer-events:none;opacity:.55}
