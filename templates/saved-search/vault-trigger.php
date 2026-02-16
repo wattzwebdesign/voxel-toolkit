@@ -40,7 +40,7 @@ if (!defined('ABSPATH')) exit;
         </li>
 
         <!-- Main button in filter wrapper -->
-        <div class="vtk-trigger vtk-trigger--save" :class="showMainBtn ? '' : 'hidden'">
+        <div class="ts-form-group vtk-trigger vtk-trigger--save" :class="showMainBtn ? '' : 'hidden'">
             <div class="ts-filter ts-popup-target vtk-trigger__btn" @mousedown.prevent="onSaveClick">
                 <span v-html="config.icon"></span>
                 {{ config.label }}
@@ -80,7 +80,7 @@ if (!defined('ABSPATH')) exit;
         </li>
 
         <!-- Main button in filter wrapper -->
-        <div class="vtk-trigger vtk-trigger--load" :class="showMainBtn ? '' : 'hidden'">
+        <div class="ts-form-group vtk-trigger vtk-trigger--load" :class="showMainBtn ? '' : 'hidden'">
             <div class="ts-filter ts-popup-target vtk-trigger__btn" :class="{'vtk-trigger--has-active': hasActiveSearch}" @mousedown.prevent="onLoadClick">
                 <span v-html="config.loadIcon"></span>
                 <span class="vtk-trigger__label">{{ activeSearchTitle || config.loadLabel }}</span>

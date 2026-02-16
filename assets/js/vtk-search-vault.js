@@ -214,6 +214,14 @@
       return;
     }
 
+    /* ---- Inject modal styles ---- */
+    if (cfg.modalCss && !document.querySelector('.vtk-modal-styles')) {
+      var styleEl = document.createElement('style');
+      styleEl.className = 'vtk-modal-styles';
+      styleEl.textContent = cfg.modalCss;
+      document.head.appendChild(styleEl);
+    }
+
     /* ---- Inject mount points ---- */
     var wrapper = el.querySelector("form .ts-filter-wrapper.flexify");
     if (cfg.enable && wrapper && !wrapper.querySelector(".vtk-trigger--save")) {

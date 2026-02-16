@@ -374,7 +374,7 @@ class Voxel_Toolkit_Saved_Search {
         $element->add_control(
             'vt_ss_save_search_items',
             [
-                'label' => __('General', 'voxel-toolkit'),
+                'label' => __('Save Search Button', 'voxel-toolkit'),
                 'type' => \Elementor\Controls_Manager::HEADING,
                 'separator' => 'before',
             ]
@@ -576,6 +576,550 @@ class Voxel_Toolkit_Saved_Search {
 
         $element->end_controls_tab();
         $element->end_controls_tabs();
+
+        // --- Load Search Button ---
+        $element->add_control(
+            'vt_ls_style_heading',
+            [
+                'label' => __('Load Search Button', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $element->start_controls_tabs('vt_ls_button_tabs');
+
+        // Normal tab
+        $element->start_controls_tab(
+            'vt_ls_button_normal',
+            ['label' => __('Normal', 'voxel-toolkit')]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_text_align',
+            [
+                'label' => __('Alignment', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => [
+                    'flex-start' => [
+                        'title' => __('Left', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => __('Center', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-center',
+                    ],
+                    'flex-end' => [
+                        'title' => __('Right', 'voxel-toolkit'),
+                        'icon' => 'eicon-text-align-right',
+                    ],
+                ],
+                'default' => 'center',
+                'toggle' => true,
+                'selectors' => [
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'justify-content: {{VALUE}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_icon_size',
+            [
+                'label' => __('Icon size', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
+                'selectors' => [
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn i' => 'font-size: {{SIZE}}{{UNIT}}!important;',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn svg' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_height',
+            [
+                'label' => __('Button Height', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
+                'selectors' => [
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'height: {{SIZE}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_radius',
+            [
+                'label' => __('Border radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px', '%'],
+                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1], '%' => ['min' => 0, 'max' => 100]],
+                'selectors' => [
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'border-radius: {{SIZE}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'vt_ls_btn_typo',
+                'label' => __('Typography', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn',
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_color',
+            [
+                'label' => __('Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#000000',
+                'selectors' => [
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'color: {{VALUE}}!important',
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn svg' => 'fill: {{VALUE}}!important',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_bg',
+            [
+                'label' => __('Background color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'background-color: {{VALUE}}!important',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_padding',
+            [
+                'label' => __('Button padding', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%', 'em'],
+                'selectors' => [
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_margin',
+            [
+                'label' => __('Button margin', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%', 'em'],
+                'selectors' => [
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
+                ],
+            ]
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Border::get_type(),
+            [
+                'name' => 'vt_ls_btn_border',
+                'label' => __('Border', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn',
+            ]
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Box_Shadow::get_type(),
+            [
+                'name' => 'vt_ls_btn_shadow',
+                'label' => __('Box Shadow', 'voxel-toolkit'),
+                'selector' => '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn',
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_btn_icon_spacing',
+            [
+                'label' => __('Icon/Text spacing', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
+                'selectors' => [
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'grid-gap: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $element->end_controls_tab();
+
+        // Hover tab
+        $element->start_controls_tab(
+            'vt_ls_button_hover',
+            ['label' => __('Hover', 'voxel-toolkit')]
+        );
+
+        $element->add_control(
+            'vt_ls_btn_color_hover',
+            [
+                'label' => __('Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vtk-trigger--load:hover .vtk-trigger__btn' => 'color: {{VALUE}}!important',
+                    '{{WRAPPER}} .vtk-trigger--load:hover .vtk-trigger__btn svg' => 'fill: {{VALUE}}!important',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_btn_bg_hover',
+            [
+                'label' => __('Background color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .vtk-trigger--load:hover .vtk-trigger__btn' => 'background: {{VALUE}}!important',
+                ],
+            ]
+        );
+
+        $element->end_controls_tab();
+        $element->end_controls_tabs();
+
+        // --- Active Search Indicator ---
+        $element->add_control(
+            'vt_ls_indicator_heading',
+            [
+                'label' => __('Active Search Indicator', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_indicator_size',
+            [
+                'label' => __('Indicator Size', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 4, 'max' => 20, 'step' => 1]],
+                'default' => ['unit' => 'px', 'size' => 8],
+                'selectors' => [
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger--has-active::after' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .vtk-trigger__icon.vtk-trigger--has-active::after' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_indicator_color',
+            [
+                'label' => __('Indicator Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#3b82f6',
+                'selectors' => [
+                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger--has-active::after' => 'background: {{VALUE}};',
+                    '{{WRAPPER}} .vtk-trigger__icon.vtk-trigger--has-active::after' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        // --- Save Search Modal ---
+        $element->add_control(
+            'vt_ss_modal_heading',
+            [
+                'label' => __('Save Search Modal', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_modal_overlay_bg',
+            [
+                'label' => __('Overlay Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__overlay' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_modal_panel_bg',
+            [
+                'label' => __('Panel Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__panel' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ss_modal_panel_radius',
+            [
+                'label' => __('Panel Border Radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 40, 'step' => 1]],
+                'selectors' => [
+                    '.vtk-dialog__panel' => 'border-radius: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $element->add_group_control(
+            \Elementor\Group_Control_Box_Shadow::get_type(),
+            [
+                'name' => 'vt_ss_modal_panel_shadow',
+                'label' => __('Panel Box Shadow', 'voxel-toolkit'),
+                'selector' => '.vtk-dialog__panel',
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_modal_title_color',
+            [
+                'label' => __('Title Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__title' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_modal_input_bg',
+            [
+                'label' => __('Input Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__input' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_modal_input_border',
+            [
+                'label' => __('Input Border Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__input' => 'border-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ss_modal_input_radius',
+            [
+                'label' => __('Input Border Radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 40, 'step' => 1]],
+                'selectors' => [
+                    '.vtk-dialog__input' => 'border-radius: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_modal_input_placeholder',
+            [
+                'label' => __('Input Placeholder Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__input::placeholder' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_modal_primary_btn_bg',
+            [
+                'label' => __('Primary Button Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__btn--primary' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_modal_primary_btn_color',
+            [
+                'label' => __('Primary Button Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__btn--primary' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_modal_secondary_btn_bg',
+            [
+                'label' => __('Secondary Button Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__btn--secondary' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ss_modal_secondary_btn_color',
+            [
+                'label' => __('Secondary Button Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__btn--secondary' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        // --- Load Search Modal ---
+        $element->add_control(
+            'vt_ls_popup_heading',
+            [
+                'label' => __('Load Search Modal', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_bg',
+            [
+                'label' => __('Popup Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__panel' => 'background: {{VALUE}};',
+                    '.vtk-dialog__item' => 'background: {{VALUE}};',
+                    '.vtk-dialog__empty' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_text_color',
+            [
+                'label' => __('Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__item-title' => 'color: {{VALUE}};',
+                    '.vtk-dialog__input' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_meta_color',
+            [
+                'label' => __('Meta Text Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__item-meta' => 'color: {{VALUE}};',
+                    '.vtk-dialog__empty' => 'color: {{VALUE}};',
+                    '.vtk-dialog__input::placeholder' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_border_color',
+            [
+                'label' => __('Border Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__search' => 'border-bottom-color: {{VALUE}};',
+                    '.vtk-dialog__item' => 'border-bottom-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_hover_bg',
+            [
+                'label' => __('Item Hover Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__item:hover' => 'background: {{VALUE}};',
+                    '.vtk-dialog__item--active' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_input_bg',
+            [
+                'label' => __('Search Input Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__search' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_responsive_control(
+            'vt_ls_popup_input_radius',
+            [
+                'label' => __('Input Border Radius', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 40, 'step' => 1]],
+                'selectors' => [
+                    '.vtk-dialog__input' => 'border-radius: {{SIZE}}{{UNIT}};',
+                    '.vtk-dialog__search' => 'border-radius: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_placeholder_color',
+            [
+                'label' => __('Input Placeholder Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__input::placeholder' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_icon_bg',
+            [
+                'label' => __('Icon Background', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__item-icon' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_icon_color',
+            [
+                'label' => __('Icon Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__item-icon' => 'color: {{VALUE}};',
+                    '.vtk-dialog__item-icon svg' => 'fill: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'vt_ls_popup_check_color',
+            [
+                'label' => __('Active Check Color', 'voxel-toolkit'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '.vtk-dialog__check' => 'color: {{VALUE}};',
+                    '.vtk-dialog__check svg' => 'fill: {{VALUE}};',
+                ],
+            ]
+        );
+
         $element->end_controls_section();
     }
 
@@ -979,371 +1523,6 @@ class Voxel_Toolkit_Saved_Search {
         );
 
         $element->end_controls_section();
-
-        // Load Search Button Style Section
-        $element->start_controls_section(
-            'vt_ls_button_style',
-            [
-                'label' => __('Load Search Button Style (VT)', 'voxel-toolkit'),
-                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
-                'condition' => ['vt_ls_enable' => 'yes'],
-            ]
-        );
-
-        $element->start_controls_tabs('vt_ls_button_tabs');
-
-        // Normal tab
-        $element->start_controls_tab(
-            'vt_ls_button_normal',
-            ['label' => __('Normal', 'voxel-toolkit')]
-        );
-
-        $element->add_responsive_control(
-            'vt_ls_text_align',
-            [
-                'label' => __('Alignment', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::CHOOSE,
-                'options' => [
-                    'flex-start' => [
-                        'title' => __('Left', 'voxel-toolkit'),
-                        'icon' => 'eicon-text-align-left',
-                    ],
-                    'center' => [
-                        'title' => __('Center', 'voxel-toolkit'),
-                        'icon' => 'eicon-text-align-center',
-                    ],
-                    'flex-end' => [
-                        'title' => __('Right', 'voxel-toolkit'),
-                        'icon' => 'eicon-text-align-right',
-                    ],
-                ],
-                'default' => 'center',
-                'toggle' => true,
-                'selectors' => [
-                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'justify-content: {{VALUE}}!important;',
-                ],
-            ]
-        );
-
-        $element->add_responsive_control(
-            'vt_ls_btn_icon_size',
-            [
-                'label' => __('Icon size', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::SLIDER,
-                'size_units' => ['px'],
-                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
-                'selectors' => [
-                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn i' => 'font-size: {{SIZE}}{{UNIT}}!important;',
-                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn svg' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}}!important;',
-                ],
-            ]
-        );
-
-        $element->add_responsive_control(
-            'vt_ls_btn_height',
-            [
-                'label' => __('Button Height', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::SLIDER,
-                'size_units' => ['px'],
-                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
-                'selectors' => [
-                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'height: {{SIZE}}{{UNIT}}!important;',
-                ],
-            ]
-        );
-
-        $element->add_responsive_control(
-            'vt_ls_btn_radius',
-            [
-                'label' => __('Border radius', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::SLIDER,
-                'size_units' => ['px', '%'],
-                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1], '%' => ['min' => 0, 'max' => 100]],
-                'selectors' => [
-                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'border-radius: {{SIZE}}{{UNIT}}!important;',
-                ],
-            ]
-        );
-
-        $element->add_group_control(
-            \Elementor\Group_Control_Typography::get_type(),
-            [
-                'name' => 'vt_ls_btn_typo',
-                'label' => __('Typography', 'voxel-toolkit'),
-                'selector' => '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn',
-            ]
-        );
-
-        $element->add_responsive_control(
-            'vt_ls_btn_color',
-            [
-                'label' => __('Color', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'default' => '#000000',
-                'selectors' => [
-                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'color: {{VALUE}}!important',
-                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn svg' => 'fill: {{VALUE}}!important',
-                ],
-            ]
-        );
-
-        $element->add_responsive_control(
-            'vt_ls_btn_bg',
-            [
-                'label' => __('Background color', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'selectors' => [
-                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'background-color: {{VALUE}}!important',
-                ],
-            ]
-        );
-
-        $element->add_responsive_control(
-            'vt_ls_btn_padding',
-            [
-                'label' => __('Button padding', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::DIMENSIONS,
-                'size_units' => ['px', '%', 'em'],
-                'selectors' => [
-                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
-                ],
-            ]
-        );
-
-        $element->add_responsive_control(
-            'vt_ls_btn_margin',
-            [
-                'label' => __('Button margin', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::DIMENSIONS,
-                'size_units' => ['px', '%', 'em'],
-                'selectors' => [
-                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
-                ],
-            ]
-        );
-
-        $element->add_group_control(
-            \Elementor\Group_Control_Border::get_type(),
-            [
-                'name' => 'vt_ls_btn_border',
-                'label' => __('Border', 'voxel-toolkit'),
-                'selector' => '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn',
-            ]
-        );
-
-        $element->add_group_control(
-            \Elementor\Group_Control_Box_Shadow::get_type(),
-            [
-                'name' => 'vt_ls_btn_shadow',
-                'label' => __('Box Shadow', 'voxel-toolkit'),
-                'selector' => '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn',
-            ]
-        );
-
-        $element->add_responsive_control(
-            'vt_ls_btn_icon_spacing',
-            [
-                'label' => __('Icon/Text spacing', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::SLIDER,
-                'size_units' => ['px'],
-                'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]],
-                'selectors' => [
-                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger__btn' => 'grid-gap: {{SIZE}}{{UNIT}};',
-                ],
-            ]
-        );
-
-        $element->end_controls_tab();
-
-        // Hover tab
-        $element->start_controls_tab(
-            'vt_ls_button_hover',
-            ['label' => __('Hover', 'voxel-toolkit')]
-        );
-
-        $element->add_control(
-            'vt_ls_btn_color_hover',
-            [
-                'label' => __('Color', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'selectors' => [
-                    '{{WRAPPER}} .vtk-trigger--load:hover .vtk-trigger__btn' => 'color: {{VALUE}}!important',
-                    '{{WRAPPER}} .vtk-trigger--load:hover .vtk-trigger__btn svg' => 'fill: {{VALUE}}!important',
-                ],
-            ]
-        );
-
-        $element->add_control(
-            'vt_ls_btn_bg_hover',
-            [
-                'label' => __('Background color', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'selectors' => [
-                    '{{WRAPPER}} .vtk-trigger--load:hover .vtk-trigger__btn' => 'background: {{VALUE}}!important',
-                ],
-            ]
-        );
-
-        $element->end_controls_tab();
-        $element->end_controls_tabs();
-
-        // Active indicator heading
-        $element->add_control(
-            'vt_ls_indicator_heading',
-            [
-                'label' => __('Active Search Indicator', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::HEADING,
-                'separator' => 'before',
-            ]
-        );
-
-        $element->add_responsive_control(
-            'vt_ls_indicator_size',
-            [
-                'label' => __('Indicator Size', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::SLIDER,
-                'size_units' => ['px'],
-                'range' => ['px' => ['min' => 4, 'max' => 20, 'step' => 1]],
-                'default' => ['unit' => 'px', 'size' => 8],
-                'selectors' => [
-                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger--has-active::after' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
-                    '{{WRAPPER}} .vtk-trigger__icon.vtk-trigger--has-active::after' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
-                ],
-            ]
-        );
-
-        $element->add_control(
-            'vt_ls_indicator_color',
-            [
-                'label' => __('Indicator Color', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'default' => '#3b82f6',
-                'selectors' => [
-                    '{{WRAPPER}} .vtk-trigger--load .vtk-trigger--has-active::after' => 'background: {{VALUE}};',
-                    '{{WRAPPER}} .vtk-trigger__icon.vtk-trigger--has-active::after' => 'background: {{VALUE}};',
-                ],
-            ]
-        );
-
-        // Popup Styling
-        $element->add_control(
-            'vt_ls_popup_heading',
-            [
-                'label' => __('Popup Styling', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::HEADING,
-                'separator' => 'before',
-            ]
-        );
-
-        $element->add_control(
-            'vt_ls_popup_bg',
-            [
-                'label' => __('Popup Background', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'selectors' => [
-                    '.vtk-dialog__panel' => 'background: {{VALUE}};',
-                    '.vtk-dialog__item' => 'background: {{VALUE}};',
-                    '.vtk-dialog__empty' => 'background: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $element->add_control(
-            'vt_ls_popup_text_color',
-            [
-                'label' => __('Text Color', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'selectors' => [
-                    '.vtk-dialog__item-title' => 'color: {{VALUE}};',
-                    '.vtk-dialog__input' => 'color: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $element->add_control(
-            'vt_ls_popup_meta_color',
-            [
-                'label' => __('Meta Text Color', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'selectors' => [
-                    '.vtk-dialog__item-meta' => 'color: {{VALUE}};',
-                    '.vtk-dialog__empty' => 'color: {{VALUE}};',
-                    '.vtk-dialog__input::placeholder' => 'color: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $element->add_control(
-            'vt_ls_popup_border_color',
-            [
-                'label' => __('Border Color', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'selectors' => [
-                    '.vtk-dialog__search' => 'border-bottom-color: {{VALUE}};',
-                    '.vtk-dialog__item' => 'border-bottom-color: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $element->add_control(
-            'vt_ls_popup_hover_bg',
-            [
-                'label' => __('Item Hover Background', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'selectors' => [
-                    '.vtk-dialog__item:hover' => 'background: {{VALUE}};',
-                    '.vtk-dialog__item--active' => 'background: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $element->add_control(
-            'vt_ls_popup_input_bg',
-            [
-                'label' => __('Search Input Background', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'selectors' => [
-                    '.vtk-dialog__search' => 'background: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $element->add_control(
-            'vt_ls_popup_icon_bg',
-            [
-                'label' => __('Icon Background', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'selectors' => [
-                    '.vtk-dialog__item-icon' => 'background: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $element->add_control(
-            'vt_ls_popup_icon_color',
-            [
-                'label' => __('Icon Color', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'selectors' => [
-                    '.vtk-dialog__item-icon' => 'color: {{VALUE}};',
-                    '.vtk-dialog__item-icon svg' => 'fill: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $element->add_control(
-            'vt_ls_popup_check_color',
-            [
-                'label' => __('Active Check Color', 'voxel-toolkit'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'selectors' => [
-                    '.vtk-dialog__check' => 'color: {{VALUE}};',
-                    '.vtk-dialog__check svg' => 'fill: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $element->end_controls_section();
     }
 
     /**
@@ -1413,6 +1592,9 @@ class Voxel_Toolkit_Saved_Search {
             'userHasSearches' => is_user_logged_in() && self::user_has_saved_searches(),
         ];
 
+        // Capture all additional output into a buffer to append to $widget_content
+        ob_start();
+
         // Include unified vault-trigger template and assets
         if ($config['enable'] || $config['enableLoadSearch']) {
             $template_path = VOXEL_TOOLKIT_PLUGIN_DIR . 'templates/saved-search/vault-trigger.php';
@@ -1423,13 +1605,94 @@ class Voxel_Toolkit_Saved_Search {
             wp_enqueue_style('vtk-search-vault');
         }
 
+        // Generate inline CSS for modal styling (modals are teleported to body, outside {{WRAPPER}})
+        $modal_css = '';
+        $modal_controls = [
+            // Save Search Modal controls
+            'vt_ss_modal_overlay_bg'          => ['.vtk-dialog__overlay' => 'background'],
+            'vt_ss_modal_panel_bg'            => ['.vtk-dialog__panel' => 'background'],
+            'vt_ss_modal_panel_radius'        => ['.vtk-dialog__panel' => 'border-radius', 'unit' => true],
+            'vt_ss_modal_title_color'         => ['.vtk-dialog__title' => 'color'],
+            'vt_ss_modal_input_bg'            => ['.vtk-dialog__input' => 'background'],
+            'vt_ss_modal_input_border'        => ['.vtk-dialog__input' => 'border-color'],
+            'vt_ss_modal_input_radius'        => ['.vtk-dialog__input' => 'border-radius', 'unit' => true],
+            'vt_ss_modal_input_placeholder'   => ['.vtk-dialog__input::placeholder' => 'color'],
+            'vt_ss_modal_primary_btn_bg'      => ['.vtk-dialog__btn--primary' => 'background'],
+            'vt_ss_modal_primary_btn_color'   => ['.vtk-dialog__btn--primary' => 'color'],
+            'vt_ss_modal_secondary_btn_bg'    => ['.vtk-dialog__btn--secondary' => 'background'],
+            'vt_ss_modal_secondary_btn_color' => ['.vtk-dialog__btn--secondary' => 'color'],
+            // Load Search Modal controls
+            'vt_ls_popup_bg'                  => ['.vtk-dialog__panel' => 'background', '.vtk-dialog__item' => 'background', '.vtk-dialog__empty' => 'background'],
+            'vt_ls_popup_text_color'          => ['.vtk-dialog__item-title' => 'color', '.vtk-dialog__input' => 'color'],
+            'vt_ls_popup_meta_color'          => ['.vtk-dialog__item-meta' => 'color', '.vtk-dialog__empty' => 'color', '.vtk-dialog__input::placeholder' => 'color'],
+            'vt_ls_popup_border_color'        => ['.vtk-dialog__search' => 'border-bottom-color', '.vtk-dialog__item' => 'border-bottom-color'],
+            'vt_ls_popup_hover_bg'            => ['.vtk-dialog__item:hover' => 'background', '.vtk-dialog__item--active' => 'background'],
+            'vt_ls_popup_input_bg'            => ['.vtk-dialog__search' => 'background'],
+            'vt_ls_popup_input_radius'        => ['.vtk-dialog__input' => 'border-radius', '.vtk-dialog__search' => 'border-radius', 'unit' => true],
+            'vt_ls_popup_placeholder_color'   => ['.vtk-dialog__input::placeholder' => 'color'],
+            'vt_ls_popup_icon_bg'             => ['.vtk-dialog__item-icon' => 'background'],
+            'vt_ls_popup_icon_color'          => ['.vtk-dialog__item-icon' => 'color', '.vtk-dialog__item-icon svg' => 'fill'],
+            'vt_ls_popup_check_color'         => ['.vtk-dialog__check' => 'color', '.vtk-dialog__check svg' => 'fill'],
+        ];
+
+        // Get Elementor Global references (needed when controls use Global Colors)
+        $globals = $widget->get_settings('__globals__');
+        if (!is_array($globals)) {
+            $globals = [];
+        }
+
+        foreach ($modal_controls as $control_id => $rules) {
+            $value = $widget->get_settings_for_display($control_id);
+            $is_slider = !empty($rules['unit']);
+            unset($rules['unit']);
+
+            if ($is_slider) {
+                if (is_array($value) && !empty($value['size'])) {
+                    $css_val = $value['size'] . ($value['unit'] ?: 'px');
+                } else {
+                    continue;
+                }
+            } else {
+                // If direct value is empty, resolve Elementor Global Color to CSS variable
+                if (empty($value) && !empty($globals[$control_id])) {
+                    if (preg_match('/globals\/colors\?id=([a-zA-Z0-9_-]+)/', $globals[$control_id], $m)) {
+                        $value = 'var(--e-global-color-' . $m[1] . ')';
+                    }
+                }
+                if (empty($value)) continue;
+                $css_val = $value;
+            }
+
+            foreach ($rules as $selector => $property) {
+                $modal_css .= $selector . '{' . $property . ':' . esc_attr($css_val) . '!important}';
+            }
+        }
+
+        // Panel box shadow (group control — stored as multiple sub-values)
+        $shadow = $widget->get_settings_for_display('vt_ss_modal_panel_shadow_box_shadow');
+        if (!empty($shadow) && is_array($shadow) && !empty($shadow['horizontal'])) {
+            $h = ($shadow['horizontal'] ?: 0) . 'px';
+            $v = ($shadow['vertical'] ?: 0) . 'px';
+            $b = ($shadow['blur'] ?: 0) . 'px';
+            $s = ($shadow['spread'] ?: 0) . 'px';
+            $c = $shadow['color'] ?: 'rgba(0,0,0,0.5)';
+            $pos = !empty($shadow['position']) && $shadow['position'] === 'inset' ? 'inset ' : '';
+            $modal_css .= '.vtk-dialog__panel{box-shadow:' . $pos . $h . ' ' . $v . ' ' . $b . ' ' . $s . ' ' . esc_attr($c) . '!important}';
+        }
+
+        if ($modal_css) {
+            $config['modalCss'] = $modal_css;
+        }
+
         ?>
         <script type="text/json" class="vtSavedSearchConfig">
             <?php echo wp_specialchars_decode(wp_json_encode($config)); ?>
         </script>
         <?php
 
-        return $widget_content;
+        $extra = ob_get_clean();
+
+        return $widget_content . $extra;
     }
 
     /**
