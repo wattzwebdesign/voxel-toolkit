@@ -317,7 +317,7 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
 
         $this->add_control('vt_ss_filter_text_heading', ['label' => __('Text', 'voxel-toolkit'), 'type' => \Elementor\Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_group_control(\Elementor\Group_Control_Typography::get_type(), ['name' => 'vt_ss_filter_typo', 'label' => __('Typography', 'voxel-toolkit'), 'selector' => '{{WRAPPER}} .vtk-vault__criterion']);
-        $this->add_control('vt_ss_filter_color', ['label' => __('Text Color', 'voxel-toolkit'), 'type' => \Elementor\Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .vtk-vault__criterion' => 'color: {{VALUE}}']]);
+        $this->add_control('vt_ss_filter_color', ['label' => __('Text Color', 'voxel-toolkit'), 'type' => \Elementor\Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .vtk-vault__criterion, {{WRAPPER}} .vtk-vault__criterion-value' => 'color: {{VALUE}}']]);
         $this->add_control('vt_ss_filter_label_color', ['label' => __('Label Color', 'voxel-toolkit'), 'type' => \Elementor\Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .vtk-vault__criterion-label' => 'color: {{VALUE}}']]);
 
         $this->add_control('vt_ss_filter_icon_heading', ['label' => __('Icon', 'voxel-toolkit'), 'type' => \Elementor\Controls_Manager::HEADING, 'separator' => 'before']);
