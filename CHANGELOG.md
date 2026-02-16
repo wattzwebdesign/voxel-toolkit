@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.1.6
+
+### Weather Widget
+
+- **Localized Forecast Dates** - Forecast day names now respect the widget's language setting using IntlDateFormatter (e.g., "pon., 16 lut" in Polish); falls back to English if the intl extension is unavailable
+- **Forecast Humidity & Wind** - Forecast cards now show humidity and wind speed when those toggles are enabled (previously only shown on Current Weather view)
+- **Translated Detail Labels** - "Humidity" and "Wind" labels are now translated across all 40 supported languages in both Current Weather and Forecast views
+
 ## 1.6.1.4
 
 ### Enhanced TinyMCE Editor
