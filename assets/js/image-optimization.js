@@ -533,6 +533,10 @@
      */
     document.addEventListener('change', async (e) => {
         if (e.target.type === 'file' && e.target.files.length > 0 && !isWorking) {
+            // Skip plupload/moxie managed inputs — handled by FilesAdded hook
+            if (e.target.closest && e.target.closest('.moxie-shim')) {
+                return;
+            }
             const files = Array.from(e.target.files);
             if (files.some(f => f.type.match(/^image\/(jpeg|png|webp)$/) && !processedFiles.has(f))) {
                 e.stopImmediatePropagation();
@@ -547,6 +551,10 @@
     document.addEventListener('drop', async (e) => {
         // Skip Voxel file upload components - handled separately below
         if (e.target.closest && e.target.closest('.ts-file-upload, .inline-file-field, .drop-mask')) {
+            return;
+        }
+        // Skip WordPress plupload drop zones — handled by FilesAdded hook
+        if (e.target.closest && e.target.closest('.uploader-window, .media-frame')) {
             return;
         }
 
