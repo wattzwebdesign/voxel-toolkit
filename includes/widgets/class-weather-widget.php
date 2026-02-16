@@ -516,29 +516,30 @@ class Voxel_Toolkit_Weather_Widget extends \Elementor\Widget_Base {
     private function render_current_weather($data, $settings) {
         $temp_unit = $this->get_temp_unit($settings['units']);
         $wind_unit = $settings['units'] === 'imperial' ? 'mph' : 'm/s';
+        $language = !empty($settings['language']) ? $settings['language'] : $this->get_default_language();
         $weather_icon = $settings['show_icons'] === 'yes' ? $this->get_weather_icon($data['weather'][0]['icon']) : '';
         ?>
         <div class="voxel-weather-current">
             <div class="voxel-weather-location"><?php echo esc_html($data['name'] . ', ' . $data['sys']['country']); ?></div>
-            
+
             <div class="voxel-weather-main">
                 <?php if ($settings['show_icons'] === 'yes' && $weather_icon): ?>
                     <div class="voxel-weather-icon"><?php echo $weather_icon; ?></div>
                 <?php endif; ?>
                 <div class="voxel-weather-temperature"><?php echo round($data['main']['temp']); ?><?php echo $temp_unit; ?></div>
             </div>
-            
+
             <?php if ($settings['show_description'] === 'yes'): ?>
                 <div class="voxel-weather-description"><?php echo ucwords($data['weather'][0]['description']); ?></div>
             <?php endif; ?>
-            
+
             <div class="voxel-weather-details">
                 <?php if ($settings['show_humidity'] === 'yes'): ?>
-                    <span class="voxel-weather-humidity">Humidity: <?php echo $data['main']['humidity']; ?>%</span>
+                    <span class="voxel-weather-humidity"><?php echo esc_html($this->get_label('humidity', $language)); ?>: <?php echo $data['main']['humidity']; ?>%</span>
                 <?php endif; ?>
-                
+
                 <?php if ($settings['show_wind'] === 'yes'): ?>
-                    <span class="voxel-weather-wind">Wind: <?php echo round($data['wind']['speed']); ?> <?php echo $wind_unit; ?></span>
+                    <span class="voxel-weather-wind"><?php echo esc_html($this->get_label('wind', $language)); ?>: <?php echo round($data['wind']['speed']); ?> <?php echo $wind_unit; ?></span>
                 <?php endif; ?>
             </div>
         </div>
@@ -550,8 +551,10 @@ class Voxel_Toolkit_Weather_Widget extends \Elementor\Widget_Base {
      */
     private function render_forecast_weather($data, $settings) {
         $temp_unit = $this->get_temp_unit($settings['units']);
+        $wind_unit = $settings['units'] === 'imperial' ? 'mph' : 'm/s';
+        $language = !empty($settings['language']) ? $settings['language'] : $this->get_default_language();
         $days_to_show = $settings['view_type'] === 'forecast_3' ? 3 : 5;
-        
+
         // Group forecasts by day
         $daily_forecasts = array();
         foreach ($data['list'] as $forecast) {
@@ -560,25 +563,35 @@ class Voxel_Toolkit_Weather_Widget extends \Elementor\Widget_Base {
                 $daily_forecasts[$date] = $forecast;
             }
         }
-        
+
         $daily_forecasts = array_slice($daily_forecasts, 0, $days_to_show, true);
         ?>
         <div class="voxel-weather-forecast">
             <div class="voxel-weather-location"><?php echo esc_html($data['city']['name'] . ', ' . $data['city']['country']); ?></div>
-            
+
             <div class="voxel-weather-forecast-days">
                 <?php foreach ($daily_forecasts as $date => $forecast): ?>
                     <div class="voxel-weather-forecast-day">
-                        <div class="voxel-weather-forecast-date"><?php echo date('M j', $forecast['dt']); ?></div>
-                        
+                        <div class="voxel-weather-forecast-date"><?php echo esc_html($this->format_localized_date($forecast['dt'], $language)); ?></div>
+
                         <?php if ($settings['show_icons'] === 'yes'): ?>
                             <div class="voxel-weather-icon"><?php echo $this->get_weather_icon($forecast['weather'][0]['icon']); ?></div>
                         <?php endif; ?>
-                        
+
                         <div class="voxel-weather-temperature"><?php echo round($forecast['main']['temp']); ?><?php echo $temp_unit; ?></div>
                         <?php if ($settings['show_description'] === 'yes'): ?>
                             <div class="voxel-weather-description"><?php echo ucwords($forecast['weather'][0]['description']); ?></div>
                         <?php endif; ?>
+
+                        <div class="voxel-weather-details">
+                            <?php if ($settings['show_humidity'] === 'yes' && isset($forecast['main']['humidity'])): ?>
+                                <span class="voxel-weather-humidity"><?php echo esc_html($this->get_label('humidity', $language)); ?>: <?php echo $forecast['main']['humidity']; ?>%</span>
+                            <?php endif; ?>
+
+                            <?php if ($settings['show_wind'] === 'yes' && isset($forecast['wind']['speed'])): ?>
+                                <span class="voxel-weather-wind"><?php echo esc_html($this->get_label('wind', $language)); ?>: <?php echo round($forecast['wind']['speed']); ?> <?php echo $wind_unit; ?></span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -640,5 +653,95 @@ class Voxel_Toolkit_Weather_Widget extends \Elementor\Widget_Base {
         ];
         
         return isset($alt_map[$icon_code]) ? $alt_map[$icon_code] : 'Weather icon';
+    }
+
+    /**
+     * Get translated label for a given key and language
+     */
+    private function get_label($key, $language) {
+        $labels = [
+            'humidity' => [
+                'en' => 'Humidity', 'af' => 'Humiditeit', 'sq' => 'Lagështia',
+                'ar' => 'الرطوبة', 'az' => 'Rütubət', 'eu' => 'Hezetasuna',
+                'be' => 'Вільготнасць', 'bg' => 'Влажност', 'ca' => 'Humitat',
+                'zh_cn' => '湿度', 'zh_tw' => '濕度', 'hr' => 'Vlažnost',
+                'cz' => 'Vlhkost', 'da' => 'Fugtighed', 'nl' => 'Luchtvochtigheid',
+                'fi' => 'Kosteus', 'fr' => 'Humidité', 'gl' => 'Humidade',
+                'de' => 'Luftfeuchtigkeit', 'el' => 'Υγρασία', 'he' => 'לחות',
+                'hi' => 'नमी', 'hu' => 'Páratartalom', 'is' => 'Rakastig',
+                'id' => 'Kelembapan', 'it' => 'Umidità', 'ja' => '湿度',
+                'kr' => '습도', 'ku' => 'Şil', 'la' => 'Mitrums',
+                'lt' => 'Drėgmė', 'mk' => 'Влажност', 'no' => 'Fuktighet',
+                'fa' => 'رطوبت', 'pl' => 'Wilgotność', 'pt' => 'Humidade',
+                'pt_br' => 'Umidade', 'ro' => 'Umiditate', 'ru' => 'Влажность',
+                'sr' => 'Влажност', 'sk' => 'Vlhkosť', 'sl' => 'Vlažnost',
+                'es' => 'Humedad', 'sv' => 'Luftfuktighet', 'th' => 'ความชื้น',
+                'tr' => 'Nem', 'uk' => 'Вологість', 'vi' => 'Độ ẩm',
+            ],
+            'wind' => [
+                'en' => 'Wind', 'af' => 'Wind', 'sq' => 'Era',
+                'ar' => 'الرياح', 'az' => 'Külək', 'eu' => 'Haizea',
+                'be' => 'Вецер', 'bg' => 'Вятър', 'ca' => 'Vent',
+                'zh_cn' => '风速', 'zh_tw' => '風速', 'hr' => 'Vjetar',
+                'cz' => 'Vítr', 'da' => 'Vind', 'nl' => 'Wind',
+                'fi' => 'Tuuli', 'fr' => 'Vent', 'gl' => 'Vento',
+                'de' => 'Wind', 'el' => 'Άνεμος', 'he' => 'רוח',
+                'hi' => 'हवा', 'hu' => 'Szél', 'is' => 'Vindur',
+                'id' => 'Angin', 'it' => 'Vento', 'ja' => '風速',
+                'kr' => '바람', 'ku' => 'Ba', 'la' => 'Vējš',
+                'lt' => 'Vėjas', 'mk' => 'Ветер', 'no' => 'Vind',
+                'fa' => 'باد', 'pl' => 'Wiatr', 'pt' => 'Vento',
+                'pt_br' => 'Vento', 'ro' => 'Vânt', 'ru' => 'Ветер',
+                'sr' => 'Ветар', 'sk' => 'Vietor', 'sl' => 'Veter',
+                'es' => 'Viento', 'sv' => 'Vind', 'th' => 'ลม',
+                'tr' => 'Rüzgar', 'uk' => 'Вітер', 'vi' => 'Gió',
+            ],
+        ];
+
+        return isset($labels[$key][$language]) ? $labels[$key][$language] : $labels[$key]['en'];
+    }
+
+    /**
+     * Map OpenWeatherMap language code to ICU locale
+     */
+    private function get_intl_locale($lang) {
+        $explicit = [
+            'zh_cn' => 'zh_CN',
+            'zh_tw' => 'zh_TW',
+            'pt_br' => 'pt_BR',
+            'cz'    => 'cs_CZ',
+            'kr'    => 'ko_KR',
+            'la'    => 'lv_LV',
+            'no'    => 'nb_NO',
+        ];
+
+        if (isset($explicit[$lang])) {
+            return $explicit[$lang];
+        }
+
+        return $lang . '_' . strtoupper($lang);
+    }
+
+    /**
+     * Format a timestamp as a localized short date
+     */
+    private function format_localized_date($timestamp, $language) {
+        if (class_exists('IntlDateFormatter')) {
+            $locale = $this->get_intl_locale($language);
+            $fmt = new \IntlDateFormatter(
+                $locale,
+                \IntlDateFormatter::MEDIUM,
+                \IntlDateFormatter::NONE,
+                date_default_timezone_get(),
+                \IntlDateFormatter::GREGORIAN,
+                'EEE, d MMM'
+            );
+            $result = $fmt->format($timestamp);
+            if ($result !== false) {
+                return $result;
+            }
+        }
+
+        return date('D, M j', $timestamp);
     }
 }
