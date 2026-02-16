@@ -2,6 +2,10 @@
 
 ## 1.6.1.6
 
+### Saved Search Widget
+
+- **Notification Button Active State** - Notification toggle button now reflects Elementor Active tab styles (background, icon color, border) when notifications are ON, not just on click
+
 ### Weather Widget
 
 - **Localized Forecast Dates** - Forecast day names now respect the widget's language setting using IntlDateFormatter (e.g., "pon., 16 lut" in Polish); falls back to English if the intl extension is unavailable
