@@ -293,9 +293,9 @@ class Voxel_Toolkit_Saved_Search_Widget extends \Elementor\Widget_Base {
         $this->end_controls_tab();
 
         $this->start_controls_tab('vt_ss_action_tab_active', ['label' => __('Active', 'voxel-toolkit')]);
-        $this->add_control('vt_ss_action_bg_active', ['label' => __('Background Color', 'voxel-toolkit'), 'type' => \Elementor\Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .vtk-vault__action:active' => 'background: {{VALUE}}']]);
-        $this->add_control('vt_ss_action_icon_color_active', ['label' => __('Icon Color', 'voxel-toolkit'), 'type' => \Elementor\Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .vtk-vault__action:active svg' => 'fill: {{VALUE}}', '{{WRAPPER}} .vtk-vault__action:active i' => 'color: {{VALUE}}']]);
-        $this->add_control('vt_ss_action_border_color_active', ['label' => __('Border Color', 'voxel-toolkit'), 'type' => \Elementor\Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .vtk-vault__action:active' => 'border-color: {{VALUE}}']]);
+        $this->add_control('vt_ss_action_bg_active', ['label' => __('Background Color', 'voxel-toolkit'), 'type' => \Elementor\Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .vtk-vault__action:active, {{WRAPPER}} .vtk-vault__action--notif-on' => 'background: {{VALUE}}']]);
+        $this->add_control('vt_ss_action_icon_color_active', ['label' => __('Icon Color', 'voxel-toolkit'), 'type' => \Elementor\Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .vtk-vault__action:active svg, {{WRAPPER}} .vtk-vault__action--notif-on svg' => 'fill: {{VALUE}}', '{{WRAPPER}} .vtk-vault__action:active i, {{WRAPPER}} .vtk-vault__action--notif-on i' => 'color: {{VALUE}}']]);
+        $this->add_control('vt_ss_action_border_color_active', ['label' => __('Border Color', 'voxel-toolkit'), 'type' => \Elementor\Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .vtk-vault__action:active, {{WRAPPER}} .vtk-vault__action--notif-on' => 'border-color: {{VALUE}}']]);
         $this->end_controls_tab();
 
         $this->end_controls_tabs();
