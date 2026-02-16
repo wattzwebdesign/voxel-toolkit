@@ -5,6 +5,7 @@
 ### Saved Search Widget
 
 - **Notification Button Active State** - Notification toggle button now reflects Elementor Active tab styles (background, icon color, border) when notifications are ON, not just on click
+- **Filter Tags Text Color Fix** - Text Color control under Filter Tags now correctly applies to criterion values (was blocked by base CSS specificity)
 
 ### Weather Widget
 
