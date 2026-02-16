@@ -58,9 +58,6 @@
 
         // Watch for Vue-rendered forms
         observeDOM();
-
-        // Hook into Voxel form submission
-        hookVoxelSubmission();
     }
 
     /**
@@ -118,6 +115,11 @@
             iti: iti,
             fieldKey: fieldKey
         });
+
+        // Only hook XHR/fetch once, when we actually have phone inputs
+        if (phoneInstances.size === 1) {
+            hookVoxelSubmission();
+        }
 
         // Set initial country code if we have one
         if (existingCountryCode) {
