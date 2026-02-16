@@ -7,6 +7,10 @@
 - **Notification Button Active State** - Notification toggle button now reflects Elementor Active tab styles (background, icon color, border) when notifications are ON, not just on click
 - **Filter Tags Text Color Fix** - Text Color control under Filter Tags now correctly applies to criterion values (was blocked by base CSS specificity)
 
+### International Phone Input
+
+- **Deferred XHR/Fetch Hooking** - XHR and fetch monkey-patches are now only installed when a phone input actually exists on the page, eliminating unnecessary string checks on every AJAX request site-wide (calendar, notifications, Cloudflare beacons, etc.)
+
 ### Weather Widget
 
 - **Localized Forecast Dates** - Forecast day names now respect the widget's language setting using IntlDateFormatter (e.g., "pon., 16 lut" in Polish); falls back to English if the intl extension is unavailable
